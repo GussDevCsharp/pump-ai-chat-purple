@@ -1,9 +1,33 @@
 
-import { Link } from "react-router-dom"
+import React, { useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { toast } from "sonner"
 
 export default function Login() {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const navigate = useNavigate()
+
+  const handleLogin = (event: React.FormEvent) => {
+    event.preventDefault()
+    
+    // Simple validation
+    if (!email || !password) {
+      toast.error('Por favor, preencha todos os campos')
+      return
+    }
+
+    // Simulated login (replace with Supabase authentication later)
+    if (email === 'demo@pump.ia' && password === 'demo123') {
+      toast.success('Login realizado com sucesso!')
+      navigate('/chat')
+    } else {
+      toast.error('Credenciais inválidas')
+    }
+  }
+
   return (
     <div className="min-h-screen bg-white flex">
       <div className="flex-1 flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8">
@@ -23,7 +47,7 @@ export default function Login() {
               Entre para acessar sua conta
             </p>
           </div>
-          <form className="mt-8 space-y-6">
+          <form onSubmit={handleLogin} className="mt-8 space-y-6">
             <div className="space-y-4">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
@@ -35,6 +59,8 @@ export default function Login() {
                   type="email"
                   autoComplete="email"
                   required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="mt-1"
                 />
               </div>
@@ -48,12 +74,14 @@ export default function Login() {
                   type="password"
                   autoComplete="current-password"
                   required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="mt-1"
                 />
               </div>
             </div>
 
-            <Button className="w-full bg-pump-purple hover:bg-pump-purple/90">
+            <Button type="submit" className="w-full bg-pump-purple hover:bg-pump-purple/90">
               Entrar
             </Button>
           </form>
@@ -74,3 +102,4 @@ export default function Login() {
     </div>
   )
 }
+

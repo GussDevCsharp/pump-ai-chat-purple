@@ -1,14 +1,27 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import { ChatInput } from "@/components/chat/ChatInput"
+import { ChatMessages } from "@/components/chat/ChatMessages"
+import { ChatSidebar } from "@/components/chat/ChatSidebar"
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
-      </div>
+    <div className="flex h-screen bg-white">
+      <ChatSidebar />
+      
+      <main className="flex-1 flex flex-col">
+        <header className="border-b border-pump-gray/20 p-4">
+          <img 
+            src="/lovable-uploads/88c96faa-f875-4c6e-b71c-1389cec6d64e.png" 
+            alt="Pump.ia"
+            className="h-8"
+          />
+        </header>
+        
+        <ChatMessages />
+        <ChatInput />
+      </main>
     </div>
-  );
-};
+  )
+}
 
-export default Index;
+export default Index

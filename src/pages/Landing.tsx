@@ -9,7 +9,7 @@ export default function Landing() {
       <header className="border-b border-pump-gray/20 p-4">
         <div className="container mx-auto flex items-center justify-between">
           <img 
-            src="/lovable-uploads/88c96faa-f875-4c6e-b71c-1389cec6d64e.png" 
+            src="/lovable-uploads/5f403064-9209-4921-b73b-0f70c739981a.png" 
             alt="Pump.ia"
             className="h-8"
           />

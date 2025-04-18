@@ -19,8 +19,14 @@ export default function Login() {
       return
     }
 
-    // Simulated login (replace with Supabase authentication later)
-    if (email === 'demo@pump.ia' && password === 'demo123') {
+    // Default login credentials and simulated login
+    const defaultEmail = 'italogustavocm@gmail.com'
+    const defaultPassword = '123456'
+
+    if (
+      (email === 'demo@pump.ia' && password === 'demo123') || 
+      (email === defaultEmail && password === defaultPassword)
+    ) {
       toast.success('Login realizado com sucesso!')
       navigate('/chat')
     } else {
@@ -102,4 +108,3 @@ export default function Login() {
     </div>
   )
 }
-

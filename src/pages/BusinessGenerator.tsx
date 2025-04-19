@@ -10,6 +10,7 @@ import { Watermark } from "@/components/common/Watermark";
 import { FormHeader } from "@/components/business-generator/FormHeader";
 import { FormTitle } from "@/components/business-generator/FormTitle";
 import { useBusinessForm } from "@/hooks/useBusinessForm";
+import { steps } from "@/config/business-generator-steps";
 
 export default function BusinessGenerator() {
   const {

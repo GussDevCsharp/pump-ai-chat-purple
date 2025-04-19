@@ -28,8 +28,8 @@ export default function Login() {
       (email === defaultEmail && password === defaultPassword)
     ) {
       toast.success('Login realizado com sucesso!')
-      // Fixed: pass an empty state object to avoid null state in the destination
-      navigate('/', { state: {} })
+      // Navigate to the dashboard (root route) after successful login
+      navigate('/')
     } else {
       toast.error('Credenciais inválidas')
     }

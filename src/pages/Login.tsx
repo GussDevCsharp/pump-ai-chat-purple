@@ -28,8 +28,10 @@ export default function Login() {
       (email === defaultEmail && password === defaultPassword)
     ) {
       toast.success('Login realizado com sucesso!')
-      // Navigate to the dashboard (root route) after successful login
-      navigate('/')
+      // Ensure we navigate to the root path which shows the dashboard
+      setTimeout(() => {
+        navigate('/')
+      }, 500)
     } else {
       toast.error('Credenciais inválidas')
     }

@@ -1,7 +1,19 @@
-
 import { Step } from "@/types/business-generator";
 
 export const steps: Step[] = [
+  {
+    id: "business-info",
+    title: "Qual é o nome do seu negócio?",
+    description: "Digite o nome atual ou planejado do seu negócio",
+    fields: [
+      {
+        id: "businessName",
+        label: "Nome do negócio",
+        type: "input",
+        placeholder: "Ex: Café do João, Tech Solutions...",
+      },
+    ],
+  },
   {
     id: "business-type",
     title: "O que você quer vender?",

@@ -24,6 +24,7 @@ export interface Step {
 }
 
 export interface FormDataType {
+  businessName?: string;
   businessType?: string;
   targetAudience?: string;
   audienceDescription?: string;

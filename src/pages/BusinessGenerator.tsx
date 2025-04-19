@@ -10,7 +10,56 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 
-const steps = [
+// Define types for our form fields and data
+interface FieldOption {
+  id: string;
+  label: string;
+}
+
+interface FormField {
+  id: string;
+  label: string;
+  type: string;
+  placeholder?: string;
+  options?: FieldOption[];
+  conditional?: {
+    field: string;
+    value: string;
+  };
+}
+
+interface Step {
+  id: string;
+  title: string;
+  description: string;
+  fields: FormField[];
+}
+
+interface FormDataType {
+  businessType?: string;
+  targetAudience?: string;
+  audienceDescription?: string;
+  industry?: string;
+  industryDetail?: string;
+  uniqueValue?: string;
+  initialBudget?: string;
+  team?: string;
+  shortTermGoals?: string;
+  longTermGoals?: string;
+  [key: string]: string | undefined;
+}
+
+interface BusinessPlanSection {
+  title: string;
+  content: string;
+}
+
+interface BusinessPlan {
+  businessName: string;
+  sections: BusinessPlanSection[];
+}
+
+const steps: Step[] = [
   {
     id: "business-type",
     title: "Tipo de negócio",
@@ -147,9 +196,9 @@ const steps = [
 
 export default function BusinessGenerator() {
   const [currentStep, setCurrentStep] = useState(0);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState<FormDataType>({});
   const [isGenerating, setIsGenerating] = useState(false);
-  const [businessPlan, setBusinessPlan] = useState(null);
+  const [businessPlan, setBusinessPlan] = useState<BusinessPlan | null>(null);
   const navigate = useNavigate();
 
   const currentStepData = steps[currentStep];
@@ -180,7 +229,7 @@ export default function BusinessGenerator() {
     }
   };
 
-  const handleFieldChange = (fieldId, value) => {
+  const handleFieldChange = (fieldId: string, value: string) => {
     setFormData({
       ...formData,
       [fieldId]: value,
@@ -238,7 +287,7 @@ export default function BusinessGenerator() {
     setBusinessPlan(null);
   };
 
-  const renderFormField = (field) => {
+  const renderFormField = (field: FormField) => {
     // If this field has a condition and the condition is not met, don't render it
     if (field.conditional && formData[field.conditional.field] !== field.conditional.value) {
       return null;
@@ -286,7 +335,7 @@ export default function BusinessGenerator() {
               onValueChange={(value) => handleFieldChange(field.id, value)}
               className="flex flex-col space-y-2"
             >
-              {field.options.map((option) => (
+              {field.options?.map((option) => (
                 <div className="flex items-center space-x-2" key={option.id}>
                   <RadioGroupItem value={option.id} id={`${field.id}-${option.id}`} />
                   <label

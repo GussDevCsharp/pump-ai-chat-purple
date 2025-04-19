@@ -1,9 +1,29 @@
 
 import { SendHorizontal } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
-export const ChatInput = () => {
+interface ChatInputProps {
+  suggestedPrompts?: string[]
+}
+
+export const ChatInput = ({ suggestedPrompts }: ChatInputProps) => {
   return (
     <div className="w-full max-w-3xl mx-auto p-4 border-t border-pump-gray/20">
+      {suggestedPrompts && (
+        <div className="mb-4 flex flex-wrap gap-2">
+          {suggestedPrompts.map((prompt, index) => (
+            <Button
+              key={index}
+              variant="secondary"
+              className="text-sm"
+              onClick={() => console.log("Selected prompt:", prompt)}
+            >
+              {prompt}
+            </Button>
+          ))}
+        </div>
+      )}
+      
       <div className="relative flex items-center">
         <textarea
           className="w-full resize-none rounded-lg border border-pump-gray/20 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-pump-purple/20 pr-12"

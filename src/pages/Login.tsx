@@ -94,6 +94,15 @@ export default function Login() {
               Entrar
             </Button>
           </form>
+          
+          <div className="text-center pt-4 border-t mt-6">
+            <p className="text-sm text-gray-600 mb-2">Empreendedor? Experimente nossa ferramenta:</p>
+            <Link to="/business-generator">
+              <Button variant="outline" className="text-pump-purple hover:bg-pump-purple/10">
+                Gerar Plano de Negócios
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
       <div className="hidden lg:block relative flex-1 bg-pump-gray-light">

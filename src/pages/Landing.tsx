@@ -1,7 +1,7 @@
 
 import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
-import { Building, ChartBar, Users, TrendingUp } from "lucide-react"
+import { Building, ChartBar, Users, TrendingUp, MessageSquare } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 
 export default function Landing() {
@@ -37,11 +37,18 @@ export default function Landing() {
             alt="Pump.ia"
             className="h-8"
           />
-          <Link to="/login">
-            <Button variant="outline" className="text-pump-purple hover:text-pump-purple/90">
-              Entrar
-            </Button>
-          </Link>
+          <div className="flex gap-4">
+            <Link to="/business-generator">
+              <Button variant="outline" className="text-pump-purple hover:text-pump-purple/90">
+                Gerar um Negócio
+              </Button>
+            </Link>
+            <Link to="/login">
+              <Button variant="outline" className="text-pump-purple hover:text-pump-purple/90">
+                Entrar
+              </Button>
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -54,11 +61,19 @@ export default function Landing() {
             Transforme sua gestão empresarial com IA especializada em negócios. 
             Obtenha insights valiosos e soluções práticas para sua empresa.
           </p>
-          <Link to="/chat" state={{ topic: "Consultoria Empresarial", prompts: businessPrompts[0].prompts }}>
-            <Button size="lg" className="bg-pump-purple hover:bg-pump-purple/90">
-              Experimentar Agora
-            </Button>
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link to="/chat" state={{ topic: "Consultoria Empresarial", prompts: businessPrompts[0].prompts }}>
+              <Button size="lg" className="bg-pump-purple hover:bg-pump-purple/90 gap-2 w-full sm:w-auto">
+                <MessageSquare size={18} />
+                Consultar IA
+              </Button>
+            </Link>
+            <Link to="/business-generator">
+              <Button size="lg" variant="outline" className="bg-white border-pump-purple text-pump-purple hover:bg-pump-purple/10 w-full sm:w-auto">
+                Gerar um Negócio
+              </Button>
+            </Link>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -10,7 +9,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 
-// Define types for our form fields and data
 interface FieldOption {
   id: string;
   label: string;
@@ -62,133 +60,133 @@ interface BusinessPlan {
 const steps: Step[] = [
   {
     id: "business-type",
-    title: "Tipo de negócio",
-    description: "Escolha o tipo de negócio que você deseja criar",
+    title: "O que você quer vender?",
+    description: "Escolha o tipo principal do seu negócio",
     fields: [
       {
         id: "businessType",
-        label: "Tipo de negócio",
+        label: "Selecione uma opção:",
         type: "radio",
         options: [
-          { id: "product", label: "Produto" },
-          { id: "service", label: "Serviço" },
-          { id: "hybrid", label: "Híbrido (Produto e Serviço)" },
-          { id: "marketplace", label: "Marketplace" },
-          { id: "saas", label: "Software as a Service (SaaS)" },
+          { id: "product", label: "Quero vender produtos físicos" },
+          { id: "service", label: "Quero oferecer serviços" },
+          { id: "hybrid", label: "Quero vender produtos e serviços" },
+          { id: "marketplace", label: "Quero criar um site que conecta vendedores e compradores" },
+          { id: "saas", label: "Quero criar um software ou aplicativo" },
         ],
       },
     ],
   },
   {
     id: "target-audience",
-    title: "Público-alvo",
-    description: "Defina o público-alvo do seu negócio",
+    title: "Para quem você quer vender?",
+    description: "Vamos definir quem são seus clientes ideais",
     fields: [
       {
         id: "targetAudience",
-        label: "Quem é o público-alvo do seu negócio?",
+        label: "Quem vai comprar seu produto ou serviço?",
         type: "radio",
         options: [
-          { id: "b2c", label: "Consumidores finais (B2C)" },
-          { id: "b2b", label: "Empresas (B2B)" },
-          { id: "b2b2c", label: "Empresas e consumidores finais (B2B2C)" },
+          { id: "b2c", label: "Vou vender direto para as pessoas (consumidores)" },
+          { id: "b2b", label: "Vou vender para outras empresas" },
+          { id: "b2b2c", label: "Vou vender tanto para pessoas quanto para empresas" },
         ],
       },
       {
         id: "audienceDescription",
-        label: "Detalhe seu público-alvo em poucas palavras",
+        label: "Descreva um pouco mais sobre seus clientes ideais",
         type: "textarea",
-        placeholder: "Ex: Profissionais entre 25-45 anos que trabalham com tecnologia...",
+        placeholder: "Exemplo: Jovens de 20 a 35 anos que gostam de tecnologia...",
       },
     ],
   },
   {
     id: "industry",
-    title: "Setor",
-    description: "Escolha o setor do seu negócio",
+    title: "Qual é a área do seu negócio?",
+    description: "Escolha o setor principal da sua empresa",
     fields: [
       {
         id: "industry",
-        label: "Setor",
+        label: "Selecione a área que mais combina com seu negócio:",
         type: "radio",
         options: [
-          { id: "technology", label: "Tecnologia" },
-          { id: "health", label: "Saúde" },
-          { id: "education", label: "Educação" },
-          { id: "finance", label: "Finanças" },
-          { id: "food", label: "Alimentação" },
-          { id: "retail", label: "Varejo" },
-          { id: "logistics", label: "Logística" },
-          { id: "other", label: "Outro" },
+          { id: "technology", label: "Tecnologia e Digital" },
+          { id: "health", label: "Saúde e Bem-estar" },
+          { id: "education", label: "Educação e Ensino" },
+          { id: "finance", label: "Finanças e Dinheiro" },
+          { id: "food", label: "Comida e Bebida" },
+          { id: "retail", label: "Loja e Varejo" },
+          { id: "logistics", label: "Entregas e Logística" },
+          { id: "other", label: "Outro tipo de negócio" },
         ],
       },
       {
         id: "industryDetail",
-        label: "Se escolheu Outro, especifique",
+        label: "Qual é a área do seu negócio?",
         type: "input",
-        placeholder: "Ex: Turismo sustentável",
+        placeholder: "Ex: Turismo, Moda, Artesanato...",
         conditional: { field: "industry", value: "other" },
       },
     ],
   },
   {
     id: "unique-value",
-    title: "Diferencial",
-    description: "Qual é o diferencial do seu negócio?",
+    title: "O que torna seu negócio especial?",
+    description: "Conte-nos o que vai fazer seu negócio se destacar da concorrência",
     fields: [
       {
         id: "uniqueValue",
-        label: "Descreva o diferencial do seu negócio",
+        label: "Qual é o diferencial do seu negócio?",
         type: "textarea",
-        placeholder: "Ex: Nossa empresa oferece um serviço personalizado com atendimento 24/7...",
+        placeholder: "Ex: Vou oferecer atendimento 24 horas, entregas mais rápidas, produtos exclusivos...",
       },
     ],
   },
   {
     id: "resources",
-    title: "Recursos",
-    description: "Quais recursos você possui para começar seu negócio?",
+    title: "Recursos iniciais",
+    description: "Vamos planejar com quanto dinheiro e pessoas você vai começar",
     fields: [
       {
         id: "initialBudget",
-        label: "Orçamento inicial aproximado",
+        label: "Quanto você planeja investir no início?",
         type: "radio",
         options: [
           { id: "low", label: "Até R$ 10.000" },
           { id: "medium", label: "Entre R$ 10.000 e R$ 50.000" },
           { id: "high", label: "Entre R$ 50.000 e R$ 200.000" },
-          { id: "vhigh", label: "Acima de R$ 200.000" },
+          { id: "vhigh", label: "Mais de R$ 200.000" },
         ],
       },
       {
         id: "team",
-        label: "Equipe inicial",
+        label: "Com quantas pessoas você vai começar?",
         type: "radio",
         options: [
-          { id: "solo", label: "Apenas eu (solo)" },
-          { id: "small", label: "Pequena equipe (2-5 pessoas)" },
-          { id: "medium", label: "Equipe média (6-15 pessoas)" },
-          { id: "large", label: "Equipe grande (mais de 15 pessoas)" },
+          { id: "solo", label: "Só eu mesmo(a)" },
+          { id: "small", label: "Uma equipe pequena (2-5 pessoas)" },
+          { id: "medium", label: "Uma equipe média (6-15 pessoas)" },
+          { id: "large", label: "Uma equipe grande (mais de 15 pessoas)" },
         ],
       },
     ],
   },
   {
     id: "goals",
-    title: "Objetivos",
-    description: "Quais são os objetivos do seu negócio?",
+    title: "Quais são seus objetivos?",
+    description: "Vamos definir o que você quer alcançar com seu negócio",
     fields: [
       {
         id: "shortTermGoals",
-        label: "Objetivos de curto prazo (1 ano)",
+        label: "O que você quer conseguir no primeiro ano?",
         type: "textarea",
-        placeholder: "Ex: Lançar o MVP, conseguir os primeiros 100 clientes...",
+        placeholder: "Ex: Conseguir os primeiros 50 clientes, abrir minha loja física...",
       },
       {
         id: "longTermGoals",
-        label: "Objetivos de longo prazo (3-5 anos)",
+        label: "O que você quer alcançar em 3-5 anos?",
         type: "textarea",
-        placeholder: "Ex: Expandir para outros mercados, atingir faturamento de R$ 1 milhão...",
+        placeholder: "Ex: Expandir para outras cidades, criar novos produtos...",
       },
     ],
   },
@@ -208,7 +206,6 @@ export default function BusinessGenerator() {
       !field.conditional || formData[field.conditional.field] === field.conditional.value
     );
     
-    // Validate if all required fields are filled
     const isValid = currentFields.every(field => formData[field.id]);
     
     if (!isValid) {
@@ -239,8 +236,6 @@ export default function BusinessGenerator() {
   const generateBusinessPlan = () => {
     setIsGenerating(true);
     
-    // Here we'd typically make an API call to generate the business plan
-    // For now we'll simulate with a timeout
     setTimeout(() => {
       setBusinessPlan({
         businessName: `Startup ${formData.industry || ""}`,
@@ -288,7 +283,6 @@ export default function BusinessGenerator() {
   };
 
   const renderFormField = (field: FormField) => {
-    // If this field has a condition and the condition is not met, don't render it
     if (field.conditional && formData[field.conditional.field] !== field.conditional.value) {
       return null;
     }
@@ -354,7 +348,6 @@ export default function BusinessGenerator() {
     }
   };
 
-  // If we have a generated business plan, show it
   if (businessPlan) {
     return (
       <div className="min-h-screen bg-white">
@@ -427,50 +420,52 @@ export default function BusinessGenerator() {
         </div>
       </header>
       <main className="container mx-auto px-4 py-8">
-        <div className="max-w-2xl mx-auto">
-          <h1 className="text-3xl font-bold mb-2 text-center text-pump-purple">Gere um Negócio</h1>
-          <p className="text-center text-gray-600 mb-8">
-            Responda algumas perguntas e criaremos um plano de negócios personalizado para você.
+        <div className="max-w-3xl mx-auto">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-center text-pump-purple">
+            Monte Seu Negócio
+          </h1>
+          <p className="text-xl md:text-2xl text-center text-gray-600 mb-12">
+            Responda algumas perguntas simples e te ajudaremos a criar um plano para seu negócio.
           </p>
           
           <Card className="mb-8">
-            <CardContent className="pt-6">
-              <div className="mb-6">
-                <h2 className="text-xl font-semibold mb-1">{currentStepData.title}</h2>
-                <p className="text-gray-600">{currentStepData.description}</p>
+            <CardContent className="pt-8">
+              <div className="mb-8">
+                <h2 className="text-2xl md:text-3xl font-semibold mb-3">{currentStepData.title}</h2>
+                <p className="text-lg md:text-xl text-gray-600">{currentStepData.description}</p>
               </div>
               
-              <div className="space-y-4">
+              <div className="space-y-6">
                 {currentStepData.fields.map((field) => renderFormField(field))}
               </div>
             </CardContent>
             
-            <CardFooter className="flex justify-between">
+            <CardFooter className="flex justify-between p-6">
               <Button 
                 onClick={handlePrevious} 
                 disabled={currentStep === 0}
                 variant="outline"
-                className="gap-2"
+                className="text-lg gap-2 px-6 py-3 h-auto"
               >
-                <ArrowLeft size={16} />
-                Anterior
+                <ArrowLeft size={20} />
+                Voltar
               </Button>
-              <div className="text-sm text-gray-500">
+              <div className="text-lg text-gray-500">
                 Passo {currentStep + 1} de {steps.length}
               </div>
               <Button 
                 onClick={handleNext}
                 disabled={isGenerating}
-                className="gap-2 bg-pump-purple hover:bg-pump-purple/90"
+                className="text-lg gap-2 px-6 py-3 h-auto bg-pump-purple hover:bg-pump-purple/90"
               >
                 {isGenerating ? (
                   "Gerando..."
                 ) : currentStep === steps.length - 1 ? (
-                  "Gerar Plano"
+                  "Criar Plano"
                 ) : (
                   <>
                     Próximo
-                    <ArrowRight size={16} />
+                    <ArrowRight size={20} />
                   </>
                 )}
               </Button>

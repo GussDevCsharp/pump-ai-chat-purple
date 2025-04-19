@@ -9,13 +9,13 @@ const Index = () => {
   const location = useLocation()
   const chatState = location.state
 
-  // If accessed directly without state, redirect to dashboard
-  if (location.pathname === '/chat' && !chatState) {
-    return <Navigate to="/" replace />
-  }
-
   // Show chat interface if we're on /chat route
   if (location.pathname === '/chat') {
+    // If accessed directly without state, redirect to dashboard
+    if (!chatState) {
+      return <Navigate to="/" replace />
+    }
+    
     return (
       <div className="flex h-screen bg-white">
         <ChatSidebar />
@@ -37,7 +37,7 @@ const Index = () => {
 
   // Show dashboard on root route
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       <header className="border-b border-pump-gray/20 p-4 bg-white">
         <img 
           src="/lovable-uploads/5f403064-9209-4921-b73b-0f70c739981a.png" 

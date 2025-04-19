@@ -5,7 +5,7 @@ const businessSectors = [
   {
     title: "Marketing e Vendas",
     description: "Estratégias e conteúdo para sua equipe comercial",
-    gradient: "bg-gradient-to-br from-purple-600 to-blue-500",
+    gradient: "purple",
     prompts: [
       "Criar estratégia de marketing digital",
       "Otimizar funil de vendas",
@@ -15,7 +15,7 @@ const businessSectors = [
   {
     title: "Recursos Humanos",
     description: "Gestão de pessoas e desenvolvimento organizacional",
-    gradient: "bg-gradient-to-br from-green-500 to-emerald-700",
+    gradient: "green",
     prompts: [
       "Criar descrição de cargo",
       "Desenvolver programa de treinamento",
@@ -25,7 +25,7 @@ const businessSectors = [
   {
     title: "Finanças",
     description: "Análise financeira e planejamento estratégico",
-    gradient: "bg-gradient-to-br from-blue-600 to-cyan-500",
+    gradient: "blue",
     prompts: [
       "Análise de viabilidade financeira",
       "Planejamento orçamentário",
@@ -35,7 +35,7 @@ const businessSectors = [
   {
     title: "Operações",
     description: "Otimização de processos e gestão operacional",
-    gradient: "bg-gradient-to-br from-orange-500 to-red-600",
+    gradient: "orange",
     prompts: [
       "Mapear processos internos",
       "Otimizar cadeia de suprimentos",
@@ -45,7 +45,7 @@ const businessSectors = [
   {
     title: "Tecnologia",
     description: "Inovação e transformação digital",
-    gradient: "bg-gradient-to-br from-indigo-600 to-purple-600",
+    gradient: "indigo",
     prompts: [
       "Planejar transformação digital",
       "Avaliar soluções tecnológicas",
@@ -55,7 +55,7 @@ const businessSectors = [
   {
     title: "Jurídico",
     description: "Compliance e gestão de contratos",
-    gradient: "bg-gradient-to-br from-gray-700 to-gray-900",
+    gradient: "gray",
     prompts: [
       "Análise de contratos",
       "Adequação à LGPD",
@@ -66,7 +66,7 @@ const businessSectors = [
 
 export const Dashboard = () => {
   return (
-    <div className="p-8">
+    <div className="p-8 bg-white">
       <h1 className="text-2xl font-bold text-gray-900 mb-6">
         Bem-vindo ao Pump.ia
       </h1>

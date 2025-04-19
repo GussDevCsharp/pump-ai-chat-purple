@@ -1,7 +1,9 @@
+
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { MessageSquare } from "lucide-react"
 import { useNavigate } from "react-router-dom"
+import { Badge } from "@/components/ui/badge"
 
 interface BusinessCardProps {
   title: string
@@ -22,25 +24,39 @@ export const BusinessCard = ({ title, description, prompts, gradient }: Business
     })
   }
 
+  // Extract color from gradient for the badge
+  const getBadgeColor = (gradient: string) => {
+    if (gradient.includes('purple')) return 'bg-purple-100 text-purple-800';
+    if (gradient.includes('green')) return 'bg-green-100 text-green-800';
+    if (gradient.includes('blue')) return 'bg-blue-100 text-blue-800';
+    if (gradient.includes('orange') || gradient.includes('red')) return 'bg-orange-100 text-orange-800';
+    if (gradient.includes('indigo')) return 'bg-indigo-100 text-indigo-800';
+    if (gradient.includes('gray')) return 'bg-gray-100 text-gray-800';
+    return 'bg-gray-100 text-gray-800';
+  }
+
   return (
     <Card 
-      className={`${gradient} border-none text-white hover:scale-105 transition-transform cursor-pointer`}
+      className="border bg-white shadow-sm hover:shadow-md transition-shadow cursor-pointer"
       onClick={handleCardClick}
     >
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <MessageSquare className="h-5 w-5" />
-          {title}
-        </CardTitle>
-        <CardDescription className="text-white/90">{description}</CardDescription>
+        <div className="flex items-center justify-between mb-2">
+          <Badge className={`${getBadgeColor(gradient)} font-normal`}>
+            <MessageSquare className="h-3 w-3 mr-1" />
+            {title}
+          </Badge>
+        </div>
+        <CardTitle className="text-xl text-gray-900">{title}</CardTitle>
+        <CardDescription className="text-pump-gray">{description}</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-2">
           {prompts.map((prompt, index) => (
             <Button 
               key={index} 
-              variant="secondary" 
-              className="w-full justify-start bg-white/10 hover:bg-white/20 text-white"
+              variant="outline" 
+              className="w-full justify-start text-gray-700 hover:bg-gray-50 border-gray-200"
             >
               {prompt}
             </Button>

@@ -28,7 +28,8 @@ export default function Login() {
       (email === defaultEmail && password === defaultPassword)
     ) {
       toast.success('Login realizado com sucesso!')
-      navigate('/chat')
+      // Fixed: pass an empty state object to avoid null state in the destination
+      navigate('/', { state: {} })
     } else {
       toast.error('Credenciais inválidas')
     }

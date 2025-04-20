@@ -23,26 +23,22 @@ serve(async (req) => {
     const { data, error } = await supabase
       .from('modelkeys')
       .select('apikey')
-      .eq('model', 'openai')
-      .order('created_at', { ascending: false })
-      .limit(1)
+      .eq('id', 1)
+      .single()
+    
+    console.log("Database query result:", { data, error })
     
     if (error) {
       console.error("Database error:", error)
       throw new Error('Could not fetch API key from database')
     }
     
-    if (!data || data.length === 0) {
-      console.error("No OpenAI API key records found in database")
+    if (!data || !data.apikey) {
+      console.error("No API key found or key is null")
       throw new Error('No OpenAI API key found in database')
     }
 
-    const apikey = data[0]?.apikey
-    
-    if (!apikey) {
-      console.error("API key is null or undefined in the record")
-      throw new Error('Invalid API key format in database')
-    }
+    const apikey = data.apikey
     
     console.log("API key retrieved successfully")
 

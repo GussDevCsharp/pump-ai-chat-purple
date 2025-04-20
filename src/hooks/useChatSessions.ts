@@ -71,3 +71,4 @@ export const useChatSessions = () => {
 
   return { sessions, isLoading, createSession, refreshSessions: fetchSessions }
 }
+

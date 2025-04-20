@@ -7,7 +7,8 @@ import { ApiKeyDisplay } from "@/components/chat/ApiKeyDisplay"
 import { useLocation, Navigate, useSearchParams } from "react-router-dom"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/components/ui/use-toast"
-import Dashboard from "./Dashboard" // Import Dashboard component
+import { useChatSessions } from "@/hooks/useChatSessions"
+import Dashboard from "./Dashboard"
 
 interface Message {
   role: 'assistant' | 'user'
@@ -21,6 +22,7 @@ const Index = () => {
   const chatState = location.state
   const { toast } = useToast()
   const [messages, setMessages] = useState<Message[]>([])
+  const { createSession, refreshSessions } = useChatSessions()
   
   useEffect(() => {
     if (sessionId) {
@@ -44,7 +46,6 @@ const Index = () => {
       if (error) throw error
       
       if (data && data.length > 0) {
-        // Convert database messages to the Message interface format
         const formattedMessages: Message[] = data.map(msg => ({
           role: msg.role as 'assistant' | 'user',
           content: msg.content
@@ -72,14 +73,27 @@ const Index = () => {
       const userMessage = { role: 'user' as const, content }
       setMessages(prev => [...prev, userMessage])
 
-      if (sessionId) {
+      // Create session if we don't have one
+      let currentSessionId = sessionId
+      if (!currentSessionId) {
+        const session = await createSession("New Chat")
+        if (!session) throw new Error("Failed to create chat session")
+        currentSessionId = session.id
+        // Update URL with new session ID without reloading
+        const newSearchParams = new URLSearchParams(searchParams)
+        newSearchParams.set('session', currentSessionId)
+        window.history.pushState({}, '', `${location.pathname}?${newSearchParams}`)
+      }
+
+      // Save user message
+      if (currentSessionId) {
         await supabase
           .from('chat_messages')
-          .insert([{
-            session_id: sessionId,
+          .insert({
+            session_id: currentSessionId,
             role: 'user',
             content
-          }])
+          })
       }
 
       // Get AI response from edge function
@@ -95,14 +109,14 @@ const Index = () => {
       if (!response.ok) {
         const errorData = await response.json()
         console.error("Error response:", errorData)
-        throw new Error(errorData.error || 'Falha ao conectar com o serviço')
+        throw new Error(errorData.error || 'Failed to connect to service')
       }
 
       const data = await response.json()
       
       if (!data.choices || data.choices.length === 0) {
         console.error("Invalid response format:", data)
-        throw new Error('Formato de resposta inválido do serviço de IA')
+        throw new Error('Invalid response format from AI service')
       }
       
       const assistantMessage = {
@@ -110,23 +124,27 @@ const Index = () => {
         content: data.choices[0].message.content
       }
       
-      if (sessionId) {
+      // Save assistant message
+      if (currentSessionId) {
         await supabase
           .from('chat_messages')
-          .insert([{
-            session_id: sessionId,
+          .insert({
+            session_id: currentSessionId,
             role: 'assistant',
             content: assistantMessage.content
-          }])
+          })
       }
       
       setMessages(prev => [...prev, assistantMessage])
+      
+      // Refresh the sessions list to show the new chat
+      refreshSessions()
     } catch (error) {
       console.error("Chat error:", error)
       toast({
         variant: "destructive",
-        title: "Erro",
-        description: `Falha ao obter resposta: ${error.message}`
+        title: "Error",
+        description: `Failed to get response: ${error.message}`
       })
     }
   }
@@ -173,3 +191,4 @@ const Index = () => {
 }
 
 export default Index
+

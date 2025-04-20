@@ -2,6 +2,7 @@
 import { FormDataType } from "@/types/business-generator"
 import { useLocation } from "react-router-dom"
 import ReactMarkdown from 'react-markdown'
+import LoadingDots from "./LoadingDots"
 
 interface Message {
   role: 'assistant' | 'user'
@@ -10,9 +11,10 @@ interface Message {
 
 interface ChatMessagesProps {
   messages: Message[]
+  isThinking?: boolean
 }
 
-export const ChatMessages = ({ messages }: ChatMessagesProps) => {
+export const ChatMessages = ({ messages, isThinking }: ChatMessagesProps) => {
   const location = useLocation()
   const businessData = location.state?.businessData as FormDataType
 
@@ -74,6 +76,19 @@ export const ChatMessages = ({ messages }: ChatMessagesProps) => {
             </div>
           </div>
         ))}
+
+        {isThinking && (
+          <div className="flex gap-4 px-4">
+            <div className="w-8 h-8 rounded-full bg-pump-purple flex items-center justify-center flex-shrink-0">
+              <span className="text-sm font-medium text-white">A</span>
+            </div>
+            <div className="flex-1">
+              <div className="inline-block px-4 py-2 rounded-lg bg-pump-gray-light text-gray-800">
+                <LoadingDots />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

@@ -21,6 +21,7 @@ const Index = () => {
   const chatState = location.state
   const { toast } = useToast()
   const [messages, setMessages] = useState<Message[]>([])
+  const [isThinking, setIsThinking] = useState(false)
   const { createSession, refreshSessions } = useChatSessions()
   
   useEffect(() => {
@@ -70,6 +71,8 @@ const Index = () => {
     try {
       const userMessage = { role: 'user' as const, content }
       setMessages(prev => [...prev, userMessage])
+
+      setIsThinking(true)
 
       const response = await fetch("https://spyfzrgwbavmntiginap.supabase.co/functions/v1/chat", {
         method: 'POST',
@@ -135,6 +138,8 @@ const Index = () => {
         title: "Error",
         description: `Failed to get response: ${error.message}`
       })
+    } finally {
+      setIsThinking(false)
     }
   }
 
@@ -150,7 +155,7 @@ const Index = () => {
               className="h-8"
             />
           </header>
-          <ChatMessages messages={messages} />
+          <ChatMessages messages={messages} isThinking={isThinking} />
           <ChatInput 
             suggestedPrompts={chatState?.prompts} 
             onSendMessage={handleSendMessage}

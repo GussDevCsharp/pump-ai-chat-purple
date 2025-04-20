@@ -1,8 +1,8 @@
-
 import { FormDataType } from "@/types/business-generator"
 import { useLocation } from "react-router-dom"
 import ReactMarkdown from 'react-markdown'
 import LoadingDots from "./LoadingDots"
+import { useEffect, useRef } from "react"
 
 interface Message {
   role: 'assistant' | 'user'
@@ -17,6 +17,15 @@ interface ChatMessagesProps {
 export const ChatMessages = ({ messages, isThinking }: ChatMessagesProps) => {
   const location = useLocation()
   const businessData = location.state?.businessData as FormDataType
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }
+
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages, isThinking])
 
   return (
     <div className="flex-1 overflow-y-auto py-4">
@@ -89,6 +98,8 @@ export const ChatMessages = ({ messages, isThinking }: ChatMessagesProps) => {
             </div>
           </div>
         )}
+
+        <div ref={messagesEndRef} />
       </div>
     </div>
   )

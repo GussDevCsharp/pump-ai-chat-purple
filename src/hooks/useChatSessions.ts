@@ -16,18 +16,44 @@ export const useChatSessions = () => {
   const [sessions, setSessions] = useState<ChatSession[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const { toast } = useToast()
+  const [userId, setUserId] = useState<string | null>(null)
+
+  // Get and set the authenticated user's ID
+  useEffect(() => {
+    let ignore = false
+    async function getUser() {
+      const { data, error } = await supabase.auth.getSession()
+      if (error) return
+      const uid = data.session?.user?.id ?? null
+      if (!ignore) setUserId(uid)
+    }
+    getUser()
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUserId(session?.user?.id ?? null)
+      }
+    )
+    return () => {
+      authListener.subscription.unsubscribe()
+      ignore = true
+    }
+  }, [])
 
   const fetchSessions = async () => {
     try {
       setIsLoading(true)
-      console.log("Fetching chat sessions...")
+      if (!userId) {
+        setSessions([])
+        return
+      }
+      console.log("Fetching chat sessions for user:", userId)
       const { data, error } = await supabase
         .from('chat_sessions')
         .select('*')
+        .eq('user_id', userId)
         .order('created_at', { ascending: false })
 
       if (error) throw error
-      console.log("Fetched sessions:", data)
       setSessions(data || [])
     } catch (error) {
       console.error('Error fetching chat sessions:', error)
@@ -43,14 +69,19 @@ export const useChatSessions = () => {
 
   const createSession = async (title: string, theme?: string, cardTitle?: string, themeId?: string) => {
     try {
-      const dummyUserId = '00000000-0000-0000-0000-000000000000'
-      console.log("Creating new session:", { title, theme, cardTitle, themeId })
-      
+      if (!userId) {
+        toast({
+          variant: "destructive",
+          title: "Erro",
+          description: "Você precisa estar logado para criar uma conversa"
+        })
+        return null
+      }
       const { data, error } = await supabase
         .from('chat_sessions')
         .insert([{
           title,
-          user_id: dummyUserId,
+          user_id: userId,
           card_theme: theme,
           card_title: cardTitle,
           theme_id: themeId
@@ -63,7 +94,6 @@ export const useChatSessions = () => {
         throw error
       }
 
-      console.log("Session created successfully:", data)
       setSessions(prev => data ? [data, ...prev] : prev)
       return data
     } catch (error) {
@@ -113,9 +143,12 @@ export const useChatSessions = () => {
   }
 
   useEffect(() => {
-    console.log("Initial fetch of chat sessions")
-    fetchSessions()
-  }, [])
+    if (userId !== undefined) {
+      fetchSessions()
+    }
+    // sozinha depende de userId
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId])
 
   return { sessions, isLoading, createSession, deleteSession, refreshSessions: fetchSessions }
 }

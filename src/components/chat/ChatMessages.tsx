@@ -38,7 +38,7 @@ export const ChatMessages = ({ messages }: ChatMessagesProps) => {
           <div 
             key={index} 
             className={`flex gap-4 px-4 ${
-              message.role === 'assistant' ? '' : 'bg-pump-gray-light/50 py-4'
+              message.role === 'user' ? 'flex-row-reverse' : ''
             }`}
           >
             <div className={`w-8 h-8 rounded-full ${
@@ -48,8 +48,14 @@ export const ChatMessages = ({ messages }: ChatMessagesProps) => {
                 {message.role === 'assistant' ? 'A' : 'U'}
               </span>
             </div>
-            <div className="flex-1">
-              <p className="text-sm text-gray-800">{message.content}</p>
+            <div className={`flex-1 ${message.role === 'user' ? 'text-right' : ''}`}>
+              <p className={`text-sm inline-block px-4 py-2 rounded-lg ${
+                message.role === 'user' 
+                  ? 'bg-pump-purple text-white ml-auto' 
+                  : 'bg-pump-gray-light text-gray-800'
+              }`}>
+                {message.content}
+              </p>
             </div>
           </div>
         ))}

@@ -18,15 +18,33 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_ANON_KEY') ?? ''
     )
 
-    // Get OpenAI API key from database
-    const { data: { apikey }, error: keyError } = await supabase.rpc('get_openai_apikey')
+    console.log("Fetching OpenAI API key...")
     
-    if (keyError) {
-      throw new Error('Could not fetch API key')
+    // Get OpenAI API key from database - add better error handling
+    const { data, error } = await supabase
+      .from('modelkeys')
+      .select('apikey')
+      .eq('model', 'openai')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single()
+    
+    if (error) {
+      console.error("Database error:", error)
+      throw new Error('Could not fetch API key from database')
     }
+    
+    if (!data || !data.apikey) {
+      console.error("No API key found in database")
+      throw new Error('No OpenAI API key found in database')
+    }
+    
+    const apikey = data.apikey
+    console.log("API key retrieved successfully")
 
     const { message } = await req.json()
 
+    console.log("Sending request to OpenAI...")
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -45,16 +63,18 @@ serve(async (req) => {
       }),
     })
 
-    const data = await response.json()
+    const data_response = await response.json()
+    console.log("Received response from OpenAI")
 
     return new Response(
-      JSON.stringify(data),
+      JSON.stringify(data_response),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
       },
     )
   } catch (error) {
+    console.error("Error in edge function:", error.message)
     return new Response(
       JSON.stringify({ error: error.message }),
       { 

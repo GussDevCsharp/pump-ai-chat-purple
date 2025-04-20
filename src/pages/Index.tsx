@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { Dashboard } from "@/components/dashboard/Dashboard"
 import { ChatInput } from "@/components/chat/ChatInput"
@@ -40,9 +39,19 @@ const Index = () => {
         body: JSON.stringify({ message: content }),
       })
 
-      if (!response.ok) throw new Error('Failed to get response')
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error response:", errorData);
+        throw new Error(errorData.error || 'Failed to get response');
+      }
 
-      const data = await response.json()
+      const data = await response.json();
+      
+      if (!data.choices || data.choices.length === 0) {
+        console.error("Invalid response format:", data);
+        throw new Error('Invalid response from AI service');
+      }
+      
       const assistantMessage = {
         role: 'assistant' as const,
         content: data.choices[0].message.content
@@ -50,10 +59,11 @@ const Index = () => {
       
       setMessages(prev => [...prev, assistantMessage])
     } catch (error) {
+      console.error("Chat error:", error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to get AI response. Please try again."
+        description: `Failed to get AI response: ${error.message}`
       })
     }
   }

@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client"
 
 export const ApiKeyDisplay = () => {
   const [apiKey, setApiKey] = useState<string>('')
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchApiKey = async () => {
@@ -18,9 +19,16 @@ export const ApiKeyDisplay = () => {
           }
         )
         const data = await response.json()
-        setApiKey(data.maskedKey || 'Chave não encontrada')
+
+        if (data.error) {
+          setError(data.error)
+          setApiKey('Erro ao carregar a chave')
+        } else {
+          setApiKey(data.maskedKey || 'Chave não encontrada')
+        }
       } catch (error) {
         console.error('Erro ao buscar a chave API:', error)
+        setError(error.message)
         setApiKey('Erro ao carregar a chave')
       }
     }
@@ -29,8 +37,12 @@ export const ApiKeyDisplay = () => {
   }, [])
 
   return (
-    <div className="fixed bottom-4 left-4 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-600">
+    <div 
+      className="fixed bottom-4 left-4 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-600"
+      title={error || ''}
+    >
       API Key: {apiKey}
+      {error && <span className="text-red-500 ml-2">(*)</span>}
     </div>
   )
 }

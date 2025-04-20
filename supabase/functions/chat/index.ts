@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
@@ -21,14 +20,26 @@ serve(async (req) => {
     // Se for uma requisição para obter a chave API
     const url = new URL(req.url)
     if (url.pathname.endsWith('/getApiKey')) {
+      // Primeiro, vamos verificar todos os registros na tabela
+      const { data: allKeys, error: listError } = await supabase
+        .from('modelkeys')
+        .select('*')
+
+      console.log('Todos os registros de modelkeys:', allKeys)
+      console.log('Erro ao listar registros:', listError)
+
+      // Agora vamos buscar a chave específica
       const { data, error } = await supabase
         .from('modelkeys')
         .select('apikey')
         .eq('id', 1)
         .single()
 
+      console.log('Dados da consulta específica:', data)
+      console.log('Erro na consulta específica:', error)
+
       if (error) {
-        throw new Error('Could not fetch API key')
+        throw new Error(`Could not fetch API key: ${error.message}`)
       }
 
       const maskedKey = data.apikey ? `${data.apikey.substring(0, 3)}...${data.apikey.substring(data.apikey.length - 4)}` : null

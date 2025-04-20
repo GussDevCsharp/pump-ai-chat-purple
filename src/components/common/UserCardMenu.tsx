@@ -30,10 +30,10 @@ export function UserCardMenu() {
   }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="p-0 focus-visible:ring-0 bg-white hover:bg-gray-100 rounded-full h-auto">
-          <div className="flex items-center gap-2">
+    <div className="fixed top-4 right-4 z-50">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="p-0 focus-visible:ring-0 bg-white hover:bg-gray-100 rounded-full h-auto flex items-center gap-2">
             <Avatar className="h-9 w-9">
               {user && user.avatar_url ? (
                 <AvatarImage src={user.avatar_url} />
@@ -47,21 +47,20 @@ export function UserCardMenu() {
               <span className="text-xs font-semibold text-gray-900 truncate">{user?.email || "Visitante"}</span>
               <span className="text-[10px] text-pump-gray">{authStatus === "authenticated" ? "Usuário logado" : "Visitante"}</span>
             </div>
-          </div>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-44">
-        <DropdownMenuItem>
-          <Settings className="w-4 h-4 mr-2" />
-          Configurações
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleLogout}>
-          <LogOut className="w-4 h-4 mr-2" />
-          Sair
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-44">
+          <DropdownMenuItem>
+            <Settings className="w-4 h-4 mr-2" />
+            Configurações
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={handleLogout}>
+            <LogOut className="w-4 h-4 mr-2" />
+            Sair
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
   );
 }
-

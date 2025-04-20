@@ -1,3 +1,4 @@
+
 import { MessageCircle, Plus, User, Settings, Pencil, Trash2 } from "lucide-react"
 import { useChatSessions } from "@/hooks/useChatSessions"
 import { Button } from "@/components/ui/button"
@@ -5,7 +6,7 @@ import { useNavigate, useSearchParams } from "react-router-dom"
 import { useState, useEffect } from "react"
 import { Input } from "@/components/ui/input"
 import { supabase } from "@/integrations/supabase/client"
-import { useToast } from "@/components/ui/use-toast"
+import { useToast } from "@/hooks/use-toast"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,9 +18,11 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { ThemeSelect } from "@/components/chat/ThemeSelect"
+import { useChatThemes, ChatTheme } from "@/hooks/useChatThemes"
 
 export const ChatSidebar = () => {
   const { sessions, createSession, refreshSessions, deleteSession, isLoading } = useChatSessions()
+  const { themes } = useChatThemes()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const currentSessionId = searchParams.get('session')
@@ -30,7 +33,8 @@ export const ChatSidebar = () => {
 
   useEffect(() => {
     console.log("Sessions in ChatSidebar:", sessions)
-  }, [sessions])
+    console.log("Available themes:", themes)
+  }, [sessions, themes])
 
   const handleNewChat = async () => {
     const session = await createSession("Nova conversa")
@@ -80,12 +84,20 @@ export const ChatSidebar = () => {
     }
   }
 
+  // Find theme name by ID
+  const getThemeName = (themeId: string | null): string => {
+    if (!themeId) return 'Outras conversas'
+    const theme = themes.find(t => t.id === themeId)
+    return theme ? theme.name : 'Outras conversas'
+  }
+
+  // Group sessions by theme_id and use theme names
   const groupedSessions = sessions.reduce((groups, session) => {
-    const theme = session.card_theme || 'Outras conversas'
-    if (!groups[theme]) {
-      groups[theme] = []
+    const themeName = getThemeName(session.theme_id)
+    if (!groups[themeName]) {
+      groups[themeName] = []
     }
-    groups[theme].push(session)
+    groups[themeName].push(session)
     return groups
   }, {} as Record<string, typeof sessions>)
 
@@ -111,9 +123,9 @@ export const ChatSidebar = () => {
             </div>
           ) : (
             <div className="flex flex-col gap-4">
-              {Object.entries(groupedSessions).map(([theme, themeSessions]) => (
-                <div key={theme} className="space-y-2">
-                  <h3 className="text-xs font-medium text-pump-gray px-3">{theme}</h3>
+              {Object.entries(groupedSessions).map(([themeName, themeSessions]) => (
+                <div key={themeName} className="space-y-2">
+                  <h3 className="text-xs font-medium text-pump-gray px-3">{themeName}</h3>
                   <div className="flex flex-col gap-2">
                     {themeSessions.map((session) => (
                       <div key={session.id} className="group relative">

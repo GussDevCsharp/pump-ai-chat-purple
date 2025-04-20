@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
@@ -7,6 +8,7 @@ const corsHeaders = {
 }
 
 serve(async (req) => {
+  // Handle preflight CORS
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
@@ -17,39 +19,41 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_ANON_KEY') ?? ''
     )
 
-    // Se for uma requisição para obter a chave API
+    // If it's a request for the API key
     const url = new URL(req.url)
     if (url.pathname.endsWith('/getApiKey')) {
-      // Primeiro, vamos verificar todos os registros na tabela
+      console.log('Getting API key')
+      
+      // First, check all records in the table for debugging
       const { data: allKeys, error: listError } = await supabase
         .from('modelkeys')
         .select('*')
 
-      console.log('Todos os registros de modelkeys:', allKeys)
-      console.log('Erro ao listar registros:', listError)
+      console.log('All modelkeys records:', allKeys)
+      console.log('List error:', listError)
 
-      // Agora vamos buscar a chave específica
+      // Get the specific API key
       const { data, error } = await supabase
         .from('modelkeys')
         .select('apikey')
         .eq('model', 'OpenAI')
         .single()
 
-      console.log('Dados da consulta específica:', data)
-      console.log('Erro na consulta específica:', error)
+      console.log('API key data:', data)
+      console.log('API key error:', error)
 
       if (error) {
         throw new Error(`Could not fetch API key: ${error.message}`)
       }
 
-      // Return full API key instead of masked version
+      // Return the full API key
       return new Response(
         JSON.stringify({ apiKey: data.apikey }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
-    // Processamento normal da mensagem do chat
+    // Normal chat message processing
     const { data: keyData, error: keyError } = await supabase
       .from('modelkeys')
       .select('apikey')
@@ -64,6 +68,8 @@ serve(async (req) => {
     const apikey = keyData.apikey
     const { message } = await req.json()
 
+    console.log("Sending message to OpenAI:", message.slice(0, 50) + "...")
+    
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -97,6 +103,8 @@ serve(async (req) => {
     }
 
     const data_response = await response.json()
+    console.log("Response received from OpenAI")
+    
     return new Response(
       JSON.stringify(data_response),
       { 

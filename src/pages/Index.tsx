@@ -1,10 +1,11 @@
+
 import { useState, useEffect } from "react"
 import { ChatInput } from "@/components/chat/ChatInput"
 import { ChatMessages } from "@/components/chat/ChatMessages"
 import { ChatSidebar } from "@/components/chat/ChatSidebar"
 import { ApiKeyDisplay } from "@/components/chat/ApiKeyDisplay"
 import { WelcomeScreen } from "@/components/chat/WelcomeScreen"
-import { useLocation, useSearchParams, Link } from "react-router-dom"
+import { useLocation, useSearchParams, Link, useNavigate } from "react-router-dom"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/hooks/use-toast"
 import { useChatSessions } from "@/hooks/useChatSessions"
@@ -19,13 +20,14 @@ interface Message {
 
 const Index = () => {
   const location = useLocation()
-  const [searchParams] = useSearchParams()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
   const sessionId = searchParams.get('session')
   const chatState = location.state
   const { toast } = useToast()
   const [messages, setMessages] = useState<Message[]>([])
   const [isThinking, setIsThinking] = useState(false)
-  const { createSession, refreshSessions } = useChatSessions()
+  const { createSession, refreshSessions, sessions } = useChatSessions()
   
   useEffect(() => {
     if (sessionId) {
@@ -78,18 +80,28 @@ const Index = () => {
       setIsThinking(true)
 
       let currentSessionId = sessionId
+      
+      // If no session ID exists, create a new session
       if (!currentSessionId) {
+        // Generate default title from first message
+        const defaultTitle = content.split(' ').slice(0, 5).join(' ').slice(0, 30)
+        
+        // Create session in database
         const session = await createSession(
-          content.split(' ').slice(0, 5).join(' ').slice(0, 30),
+          defaultTitle,
           chatState?.theme,
           chatState?.title
         )
+        
         if (!session) throw new Error("Failed to create chat session")
+        
         currentSessionId = session.id
         
-        const newSearchParams = new URLSearchParams(searchParams)
-        newSearchParams.set('session', currentSessionId)
-        window.history.pushState({}, '', `${location.pathname}?${newSearchParams}`)
+        // Update URL with session ID
+        setSearchParams(prev => {
+          prev.set('session', currentSessionId!)
+          return prev
+        })
       }
 
       // First API call to get the main response
@@ -146,28 +158,34 @@ const Index = () => {
           .from('chat_sessions')
           .update({ title: suggestedTitle })
           .eq('id', currentSessionId)
-
-        refreshSessions()
       }
 
-      await supabase
-        .from('chat_messages')
-        .insert([
-          {
-            session_id: currentSessionId,
-            role: 'user',
-            content: userMessage.content
-          },
-          {
-            session_id: currentSessionId,
-            role: 'assistant',
-            content: assistantMessage.content
-          }
-        ])
+      // Save messages to database
+      try {
+        await supabase
+          .from('chat_messages')
+          .insert([
+            {
+              session_id: currentSessionId,
+              role: 'user',
+              content: userMessage.content
+            },
+            {
+              session_id: currentSessionId,
+              role: 'assistant',
+              content: assistantMessage.content
+            }
+          ])
       
-      setMessages(prev => [...prev, assistantMessage])
-      refreshSessions()
-    } catch (error) {
+        setMessages(prev => [...prev, assistantMessage])
+        
+        // Refresh sessions list to show the new/updated session
+        await refreshSessions()
+      } catch (error: any) {
+        console.error("Error saving messages:", error)
+        throw new Error(`Failed to save messages: ${error.message}`)
+      }
+    } catch (error: any) {
       console.error("Chat error:", error)
       toast({
         variant: "destructive",

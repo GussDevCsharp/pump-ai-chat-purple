@@ -71,18 +71,15 @@ export const ChatContainer = () => {
       setIsThinking(true)
 
       let currentSessionId = sessionId
-      
+      let isFirstMessage = !currentSessionId
+
       if (!currentSessionId) {
         const defaultTitle = content.split(' ').slice(0, 5).join(' ') + '...'
-        
-        console.log("Creating new session with title:", defaultTitle)
+
         const session = await createSession(defaultTitle)
-        
         if (!session) throw new Error("Failed to create chat session")
-        
+
         currentSessionId = session.id
-        console.log("Created session with ID:", currentSessionId)
-        
         setSearchParams(prev => {
           prev.set('session', currentSessionId!)
           return prev
@@ -100,43 +97,61 @@ export const ChatContainer = () => {
 
       if (!response.ok) {
         const errorData = await response.json()
-        console.error("Error response:", errorData)
         throw new Error(errorData.error || 'Failed to connect to service')
       }
 
       const data = await response.json()
-      
       if (!data.choices || data.choices.length === 0) {
-        console.error("Invalid response format:", data)
         throw new Error('Invalid response format from AI service')
       }
-      
+
       const assistantMessage = {
         role: 'assistant' as const,
         content: data.choices[0].message.content
       }
 
-      try {
-        await supabase
-          .from('chat_messages')
-          .insert([
-            {
-              session_id: currentSessionId,
-              role: 'user',
-              content: userMessage.content
-            },
-            {
-              session_id: currentSessionId,
-              role: 'assistant',
-              content: assistantMessage.content
-            }
-          ])
-      
+      if (isFirstMessage) {
+        try {
+          await supabase
+            .from('chat_messages')
+            .insert([
+              {
+                session_id: currentSessionId,
+                role: 'user',
+                content: userMessage.content
+              },
+              {
+                session_id: currentSessionId,
+                role: 'assistant',
+                content: assistantMessage.content
+              }
+            ])
+        } catch (error: any) {
+          console.error("Erro ao salvar a primeira conversa:", error)
+        }
         setMessages(prev => [...prev, assistantMessage])
         await refreshSessions()
-      } catch (error: any) {
-        console.error("Error saving messages:", error)
-        throw new Error(`Failed to save messages: ${error.message}`)
+      } else {
+        try {
+          await supabase
+            .from('chat_messages')
+            .insert([
+              {
+                session_id: currentSessionId,
+                role: 'user',
+                content: userMessage.content
+              },
+              {
+                session_id: currentSessionId,
+                role: 'assistant',
+                content: assistantMessage.content
+              }
+            ])
+          setMessages(prev => [...prev, assistantMessage])
+          await refreshSessions()
+        } catch (error: any) {
+          throw new Error(`Failed to save messages: ${error.message}`)
+        }
       }
     } catch (error: any) {
       console.error("Chat error:", error)

@@ -1,4 +1,3 @@
-
 import { MessageCircle, Plus, User, Settings, Pencil, Trash2 } from "lucide-react"
 import { useChatSessions } from "@/hooks/useChatSessions"
 import { Button } from "@/components/ui/button"
@@ -17,6 +16,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import { ThemeSelect } from "@/components/chat/ThemeSelect"
 
 export const ChatSidebar = () => {
   const { sessions, createSession, refreshSessions, deleteSession, isLoading } = useChatSessions()
@@ -72,7 +72,6 @@ export const ChatSidebar = () => {
     if (sessionToDelete) {
       const isDeleted = await deleteSession(sessionToDelete)
       
-      // If successfully deleted and it was the current session, navigate back to chat home
       if (isDeleted && sessionToDelete === currentSessionId) {
         navigate('/chat')
       }
@@ -81,7 +80,6 @@ export const ChatSidebar = () => {
     }
   }
 
-  // Group sessions by theme
   const groupedSessions = sessions.reduce((groups, session) => {
     const theme = session.card_theme || 'Outras conversas'
     if (!groups[theme]) {
@@ -143,6 +141,11 @@ export const ChatSidebar = () => {
                               {session.title}
                             </span>
                             <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
+                              <ThemeSelect 
+                                sessionId={session.id} 
+                                currentTheme={session.theme_id}
+                                onThemeChange={refreshSessions}
+                              />
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation()
@@ -171,7 +174,6 @@ export const ChatSidebar = () => {
           )}
         </div>
 
-        {/* User Menu */}
         <div className="border-t border-pump-gray/20 pt-4 mt-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">

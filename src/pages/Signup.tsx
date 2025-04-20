@@ -6,40 +6,38 @@ import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
 import { supabase } from "@/integrations/supabase/client"
 
-export default function Login() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+export default function Signup() {
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
 
-  const handleLogin = async (event: React.FormEvent) => {
+  const handleSignup = async (event: React.FormEvent) => {
     event.preventDefault()
-    if (!email || !password) {
-      toast.error('Por favor, preencha todos os campos')
+    if (!email || !password || !confirmPassword) {
+      toast.error("Por favor, preencha todos os campos")
       return
     }
-
+    if (password !== confirmPassword) {
+      toast.error("As senhas não coincidem")
+      return
+    }
     setIsLoading(true)
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
-
+    const { error } = await supabase.auth.signUp({ email, password })
     setIsLoading(false)
-
     if (error) {
-      if (error.message && error.message.includes("Invalid login credentials")) {
-        toast.error('Email ou senha inválidos')
+      if (error.message && error.message.includes("already registered")) {
+        toast.error("Este e-mail já está cadastrado")
       } else {
-        toast.error(error.message || 'Erro ao fazer login')
+        toast.error(error.message || "Erro ao criar conta")
       }
       return
     }
-
-    toast.success('Login realizado com sucesso!')
+    toast.success("Cadastro realizado! Verifique seu email.")
     setTimeout(() => {
-      navigate('/themes')
-    }, 600)
+      navigate("/login")
+    }, 800)
   }
 
   return (
@@ -48,20 +46,20 @@ export default function Login() {
         <div className="max-w-md w-full space-y-8">
           <div className="text-center">
             <Link to="/">
-              <img 
-                src="/lovable-uploads/5f403064-9209-4921-b73b-0f70c739981a.png" 
+              <img
+                src="/lovable-uploads/5f403064-9209-4921-b73b-0f70c739981a.png"
                 alt="Pump.ia"
                 className="h-12 mx-auto"
               />
             </Link>
             <h2 className="mt-6 text-3xl font-bold text-gray-900">
-              Bem-vindo de volta
+              Crie sua conta grátis
             </h2>
             <p className="mt-2 text-sm text-pump-gray">
-              Entre para acessar sua conta
+              Cadastre-se para acessar todas as funcionalidades
             </p>
           </div>
-          <form onSubmit={handleLogin} className="mt-8 space-y-6">
+          <form onSubmit={handleSignup} className="mt-8 space-y-6">
             <div className="space-y-4">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
@@ -74,7 +72,7 @@ export default function Login() {
                   autoComplete="email"
                   required
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={e => setEmail(e.target.value)}
                   className="mt-1"
                   disabled={isLoading}
                 />
@@ -87,40 +85,46 @@ export default function Login() {
                   id="password"
                   name="password"
                   type="password"
-                  autoComplete="current-password"
+                  autoComplete="new-password"
                   required
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={e => setPassword(e.target.value)}
+                  className="mt-1"
+                  disabled={isLoading}
+                />
+              </div>
+              <div>
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+                  Confirmar senha
+                </label>
+                <Input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  autoComplete="new-password"
+                  required
+                  value={confirmPassword}
+                  onChange={e => setConfirmPassword(e.target.value)}
                   className="mt-1"
                   disabled={isLoading}
                 />
               </div>
             </div>
-
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               className="w-full bg-pump-purple hover:bg-pump-purple/90"
               disabled={isLoading}
             >
-              {isLoading ? "Entrando..." : "Entrar"}
+              {isLoading ? "Criando conta..." : "Cadastrar"}
             </Button>
           </form>
-          
           <div className="text-center pt-4 border-t mt-6">
-            <p className="text-sm text-gray-600 mb-2">Empreendedor? Experimente nossa ferramenta:</p>
-            <Link to="/business-generator">
+            <p className="text-sm text-gray-600 mb-2">Já tem uma conta?</p>
+            <Link to="/login">
               <Button variant="outline" className="text-pump-purple hover:bg-pump-purple/10">
-                Gerar Plano de Negócios
+                Fazer login
               </Button>
             </Link>
-            <div className="mt-4">
-              <p className="text-sm text-gray-600 mb-2">Ainda não tem uma conta?</p>
-              <Link to="/signup">
-                <Button variant="link" className="text-pump-purple">
-                  Cadastrar-se
-                </Button>
-              </Link>
-            </div>
           </div>
         </div>
       </div>
@@ -131,7 +135,7 @@ export default function Login() {
               Transforme sua empresa com IA
             </h3>
             <p className="text-pump-gray">
-              Acesse ferramentas poderosas de IA desenvolvidas especialmente para empresas como a sua.
+              Use inteligência artificial de ponta para turbinar o seu negócio.
             </p>
           </div>
         </div>

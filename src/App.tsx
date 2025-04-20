@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound";
 import Dashboard from "./pages/Dashboard";
 import BusinessGenerator from "./pages/BusinessGenerator";
 import Themes from "./pages/Themes";
++import Signup from "./pages/Signup";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/chat" element={<Index />} />
           <Route path="/login" element={<Login />} />
++          <Route path="/signup" element={<Signup />} />
           <Route path="/themes" element={<Themes />} />
           <Route path="/business-generator" element={<BusinessGenerator />} />
           <Route path="*" element={<NotFound />} />
@@ -35,3 +37,4 @@ const App = () => (
 );
 
 export default App;
+

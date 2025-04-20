@@ -1,13 +1,18 @@
-
 import { useLocation } from "react-router-dom"
 import { ChatLayout } from "@/components/chat/ChatLayout"
 import { Dashboard } from "@/components/dashboard/Dashboard"
+import { UserCard } from "@/components/common/UserCard";
 
 const Index = () => {
   const location = useLocation()
 
   if (location.pathname === '/chat') {
-    return <ChatLayout />
+    return (
+      <>
+        <UserCard />
+        <ChatLayout />
+      </>
+    );
   }
 
   return (
@@ -20,6 +25,7 @@ const Index = () => {
         />
       </header>
       <main>
+        <UserCard />
         <Dashboard />
       </main>
     </div>

@@ -1,4 +1,3 @@
-
 import { useEffect } from "react"
 import { useChatThemes } from "@/hooks/useChatThemes" 
 import { Card, CardContent } from "@/components/ui/card"
@@ -8,6 +7,7 @@ import {
   Lightbulb, Code, Music, Users, ShoppingCart, Target, Activity, Compass, Map, Calendar, Layout
 } from "lucide-react"
 import { useChatSessions } from "@/hooks/useChatSessions"
+import { UserCard } from "@/components/common/UserCard"
 
 function getThemeIcon(themeName: string) {
   const name = themeName.toLowerCase();
@@ -58,6 +58,7 @@ export default function Themes() {
         />
       </header>
       <main className="container mx-auto p-8">
+        <UserCard />
         <h1 className="text-3xl font-bold text-gray-900 mb-8">
           Escolha um tema para conversar
         </h1>
@@ -103,4 +104,3 @@ export default function Themes() {
     </div>
   )
 }
-

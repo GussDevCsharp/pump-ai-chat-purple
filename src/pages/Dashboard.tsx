@@ -1,5 +1,5 @@
-
 import { BusinessCard } from "@/components/dashboard/BusinessCard"
+import { UserCard } from "@/components/common/UserCard";
 
 const extendedBusinessSectors = [
   {
@@ -114,6 +114,7 @@ export default function Dashboard() {
       </header>
 
       <main className="container mx-auto px-4 py-12">
+        <UserCard />
         <div className="max-w-4xl mx-auto text-center mb-16">
           <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
             Central de Inteligência Empresarial

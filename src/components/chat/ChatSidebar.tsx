@@ -20,7 +20,7 @@ import {
 import { ThemeSelect } from "@/components/chat/ThemeSelect"
 import { useChatThemes, ChatTheme } from "@/hooks/useChatThemes"
 
-export const ChatSidebar = () => {
+export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
   const { sessions, createSession, refreshSessions, deleteSession, isLoading } = useChatSessions()
   const { themes } = useChatThemes()
   const navigate = useNavigate()
@@ -40,6 +40,7 @@ export const ChatSidebar = () => {
     const session = await createSession("Nova conversa")
     if (session) {
       navigate(`/chat?session=${session.id}`)
+      if (onClose) onClose()
     }
   }
 
@@ -81,6 +82,7 @@ export const ChatSidebar = () => {
       }
       
       setSessionToDelete(null)
+      if (onClose) onClose()
     }
   }
 
@@ -103,7 +105,19 @@ export const ChatSidebar = () => {
 
   return (
     <>
-      <div className="w-64 h-screen bg-white border-r border-pump-gray/20 p-4 flex flex-col">
+      <div className="w-64 max-w-full h-full md:h-screen bg-white border-r border-pump-gray/20 p-4 flex flex-col">
+        {/* Mostrar botão fechar apenas no mobile */}
+        {onClose && (
+          <button
+            type="button"
+            className="md:hidden self-end mb-2 p-2 rounded hover:bg-pump-gray-light transition"
+            onClick={onClose}
+            aria-label="Fechar menu"
+          >
+            <span className="text-pump-purple text-2xl font-bold">&times;</span>
+          </button>
+        )}
+
         <button 
           onClick={handleNewChat}
           className="w-full flex items-center gap-2 p-3 bg-white hover:bg-pump-gray-light rounded-lg border border-pump-gray/20 transition-colors"
@@ -145,7 +159,10 @@ export const ChatSidebar = () => {
                           </div>
                         ) : (
                           <button
-                            onClick={() => navigate(`/chat?session=${session.id}`)}
+                            onClick={() => {
+                              navigate(`/chat?session=${session.id}`)
+                              if (onClose) onClose()
+                            }}
                             className="flex items-center gap-2 p-3 w-full hover:bg-pump-gray-light rounded-lg transition-colors"
                           >
                             <MessageCircle className="w-4 h-4 text-pump-gray" />

@@ -76,6 +76,23 @@ const Index = () => {
 
       setIsThinking(true)
 
+      const title = content.split(' ').slice(0, 5).join(' ').slice(0, 30)
+
+      let currentSessionId = sessionId
+      if (!currentSessionId) {
+        const session = await createSession(
+          title,
+          chatState?.theme,
+          chatState?.title
+        )
+        if (!session) throw new Error("Failed to create chat session")
+        currentSessionId = session.id
+        
+        const newSearchParams = new URLSearchParams(searchParams)
+        newSearchParams.set('session', currentSessionId)
+        window.history.pushState({}, '', `${location.pathname}?${newSearchParams}`)
+      }
+
       const response = await fetch("https://spyfzrgwbavmntiginap.supabase.co/functions/v1/chat", {
         method: 'POST',
         headers: {
@@ -103,28 +120,13 @@ const Index = () => {
         content: data.choices[0].message.content
       }
 
-      let currentSessionId = sessionId
-      if (!currentSessionId) {
-        const session = await createSession(
-          "New Chat",
-          chatState?.theme,
-          chatState?.title
-        )
-        if (!session) throw new Error("Failed to create chat session")
-        currentSessionId = session.id
-        
-        const newSearchParams = new URLSearchParams(searchParams)
-        newSearchParams.set('session', currentSessionId)
-        window.history.pushState({}, '', `${location.pathname}?${newSearchParams}`)
-
-        await supabase
-          .from('chat_messages')
-          .insert({
-            session_id: currentSessionId,
-            role: 'user',
-            content: userMessage.content
-          })
-      }
+      await supabase
+        .from('chat_messages')
+        .insert({
+          session_id: currentSessionId,
+          role: 'user',
+          content: userMessage.content
+        })
 
       await supabase
         .from('chat_messages')

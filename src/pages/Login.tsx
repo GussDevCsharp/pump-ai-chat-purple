@@ -4,37 +4,42 @@ import { Link, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
+import { supabase } from "@/integrations/supabase/client"
 
 export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
 
-  const handleLogin = (event: React.FormEvent) => {
+  const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault()
-    
-    // Simple validation
     if (!email || !password) {
       toast.error('Por favor, preencha todos os campos')
       return
     }
 
-    // Default login credentials and simulated login
-    const defaultEmail = 'italogustavocm@gmail.com'
-    const defaultPassword = '123456'
+    setIsLoading(true)
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
 
-    if (
-      (email === 'demo@pump.ia' && password === 'demo123') || 
-      (email === defaultEmail && password === defaultPassword)
-    ) {
-      toast.success('Login realizado com sucesso!')
-      // Redirect to themes page after successful login
-      setTimeout(() => {
-        navigate('/themes')
-      }, 500)
-    } else {
-      toast.error('Credenciais inválidas')
+    setIsLoading(false)
+
+    if (error) {
+      if (error.message && error.message.includes("Invalid login credentials")) {
+        toast.error('Email ou senha inválidos')
+      } else {
+        toast.error(error.message || 'Erro ao fazer login')
+      }
+      return
     }
+
+    toast.success('Login realizado com sucesso!')
+    setTimeout(() => {
+      navigate('/themes')
+    }, 600)
   }
 
   return (
@@ -71,6 +76,7 @@ export default function Login() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="mt-1"
+                  disabled={isLoading}
                 />
               </div>
               <div>
@@ -86,12 +92,17 @@ export default function Login() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="mt-1"
+                  disabled={isLoading}
                 />
               </div>
             </div>
 
-            <Button type="submit" className="w-full bg-pump-purple hover:bg-pump-purple/90">
-              Entrar
+            <Button 
+              type="submit" 
+              className="w-full bg-pump-purple hover:bg-pump-purple/90"
+              disabled={isLoading}
+            >
+              {isLoading ? "Entrando..." : "Entrar"}
             </Button>
           </form>
           

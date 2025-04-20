@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react"
 import { ChatMessages } from "@/components/chat/ChatMessages"
 import { ChatInput } from "@/components/chat/ChatInput"
@@ -40,6 +41,12 @@ interface Message {
   content: string
 }
 
+// Interface para mensagens locais
+interface LocalMessage extends Message {
+  session_id: string
+  created_at: string
+}
+
 export const ChatContainer = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const navigate = useNavigate()
@@ -58,6 +65,20 @@ export const ChatContainer = () => {
         setCurrentThemeId(null);
         return;
       }
+      
+      // Para sessões locais, verificamos no localStorage
+      if (authStatus === 'anonymous') {
+        try {
+          const localSessions = JSON.parse(localStorage.getItem('anonymous_chat_sessions') || '[]');
+          const session = localSessions.find((s: any) => s.id === sessionId);
+          setCurrentThemeId(session?.theme_id || null);
+        } catch (e) {
+          setCurrentThemeId(null);
+        }
+        return;
+      }
+      
+      // Para sessões no banco
       const { data, error } = await supabase
         .from('chat_sessions')
         .select('theme_id')
@@ -67,7 +88,7 @@ export const ChatContainer = () => {
       else setCurrentThemeId(null);
     }
     fetchThemeId();
-  }, [sessionId]);
+  }, [sessionId, authStatus]);
 
   const { patternPrompt } = useThemePrompt(currentThemeId ?? undefined);
 
@@ -77,17 +98,79 @@ export const ChatContainer = () => {
     years: "5",
     focus: "Soluções inovadoras",
   });
+  
+  // Chave para armazenar mensagens locais
+  const LOCAL_MESSAGES_KEY = 'anonymous_chat_messages';
+  
+  // Carregar mensagens locais do localStorage
+  const getLocalMessages = (chatSessionId: string): Message[] => {
+    try {
+      const allMessages = JSON.parse(localStorage.getItem(LOCAL_MESSAGES_KEY) || '[]');
+      return allMessages
+        .filter((msg: LocalMessage) => msg.session_id === chatSessionId)
+        .sort((a: LocalMessage, b: LocalMessage) => 
+          new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
+        .map((msg: LocalMessage) => ({
+          role: msg.role,
+          content: msg.content
+        }));
+    } catch (error) {
+      console.error('Error loading local messages:', error);
+      return [];
+    }
+  };
+  
+  // Salvar mensagens locais no localStorage
+  const saveLocalMessages = (sessionId: string, newMessages: Message[]) => {
+    try {
+      // Pegar todas as mensagens salvas
+      const allMessages = JSON.parse(localStorage.getItem(LOCAL_MESSAGES_KEY) || '[]');
+      
+      // Remover mensagens antigas desta sessão
+      const otherSessionsMessages = allMessages.filter(
+        (msg: LocalMessage) => msg.session_id !== sessionId
+      );
+      
+      // Adicionar novas mensagens com id da sessão
+      const updatedMessages = [
+        ...otherSessionsMessages,
+        ...newMessages.map((msg) => ({
+          ...msg,
+          session_id: sessionId,
+          created_at: new Date().toISOString()
+        }))
+      ];
+      
+      localStorage.setItem(LOCAL_MESSAGES_KEY, JSON.stringify(updatedMessages));
+    } catch (error) {
+      console.error('Error saving local messages:', error);
+    }
+  };
 
   useEffect(() => {
     if (sessionId) {
-      loadMessages(sessionId)
+      if (authStatus === 'anonymous') {
+        // Carregar mensagens do localStorage para usuários anônimos
+        const localMessages = getLocalMessages(sessionId);
+        if (localMessages.length > 0) {
+          setMessages(localMessages);
+        } else {
+          setMessages([{
+            role: 'assistant',
+            content: 'Olá! Como posso ajudar você hoje?'
+          }]);
+        }
+      } else {
+        // Carregar mensagens do banco para usuários autenticados
+        loadMessages(sessionId);
+      }
     } else {
       setMessages([{
         role: 'assistant',
         content: 'Olá! Como posso ajudar você hoje?'
-      }])
+      }]);
     }
-  }, [sessionId])
+  }, [sessionId, authStatus]);
 
   const loadMessages = async (sessionId: string) => {
     try {
@@ -195,7 +278,13 @@ export const ChatContainer = () => {
         content: data.choices[0].message.content
       }
 
-      if (isFirstMessage) {
+      if (authStatus === 'anonymous') {
+        // Salvar mensagens localmente para usuários anônimos
+        saveLocalMessages(currentSessionId, [userMessage, assistantMessage]);
+        setMessages(prev => [...prev, assistantMessage]);
+        await refreshSessions();
+      } else if (isFirstMessage) {
+        // Salvar a primeira mensagem para usuários autenticados
         try {
           await supabase
             .from('chat_messages')
@@ -217,6 +306,7 @@ export const ChatContainer = () => {
         setMessages(prev => [...prev, assistantMessage])
         await refreshSessions()
       } else {
+        // Salvar mensagens subsequentes para usuários autenticados
         try {
           await supabase
             .from('chat_messages')

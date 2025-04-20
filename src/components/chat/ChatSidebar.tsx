@@ -1,17 +1,61 @@
 
-import { MessageCircle, Plus, User, Settings } from "lucide-react"
+import { MessageCircle, Plus, User, Settings, Pencil } from "lucide-react"
 import { useChatSessions } from "@/hooks/useChatSessions"
 import { Button } from "@/components/ui/button"
 import { useNavigate } from "react-router-dom"
+import { useState } from "react"
+import { Input } from "@/components/ui/input"
+import { supabase } from "@/integrations/supabase/client"
+import { useToast } from "@/components/ui/use-toast"
 
 export const ChatSidebar = () => {
-  const { sessions, createSession } = useChatSessions()
+  const { sessions, createSession, refreshSessions } = useChatSessions()
   const navigate = useNavigate()
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [newTitle, setNewTitle] = useState("")
+  const { toast } = useToast()
 
   const handleNewChat = async () => {
-    const session = await createSession("New Chat")
+    const session = await createSession("Nova conversa")
     if (session) {
       navigate(`/chat?session=${session.id}`)
+    }
+  }
+
+  const startEditing = (id: string, currentTitle: string) => {
+    setEditingId(id)
+    setNewTitle(currentTitle)
+  }
+
+  const handleRename = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('chat_sessions')
+        .update({ title: newTitle })
+        .eq('id', id)
+
+      if (error) throw error
+
+      setEditingId(null)
+      refreshSessions()
+      
+      toast({
+        description: "Conversa renomeada com sucesso",
+      })
+    } catch (error) {
+      console.error('Error renaming session:', error)
+      toast({
+        variant: "destructive",
+        description: "Erro ao renomear a conversa",
+      })
+    }
+  }
+
+  const handleKeyPress = (e: React.KeyboardEvent, id: string) => {
+    if (e.key === 'Enter') {
+      handleRename(id)
+    } else if (e.key === 'Escape') {
+      setEditingId(null)
     }
   }
 
@@ -22,22 +66,45 @@ export const ChatSidebar = () => {
         className="w-full flex items-center gap-2 p-3 bg-white hover:bg-pump-gray-light rounded-lg border border-pump-gray/20 transition-colors"
       >
         <Plus className="w-4 h-4 text-pump-gray" />
-        <span className="text-sm text-pump-gray font-medium">Novo chat</span>
+        <span className="text-sm text-pump-gray font-medium">Nova conversa</span>
       </button>
       
       <div className="mt-4 flex-1 overflow-y-auto">
         <div className="flex flex-col gap-2">
           {sessions.map((session) => (
-            <button
-              key={session.id}
-              onClick={() => navigate(`/chat?session=${session.id}`)}
-              className="flex items-center gap-2 p-3 hover:bg-pump-gray-light rounded-lg transition-colors"
-            >
-              <MessageCircle className="w-4 h-4 text-pump-gray" />
-              <span className="text-sm text-pump-gray font-medium truncate">
-                {session.title}
-              </span>
-            </button>
+            <div key={session.id} className="group relative">
+              {editingId === session.id ? (
+                <div className="flex items-center gap-2 p-3 rounded-lg bg-pump-gray-light">
+                  <Input
+                    value={newTitle}
+                    onChange={(e) => setNewTitle(e.target.value)}
+                    onKeyDown={(e) => handleKeyPress(e, session.id)}
+                    onBlur={() => handleRename(session.id)}
+                    autoFocus
+                    className="text-sm"
+                  />
+                </div>
+              ) : (
+                <button
+                  onClick={() => navigate(`/chat?session=${session.id}`)}
+                  className="flex items-center gap-2 p-3 w-full hover:bg-pump-gray-light rounded-lg transition-colors"
+                >
+                  <MessageCircle className="w-4 h-4 text-pump-gray" />
+                  <span className="text-sm text-pump-gray font-medium truncate flex-1 text-left">
+                    {session.title}
+                  </span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      startEditing(session.id, session.title)
+                    }}
+                    className="opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <Pencil className="w-4 h-4 text-pump-gray hover:text-pump-purple" />
+                  </button>
+                </button>
+              )}
+            </div>
           ))}
         </div>
       </div>

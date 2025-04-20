@@ -7,6 +7,7 @@ import { useLocation, useSearchParams } from "react-router-dom"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/components/ui/use-toast"
 import { useChatSessions } from "@/hooks/useChatSessions"
+import { Dashboard } from "@/components/dashboard/Dashboard"
 
 interface Message {
   role: 'assistant' | 'user'

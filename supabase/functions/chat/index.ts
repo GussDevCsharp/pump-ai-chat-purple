@@ -33,7 +33,7 @@ serve(async (req) => {
       const { data, error } = await supabase
         .from('modelkeys')
         .select('apikey')
-        .eq('model', 'openai')
+        .eq('model', 'OpenAI')
         .single()
 
       console.log('Dados da consulta específica:', data)
@@ -54,7 +54,7 @@ serve(async (req) => {
     const { data: keyData, error: keyError } = await supabase
       .from('modelkeys')
       .select('apikey')
-      .eq('model', 'openai')
+      .eq('model', 'OpenAI')
       .single()
 
     if (keyError || !keyData) {
@@ -116,3 +116,4 @@ serve(async (req) => {
     )
   }
 })
+

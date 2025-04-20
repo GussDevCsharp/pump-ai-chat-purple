@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react"
 import { ChatInput } from "@/components/chat/ChatInput"
 import { ChatMessages } from "@/components/chat/ChatMessages"
@@ -5,7 +6,7 @@ import { ChatSidebar } from "@/components/chat/ChatSidebar"
 import { ApiKeyDisplay } from "@/components/chat/ApiKeyDisplay"
 import { useLocation, useSearchParams, Link } from "react-router-dom"
 import { supabase } from "@/integrations/supabase/client"
-import { useToast } from "@/components/ui/use-toast"
+import { useToast } from "@/hooks/use-toast"
 import { useChatSessions } from "@/hooks/useChatSessions"
 import { Dashboard } from "@/components/dashboard/Dashboard"
 import { Button } from "@/components/ui/button"
@@ -76,12 +77,10 @@ const Index = () => {
 
       setIsThinking(true)
 
-      const title = content.split(' ').slice(0, 5).join(' ').slice(0, 30)
-
       let currentSessionId = sessionId
       if (!currentSessionId) {
         const session = await createSession(
-          title,
+          content.split(' ').slice(0, 5).join(' ').slice(0, 30),
           chatState?.theme,
           chatState?.title
         )
@@ -93,6 +92,7 @@ const Index = () => {
         window.history.pushState({}, '', `${location.pathname}?${newSearchParams}`)
       }
 
+      // First API call to get the main response
       const response = await fetch("https://spyfzrgwbavmntiginap.supabase.co/functions/v1/chat", {
         method: 'POST',
         headers: {
@@ -120,24 +120,52 @@ const Index = () => {
         content: data.choices[0].message.content
       }
 
-      await supabase
-        .from('chat_messages')
-        .insert({
-          session_id: currentSessionId,
-          role: 'user',
-          content: userMessage.content
-        })
+      // Second API call to generate a title
+      const titleResponse = await fetch("https://spyfzrgwbavmntiginap.supabase.co/functions/v1/chat", {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNweWZ6cmd3YmF2bW50aWdpbmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ4MzcwNjEsImV4cCI6MjA2MDQxMzA2MX0.nBc8x2mLTm4j9KpxSzsgCp0xHgaJnWvN2t7I3H37n70`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: `Based on this conversation:\nUser: ${content}\nAssistant: ${assistantMessage.content}\n\nGenerate a very concise title (maximum 40 characters) that captures the main topic or question.`
+        }),
+      })
+
+      if (!titleResponse.ok) throw new Error('Failed to generate title')
+      const titleData = await titleResponse.json()
+
+      if (titleData.choices && titleData.choices.length > 0) {
+        const suggestedTitle = titleData.choices[0].message.content
+          .replace(/["']/g, '') // Remove quotes if present
+          .trim()
+          .slice(0, 40) // Ensure max length
+
+        // Update session title
+        await supabase
+          .from('chat_sessions')
+          .update({ title: suggestedTitle })
+          .eq('id', currentSessionId)
+
+        refreshSessions()
+      }
 
       await supabase
         .from('chat_messages')
-        .insert({
-          session_id: currentSessionId,
-          role: 'assistant',
-          content: assistantMessage.content
-        })
+        .insert([
+          {
+            session_id: currentSessionId,
+            role: 'user',
+            content: userMessage.content
+          },
+          {
+            session_id: currentSessionId,
+            role: 'assistant',
+            content: assistantMessage.content
+          }
+        ])
       
       setMessages(prev => [...prev, assistantMessage])
-      
       refreshSessions()
     } catch (error) {
       console.error("Chat error:", error)

@@ -62,6 +62,11 @@ serve(async (req) => {
           content: message 
         }
       ],
+      temperature: 0.7,
+      max_tokens: 500,
+      top_p: 1,
+      frequency_penalty: 0,
+      presence_penalty: 0
     }
 
     console.log("Request body prepared:", JSON.stringify(requestBody))

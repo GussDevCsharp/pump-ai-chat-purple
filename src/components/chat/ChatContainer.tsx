@@ -12,6 +12,29 @@ import { Button } from "@/components/ui/button"
 import { LogIn } from "lucide-react"
 import { useThemePrompt } from "@/hooks/useThemePrompt"
 
+const demoPrompts = [
+  { title: "Campanha Digital para Lançamento de Produto", tema: "marketing e vendas", tags: ["nome_empresa", "segmento", "tipo_produto", "plataforma_marketing"], prompt: "Crie uma campanha de marketing digital para lançar o produto {{tipo_produto}} da empresa {{nome_empresa}}, que atua no segmento de {{segmento}}. A campanha deve ser focada em atrair novos clientes e aumentar o reconhecimento da marca nas plataformas {{plataforma_marketing}}." },
+  { title: "Aumento de Ticket Médio", tema: "marketing e vendas", tags: ["nome_empresa", "segmento", "canal_venda"], prompt: "Sugira estratégias eficazes para aumentar o ticket médio das vendas da empresa {{nome_empresa}}, que atua no segmento {{segmento}}, com foco nas vendas realizadas pelo canal {{canal_venda}}." },
+  { title: "Sequência de E-mails para Recuperar Clientes Inativos", tema: "marketing e vendas", tags: ["nome_empresa", "segmento", "tipo_cliente"], prompt: "Crie uma sequência de 3 e-mails para reengajar clientes inativos da empresa {{nome_empresa}}, que trabalha com {{segmento}}, considerando o perfil do público {{tipo_cliente}}." },
+  { title: "Conteúdos Virais para TikTok", tema: "marketing e vendas", tags: ["nome_empresa", "produto_principal", "publico_alvo"], prompt: "Sugira 5 ideias de conteúdos virais para TikTok com foco no produto {{produto_principal}} da empresa {{nome_empresa}}, considerando que o público-alvo principal são {{publico_alvo}}." },
+  { title: "Roteiro de Abordagem de Vendas pelo WhatsApp", tema: "marketing e vendas", tags: ["nome_empresa", "segmento", "tipo_cliente"], prompt: "Crie um roteiro de abordagem para a equipe de vendas da empresa {{nome_empresa}} utilizar pelo WhatsApp, considerando o segmento {{segmento}} e um perfil de cliente {{tipo_cliente}}." },
+  { title: "Chatbot para Atendimento Inicial", tema: "tecnologia", tags: ["nome_empresa", "segmento", "canal_atendimento"], prompt: "Crie um roteiro de chatbot simples para atender clientes no canal {{canal_atendimento}} da empresa {{nome_empresa}}, que atua no setor de {{segmento}}. O bot deve ser simpático, objetivo e captar as primeiras informações do cliente." },
+  { title: "Ferramentas de Automação para Pequenas Empresas", tema: "tecnologia", tags: ["nome_empresa", "segmento", "quantidade_colaboradores"], prompt: "Sugira ferramentas acessíveis de automação que a empresa {{nome_empresa}}, com {{quantidade_colaboradores}} colaboradores, pode usar para otimizar processos no segmento de {{segmento}}." },
+  { title: "Uso de IA para Previsão de Demanda", tema: "tecnologia", tags: ["nome_empresa", "segmento", "produto_servico"], prompt: "Mostre como a empresa {{nome_empresa}}, do segmento {{segmento}}, pode utilizar inteligência artificial para analisar dados de vendas e prever a demanda do produto/serviço {{produto_servico}}." },
+  { title: "Plano de Cibersegurança para Pequenas Empresas", tema: "tecnologia", tags: ["nome_empresa", "segmento"], prompt: "Crie um plano básico de cibersegurança para proteger dados e operações da empresa {{nome_empresa}}, que atua no segmento {{segmento}} e está iniciando sua jornada digital." },
+  { title: "Plataformas para Criar Aplicativo de Agendamento", tema: "tecnologia", tags: ["nome_empresa", "tipo_servico"], prompt: "Sugira plataformas e ferramentas acessíveis para que a empresa {{nome_empresa}} crie um aplicativo simples de agendamento de {{tipo_servico}} para seus clientes." },
+  { title: "Processo Seletivo para Contratar Vendedores", tema: "recursos humanos", tags: ["nome_empresa", "segmento", "tipo_vaga"], prompt: "Crie um processo seletivo objetivo e eficaz para contratação de {{tipo_vaga}} pela empresa {{nome_empresa}}, que atua no setor de {{segmento}}." },
+  { title: "Plano de Cargos e Salários", tema: "recursos humanos", tags: ["nome_empresa", "quantidade_colaboradores", "segmento"], prompt: "Estruture um plano básico de cargos e salários para a empresa {{nome_empresa}}, do segmento {{segmento}}, com até {{quantidade_colaboradores}} colaboradores." },
+  { title: "Manual de Boas-Vindas para Novos Colaboradores", tema: "recursos humanos", tags: ["nome_empresa", "cultura_empresa", "segmento"], prompt: "Crie um manual de boas-vindas para novos colaboradores da empresa {{nome_empresa}}, destacando a cultura {{cultura_empresa}} e os principais valores do segmento de {{segmento}}." },
+  { title: "Indicadores de RH para Pequenas Empresas", tema: "recursos humanos", tags: ["nome_empresa", "quantidade_colaboradores"], prompt: "Sugira indicadores simples e eficazes para que o setor de RH da empresa {{nome_empresa}}, com {{quantidade_colaboradores}} funcionários, acompanhe a performance da equipe." },
+  { title: "Política de Home Office", tema: "recursos humanos", tags: ["nome_empresa", "segmento", "cultura_empresa"], prompt: "Desenvolva uma política prática de home office para a empresa {{nome_empresa}}, do segmento {{segmento}}, levando em consideração uma cultura organizacional {{cultura_empresa}}." },
+  { title: "Plano Estratégico de Expansão", tema: "estratégia", tags: ["nome_empresa", "segmento", "tempo_mercado"], prompt: "Desenvolva um plano estratégico de 6 meses para expansão da empresa {{nome_empresa}}, que atua no setor de {{segmento}} e tem {{tempo_mercado}} de mercado." },
+  { title: "Objetivos SMART para Crescimento", tema: "estratégia", tags: ["nome_empresa", "meta_principal", "segmento"], prompt: "Crie objetivos SMART para a empresa {{nome_empresa}}, que deseja alcançar a meta de {{meta_principal}} atuando no segmento de {{segmento}}." },
+  { title: "Modelo de Negócio Canvas", tema: "estratégia", tags: ["nome_empresa", "segmento"], prompt: "Monte um Business Model Canvas completo para a empresa {{nome_empresa}}, que atua no setor de {{segmento}}." },
+  { title: "Matriz BCG para Análise de Produtos", tema: "estratégia", tags: ["nome_empresa", "produtos_principais"], prompt: "Utilize a matriz BCG para analisar os principais produtos da empresa {{nome_empresa}}: {{produtos_principais}}. Classifique os produtos como Estrela, Vaca Leiteira, Abacaxi ou Interrogação e recomende ações." },
+  { title: "Análise SWOT Personalizada", tema: "estratégia", tags: ["nome_empresa", "segmento", "mercado_atuacao"], prompt: "Realize uma análise SWOT (Forças, Fraquezas, Oportunidades e Ameaças) personalizada para a empresa {{nome_empresa}}, que atua no setor de {{segmento}} com foco no mercado {{mercado_atuacao}}." }
+];
+
 interface Message {
   role: 'assistant' | 'user'
   content: string
@@ -229,6 +252,11 @@ export const ChatContainer = () => {
 
   const showWelcomeScreen = !sessionId || (messages.length === 1 && messages[0].role === 'assistant' && 
     messages[0].content === 'Olá! Como posso ajudar você hoje?')
+
+  useEffect(() => {
+    const temasUnicos = Array.from(new Set(demoPrompts.map(p => p.tema)));
+    console.log('Temas:', temasUnicos.join(', '));
+  }, []);
 
   return (
     <div className="flex-1 flex flex-col">

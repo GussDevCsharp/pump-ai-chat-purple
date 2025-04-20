@@ -1,14 +1,12 @@
-
 import { useState, useEffect } from "react"
 import { ChatInput } from "@/components/chat/ChatInput"
 import { ChatMessages } from "@/components/chat/ChatMessages"
 import { ChatSidebar } from "@/components/chat/ChatSidebar"
 import { ApiKeyDisplay } from "@/components/chat/ApiKeyDisplay"
-import { useLocation, Navigate, useSearchParams } from "react-router-dom"
+import { useLocation, useSearchParams } from "react-router-dom"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/components/ui/use-toast"
 import { useChatSessions } from "@/hooks/useChatSessions"
-import Dashboard from "./Dashboard"
 
 interface Message {
   role: 'assistant' | 'user'
@@ -69,34 +67,9 @@ const Index = () => {
   
   const handleSendMessage = async (content: string) => {
     try {
-      // Add user message
       const userMessage = { role: 'user' as const, content }
       setMessages(prev => [...prev, userMessage])
 
-      // Create session if we don't have one
-      let currentSessionId = sessionId
-      if (!currentSessionId) {
-        const session = await createSession("New Chat")
-        if (!session) throw new Error("Failed to create chat session")
-        currentSessionId = session.id
-        // Update URL with new session ID without reloading
-        const newSearchParams = new URLSearchParams(searchParams)
-        newSearchParams.set('session', currentSessionId)
-        window.history.pushState({}, '', `${location.pathname}?${newSearchParams}`)
-      }
-
-      // Save user message
-      if (currentSessionId) {
-        await supabase
-          .from('chat_messages')
-          .insert({
-            session_id: currentSessionId,
-            role: 'user',
-            content
-          })
-      }
-
-      // Get AI response from edge function
       const response = await fetch("https://spyfzrgwbavmntiginap.supabase.co/functions/v1/chat", {
         method: 'POST',
         headers: {
@@ -123,21 +96,36 @@ const Index = () => {
         role: 'assistant' as const,
         content: data.choices[0].message.content
       }
-      
-      // Save assistant message
-      if (currentSessionId) {
+
+      let currentSessionId = sessionId
+      if (!currentSessionId) {
+        const session = await createSession("New Chat")
+        if (!session) throw new Error("Failed to create chat session")
+        currentSessionId = session.id
+        
+        const newSearchParams = new URLSearchParams(searchParams)
+        newSearchParams.set('session', currentSessionId)
+        window.history.pushState({}, '', `${location.pathname}?${newSearchParams}`)
+
         await supabase
           .from('chat_messages')
           .insert({
             session_id: currentSessionId,
-            role: 'assistant',
-            content: assistantMessage.content
+            role: 'user',
+            content: userMessage.content
           })
       }
+
+      await supabase
+        .from('chat_messages')
+        .insert({
+          session_id: currentSessionId,
+          role: 'assistant',
+          content: assistantMessage.content
+        })
       
       setMessages(prev => [...prev, assistantMessage])
       
-      // Refresh the sessions list to show the new chat
       refreshSessions()
     } catch (error) {
       console.error("Chat error:", error)
@@ -149,7 +137,6 @@ const Index = () => {
     }
   }
 
-  // Show chat interface if we're on /chat route
   if (location.pathname === '/chat') {
     return (
       <div className="flex h-screen bg-white">
@@ -173,7 +160,6 @@ const Index = () => {
     )
   }
 
-  // Show dashboard on root route
   return (
     <div className="min-h-screen bg-white">
       <header className="border-b border-pump-gray/20 p-4 bg-white">

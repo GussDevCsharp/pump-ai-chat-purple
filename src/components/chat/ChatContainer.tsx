@@ -1,12 +1,16 @@
+
 import { useState, useEffect } from "react"
 import { ChatMessages } from "@/components/chat/ChatMessages"
 import { ChatInput } from "@/components/chat/ChatInput"
 import { ApiKeyDisplay } from "@/components/chat/ApiKeyDisplay"
 import { WelcomeScreen } from "@/components/chat/WelcomeScreen"
-import { useSearchParams } from "react-router-dom"
+import { useSearchParams, useNavigate } from "react-router-dom"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/hooks/use-toast"
 import { useChatSessions } from "@/hooks/useChatSessions"
+import { useChatAuth } from "@/hooks/useChatAuth"
+import { Button } from "@/components/ui/button"
+import { LogIn } from "lucide-react"
 
 interface Message {
   role: 'assistant' | 'user'
@@ -15,11 +19,13 @@ interface Message {
 
 export const ChatContainer = () => {
   const [searchParams, setSearchParams] = useSearchParams()
+  const navigate = useNavigate()
   const sessionId = searchParams.get('session')
   const { toast } = useToast()
   const [messages, setMessages] = useState<Message[]>([])
   const [isThinking, setIsThinking] = useState(false)
   const { createSession, refreshSessions } = useChatSessions()
+  const { authStatus, recordInteraction, remainingInteractions } = useChatAuth()
 
   useEffect(() => {
     if (sessionId) {
@@ -65,6 +71,11 @@ export const ChatContainer = () => {
   }
 
   const handleSendMessage = async (content: string) => {
+    // Check if the user can send a message (based on interaction limit)
+    if (authStatus === 'anonymous' && !recordInteraction()) {
+      return;
+    }
+
     try {
       const userMessage = { role: 'user' as const, content }
       setMessages(prev => [...prev, userMessage])
@@ -170,6 +181,25 @@ export const ChatContainer = () => {
 
   return (
     <div className="flex-1 flex flex-col">
+      {authStatus === 'anonymous' && (
+        <div className="bg-blue-50 p-3 flex items-center justify-between border-b">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-blue-700">
+              Modo visitante: {remainingInteractions} interações restantes hoje
+            </span>
+          </div>
+          <Button 
+            variant="outline" 
+            size="sm"
+            className="text-blue-700 border-blue-300 hover:bg-blue-100"
+            onClick={() => navigate('/login')}
+          >
+            <LogIn className="w-4 h-4 mr-2" />
+            Entrar para recursos avançados
+          </Button>
+        </div>
+      )}
+      
       {showWelcomeScreen ? (
         <WelcomeScreen onSendMessage={handleSendMessage} />
       ) : (

@@ -28,9 +28,9 @@ export default function Login() {
       (email === defaultEmail && password === defaultPassword)
     ) {
       toast.success('Login realizado com sucesso!')
-      // Redirect to dashboard after successful login
+      // Redirect to themes page after successful login
       setTimeout(() => {
-        navigate('/dashboard')
+        navigate('/themes')
       }, 500)
     } else {
       toast.error('Credenciais inválidas')

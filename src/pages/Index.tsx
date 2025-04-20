@@ -105,7 +105,11 @@ const Index = () => {
 
       let currentSessionId = sessionId
       if (!currentSessionId) {
-        const session = await createSession("New Chat")
+        const session = await createSession(
+          "New Chat",
+          chatState?.theme,
+          chatState?.title
+        )
         if (!session) throw new Error("Failed to create chat session")
         currentSessionId = session.id
         

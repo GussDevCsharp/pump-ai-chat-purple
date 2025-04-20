@@ -50,6 +50,8 @@ export type Database = {
       }
       chat_sessions: {
         Row: {
+          card_theme: string | null
+          card_title: string | null
           created_at: string
           id: string
           title: string
@@ -57,6 +59,8 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          card_theme?: string | null
+          card_title?: string | null
           created_at?: string
           id?: string
           title: string
@@ -64,6 +68,8 @@ export type Database = {
           user_id: string
         }
         Update: {
+          card_theme?: string | null
+          card_title?: string | null
           created_at?: string
           id?: string
           title?: string

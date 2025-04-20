@@ -7,6 +7,8 @@ interface ChatSession {
   id: string
   title: string
   created_at: string
+  card_theme?: string | null
+  card_title?: string | null
 }
 
 export const useChatSessions = () => {
@@ -20,7 +22,6 @@ export const useChatSessions = () => {
         .from('chat_sessions')
         .select('*')
         .order('created_at', { ascending: false })
-        .limit(10)
 
       if (error) throw error
       setSessions(data || [])
@@ -36,16 +37,17 @@ export const useChatSessions = () => {
     }
   }
 
-  const createSession = async (title: string) => {
+  const createSession = async (title: string, theme?: string, cardTitle?: string) => {
     try {
-      // Create a random UUID for the user_id since there's no authentication
       const dummyUserId = '00000000-0000-0000-0000-000000000000'
       
       const { data, error } = await supabase
         .from('chat_sessions')
         .insert({
           title,
-          user_id: dummyUserId
+          user_id: dummyUserId,
+          card_theme: theme,
+          card_title: cardTitle
         })
         .select()
         .single()

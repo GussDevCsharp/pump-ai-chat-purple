@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/hooks/use-toast"
 
-interface ChatTheme {
+export interface ChatTheme {
   id: string
   name: string
   description: string | null
@@ -18,12 +18,14 @@ export const useChatThemes = () => {
   const fetchThemes = async () => {
     try {
       setIsLoading(true)
+      console.log("Fetching chat themes...")
       const { data, error } = await supabase
         .from('chat_themes')
         .select('*')
         .order('name', { ascending: true })
 
       if (error) throw error
+      console.log("Fetched themes:", data)
       setThemes(data || [])
     } catch (error) {
       console.error('Error fetching themes:', error)

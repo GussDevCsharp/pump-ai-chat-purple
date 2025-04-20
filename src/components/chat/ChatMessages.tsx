@@ -80,16 +80,22 @@ export const ChatMessages = ({ messages, isThinking }: ChatMessagesProps) => {
               </span>
             </div>
             <div className={`flex-1 ${message.role === 'user' ? 'text-right' : ''}`}>
-              <div className={`text-sm inline-block px-4 py-2 rounded-lg relative ${
-                message.role === 'user' 
-                  ? 'bg-pump-purple text-white ml-auto' 
-                  : 'bg-pump-gray-light text-gray-800'
-              }`}>
+              <div 
+                className={`group relative text-sm inline-block px-4 py-2 rounded-lg ${
+                  message.role === 'user' 
+                    ? 'bg-pump-purple text-white ml-auto' 
+                    : 'bg-pump-gray-light text-gray-800'
+                }`}
+              >
                 {message.role === 'assistant' && (
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="absolute top-2 right-2 h-6 w-6"
+                    className="
+                      absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100
+                      transition-opacity
+                      ml-2
+                    "
                     onClick={() => handleCopy(message.content)}
                   >
                     <Copy className="h-4 w-4" />
@@ -134,3 +140,4 @@ export const ChatMessages = ({ messages, isThinking }: ChatMessagesProps) => {
     </div>
   )
 }
+

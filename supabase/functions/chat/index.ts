@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
@@ -43,9 +42,9 @@ serve(async (req) => {
         throw new Error(`Could not fetch API key: ${error.message}`)
       }
 
-      const maskedKey = data.apikey ? `${data.apikey.substring(0, 3)}...${data.apikey.substring(data.apikey.length - 4)}` : null
+      // Return full API key instead of masked version
       return new Response(
-        JSON.stringify({ maskedKey }),
+        JSON.stringify({ apiKey: data.apikey }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
@@ -116,4 +115,3 @@ serve(async (req) => {
     )
   }
 })
-

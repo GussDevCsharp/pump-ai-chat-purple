@@ -24,7 +24,8 @@ export const ApiKeyDisplay = () => {
           setError(data.error)
           setApiKey('Erro ao carregar a chave')
         } else {
-          setApiKey(data.maskedKey || 'Chave não encontrada')
+          // Show full API key instead of masked version
+          setApiKey(data.apiKey || 'Chave não encontrada')
         }
       } catch (error) {
         console.error('Erro ao buscar a chave API:', error)

@@ -14,11 +14,10 @@ import { Button } from "@/components/ui/button";
 export function UserCardMenu() {
   const { authStatus, user, isLoading } = useChatAuth();
 
-  // Handler de logout provisório
+  // Handler de logout ajustado para redirecionar à página inicial
   const handleLogout = () => {
-    // É esperado que haja integração com Supabase, mas pode ser ajustado conforme necessidade
     if (window.confirm("Tem certeza que deseja sair?")) {
-      window.location.href = "/login";
+      window.location.href = "/";
     }
   };
 
@@ -36,7 +35,6 @@ export function UserCardMenu() {
   }
 
   return (
-    // Removido o fixed e posicionamento absoluto para ficar no fluxo normal
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button

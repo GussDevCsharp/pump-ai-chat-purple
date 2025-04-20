@@ -7,7 +7,7 @@ import {
   Lightbulb, Code, Music, Users, ShoppingCart, Target, Activity, Compass, Map, Calendar, Layout
 } from "lucide-react"
 import { useChatSessions } from "@/hooks/useChatSessions"
-import { UserCard } from "@/components/common/UserCard"
+import { UserCardMenu } from "@/components/common/UserCardMenu"
 
 function getThemeIcon(themeName: string) {
   const name = themeName.toLowerCase();
@@ -32,7 +32,6 @@ function getThemeIcon(themeName: string) {
   if (name.includes("data") || name.includes("calendário")) return <Calendar className="w-5 h-5" />;
   if (name.includes("layout") || name.includes("interface")) return <Layout className="w-5 h-5" />;
   if (name.includes("podcast") || name.includes("áudio") || name.includes("audio")) return <Headphones className="w-5 h-5" />;
-  // fallback para temas gerais
   return <MessageCircle className="w-5 h-5" />;
 }
 
@@ -50,15 +49,19 @@ export default function Themes() {
 
   return (
     <div className="min-h-screen bg-white">
-      <header className="border-b border-pump-gray/20 p-4 bg-white">
-        <img 
-          src="/lovable-uploads/5f403064-9209-4921-b73b-0f70c739981a.png" 
-          alt="Pump.ia"
-          className="h-8"
-        />
+      <header className="border-b border-pump-gray/20 p-4 px-4 sm:px-8 bg-white relative">
+        <div className="flex items-center justify-between max-w-7xl mx-auto">
+          <img 
+            src="/lovable-uploads/5f403064-9209-4921-b73b-0f70c739981a.png" 
+            alt="Pump.ia"
+            className="h-8"
+          />
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 sm:static sm:translate-y-0">
+            <UserCardMenu />
+          </div>
+        </div>
       </header>
       <main className="container mx-auto p-8">
-        <UserCard />
         <h1 className="text-3xl font-bold text-gray-900 mb-8">
           Escolha um tema para conversar
         </h1>
@@ -83,7 +86,6 @@ export default function Themes() {
                   <div className="flex items-start gap-4">
                     <div className="w-10 h-10 rounded-full flex items-center justify-center"
                          style={{ backgroundColor: theme.color ? theme.color + '20' : '#9b87f520' }}>
-                      {/* Icone temático */}
                       <span style={{ color: theme.color || '#9b87f5' }}>
                         {getThemeIcon(theme.name)}
                       </span>

@@ -19,7 +19,7 @@ export const useChatSessions = () => {
   const fetchSessions = async () => {
     try {
       setIsLoading(true)
-      // Buscar todas as sessões (não autenticadas, user_id dummy, por enquanto)
+      console.log("Fetching chat sessions...")
       const { data, error } = await supabase
         .from('chat_sessions')
         .select('*')
@@ -42,9 +42,9 @@ export const useChatSessions = () => {
 
   const createSession = async (title: string, theme?: string, cardTitle?: string) => {
     try {
-      // Usando um user_id dummy já que a autenticação não está implementada
       const dummyUserId = '00000000-0000-0000-0000-000000000000'
-      console.log("Criando nova sessão com título:", title)
+      console.log("Creating new session:", { title, theme, cardTitle })
+      
       const { data, error } = await supabase
         .from('chat_sessions')
         .insert([{
@@ -57,15 +57,15 @@ export const useChatSessions = () => {
         .single()
 
       if (error) {
-        console.error("Erro ao criar sessão:", error)
+        console.error("Error creating session:", error)
         throw error
       }
 
-      console.log("Sessão criada:", data)
+      console.log("Session created successfully:", data)
       setSessions(prev => data ? [data, ...prev] : prev)
       return data
     } catch (error) {
-      console.error('Erro ao criar chat session:', error)
+      console.error('Error creating chat session:', error)
       toast({
         variant: "destructive",
         title: "Erro",
@@ -111,6 +111,7 @@ export const useChatSessions = () => {
   }
 
   useEffect(() => {
+    console.log("Initial fetch of chat sessions")
     fetchSessions()
   }, [])
 

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react"
 import { ChatInput } from "@/components/chat/ChatInput"
 import { ChatMessages } from "@/components/chat/ChatMessages"
@@ -76,28 +75,24 @@ const Index = () => {
     try {
       const userMessage = { role: 'user' as const, content }
       setMessages(prev => [...prev, userMessage])
-
       setIsThinking(true)
 
       let currentSessionId = sessionId
       
-      // If no session ID exists, create a new session
+      // Create a new session if this is the first message
       if (!currentSessionId) {
-        // Generate default title from first message
-        const defaultTitle = content.split(' ').slice(0, 5).join(' ').slice(0, 30)
+        // Generate title from first message
+        const defaultTitle = content.split(' ').slice(0, 5).join(' ') + '...'
         
-        // Create session in database
-        const session = await createSession(
-          defaultTitle,
-          chatState?.theme,
-          chatState?.title
-        )
+        console.log("Creating new session with title:", defaultTitle)
+        const session = await createSession(defaultTitle, chatState?.theme, chatState?.title)
         
         if (!session) throw new Error("Failed to create chat session")
         
         currentSessionId = session.id
+        console.log("Created session with ID:", currentSessionId)
         
-        // Update URL with session ID
+        // Update URL with new session ID
         setSearchParams(prev => {
           prev.set('session', currentSessionId!)
           return prev
@@ -178,8 +173,6 @@ const Index = () => {
           ])
       
         setMessages(prev => [...prev, assistantMessage])
-        
-        // Refresh sessions list to show the new/updated session
         await refreshSessions()
       } catch (error: any) {
         console.error("Error saving messages:", error)
@@ -189,8 +182,8 @@ const Index = () => {
       console.error("Chat error:", error)
       toast({
         variant: "destructive",
-        title: "Error",
-        description: `Failed to get response: ${error.message}`
+        title: "Erro",
+        description: `Falha ao obter resposta: ${error.message}`
       })
     } finally {
       setIsThinking(false)

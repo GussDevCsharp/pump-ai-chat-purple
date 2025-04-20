@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/hooks/use-toast"
 import { v4 as uuidv4 } from 'uuid'
-import { toast } from 'sonner'
+import { toast as sonnerToast } from 'sonner'
 
 export interface ChatSession {
   id: string
@@ -111,7 +111,10 @@ export const useChatSessions = () => {
         setLocalSessions(updatedSessions)
         saveLocalSessions(updatedSessions)
         
-        toast.success("Nova conversa criada")
+        // Use toast from useToast instead of toast.success
+        toast({
+          description: "Nova conversa criada"
+        })
         return newSession
       }
       

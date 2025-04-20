@@ -4,6 +4,7 @@ import { ChatInput } from "@/components/chat/ChatInput"
 import { ChatMessages } from "@/components/chat/ChatMessages"
 import { ChatSidebar } from "@/components/chat/ChatSidebar"
 import { ApiKeyDisplay } from "@/components/chat/ApiKeyDisplay"
+import { WelcomeScreen } from "@/components/chat/WelcomeScreen"
 import { useLocation, useSearchParams, Link } from "react-router-dom"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/hooks/use-toast"
@@ -180,6 +181,9 @@ const Index = () => {
   }
 
   if (location.pathname === '/chat') {
+    const showWelcomeScreen = messages.length === 1 && messages[0].role === 'assistant' && 
+      messages[0].content === 'Olá! Como posso ajudar você hoje?'
+
     return (
       <div className="flex h-screen bg-white">
         <ChatSidebar />
@@ -197,12 +201,15 @@ const Index = () => {
               </Button>
             </Link>
           </header>
-          <ChatMessages messages={messages} isThinking={isThinking} />
-          <ChatInput 
-            suggestedPrompts={chatState?.prompts} 
-            onSendMessage={handleSendMessage}
-          />
-          <ApiKeyDisplay />
+          {showWelcomeScreen ? (
+            <WelcomeScreen onSendMessage={handleSendMessage} />
+          ) : (
+            <>
+              <ChatMessages messages={messages} isThinking={isThinking} />
+              <ChatInput onSendMessage={handleSendMessage} />
+              <ApiKeyDisplay />
+            </>
+          )}
         </main>
       </div>
     )

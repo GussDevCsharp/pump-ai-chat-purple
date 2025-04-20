@@ -20,8 +20,8 @@ serve(async (req) => {
 
     console.log("Fetching OpenAI API key...")
     
-    // First try to get the API key directly using a simple query
-    let { data, error } = await supabase
+    // Get the OpenAI API key using a direct query
+    const { data, error } = await supabase
       .from('modelkeys')
       .select('apikey')
       .eq('model', 'openai')
@@ -33,13 +33,11 @@ serve(async (req) => {
       throw new Error('Could not fetch API key from database')
     }
     
-    // Check if we have any data
     if (!data || data.length === 0) {
       console.error("No OpenAI API key records found in database")
       throw new Error('No OpenAI API key found in database')
     }
 
-    // Get the first record's API key
     const apikey = data[0]?.apikey
     
     if (!apikey) {
@@ -69,6 +67,12 @@ serve(async (req) => {
         ],
       }),
     })
+
+    if (!response.ok) {
+      const errorData = await response.text()
+      console.error("OpenAI API error:", response.status, errorData)
+      throw new Error(`OpenAI API error: ${response.status}`)
+    }
 
     const data_response = await response.json()
     console.log("Received response from OpenAI")

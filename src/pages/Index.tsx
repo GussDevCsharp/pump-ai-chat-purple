@@ -43,14 +43,14 @@ const Index = () => {
       if (!response.ok) {
         const errorData = await response.json();
         console.error("Error response:", errorData);
-        throw new Error(errorData.error || 'Failed to get response');
+        throw new Error(errorData.error || 'Falha ao conectar com o serviço');
       }
 
       const data = await response.json();
       
       if (!data.choices || data.choices.length === 0) {
         console.error("Invalid response format:", data);
-        throw new Error('Invalid response from AI service');
+        throw new Error('Formato de resposta inválido do serviço de IA');
       }
       
       const assistantMessage = {

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react'
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/components/ui/use-toast"
@@ -8,6 +9,7 @@ interface ChatSession {
   created_at: string
   card_theme?: string | null
   card_title?: string | null
+  theme_id?: string | null
 }
 
 export const useChatSessions = () => {

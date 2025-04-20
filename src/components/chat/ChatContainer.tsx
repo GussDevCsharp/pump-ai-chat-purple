@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react"
 import { ChatMessages } from "@/components/chat/ChatMessages"
 import { ChatInput } from "@/components/chat/ChatInput"
@@ -151,8 +150,8 @@ export const ChatContainer = () => {
     }
   }
 
-  const showWelcomeScreen = messages.length === 1 && messages[0].role === 'assistant' && 
-    messages[0].content === 'Olá! Como posso ajudar você hoje?'
+  const showWelcomeScreen = !sessionId || (messages.length === 1 && messages[0].role === 'assistant' && 
+    messages[0].content === 'Olá! Como posso ajudar você hoje?')
 
   return (
     <div className="flex-1 flex flex-col">

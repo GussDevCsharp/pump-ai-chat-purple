@@ -2,7 +2,7 @@
 import { MessageCircle, Plus, User, Settings, Pencil, Trash2 } from "lucide-react"
 import { useChatSessions } from "@/hooks/useChatSessions"
 import { Button } from "@/components/ui/button"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useSearchParams } from "react-router-dom"
 import { useState, useEffect } from "react"
 import { Input } from "@/components/ui/input"
 import { supabase } from "@/integrations/supabase/client"
@@ -21,6 +21,8 @@ import {
 export const ChatSidebar = () => {
   const { sessions, createSession, refreshSessions, deleteSession, isLoading } = useChatSessions()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const currentSessionId = searchParams.get('session')
   const [editingId, setEditingId] = useState<string | null>(null)
   const [newTitle, setNewTitle] = useState("")
   const [sessionToDelete, setSessionToDelete] = useState<string | null>(null)
@@ -68,7 +70,13 @@ export const ChatSidebar = () => {
 
   const handleDeleteConfirm = async () => {
     if (sessionToDelete) {
-      await deleteSession(sessionToDelete)
+      const isDeleted = await deleteSession(sessionToDelete)
+      
+      // If successfully deleted and it was the current session, navigate back to chat home
+      if (isDeleted && sessionToDelete === currentSessionId) {
+        navigate('/chat')
+      }
+      
       setSessionToDelete(null)
     }
   }

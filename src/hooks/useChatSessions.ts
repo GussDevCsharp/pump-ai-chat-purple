@@ -19,6 +19,7 @@ export const useChatSessions = () => {
   const fetchSessions = async () => {
     try {
       setIsLoading(true)
+      // Buscar todas as sessões (não autenticadas, user_id dummy, por enquanto)
       const { data, error } = await supabase
         .from('chat_sessions')
         .select('*')
@@ -31,8 +32,8 @@ export const useChatSessions = () => {
       console.error('Error fetching chat sessions:', error)
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Failed to load chat history"
+        title: "Erro",
+        description: "Falha ao carregar histórico de conversas"
       })
     } finally {
       setIsLoading(false)
@@ -41,36 +42,34 @@ export const useChatSessions = () => {
 
   const createSession = async (title: string, theme?: string, cardTitle?: string) => {
     try {
-      // Using a dummy user ID until proper authentication is implemented
+      // Usando um user_id dummy já que a autenticação não está implementada
       const dummyUserId = '00000000-0000-0000-0000-000000000000'
-      
-      console.log("Creating new session with title:", title)
-      
+      console.log("Criando nova sessão com título:", title)
       const { data, error } = await supabase
         .from('chat_sessions')
-        .insert({
+        .insert([{
           title,
           user_id: dummyUserId,
           card_theme: theme,
           card_title: cardTitle
-        })
+        }])
         .select()
         .single()
 
       if (error) {
-        console.error("Error creating session:", error)
+        console.error("Erro ao criar sessão:", error)
         throw error
       }
-      
-      console.log("Created session:", data)
-      setSessions(prev => [data, ...prev])
+
+      console.log("Sessão criada:", data)
+      setSessions(prev => data ? [data, ...prev] : prev)
       return data
     } catch (error) {
-      console.error('Error creating chat session:', error)
+      console.error('Erro ao criar chat session:', error)
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Failed to create new chat"
+        title: "Erro",
+        description: "Falha ao criar conversa"
       })
       return null
     }
@@ -78,34 +77,33 @@ export const useChatSessions = () => {
 
   const deleteSession = async (sessionId: string) => {
     try {
-      // First, delete all messages associated with this session
+      // Excluir todas as mensagens antes de remover a sessão
       const { error: messagesError } = await supabase
         .from('chat_messages')
         .delete()
         .eq('session_id', sessionId)
 
       if (messagesError) throw messagesError
-      
-      // Then delete the session itself
+
+      // Remover a sessão
       const { error } = await supabase
         .from('chat_sessions')
         .delete()
         .eq('id', sessionId)
 
       if (error) throw error
-      
+
       setSessions(prev => prev.filter(session => session.id !== sessionId))
-      
       toast({
         description: "Chat excluído com sucesso"
       })
-      
+
       return true
     } catch (error) {
-      console.error('Error deleting chat session:', error)
+      console.error('Erro ao excluir chat session:', error)
       toast({
         variant: "destructive",
-        title: "Error",
+        title: "Erro",
         description: "Falha ao excluir o chat"
       })
       return false

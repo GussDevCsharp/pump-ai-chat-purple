@@ -20,7 +20,6 @@ serve(async (req) => {
 
     console.log("Fetching OpenAI API key...")
     
-    // Get the OpenAI API key using a direct query
     const { data, error } = await supabase
       .from('modelkeys')
       .select('apikey')
@@ -49,23 +48,31 @@ serve(async (req) => {
 
     const { message } = await req.json()
 
-    console.log("Sending request to OpenAI...")
+    console.log("Sending request to OpenAI with message:", message)
+
+    const requestBody = {
+      model: 'gpt-4o-mini',
+      messages: [
+        {
+          role: 'system',
+          content: 'You are a helpful AI assistant focused on providing guidance and expertise.'
+        },
+        { 
+          role: 'user', 
+          content: message 
+        }
+      ],
+    }
+
+    console.log("Request body prepared:", JSON.stringify(requestBody))
+
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apikey}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [
-          {
-            role: 'system',
-            content: 'You are a helpful AI assistant focused on providing guidance and expertise.'
-          },
-          { role: 'user', content: message }
-        ],
-      }),
+      body: JSON.stringify(requestBody),
     })
 
     if (!response.ok) {
@@ -75,7 +82,7 @@ serve(async (req) => {
     }
 
     const data_response = await response.json()
-    console.log("Received response from OpenAI")
+    console.log("Received response from OpenAI:", data_response)
 
     return new Response(
       JSON.stringify(data_response),

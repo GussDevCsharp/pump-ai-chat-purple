@@ -1,8 +1,12 @@
+
 import { FormDataType } from "@/types/business-generator"
 import { useLocation } from "react-router-dom"
 import ReactMarkdown from 'react-markdown'
 import LoadingDots from "./LoadingDots"
 import { useEffect, useRef } from "react"
+import { Copy } from "lucide-react"
+import { Button } from "../ui/button"
+import { useToast } from "@/hooks/use-toast"
 
 interface Message {
   role: 'assistant' | 'user'
@@ -18,6 +22,7 @@ export const ChatMessages = ({ messages, isThinking }: ChatMessagesProps) => {
   const location = useLocation()
   const businessData = location.state?.businessData as FormDataType
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const { toast } = useToast()
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -26,6 +31,20 @@ export const ChatMessages = ({ messages, isThinking }: ChatMessagesProps) => {
   useEffect(() => {
     scrollToBottom()
   }, [messages, isThinking])
+
+  const handleCopy = async (content: string) => {
+    try {
+      await navigator.clipboard.writeText(content)
+      toast({
+        description: "Conteúdo copiado para a área de transferência",
+      })
+    } catch (err) {
+      toast({
+        variant: "destructive",
+        description: "Erro ao copiar conteúdo",
+      })
+    }
+  }
 
   return (
     <div className="flex-1 overflow-y-auto py-4">
@@ -61,11 +80,22 @@ export const ChatMessages = ({ messages, isThinking }: ChatMessagesProps) => {
               </span>
             </div>
             <div className={`flex-1 ${message.role === 'user' ? 'text-right' : ''}`}>
-              <div className={`text-sm inline-block px-4 py-2 rounded-lg ${
+              <div className={`text-sm inline-block px-4 py-2 rounded-lg relative ${
                 message.role === 'user' 
                   ? 'bg-pump-purple text-white ml-auto' 
                   : 'bg-pump-gray-light text-gray-800'
               }`}>
+                {message.role === 'assistant' && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute top-2 right-2 h-6 w-6"
+                    onClick={() => handleCopy(message.content)}
+                  >
+                    <Copy className="h-4 w-4" />
+                    <span className="sr-only">Copiar mensagem</span>
+                  </Button>
+                )}
                 {message.role === 'assistant' ? (
                   <ReactMarkdown 
                     components={{

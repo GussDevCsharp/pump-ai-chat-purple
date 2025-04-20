@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react"
 import { ChatInput } from "@/components/chat/ChatInput"
 import { ChatMessages } from "@/components/chat/ChatMessages"
@@ -6,6 +7,7 @@ import { ApiKeyDisplay } from "@/components/chat/ApiKeyDisplay"
 import { useLocation, Navigate, useSearchParams } from "react-router-dom"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/components/ui/use-toast"
+import Dashboard from "./Dashboard" // Import Dashboard component
 
 interface Message {
   role: 'assistant' | 'user'
@@ -40,10 +42,20 @@ const Index = () => {
         .order('created_at', { ascending: true })
 
       if (error) throw error
-      setMessages(data || [{
-        role: 'assistant',
-        content: 'Olá! Como posso ajudar você hoje?'
-      }])
+      
+      if (data && data.length > 0) {
+        // Convert database messages to the Message interface format
+        const formattedMessages: Message[] = data.map(msg => ({
+          role: msg.role as 'assistant' | 'user',
+          content: msg.content
+        }))
+        setMessages(formattedMessages)
+      } else {
+        setMessages([{
+          role: 'assistant',
+          content: 'Olá! Como posso ajudar você hoje?'
+        }])
+      }
     } catch (error) {
       console.error('Error loading messages:', error)
       toast({

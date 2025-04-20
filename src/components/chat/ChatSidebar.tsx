@@ -1,5 +1,5 @@
 
-import { MessageCircle, Plus } from "lucide-react"
+import { MessageCircle, Plus, User, Settings } from "lucide-react"
 import { useChatSessions } from "@/hooks/useChatSessions"
 import { Button } from "@/components/ui/button"
 import { useNavigate } from "react-router-dom"

@@ -38,9 +38,16 @@ export const useChatSessions = () => {
 
   const createSession = async (title: string) => {
     try {
+      // We need to set a dummy user_id since there's no authentication yet
+      // In a real app, this would be the actual user's ID from auth
+      const dummyUserId = '00000000-0000-0000-0000-000000000000'
+      
       const { data, error } = await supabase
         .from('chat_sessions')
-        .insert([{ title }])
+        .insert({ 
+          title, 
+          user_id: dummyUserId 
+        })
         .select()
         .single()
 

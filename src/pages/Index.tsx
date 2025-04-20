@@ -1,3 +1,4 @@
+
 import { useLocation } from "react-router-dom"
 import { ChatLayout } from "@/components/chat/ChatLayout"
 import { Dashboard } from "@/components/dashboard/Dashboard"
@@ -7,12 +8,7 @@ const Index = () => {
   const location = useLocation()
 
   if (location.pathname === '/chat') {
-    return (
-      <>
-        <UserCard />
-        <ChatLayout />
-      </>
-    );
+    return <ChatLayout />;
   }
 
   return (

@@ -1,10 +1,9 @@
-import { useState } from "react"
-import { Dashboard } from "@/components/dashboard/Dashboard"
+import { useState, useEffect } from "react"
 import { ChatInput } from "@/components/chat/ChatInput"
 import { ChatMessages } from "@/components/chat/ChatMessages"
 import { ChatSidebar } from "@/components/chat/ChatSidebar"
 import { ApiKeyDisplay } from "@/components/chat/ApiKeyDisplay"
-import { useLocation, Navigate } from "react-router-dom"
+import { useLocation, Navigate, useSearchParams } from "react-router-dom"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/components/ui/use-toast"
 
@@ -15,20 +14,61 @@ interface Message {
 
 const Index = () => {
   const location = useLocation()
+  const [searchParams] = useSearchParams()
+  const sessionId = searchParams.get('session')
   const chatState = location.state
   const { toast } = useToast()
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      role: 'assistant',
-      content: 'Olá! Como posso ajudar você hoje?'
+  const [messages, setMessages] = useState<Message[]>([])
+  
+  useEffect(() => {
+    if (sessionId) {
+      loadMessages(sessionId)
+    } else {
+      setMessages([{
+        role: 'assistant',
+        content: 'Olá! Como posso ajudar você hoje?'
+      }])
     }
-  ])
+  }, [sessionId])
+
+  const loadMessages = async (sessionId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('chat_messages')
+        .select('*')
+        .eq('session_id', sessionId)
+        .order('created_at', { ascending: true })
+
+      if (error) throw error
+      setMessages(data || [{
+        role: 'assistant',
+        content: 'Olá! Como posso ajudar você hoje?'
+      }])
+    } catch (error) {
+      console.error('Error loading messages:', error)
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to load chat messages"
+      })
+    }
+  }
   
   const handleSendMessage = async (content: string) => {
     try {
       // Add user message
       const userMessage = { role: 'user' as const, content }
       setMessages(prev => [...prev, userMessage])
+
+      if (sessionId) {
+        await supabase
+          .from('chat_messages')
+          .insert([{
+            session_id: sessionId,
+            role: 'user',
+            content
+          }])
+      }
 
       // Get AI response from edge function
       const response = await fetch("https://spyfzrgwbavmntiginap.supabase.co/functions/v1/chat", {
@@ -58,6 +98,16 @@ const Index = () => {
         content: data.choices[0].message.content
       }
       
+      if (sessionId) {
+        await supabase
+          .from('chat_messages')
+          .insert([{
+            session_id: sessionId,
+            role: 'assistant',
+            content: assistantMessage.content
+          }])
+      }
+      
       setMessages(prev => [...prev, assistantMessage])
     } catch (error) {
       console.error("Chat error:", error)
@@ -71,11 +121,6 @@ const Index = () => {
 
   // Show chat interface if we're on /chat route
   if (location.pathname === '/chat') {
-    // If accessed directly without state, redirect to dashboard
-    if (!chatState) {
-      return <Navigate to="/" replace />
-    }
-    
     return (
       <div className="flex h-screen bg-white">
         <ChatSidebar />
@@ -86,7 +131,6 @@ const Index = () => {
               alt="Pump.ia"
               className="h-8"
             />
-            <h2 className="mt-2 text-lg font-semibold text-gray-900">{chatState?.topic}</h2>
           </header>
           <ChatMessages messages={messages} />
           <ChatInput 

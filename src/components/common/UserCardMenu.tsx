@@ -2,7 +2,7 @@
 import { useChatAuth } from "@/hooks/useChatAuth";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
-import { settings, logOut, UserRound } from "lucide-react";
+import { Settings, LogOut, UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function UserCardMenu() {
@@ -52,15 +52,16 @@ export function UserCardMenu() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-44">
         <DropdownMenuItem>
-          <settings className="w-4 h-4 mr-2" />
+          <Settings className="w-4 h-4 mr-2" />
           Configurações
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout}>
-          <logOut className="w-4 h-4 mr-2" />
+          <LogOut className="w-4 h-4 mr-2" />
           Sair
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
 }
+

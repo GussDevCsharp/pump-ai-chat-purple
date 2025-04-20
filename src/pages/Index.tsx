@@ -30,11 +30,11 @@ const Index = () => {
       const userMessage = { role: 'user' as const, content }
       setMessages(prev => [...prev, userMessage])
 
-      // Get AI response
-      const response = await fetch(`${supabase.supabaseUrl}/functions/v1/chat`, {
+      // Get AI response from edge function
+      const response = await fetch("https://spyfzrgwbavmntiginap.supabase.co/functions/v1/chat", {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${supabase.supabaseKey}`,
+          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNweWZ6cmd3YmF2bW50aWdpbmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ4MzcwNjEsImV4cCI6MjA2MDQxMzA2MX0.nBc8x2mLTm4j9KpxSzsgCp0xHgaJnWvN2t7I3H37n70`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ message: content }),

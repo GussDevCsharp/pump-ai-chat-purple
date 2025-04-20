@@ -3,15 +3,44 @@ import React from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Button } from "@/components/ui/button";
+import { Wand } from "lucide-react";
 import { FormField } from "@/types/business-generator";
 
 interface FormFieldProps {
   field: FormField;
   value: string;
   onChange: (value: string) => void;
+  formData?: Record<string, string>;
+  onAIGenerate?: (fieldId: string) => void;
 }
 
-export const BusinessFormField: React.FC<FormFieldProps> = ({ field, value, onChange }) => {
+export const BusinessFormField: React.FC<FormFieldProps> = ({ 
+  field, 
+  value, 
+  onChange,
+  formData,
+  onAIGenerate
+}) => {
+  const showAIButton = field.type === "input" || field.type === "textarea";
+
+  const renderAIButton = () => {
+    if (!showAIButton || !onAIGenerate) return null;
+    
+    return (
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        onClick={() => onAIGenerate(field.id)}
+        className="ml-2"
+      >
+        <Wand className="mr-2 h-4 w-4" />
+        Gerar com IA
+      </Button>
+    );
+  };
+
   switch (field.type) {
     case "input":
       return (
@@ -19,13 +48,16 @@ export const BusinessFormField: React.FC<FormFieldProps> = ({ field, value, onCh
           <label htmlFor={field.id} className="block text-sm font-medium text-gray-700">
             {field.label}
           </label>
-          <Input
-            id={field.id}
-            value={value || ""}
-            onChange={(e) => onChange(e.target.value)}
-            placeholder={field.placeholder || ""}
-            className="w-full"
-          />
+          <div className="flex items-center">
+            <Input
+              id={field.id}
+              value={value || ""}
+              onChange={(e) => onChange(e.target.value)}
+              placeholder={field.placeholder || ""}
+              className="w-full"
+            />
+            {renderAIButton()}
+          </div>
         </div>
       );
     case "textarea":
@@ -34,13 +66,16 @@ export const BusinessFormField: React.FC<FormFieldProps> = ({ field, value, onCh
           <label htmlFor={field.id} className="block text-sm font-medium text-gray-700">
             {field.label}
           </label>
-          <Textarea
-            id={field.id}
-            value={value || ""}
-            onChange={(e) => onChange(e.target.value)}
-            placeholder={field.placeholder || ""}
-            className="w-full"
-          />
+          <div className="flex items-start">
+            <Textarea
+              id={field.id}
+              value={value || ""}
+              onChange={(e) => onChange(e.target.value)}
+              placeholder={field.placeholder || ""}
+              className="w-full"
+            />
+            {renderAIButton()}
+          </div>
         </div>
       );
     case "radio":

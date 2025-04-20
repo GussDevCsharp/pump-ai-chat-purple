@@ -22,6 +22,7 @@ export default function BusinessGenerator() {
     handleNext,
     handlePrevious,
     handleFieldChange,
+    handleGenerateWithAI,
     startNewPlan
   } = useBusinessForm();
 
@@ -69,6 +70,8 @@ export default function BusinessGenerator() {
                       field={field}
                       value={formData[field.id] || ""}
                       onChange={(value) => handleFieldChange(field.id, value)}
+                      formData={formData}
+                      onAIGenerate={handleGenerateWithAI}
                     />
                   );
                 })}

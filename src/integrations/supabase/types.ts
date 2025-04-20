@@ -54,6 +54,7 @@ export type Database = {
           card_title: string | null
           created_at: string
           id: string
+          theme_id: string | null
           title: string
           updated_at: string
           user_id: string
@@ -63,6 +64,7 @@ export type Database = {
           card_title?: string | null
           created_at?: string
           id?: string
+          theme_id?: string | null
           title: string
           updated_at?: string
           user_id: string
@@ -72,9 +74,39 @@ export type Database = {
           card_title?: string | null
           created_at?: string
           id?: string
+          theme_id?: string | null
           title?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_sessions_theme_id_fkey"
+            columns: ["theme_id"]
+            isOneToOne: false
+            referencedRelation: "chat_themes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chat_themes: {
+        Row: {
+          color: string | null
+          description: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          color?: string | null
+          description?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          color?: string | null
+          description?: string | null
+          id?: string
+          name?: string
         }
         Relationships: []
       }

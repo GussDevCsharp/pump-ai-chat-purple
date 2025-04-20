@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { MessageSquare } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { Badge } from "@/components/ui/badge"
+import { supabase } from "@/integrations/supabase/client"
 
 interface BusinessCardProps {
   title: string
@@ -15,11 +16,42 @@ interface BusinessCardProps {
 export const BusinessCard = ({ title, description, prompts, gradient }: BusinessCardProps) => {
   const navigate = useNavigate()
 
-  const handleCardClick = () => {
+  const handleCardClick = async () => {
+    // Primeiro, encontrar ou criar o tema
+    const { data: themeData, error: themeError } = await supabase
+      .from('chat_themes')
+      .select('id')
+      .eq('name', title)
+      .single()
+
+    let themeId = themeData?.id
+
+    if (!themeData) {
+      const { data: newTheme, error: createError } = await supabase
+        .from('chat_themes')
+        .insert([
+          { 
+            name: title, 
+            description: description,
+            color: gradient 
+          }
+        ])
+        .select()
+        .single()
+
+      if (createError) {
+        console.error('Error creating theme:', createError)
+        return
+      }
+      
+      themeId = newTheme.id
+    }
+
     navigate('/chat', { 
       state: { 
         topic: title,
-        prompts: prompts
+        prompts: prompts,
+        themeId: themeId
       } 
     })
   }

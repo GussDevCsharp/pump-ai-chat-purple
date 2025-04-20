@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react'
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/components/ui/use-toast"
@@ -40,10 +39,10 @@ export const useChatSessions = () => {
     }
   }
 
-  const createSession = async (title: string, theme?: string, cardTitle?: string) => {
+  const createSession = async (title: string, theme?: string, cardTitle?: string, themeId?: string) => {
     try {
       const dummyUserId = '00000000-0000-0000-0000-000000000000'
-      console.log("Creating new session:", { title, theme, cardTitle })
+      console.log("Creating new session:", { title, theme, cardTitle, themeId })
       
       const { data, error } = await supabase
         .from('chat_sessions')
@@ -51,7 +50,8 @@ export const useChatSessions = () => {
           title,
           user_id: dummyUserId,
           card_theme: theme,
-          card_title: cardTitle
+          card_title: cardTitle,
+          theme_id: themeId
         }])
         .select()
         .single()

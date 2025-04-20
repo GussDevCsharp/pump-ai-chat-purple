@@ -140,12 +140,27 @@ export const useChatAuth = () => {
     return true;
   };
 
+  // Função para realizar logout
+  const logout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      setAuthStatus('anonymous');
+      setUser(null);
+      return { success: true };
+    } catch (error) {
+      console.error('Error signing out:', error);
+      return { success: false, error };
+    }
+  };
+
   return { 
     authStatus, 
     user, 
     isLoading,
     dailyInteractionsCount, 
     remainingInteractions,
-    recordInteraction
+    recordInteraction,
+    logout
   };
 };

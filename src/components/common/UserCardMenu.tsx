@@ -10,14 +10,27 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Settings, LogOut, UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export function UserCardMenu() {
   const { authStatus, user, isLoading } = useChatAuth();
+  const navigate = useNavigate();
 
-  // Handler de logout ajustado para redirecionar à página inicial
-  const handleLogout = () => {
+  // Função de logout corrigida para usar o método do Supabase
+  const handleLogout = async () => {
     if (window.confirm("Tem certeza que deseja sair?")) {
-      window.location.href = "/";
+      try {
+        const { error } = await supabase.auth.signOut();
+        if (error) throw error;
+        
+        toast.success("Logout realizado com sucesso!");
+        navigate("/");
+      } catch (error) {
+        console.error("Erro ao fazer logout:", error);
+        toast.error("Erro ao fazer logout");
+      }
     }
   };
 

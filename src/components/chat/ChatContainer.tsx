@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react"
 import { ChatMessages } from "@/components/chat/ChatMessages"
 import { ChatInput } from "@/components/chat/ChatInput"
@@ -11,6 +10,7 @@ import { useChatSessions } from "@/hooks/useChatSessions"
 import { useChatAuth } from "@/hooks/useChatAuth"
 import { Button } from "@/components/ui/button"
 import { LogIn } from "lucide-react"
+import { useThemePrompt } from "@/hooks/useThemePrompt"
 
 interface Message {
   role: 'assistant' | 'user'
@@ -26,6 +26,34 @@ export const ChatContainer = () => {
   const [isThinking, setIsThinking] = useState(false)
   const { createSession, refreshSessions } = useChatSessions()
   const { authStatus, recordInteraction, remainingInteractions } = useChatAuth()
+
+  const [currentThemeId, setCurrentThemeId] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchThemeId() {
+      if (!sessionId) {
+        setCurrentThemeId(null);
+        return;
+      }
+      const { data, error } = await supabase
+        .from('chat_sessions')
+        .select('theme_id')
+        .eq('id', sessionId)
+        .maybeSingle();
+      if (!error && data && data.theme_id) setCurrentThemeId(data.theme_id);
+      else setCurrentThemeId(null);
+    }
+    fetchThemeId();
+  }, [sessionId]);
+
+  const { patternPrompt } = useThemePrompt(currentThemeId ?? undefined);
+
+  const [businessData] = useState({
+    company_name: "Minha Empresa",
+    industry: "Tecnologia",
+    years: "5",
+    focus: "Soluções inovadoras",
+  });
 
   useEffect(() => {
     if (sessionId) {
@@ -70,8 +98,20 @@ export const ChatContainer = () => {
     }
   }
 
+  const interpolatePatternPrompt = (
+    pattern: string,
+    userQuery: string,
+    business: Record<string, string>
+  ) => {
+    let filled = pattern;
+    for (const key in business) {
+      filled = filled.replace(new RegExp(`{{\\s*${key}\\s*}}`, "g"), business[key]);
+    }
+    filled = filled.replace(/{{\s*user_query\s*}}/g, userQuery);
+    return filled;
+  };
+
   const handleSendMessage = async (content: string) => {
-    // Check if the user can send a message (based on interaction limit)
     if (authStatus === 'anonymous' && !recordInteraction()) {
       return;
     }
@@ -97,13 +137,24 @@ export const ChatContainer = () => {
         })
       }
 
+      let aiMessageToSend: string;
+      if (patternPrompt?.pattern_prompt) {
+        aiMessageToSend = interpolatePatternPrompt(
+          patternPrompt.pattern_prompt,
+          content,
+          businessData
+        );
+      } else {
+        aiMessageToSend = content;
+      }
+
       const response = await fetch("https://spyfzrgwbavmntiginap.supabase.co/functions/v1/chat", {
         method: 'POST',
         headers: {
           'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNweWZ6cmd3YmF2bW50aWdpbmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ4MzcwNjEsImV4cCI6MjA2MDQxMzA2MX0.nBc8x2mLTm4j9KpxSzsgCp0xHgaJnWvN2t7I3H37n70`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: content }),
+        body: JSON.stringify({ message: aiMessageToSend }),
       })
 
       if (!response.ok) {

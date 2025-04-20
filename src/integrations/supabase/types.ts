@@ -223,6 +223,41 @@ export type Database = {
         }
         Relationships: []
       }
+      theme_prompts: {
+        Row: {
+          created_at: string
+          id: string
+          pattern_prompt: string
+          theme_id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          pattern_prompt: string
+          theme_id: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          pattern_prompt?: string
+          theme_id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "theme_prompts_theme_id_fkey"
+            columns: ["theme_id"]
+            isOneToOne: false
+            referencedRelation: "chat_themes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

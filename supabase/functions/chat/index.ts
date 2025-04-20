@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
@@ -19,6 +18,12 @@ serve(async (req) => {
     )
 
     console.log("Fetching OpenAI API key...")
+    
+    const { data: allData, error: allError } = await supabase
+      .from('modelkeys')
+      .select('*');
+    
+    console.log("All modelkeys records:", JSON.stringify(allData, null, 2));
     
     const { data, error } = await supabase
       .from('modelkeys')
@@ -93,7 +98,7 @@ serve(async (req) => {
       },
     )
   } catch (error) {
-    console.error("Error in edge function:", error.message)
+    console.error("Error in edge function:", error)
     return new Response(
       JSON.stringify({ error: error.message }),
       { 

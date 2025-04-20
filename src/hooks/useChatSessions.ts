@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react'
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/components/ui/use-toast"
@@ -66,9 +65,32 @@ export const useChatSessions = () => {
     }
   }
 
+  const deleteSession = async (sessionId: string) => {
+    try {
+      const { error } = await supabase
+        .from('chat_sessions')
+        .delete()
+        .eq('id', sessionId)
+
+      if (error) throw error
+      setSessions(prev => prev.filter(session => session.id !== sessionId))
+      
+      toast({
+        description: "Chat excluído com sucesso"
+      })
+    } catch (error) {
+      console.error('Error deleting chat session:', error)
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Falha ao excluir o chat"
+      })
+    }
+  }
+
   useEffect(() => {
     fetchSessions()
   }, [])
 
-  return { sessions, isLoading, createSession, refreshSessions: fetchSessions }
+  return { sessions, isLoading, createSession, deleteSession, refreshSessions: fetchSessions }
 }

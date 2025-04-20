@@ -20,26 +20,33 @@ serve(async (req) => {
 
     console.log("Fetching OpenAI API key...")
     
-    // Get OpenAI API key from database - add better error handling
-    const { data, error } = await supabase
+    // First try to get the API key directly using a simple query
+    let { data, error } = await supabase
       .from('modelkeys')
       .select('apikey')
       .eq('model', 'openai')
       .order('created_at', { ascending: false })
       .limit(1)
-      .single()
     
     if (error) {
       console.error("Database error:", error)
       throw new Error('Could not fetch API key from database')
     }
     
-    if (!data || !data.apikey) {
-      console.error("No API key found in database")
+    // Check if we have any data
+    if (!data || data.length === 0) {
+      console.error("No OpenAI API key records found in database")
       throw new Error('No OpenAI API key found in database')
     }
+
+    // Get the first record's API key
+    const apikey = data[0]?.apikey
     
-    const apikey = data.apikey
+    if (!apikey) {
+      console.error("API key is null or undefined in the record")
+      throw new Error('Invalid API key format in database')
+    }
+    
     console.log("API key retrieved successfully")
 
     const { message } = await req.json()

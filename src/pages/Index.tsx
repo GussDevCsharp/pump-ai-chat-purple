@@ -1,3 +1,4 @@
+
 import { useState } from "react"
 import { Dashboard } from "@/components/dashboard/Dashboard"
 import { ChatInput } from "@/components/chat/ChatInput"
@@ -62,8 +63,8 @@ const Index = () => {
       console.error("Chat error:", error);
       toast({
         variant: "destructive",
-        title: "Error",
-        description: `Failed to get AI response: ${error.message}`
+        title: "Erro",
+        description: `Falha ao obter resposta: ${error.message}`
       })
     }
   }

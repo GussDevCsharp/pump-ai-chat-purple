@@ -1,9 +1,9 @@
-
 import { useState } from "react"
 import { Dashboard } from "@/components/dashboard/Dashboard"
 import { ChatInput } from "@/components/chat/ChatInput"
 import { ChatMessages } from "@/components/chat/ChatMessages"
 import { ChatSidebar } from "@/components/chat/ChatSidebar"
+import { ApiKeyDisplay } from "@/components/chat/ApiKeyDisplay"
 import { useLocation, Navigate } from "react-router-dom"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/components/ui/use-toast"
@@ -86,13 +86,14 @@ const Index = () => {
               alt="Pump.ia"
               className="h-8"
             />
-            <h2 className="mt-2 text-lg font-semibold text-gray-900">{chatState.topic}</h2>
+            <h2 className="mt-2 text-lg font-semibold text-gray-900">{chatState?.topic}</h2>
           </header>
           <ChatMessages messages={messages} />
           <ChatInput 
-            suggestedPrompts={chatState.prompts} 
+            suggestedPrompts={chatState?.prompts} 
             onSendMessage={handleSendMessage}
           />
+          <ApiKeyDisplay />
         </main>
       </div>
     )

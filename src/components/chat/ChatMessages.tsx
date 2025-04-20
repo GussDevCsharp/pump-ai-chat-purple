@@ -1,6 +1,7 @@
 
 import { FormDataType } from "@/types/business-generator"
 import { useLocation } from "react-router-dom"
+import ReactMarkdown from 'react-markdown'
 
 interface Message {
   role: 'assistant' | 'user'
@@ -49,13 +50,27 @@ export const ChatMessages = ({ messages }: ChatMessagesProps) => {
               </span>
             </div>
             <div className={`flex-1 ${message.role === 'user' ? 'text-right' : ''}`}>
-              <p className={`text-sm inline-block px-4 py-2 rounded-lg ${
+              <div className={`text-sm inline-block px-4 py-2 rounded-lg ${
                 message.role === 'user' 
                   ? 'bg-pump-purple text-white ml-auto' 
                   : 'bg-pump-gray-light text-gray-800'
               }`}>
-                {message.content}
-              </p>
+                {message.role === 'assistant' ? (
+                  <ReactMarkdown 
+                    components={{
+                      p: ({children}) => <p className="mb-3 last:mb-0">{children}</p>,
+                      h3: ({children}) => <h3 className="text-base font-semibold mb-2">{children}</h3>,
+                      ul: ({children}) => <ul className="list-disc ml-4 mb-3 space-y-1">{children}</ul>,
+                      li: ({children}) => <li>{children}</li>,
+                      strong: ({children}) => <strong className="font-semibold">{children}</strong>,
+                    }}
+                  >
+                    {message.content}
+                  </ReactMarkdown>
+                ) : (
+                  message.content
+                )}
+              </div>
             </div>
           </div>
         ))}

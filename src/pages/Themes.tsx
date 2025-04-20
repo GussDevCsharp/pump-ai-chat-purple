@@ -3,8 +3,38 @@ import { useEffect } from "react"
 import { useChatThemes } from "@/hooks/useChatThemes" 
 import { Card, CardContent } from "@/components/ui/card"
 import { useNavigate } from "react-router-dom"
-import { MessageCircle } from "lucide-react"
+import { 
+  MessageCircle, Briefcase, Award, Book, Headphones, Heart, User, Globe, Puzzle, Star, PieChart,
+  Lightbulb, Code, Music, Users, ShoppingCart, Target, Activity, Compass, Map, Calendar, Layout
+} from "lucide-react"
 import { useChatSessions } from "@/hooks/useChatSessions"
+
+function getThemeIcon(themeName: string) {
+  const name = themeName.toLowerCase();
+  if (name.includes("negócios") || name.includes("empresa") || name.includes("start")) return <Briefcase className="w-5 h-5" />;
+  if (name.includes("prêmio") || name.includes("premio") || name.includes("conquista")) return <Award className="w-5 h-5" />;
+  if (name.includes("livro") || name.includes("educa") || name.includes("estudo")) return <Book className="w-5 h-5" />;
+  if (name.includes("música") || name.includes("musica")) return <Music className="w-5 h-5" />;
+  if (name.includes("amor") || name.includes("romance") || name.includes("relaciona")) return <Heart className="w-5 h-5" />;
+  if (name.includes("pessoa") || name.includes("perfil")) return <User className="w-5 h-5" />;
+  if (name.includes("globo") || name.includes("mundo")) return <Globe className="w-5 h-5" />;
+  if (name.includes("puzzle") || name.includes("desafio") || name.includes("jogo")) return <Puzzle className="w-5 h-5" />;
+  if (name.includes("estrela") || name.includes("favorito")) return <Star className="w-5 h-5" />;
+  if (name.includes("gráfico") || name.includes("dados") || name.includes("análise")) return <PieChart className="w-5 h-5" />;
+  if (name.includes("ideia") || name.includes("inovação") || name.includes("inspir")) return <Lightbulb className="w-5 h-5" />;
+  if (name.includes("programa") || name.includes("tech") || name.includes("código") || name.includes("codigo")) return <Code className="w-5 h-5" />;
+  if (name.includes("equipe") || name.includes("grupo")) return <Users className="w-5 h-5" />;
+  if (name.includes("compras") || name.includes("loja") || name.includes("shop")) return <ShoppingCart className="w-5 h-5" />;
+  if (name.includes("objetivo") || name.includes("meta")) return <Target className="w-5 h-5" />;
+  if (name.includes("atividade") || name.includes("atividade")) return <Activity className="w-5 h-5" />;
+  if (name.includes("navega") || name.includes("bússola")) return <Compass className="w-5 h-5" />;
+  if (name.includes("mapa") || name.includes("viagem")) return <Map className="w-5 h-5" />;
+  if (name.includes("data") || name.includes("calendário")) return <Calendar className="w-5 h-5" />;
+  if (name.includes("layout") || name.includes("interface")) return <Layout className="w-5 h-5" />;
+  if (name.includes("podcast") || name.includes("áudio") || name.includes("audio")) return <Headphones className="w-5 h-5" />;
+  // fallback para temas gerais
+  return <MessageCircle className="w-5 h-5" />;
+}
 
 export default function Themes() {
   const { themes, isLoading } = useChatThemes()
@@ -52,8 +82,10 @@ export default function Themes() {
                   <div className="flex items-start gap-4">
                     <div className="w-10 h-10 rounded-full flex items-center justify-center"
                          style={{ backgroundColor: theme.color ? theme.color + '20' : '#9b87f520' }}>
-                      <MessageCircle className="w-5 h-5" 
-                                     style={{ color: theme.color || '#9b87f5' }} />
+                      {/* Icone temático */}
+                      <span style={{ color: theme.color || '#9b87f5' }}>
+                        {getThemeIcon(theme.name)}
+                      </span>
                     </div>
                     <div>
                       <h3 className="font-medium text-gray-900">{theme.name}</h3>
@@ -71,3 +103,4 @@ export default function Themes() {
     </div>
   )
 }
+

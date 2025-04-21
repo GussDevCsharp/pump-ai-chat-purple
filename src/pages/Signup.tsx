@@ -27,7 +27,13 @@ export default function Signup() {
   const [averageRevenue, setAverageRevenue] = useState<number | "">("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Perfil do empresário
+  // Perfil do empresário - campos novos e antigos
+  const [nomeEmpresario, setNomeEmpresario] = useState("");
+  const [idadeEmpresario, setIdadeEmpresario] = useState<number | "">("");
+  const [generoEmpresario, setGeneroEmpresario] = useState("");
+  const [perfilPessoalPergunta1, setPerfilPessoalPergunta1] = useState(""); // Ex: O que te inspira no dia a dia?
+  const [perfilPessoalPergunta2, setPerfilPessoalPergunta2] = useState(""); // Ex: Como se define pessoalmente?
+
   const [vision, setVision] = useState("");
   const [mainChallenge, setMainChallenge] = useState("");
   const [decisionProfile, setDecisionProfile] = useState(""); // conservador, equilibrado, agressivo
@@ -87,8 +93,13 @@ export default function Signup() {
         social_linkedin: socialLinkedin,
         employees_count: employeesCount === "" ? null : Number(employeesCount),
         average_revenue: averageRevenue === "" ? null : Number(averageRevenue),
-        // Esses dados vão no campo metadata (se existir) ou como campos extras se você adicionar via migration depois
+        // Adiciona todos os campos de perfil do empresário no metadata
         metadata: {
+          nomeEmpresario,
+          idadeEmpresario: idadeEmpresario === "" ? null : Number(idadeEmpresario),
+          generoEmpresario,
+          perfilPessoalPergunta1,
+          perfilPessoalPergunta2,
           vision,
           main_challenge: mainChallenge,
           decision_profile: decisionProfile,
@@ -178,6 +189,76 @@ export default function Signup() {
                   className="mt-1"
                   disabled={isLoading}
                 />
+              </div>
+
+              {/* Campos extras do Empresário */}
+              <div className="pt-4 border-t mt-4 space-y-4">
+                <h3 className="font-semibold text-lg mb-2 text-gray-900">Dados do Empresário</h3>
+                <div>
+                  <Label htmlFor="nomeEmpresario">Nome do empresário</Label>
+                  <Input
+                    id="nomeEmpresario"
+                    type="text"
+                    value={nomeEmpresario}
+                    onChange={e => setNomeEmpresario(e.target.value)}
+                    className="mt-1"
+                    disabled={isLoading}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="idadeEmpresario">Idade</Label>
+                  <Input
+                    id="idadeEmpresario"
+                    type="number"
+                    min={0}
+                    value={idadeEmpresario}
+                    onChange={e => setIdadeEmpresario(e.target.value === "" ? "" : Number(e.target.value))}
+                    className="mt-1"
+                    disabled={isLoading}
+                  />
+                </div>
+                <div>
+                  <Label>Gênero</Label>
+                  <RadioGroup
+                    className="mt-2 flex flex-row gap-5"
+                    value={generoEmpresario}
+                    onValueChange={setGeneroEmpresario}
+                    disabled={isLoading}
+                  >
+                    <div className="flex items-center gap-2">
+                      <RadioGroupItem id="genero-masculino" value="masculino" />
+                      <Label htmlFor="genero-masculino">Masculino</Label>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <RadioGroupItem id="genero-feminino" value="feminino" />
+                      <Label htmlFor="genero-feminino">Feminino</Label>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <RadioGroupItem id="genero-outro" value="outro" />
+                      <Label htmlFor="genero-outro">Outro</Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+                <div>
+                  <Label htmlFor="perfilPessoalPergunta1">O que te inspira no dia a dia?</Label>
+                  <Textarea
+                    id="perfilPessoalPergunta1"
+                    value={perfilPessoalPergunta1}
+                    onChange={e => setPerfilPessoalPergunta1(e.target.value)}
+                    className="mt-1"
+                    disabled={isLoading}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="perfilPessoalPergunta2">Como você se define pessoalmente?</Label>
+                  <Textarea
+                    id="perfilPessoalPergunta2"
+                    value={perfilPessoalPergunta2}
+                    onChange={e => setPerfilPessoalPergunta2(e.target.value)}
+                    className="mt-1"
+                    disabled={isLoading}
+                  />
+                </div>
               </div>
 
               {/* Perfil da Empresa */}

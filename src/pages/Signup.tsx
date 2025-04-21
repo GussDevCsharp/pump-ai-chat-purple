@@ -1,44 +1,95 @@
 
-import React, { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { toast } from "sonner"
-import { supabase } from "@/integrations/supabase/client"
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function Signup() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const navigate = useNavigate()
+  // Login info
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  // Company profile info
+  const [companyName, setCompanyName] = useState("");
+  const [businessSegment, setBusinessSegment] = useState("");
+  const [mainProducts, setMainProducts] = useState("");
+  const [address, setAddress] = useState("");
+  const [phone, setPhone] = useState("");
+  const [socialInstagram, setSocialInstagram] = useState("");
+  const [socialFacebook, setSocialFacebook] = useState("");
+  const [socialLinkedin, setSocialLinkedin] = useState("");
+  const [employeesCount, setEmployeesCount] = useState<number | "">("");
+  const [averageRevenue, setAverageRevenue] = useState<number | "">("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleSignup = async (event: React.FormEvent) => {
-    event.preventDefault()
-    if (!email || !password || !confirmPassword) {
-      toast.error("Por favor, preencha todos os campos")
-      return
+    event.preventDefault();
+    // Verificação dos campos obrigatórios de login e empresa
+    if (
+      !email || !password || !confirmPassword ||
+      !companyName
+    ) {
+      toast.error("Preencha todos os campos obrigatórios");
+      return;
     }
     if (password !== confirmPassword) {
-      toast.error("As senhas não coincidem")
-      return
+      toast.error("As senhas não coincidem");
+      return;
     }
-    setIsLoading(true)
-    const { error } = await supabase.auth.signUp({ email, password })
-    setIsLoading(false)
-    if (error) {
-      if (error.message && error.message.includes("already registered")) {
-        toast.error("Este e-mail já está cadastrado")
+    setIsLoading(true);
+
+    // Cria o usuário no auth
+    const { data: signupData, error: signupError } = await supabase.auth.signUp({ email, password });
+    if (signupError) {
+      setIsLoading(false);
+      if (signupError.message && signupError.message.includes("already registered")) {
+        toast.error("Este e-mail já está cadastrado");
       } else {
-        toast.error(error.message || "Erro ao criar conta")
+        toast.error(signupError.message || "Erro ao criar conta");
       }
-      return
+      return;
     }
-    toast.success("Cadastro realizado! Verifique seu email.")
+    // Pega id do usuário criado (caso já esteja autenticado na resposta)
+    const userId = signupData?.user?.id;
+    if (!userId) {
+      setIsLoading(false);
+      toast.success("Cadastro realizado! Verifique seu email.");
+      setTimeout(() => { navigate("/login"); }, 800);
+      return;
+    }
+
+    // Insere o perfil da empresa
+    const { error: companyError } = await supabase
+      .from("company_profiles")
+      .insert([{
+        user_id: userId,
+        company_name: companyName,
+        business_segment: businessSegment,
+        main_products: mainProducts,
+        address,
+        phone,
+        social_facebook: socialFacebook,
+        social_instagram: socialInstagram,
+        social_linkedin: socialLinkedin,
+        employees_count: employeesCount === "" ? null : Number(employeesCount),
+        average_revenue: averageRevenue === "" ? null : Number(averageRevenue),
+      }]);
+
+    setIsLoading(false);
+    if (companyError) {
+      toast.warning("Cadastro realizado, mas houve um erro ao salvar o perfil da empresa. Complete depois.");
+    } else {
+      toast.success("Cadastro realizado! Verifique seu email.");
+    }
+
     setTimeout(() => {
-      navigate("/login")
-    }, 800)
-  }
+      navigate("/login");
+    }, 1000);
+  };
 
   return (
     <div className="min-h-screen bg-white flex">
@@ -61,9 +112,10 @@ export default function Signup() {
           </div>
           <form onSubmit={handleSignup} className="mt-8 space-y-6">
             <div className="space-y-4">
+              {/* Campos de login */}
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                  Email
+                  Email *
                 </label>
                 <Input
                   id="email"
@@ -79,7 +131,7 @@ export default function Signup() {
               </div>
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                  Senha
+                  Senha *
                 </label>
                 <Input
                   id="password"
@@ -95,7 +147,7 @@ export default function Signup() {
               </div>
               <div>
                 <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                  Confirmar senha
+                  Confirmar senha *
                 </label>
                 <Input
                   id="confirmPassword"
@@ -108,6 +160,119 @@ export default function Signup() {
                   className="mt-1"
                   disabled={isLoading}
                 />
+              </div>
+              {/* Perfil da Empresa */}
+              <div className="pt-4 border-t mt-4">
+                <h3 className="font-semibold text-lg mb-2 text-gray-900">Dados da Empresa</h3>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Nome da empresa *</label>
+                  <Input
+                    type="text"
+                    required
+                    value={companyName}
+                    onChange={e => setCompanyName(e.target.value)}
+                    className="mt-1"
+                    disabled={isLoading}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Segmento</label>
+                  <Input
+                    type="text"
+                    placeholder="Ex: Restaurante, Loja de Roupas, etc."
+                    value={businessSegment}
+                    onChange={e => setBusinessSegment(e.target.value)}
+                    className="mt-1"
+                    disabled={isLoading}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Produtos/Serviços principais</label>
+                  <Input
+                    type="text"
+                    placeholder="Separe por vírgula"
+                    value={mainProducts}
+                    onChange={e => setMainProducts(e.target.value)}
+                    className="mt-1"
+                    disabled={isLoading}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Endereço</label>
+                  <Input
+                    type="text"
+                    value={address}
+                    onChange={e => setAddress(e.target.value)}
+                    className="mt-1"
+                    disabled={isLoading}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Telefone</label>
+                  <Input
+                    type="tel"
+                    value={phone}
+                    onChange={e => setPhone(e.target.value)}
+                    className="mt-1"
+                    disabled={isLoading}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Instagram</label>
+                  <Input
+                    type="text"
+                    placeholder="@empresa"
+                    value={socialInstagram}
+                    onChange={e => setSocialInstagram(e.target.value)}
+                    className="mt-1"
+                    disabled={isLoading}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Facebook</label>
+                  <Input
+                    type="text"
+                    placeholder="/empresa"
+                    value={socialFacebook}
+                    onChange={e => setSocialFacebook(e.target.value)}
+                    className="mt-1"
+                    disabled={isLoading}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">LinkedIn</label>
+                  <Input
+                    type="text"
+                    placeholder="/empresa"
+                    value={socialLinkedin}
+                    onChange={e => setSocialLinkedin(e.target.value)}
+                    className="mt-1"
+                    disabled={isLoading}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Quantidade de funcionários</label>
+                  <Input
+                    type="number"
+                    min={0}
+                    value={employeesCount}
+                    onChange={e => setEmployeesCount(e.target.value === "" ? "" : Number(e.target.value))}
+                    className="mt-1"
+                    disabled={isLoading}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Faturamento médio mensal (R$)</label>
+                  <Input
+                    type="number"
+                    min={0}
+                    step={0.01}
+                    value={averageRevenue}
+                    onChange={e => setAverageRevenue(e.target.value === "" ? "" : Number(e.target.value))}
+                    className="mt-1"
+                    disabled={isLoading}
+                  />
+                </div>
               </div>
             </div>
             <Button
@@ -141,5 +306,5 @@ export default function Signup() {
         </div>
       </div>
     </div>
-  )
+  );
 }

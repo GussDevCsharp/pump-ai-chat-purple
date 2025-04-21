@@ -110,6 +110,57 @@ export type Database = {
         }
         Relationships: []
       }
+      company_profiles: {
+        Row: {
+          address: string | null
+          average_revenue: number | null
+          business_segment: string | null
+          company_name: string
+          created_at: string | null
+          employees_count: number | null
+          id: string
+          main_products: string | null
+          phone: string | null
+          social_facebook: string | null
+          social_instagram: string | null
+          social_linkedin: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          address?: string | null
+          average_revenue?: number | null
+          business_segment?: string | null
+          company_name: string
+          created_at?: string | null
+          employees_count?: number | null
+          id?: string
+          main_products?: string | null
+          phone?: string | null
+          social_facebook?: string | null
+          social_instagram?: string | null
+          social_linkedin?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          address?: string | null
+          average_revenue?: number | null
+          business_segment?: string | null
+          company_name?: string
+          created_at?: string | null
+          employees_count?: number | null
+          id?: string
+          main_products?: string | null
+          phone?: string | null
+          social_facebook?: string | null
+          social_instagram?: string | null
+          social_linkedin?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       documents: {
         Row: {
           content: string | null

@@ -82,7 +82,7 @@ export default function Landing() {
               to="/chat"
               state={{ topic: category.title, prompts: category.prompts }}
             >
-              <Card className="h-full hover:shadow-md transition-shadow cursor-pointer border-pump-gray/20">
+              <Card className="h-full hover:shadow-md transition-shadow cursor-pointer border-pump-gray/20 bg-transparent">
                 <CardContent className="pt-6">
                   <div className="flex flex-col items-center text-center space-y-4">
                     <div className="p-3 rounded-full bg-pump-purple/10 text-pump-purple">

@@ -1,3 +1,4 @@
+
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { MessageSquare } from "lucide-react"
@@ -70,7 +71,7 @@ export const BusinessCard = ({ title, description, prompts, gradient, themeName,
 
   return (
     <Card 
-      className="border bg-offwhite shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+      className="border bg-transparent shadow-sm hover:shadow-md transition-shadow cursor-pointer"
       onClick={handleCardClick}
     >
       <CardHeader>
@@ -111,3 +112,4 @@ export const BusinessCard = ({ title, description, prompts, gradient, themeName,
     </Card>
   )
 }
+

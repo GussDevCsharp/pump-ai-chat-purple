@@ -1,6 +1,6 @@
-import { useChatThemes } from "@/hooks/useChatThemes";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
+import { useChatThemes } from "@/hooks/useChatThemes";
 import { useChatSessions } from "@/hooks/useChatSessions";
 import { UserCardMenu } from "@/components/common/UserCardMenu";
 import { Button } from "@/components/ui/button";
@@ -59,7 +59,7 @@ export default function Themes() {
             </Button>
           </div>
 
-          <Card className="w-full md:w-1/3 bg-gradient-to-br from-pump-purple/5 to-pump-purple/10 border-none shadow-sm min-h-[120px]">
+          <Card className="w-full md:w-1/3 bg-transparent border-none shadow-none min-h-[120px]">
             <CardContent className="p-6 flex flex-col items-center justify-center h-full">
               {quoteLoading ? (
                 <p className="text-pump-gray animate-pulse text-center">
@@ -99,7 +99,7 @@ export default function Themes() {
               <Card 
                 key={theme.id}
                 onClick={() => handleSelectTheme(theme.id, theme.name)}
-                className="cursor-pointer hover:shadow-md transition-shadow border-pump-gray/20"
+                className="cursor-pointer hover:shadow-md transition-shadow border-pump-gray/20 bg-transparent"
                 style={{
                   borderColor: theme.color || undefined
                 }}

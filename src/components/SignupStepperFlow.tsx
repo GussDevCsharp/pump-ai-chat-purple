@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { SignupForm } from "./SignupForm";
 import { SignupPlansStep } from "./SignupPlansStep";
@@ -182,7 +181,6 @@ export function SignupStepperFlow() {
                 selectedPlanId={selectedPlan?.id ?? null}
                 onSelect={plan => setSelectedPlan(plan)}
                 disabled={isLoading}
-                forceColumn
               />
               <Button
                 className="bg-pump-purple text-white w-full mt-6"
@@ -300,4 +298,3 @@ export function SignupStepperFlow() {
 
   return null;
 }
-// ... FIM DO ARQUIVO

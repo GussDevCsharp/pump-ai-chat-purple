@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -20,6 +19,7 @@ type Plan = {
   chatpump?: boolean;
   benefits?: string[];
 };
+type Benefit = string;
 
 const STEPS = [
   "Plano",
@@ -31,6 +31,7 @@ export default function Signup() {
   // Formulário geral
   const [step, setStep] = useState(0);
   const [plans, setPlans] = useState<Plan[]>([]);
+  const [allBenefits, setAllBenefits] = useState<Benefit[]>([]);
   const [loadingPlans, setLoadingPlans] = useState(true);
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
 
@@ -49,106 +50,126 @@ export default function Signup() {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  // Buscar planos do Supabase
+  // Buscar planos + benefícios do Supabase
   useEffect(() => {
-    setLoadingPlans(true);
-    console.log("Buscando planos...");
+    const fetchPlansAndBenefits = async () => {
+      setLoadingPlans(true);
+      console.log("Buscando planos...");
 
-    // Busca planos
-    supabase
-      .from("pricing")
-      .select("id, name, description, price, is_paid, chatpump")
-      .order("price", { ascending: true })
-      .then(async ({ data, error }) => {
-        if (error) {
-          console.error("Erro ao buscar planos:", error);
-          toast.error("Erro ao buscar planos");
-          setLoadingPlans(false);
-          return;
+      // Busca planos
+      const { data: planData, error: planError } = await supabase
+        .from("pricing")
+        .select("id, name, description, price, is_paid, chatpump")
+        .order("price", { ascending: true });
+
+      if (planError) {
+        console.error("Erro ao buscar planos:", planError);
+        toast.error("Erro ao buscar planos");
+        setLoadingPlans(false);
+        return;
+      }
+
+      // Busca benefícios (todos)
+      const { data: allBenefitsData, error: allBenefitsError } = await supabase
+        .from("benefits")
+        .select("description")
+        .order("description", { ascending: true });
+
+      if (allBenefitsError) {
+        console.error("Erro ao buscar todos os benefícios:", allBenefitsError);
+        toast.error("Erro ao buscar benefícios");
+      }
+      const allBenefitsArr = (allBenefitsData || []).map(b => b.description) as string[];
+      setAllBenefits(allBenefitsArr);
+
+      if (planData && planData.length > 0) {
+        // Para cada plano, buscar os benefícios associados
+        const planIds = planData.map(plan => plan.id);
+
+        const { data: mappings, error: mappingsError } = await supabase
+          .from("plan_benefit_mappings")
+          .select("plan_id, benefit:benefit_id (description)")
+          .in("plan_id", planIds);
+
+        if (mappingsError) {
+          console.error("Erro ao buscar os mapeamentos de benefícios:", mappingsError);
+          toast.error("Erro ao buscar benefícios");
         }
-        console.log("Todos os planos recebidos:", data);
 
-        if (data && data.length > 0) {
-          // Para cada plano, buscar os benefícios associados via o novo relacionamento muitos-para-muitos
-          const planIds = data.map(plan => plan.id);
-
-          // Obter todos os mapeamentos plan_benefit_mappings para esses planos, incluindo benefícios associados
-          // Fazendo join direto: benefit_id -> benefits.description
-          const { data: mappings, error: mappingsError } = await supabase
-            .from("plan_benefit_mappings")
-            .select("plan_id, benefit:benefit_id (description)")
-            .in("plan_id", planIds);
-
-          if (mappingsError) {
-            console.error("Erro ao buscar os mapeamentos de benefícios:", mappingsError);
-            toast.error("Erro ao buscar benefícios");
-          }
-
-          // Estratégia: montar benefits por plan_id
-          const benefitsMap: Record<string, string[]> = {};
-          if (mappings) {
-            for (const mapping of mappings) {
-              if (!benefitsMap[mapping.plan_id]) benefitsMap[mapping.plan_id] = [];
-              // mapping.benefit?.description pode ser nulo se relacionamento quebrar
-              if (mapping.benefit && mapping.benefit.description) {
-                benefitsMap[mapping.plan_id].push(mapping.benefit.description);
-              }
+        // Montar benefits por plan_id
+        const benefitsMap: Record<string, string[]> = {};
+        if (mappings) {
+          for (const mapping of mappings) {
+            if (!benefitsMap[mapping.plan_id]) benefitsMap[mapping.plan_id] = [];
+            if (mapping.benefit && mapping.benefit.description) {
+              benefitsMap[mapping.plan_id].push(mapping.benefit.description);
             }
           }
+        }
 
-          // Junta benefícios aos planos
-          const enrichedPlans = data.map(plan => ({
-            ...plan,
-            benefits: benefitsMap[plan.id] || [],
-          }));
+        // Junta benefícios aos planos
+        const enrichedPlans = planData.map(plan => ({
+          ...plan,
+          benefits: benefitsMap[plan.id] || [],
+        }));
 
-          // Mantém o filtro do chatpump se houver
-          const filteredPlans = enrichedPlans.filter(plan => plan.chatpump === true);
+        const filteredPlans = enrichedPlans.filter(plan => plan.chatpump === true);
 
-          if (filteredPlans.length > 0) {
-            setPlans(filteredPlans as Plan[]);
-            setSelectedPlan(filteredPlans[0] as Plan);
-          } else {
-            setPlans(enrichedPlans as Plan[]);
-            setSelectedPlan(enrichedPlans[0] as Plan);
-            toast.warning("Usando todos os planos disponíveis", {
-              duration: 5000
-            });
-          }
+        if (filteredPlans.length > 0) {
+          setPlans(filteredPlans as Plan[]);
+          setSelectedPlan(filteredPlans[0] as Plan);
         } else {
-          console.log("Nenhum plano encontrado na tabela pricing");
-          const demoPlans = [
-            {
-              id: "free-plan",
-              name: "Plano Gratuito",
-              description: "Acesso básico às funcionalidades",
-              price: 0,
-              is_paid: false,
-              benefits: [
-                "Chat especializado para empresa",
-                "Limite de interações diárias: 10",
-                "Agrupamento das conversas por tema empresarial",
-                "Criação do perfil da sua empresa",
-                "Criação do perfil do empresário"
-              ]
-            },
-            {
-              id: "premium-plan",
-              name: "Plano Premium",
-              description: "Acesso completo a todas as funcionalidades",
-              price: 29.90,
-              is_paid: true,
-              benefits: ["Todas as funções", "Suporte prioritário"]
-            }
-          ];
-          setPlans(demoPlans);
-          setSelectedPlan(demoPlans[0]);
-          toast.warning("Usando planos de demonstração - Configure no Supabase", {
+          setPlans(enrichedPlans as Plan[]);
+          setSelectedPlan(enrichedPlans[0] as Plan);
+          toast.warning("Usando todos os planos disponíveis", {
             duration: 5000
           });
         }
-        setLoadingPlans(false);
-      });
+      } else {
+        console.log("Nenhum plano encontrado na tabela pricing");
+        // Em modo demonstração, mostre todos benefícios conhecidos
+        const demoBenefits = allBenefitsArr.length > 0 ? allBenefitsArr : [
+          "Chat especializado para empresa",
+          "Limite de interações diárias: 10",
+          "Agrupamento das conversas por tema empresarial",
+          "Criação do perfil da sua empresa",
+          "Criação do perfil do empresário"
+        ];
+        const demoPlans = [
+          {
+            id: "free-plan",
+            name: "Plano Gratuito",
+            description: "Acesso básico às funcionalidades",
+            price: 0,
+            is_paid: false,
+            benefits: [
+              "Chat especializado para empresa",
+              "Limite de interações diárias: 10",
+              "Agrupamento das conversas por tema empresarial",
+              "Criação do perfil da sua empresa",
+              "Criação do perfil do empresário"
+            ]
+          },
+          {
+            id: "premium-plan",
+            name: "Plano Premium",
+            description: "Acesso completo a todas as funcionalidades",
+            price: 29.90,
+            is_paid: true,
+            benefits: ["Todas as funções", "Suporte prioritário"]
+          }
+        ];
+        setPlans(demoPlans);
+        setAllBenefits(demoBenefits);
+        setSelectedPlan(demoPlans[0]);
+        toast.warning("Usando planos de demonstração - Configure no Supabase", {
+          duration: 5000
+        });
+      }
+      setLoadingPlans(false);
+    };
+
+    fetchPlansAndBenefits();
   }, []);
 
   // Passar para próximo/voltar
@@ -196,6 +217,7 @@ export default function Signup() {
                   selectedPlanId={selectedPlan?.id ?? null}
                   onSelect={plan => setSelectedPlan(plan)}
                   disabled={isLoading}
+                  allBenefits={allBenefits}
                 />
                 <Button
                   className="bg-pump-purple text-white w-full mt-6"

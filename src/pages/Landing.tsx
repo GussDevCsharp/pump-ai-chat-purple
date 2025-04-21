@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Building, ChartBar, Users, TrendingUp, MessageSquare } from "lucide-react"
@@ -29,7 +28,7 @@ export default function Landing() {
   ]
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-offwhite">
       <header className="border-b border-pump-gray/20 p-4">
         <div className="container mx-auto flex items-center justify-between">
           <img 
@@ -52,7 +51,7 @@ export default function Landing() {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-12">
+      <main className="container mx-auto px-4 py-12 bg-offwhite">
         <div className="max-w-4xl mx-auto text-center mb-16">
           <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
             Inteligência Artificial para Empresas

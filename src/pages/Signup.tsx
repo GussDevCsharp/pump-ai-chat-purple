@@ -124,7 +124,13 @@ export default function Signup() {
               description: "Acesso básico às funcionalidades",
               price: 0,
               is_paid: false,
-              benefits: ["Acesso limitado", "Suporte básico"]
+              benefits: [
+                "Chat especializado para empresa",
+                "Limite de interações diárias: 10",
+                "Agrupamento das conversas por tema empresarial",
+                "Criação do perfil da sua empresa",
+                "Criação do perfil do empresário"
+              ]
             },
             {
               id: "premium-plan",

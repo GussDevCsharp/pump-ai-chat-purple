@@ -1,4 +1,3 @@
-
 import { MessageCircle, Plus, User, Settings, Pencil, Trash2 } from "lucide-react"
 import { useChatSessions } from "@/hooks/useChatSessions"
 import { Button } from "@/components/ui/button"
@@ -86,27 +85,24 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
     }
   }
 
-  // Find theme name by ID
-  const getThemeName = (themeId: string | null): string => {
-    if (!themeId) return 'Outras conversas'
-    const theme = themes.find(t => t.id === themeId)
-    return theme ? theme.name : 'Outras conversas'
+  const getThemeObject = (themeId: string | null) => {
+    if (!themeId) return null;
+    return themes.find(t => t.id === themeId) || null;
   }
 
-  // Group sessions by theme_id and use theme names
-  const groupedSessions = sessions.reduce((groups, session) => {
-    const themeName = getThemeName(session.theme_id)
-    if (!groups[themeName]) {
-      groups[themeName] = []
+  const groupedSessions: Record<string, { themeObj: ChatTheme | null, sessions: typeof sessions }> = {};
+  sessions.forEach(session => {
+    const themeObj = getThemeObject(session.theme_id);
+    const groupKey = themeObj ? themeObj.id : 'no-theme';
+    if (!groupedSessions[groupKey]) {
+      groupedSessions[groupKey] = { themeObj, sessions: [] };
     }
-    groups[themeName].push(session)
-    return groups
-  }, {} as Record<string, typeof sessions>)
+    groupedSessions[groupKey].sessions.push(session);
+  });
 
   return (
     <>
       <div className="w-64 max-w-full h-full md:h-screen bg-white border-r border-pump-gray/20 p-4 flex flex-col">
-        {/* Mostrar botão fechar apenas no mobile */}
         {onClose && (
           <button
             type="button"
@@ -137,68 +133,80 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
             </div>
           ) : (
             <div className="flex flex-col gap-4">
-              {Object.entries(groupedSessions).map(([themeName, themeSessions]) => (
-                <div key={themeName} className="space-y-2">
-                  <h3 className="text-xs font-medium text-pump-gray px-3">{themeName}</h3>
-                  <div className="flex flex-col gap-2">
-                    {themeSessions.map((session) => (
-                      <div key={session.id} className="group relative">
-                        {editingId === session.id ? (
-                          <div className="flex items-center gap-2 p-3 rounded-lg bg-pump-gray-light">
-                            <Input
-                              value={newTitle}
-                              onChange={(e) => setNewTitle(e.target.value)}
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter') handleRename(session.id)
-                                if (e.key === 'Escape') setEditingId(null)
-                              }}
-                              onBlur={() => handleRename(session.id)}
-                              autoFocus
-                              className="text-sm"
-                            />
-                          </div>
-                        ) : (
-                          <button
-                            onClick={() => {
-                              navigate(`/chat?session=${session.id}`)
-                              if (onClose) onClose()
-                            }}
-                            className="flex items-center gap-2 p-3 w-full hover:bg-pump-gray-light rounded-lg transition-colors"
-                          >
-                            <MessageCircle className="w-4 h-4 text-pump-gray" />
-                            <span className="text-sm text-pump-gray font-medium truncate flex-1 text-left">
-                              {session.title}
-                            </span>
-                            <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
-                              <ThemeSelect 
-                                sessionId={session.id} 
-                                currentTheme={session.theme_id}
-                                onThemeChange={refreshSessions}
+              {Object.entries(groupedSessions).map(([groupKey, { themeObj, sessions: themeSessions }]) => {
+                const themeName = themeObj ? themeObj.name : 'Outras conversas';
+                const themeColor = themeObj && themeObj.color ? themeObj.color : undefined;
+                return (
+                  <div key={groupKey} className="space-y-2">
+                    <h3 className="flex items-center text-xs font-medium text-pump-gray px-3">
+                      {themeColor && (
+                        <span
+                          className="inline-block w-3 h-3 rounded-full mr-2 border border-pump-gray/30"
+                          style={{ backgroundColor: themeColor }}
+                        />
+                      )}
+                      <span style={themeColor ? { color: themeColor } : {}}>{themeName}</span>
+                    </h3>
+                    <div className="flex flex-col gap-2">
+                      {themeSessions.map((session) => (
+                        <div key={session.id} className="group relative">
+                          {editingId === session.id ? (
+                            <div className="flex items-center gap-2 p-3 rounded-lg bg-pump-gray-light">
+                              <Input
+                                value={newTitle}
+                                onChange={(e) => setNewTitle(e.target.value)}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') handleRename(session.id)
+                                  if (e.key === 'Escape') setEditingId(null)
+                                }}
+                                onBlur={() => handleRename(session.id)}
+                                autoFocus
+                                className="text-sm"
                               />
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  startEditing(session.id, session.title)
-                                }}
-                              >
-                                <Pencil className="w-4 h-4 text-pump-gray hover:text-pump-purple" />
-                              </button>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  setSessionToDelete(session.id)
-                                }}
-                              >
-                                <Trash2 className="w-4 h-4 text-pump-gray hover:text-red-500" />
-                              </button>
                             </div>
-                          </button>
-                        )}
-                      </div>
-                    ))}
+                          ) : (
+                            <button
+                              onClick={() => {
+                                navigate(`/chat?session=${session.id}`)
+                                if (onClose) onClose()
+                              }}
+                              className="flex items-center gap-2 p-3 w-full hover:bg-pump-gray-light rounded-lg transition-colors"
+                            >
+                              <MessageCircle className="w-4 h-4 text-pump-gray" />
+                              <span className="text-sm text-pump-gray font-medium truncate flex-1 text-left">
+                                {session.title}
+                              </span>
+                              <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
+                                <ThemeSelect 
+                                  sessionId={session.id} 
+                                  currentTheme={session.theme_id}
+                                  onThemeChange={refreshSessions}
+                                />
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    startEditing(session.id, session.title)
+                                  }}
+                                >
+                                  <Pencil className="w-4 h-4 text-pump-gray hover:text-pump-purple" />
+                                </button>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    setSessionToDelete(session.id)
+                                  }}
+                                >
+                                  <Trash2 className="w-4 h-4 text-pump-gray hover:text-red-500" />
+                                </button>
+                              </div>
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           )}
         </div>

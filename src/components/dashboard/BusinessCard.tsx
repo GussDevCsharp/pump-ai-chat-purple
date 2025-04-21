@@ -1,4 +1,3 @@
-
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { MessageSquare } from "lucide-react"
@@ -11,9 +10,11 @@ interface BusinessCardProps {
   description: string
   prompts: string[]
   gradient: string
+  themeName?: string
+  themeColor?: string
 }
 
-export const BusinessCard = ({ title, description, prompts, gradient }: BusinessCardProps) => {
+export const BusinessCard = ({ title, description, prompts, gradient, themeName, themeColor }: BusinessCardProps) => {
   const navigate = useNavigate()
 
   const handleCardClick = async () => {
@@ -81,6 +82,18 @@ export const BusinessCard = ({ title, description, prompts, gradient }: Business
         </div>
         <CardTitle className="text-xl text-gray-900">{title}</CardTitle>
         <CardDescription className="text-pump-gray">{description}</CardDescription>
+        {themeName && (
+          <div className="mt-2">
+            <span
+              className="font-semibold text-sm"
+              style={{
+                color: themeColor || "#9b87f5"
+              }}
+            >
+              {themeName}
+            </span>
+          </div>
+        )}
       </CardHeader>
       <CardContent>
         <div className="space-y-2">

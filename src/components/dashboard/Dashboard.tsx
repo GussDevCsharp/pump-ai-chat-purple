@@ -10,7 +10,9 @@ const businessSectors = [
       "Criar estratégia de marketing digital",
       "Otimizar funil de vendas",
       "Desenvolver pitch comercial"
-    ]
+    ],
+    themeName: "Marketing",
+    themeColor: "#9b87f5"
   },
   {
     title: "Recursos Humanos",
@@ -20,7 +22,9 @@ const businessSectors = [
       "Criar descrição de cargo",
       "Desenvolver programa de treinamento",
       "Avaliar desempenho de equipe"
-    ]
+    ],
+    themeName: "RH",
+    themeColor: "#4ADE80"
   },
   {
     title: "Finanças",
@@ -30,7 +34,9 @@ const businessSectors = [
       "Análise de viabilidade financeira",
       "Planejamento orçamentário",
       "Gestão de custos"
-    ]
+    ],
+    themeName: "Financeiro",
+    themeColor: "#0EA5E9"
   },
   {
     title: "Operações",
@@ -40,7 +46,9 @@ const businessSectors = [
       "Mapear processos internos",
       "Otimizar cadeia de suprimentos",
       "Implementar metodologia ágil"
-    ]
+    ],
+    themeName: "Operações",
+    themeColor: "#F97316"
   },
   {
     title: "Tecnologia",
@@ -50,7 +58,9 @@ const businessSectors = [
       "Planejar transformação digital",
       "Avaliar soluções tecnológicas",
       "Desenvolver arquitetura de sistemas"
-    ]
+    ],
+    themeName: "Tecnologia",
+    themeColor: "#6366F1"
   },
   {
     title: "Jurídico",
@@ -60,7 +70,9 @@ const businessSectors = [
       "Análise de contratos",
       "Adequação à LGPD",
       "Gestão de propriedade intelectual"
-    ]
+    ],
+    themeName: "Jurídico",
+    themeColor: "#6B7280"
   }
 ]
 
@@ -78,3 +90,4 @@ export const Dashboard = () => {
     </div>
   )
 }
+

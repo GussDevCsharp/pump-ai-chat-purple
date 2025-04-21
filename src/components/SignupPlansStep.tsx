@@ -17,6 +17,14 @@ interface SignupPlansStepProps {
 }
 
 export function SignupPlansStep({ plans, selectedPlanId, onSelect, disabled }: SignupPlansStepProps) {
+  if (plans.length === 0) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-gray-500">Nenhum plano disponível no momento. Por favor, tente novamente mais tarde.</p>
+      </div>
+    );
+  }
+
   return (
     <div>
       <h3 className="font-semibold text-lg mb-4 text-gray-900">Escolha o seu plano</h3>

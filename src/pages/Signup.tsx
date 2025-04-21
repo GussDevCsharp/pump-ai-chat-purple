@@ -50,6 +50,8 @@ export default function Signup() {
   // Buscar planos do Supabase
   useEffect(() => {
     setLoadingPlans(true);
+    console.log("Buscando planos...");
+    
     supabase
       .from("pricing")
       .select("id, name, description, price, is_paid")
@@ -57,9 +59,39 @@ export default function Signup() {
       .order("price", { ascending: true })
       .then(({ data, error }) => {
         if (error) {
+          console.error("Erro ao buscar planos:", error);
           toast.error("Erro ao buscar planos");
-        } else if (data) {
-          setPlans(data as Plan[]);
+        } else {
+          console.log("Planos recebidos:", data);
+          if (data && data.length > 0) {
+            setPlans(data as Plan[]);
+            // Selecione automaticamente o primeiro plano
+            setSelectedPlan(data[0] as Plan);
+          } else {
+            console.log("Nenhum plano encontrado com chatpump=true");
+            // Adicione temporariamente alguns planos de demonstração se não houver planos no banco de dados
+            const demoPlans = [
+              {
+                id: "free-plan",
+                name: "Plano Gratuito",
+                description: "Acesso básico às funcionalidades",
+                price: 0,
+                is_paid: false
+              },
+              {
+                id: "premium-plan",
+                name: "Plano Premium",
+                description: "Acesso completo a todas as funcionalidades",
+                price: 29.90,
+                is_paid: true
+              }
+            ];
+            setPlans(demoPlans);
+            setSelectedPlan(demoPlans[0]);
+            toast.warning("Usando planos de demonstração - Configure no Supabase", {
+              duration: 5000
+            });
+          }
         }
         setLoadingPlans(false);
       });
@@ -69,6 +101,7 @@ export default function Signup() {
   function nextStep() {
     setStep(prev => prev + 1);
   }
+  
   function prevStep() {
     setStep(prev => prev - 1);
   }
@@ -98,7 +131,10 @@ export default function Signup() {
         {step === 0 && (
           <div>
             {loadingPlans ? (
-              <div className="text-center py-10 text-pump-purple">Carregando planos...</div>
+              <div className="text-center py-10">
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-pump-purple border-t-transparent"></div>
+                <p className="mt-2 text-pump-purple">Carregando planos...</p>
+              </div>
             ) : (
               <>
                 <SignupPlansStep

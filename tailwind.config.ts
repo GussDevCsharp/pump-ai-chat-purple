@@ -19,10 +19,14 @@ export default {
     },
     extend: {
       colors: {
+        offwhite: {
+          DEFAULT: '#FFFDF3',
+        },
         pump: {
           purple: '#7E1CC6',
           gray: '#8E9196',
           'gray-light': '#F5F5F5',
+          'offwhite': '#FFFDF3'
         },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

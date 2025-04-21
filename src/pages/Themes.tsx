@@ -1,4 +1,3 @@
-
 import { useChatThemes } from "@/hooks/useChatThemes";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
@@ -29,8 +28,8 @@ export default function Themes() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      <header className="border-b border-pump-gray/20 p-4">
+    <div className="min-h-screen bg-offwhite">
+      <header className="border-b border-pump-gray/20 p-4 bg-white">
         <div className="container mx-auto flex items-center justify-between">
           <img 
             src="/lovable-uploads/5f403064-9209-4921-b73b-0f70c739981a.png" 
@@ -41,7 +40,7 @@ export default function Themes() {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-12">
+      <main className="container mx-auto px-4 py-12 bg-offwhite">
         <div className="flex flex-col md:flex-row justify-between items-start gap-8 mb-16">
           <div className="w-full md:w-2/3 text-left">
             <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">

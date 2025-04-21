@@ -5,7 +5,8 @@ import { useChatThemes } from "@/hooks/useChatThemes";
 import { useChatSessions } from "@/hooks/useChatSessions";
 import { UserCardMenu } from "@/components/common/UserCardMenu";
 import { Button } from "@/components/ui/button";
-import { MessageCircle } from "lucide-react";
+import { Download, MessageCircle } from "lucide-react";
+import { exportThemesToCSV } from "@/utils/exportThemes";
 
 export default function Themes() {
   const { themes, isLoading } = useChatThemes();
@@ -48,14 +49,25 @@ export default function Themes() {
             <p className="text-lg text-pump-gray mb-8">
               Gerencie seus temas, chats e configurações de forma centralizada.
             </p>
-            <Button 
-              onClick={handleNewChat}
-              size="lg"
-              className="bg-pump-purple hover:bg-pump-purple/90 text-white"
-            >
-              <MessageCircle className="w-5 h-5 mr-2" />
-              Novo Chat
-            </Button>
+            <div className="flex gap-4">
+              <Button 
+                onClick={handleNewChat}
+                size="lg"
+                className="bg-pump-purple hover:bg-pump-purple/90 text-white"
+              >
+                <MessageCircle className="w-5 h-5 mr-2" />
+                Novo Chat
+              </Button>
+              <Button
+                onClick={exportThemesToCSV}
+                size="lg"
+                variant="outline"
+                className="border-pump-purple text-pump-purple hover:bg-pump-purple/10"
+              >
+                <Download className="w-5 h-5 mr-2" />
+                Exportar Temas
+              </Button>
+            </div>
           </div>
         </div>
 

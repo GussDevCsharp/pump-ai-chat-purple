@@ -36,7 +36,6 @@ interface SignupPlansStepProps {
   selectedPlanId: string | null;
   onSelect: (plan: Plan) => void;
   disabled?: boolean;
-  forceColumn?: boolean; // Força exibição em coluna (vertical)
 }
 
 function getBenefitIcon(benefit: string) {
@@ -48,7 +47,7 @@ function getBenefitIcon(benefit: string) {
   return entry ? entry[1] : <FileText className="w-4 h-4" />;
 }
 
-export function SignupPlansStep({ plans, selectedPlanId, onSelect, disabled, forceColumn }: SignupPlansStepProps) {
+export function SignupPlansStep({ plans, selectedPlanId, onSelect, disabled }: SignupPlansStepProps) {
   if (plans.length === 0) {
     return (
       <div className="text-center py-8">
@@ -57,15 +56,11 @@ export function SignupPlansStep({ plans, selectedPlanId, onSelect, disabled, for
     );
   }
 
-  // Layout: cards em coluna ocupando toda a largura (sem overflow)
+  // Layout: cards horizontalmente em rolagem (responsivo)
   return (
     <div>
       <h3 className="font-semibold text-xl mb-6 text-gray-900 text-center">Escolha o seu plano</h3>
-      <div className={
-        forceColumn
-          ? "flex flex-col w-full gap-6"
-          : "flex w-full overflow-x-auto gap-6 p-2 justify-center"
-      }>
+      <div className="flex w-full gap-6 p-2 overflow-x-auto justify-center">
         {plans.map((plan, idx) => {
           const selected = selectedPlanId === plan.id;
           return (
@@ -144,3 +139,4 @@ export function SignupPlansStep({ plans, selectedPlanId, onSelect, disabled, for
     </div>
   );
 }
+

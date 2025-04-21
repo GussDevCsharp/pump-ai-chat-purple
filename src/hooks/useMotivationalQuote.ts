@@ -1,10 +1,12 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useChatAuth } from '@/hooks/useChatAuth';
 
 export const useMotivationalQuote = () => {
   const [quote, setQuote] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
+  const { authStatus } = useChatAuth();
 
   const fetchQuote = async () => {
     try {
@@ -23,8 +25,11 @@ export const useMotivationalQuote = () => {
   };
 
   useEffect(() => {
-    fetchQuote();
-  }, []);
+    // Generate a new quote whenever the auth status changes to 'authenticated'
+    if (authStatus === 'authenticated') {
+      fetchQuote();
+    }
+  }, [authStatus]);
 
   return { quote, isLoading };
 };

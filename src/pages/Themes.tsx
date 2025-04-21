@@ -60,15 +60,17 @@ export default function Themes() {
             </Button>
           </div>
 
-          <Card className="w-full md:w-1/3 bg-gradient-to-br from-pump-purple/5 to-pump-purple/10 border-none shadow-sm">
+          <Card className="w-full md:w-1/3 bg-gradient-to-br from-pump-purple/5 to-pump-purple/10 border-none shadow-sm min-h-[120px]">
             <CardContent className="p-6 flex items-center justify-center h-full">
               {quoteLoading ? (
-                <p className="text-pump-gray animate-pulse text-center">Carregando frase...</p>
-              ) : (
+                <p className="text-pump-gray animate-pulse text-center">
+                  Carregando sua frase do dia...
+                </p>
+              ) : quote ? (
                 <p className="text-lg text-pump-purple font-medium italic text-center">
                   "{quote}"
                 </p>
-              )}
+              ) : null}
             </CardContent>
           </Card>
         </div>

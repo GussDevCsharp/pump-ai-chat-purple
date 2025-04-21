@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -51,11 +50,11 @@ export default function Signup() {
   useEffect(() => {
     setLoadingPlans(true);
     console.log("Buscando planos...");
-    
+
     supabase
       .from("pricing")
       .select("id, name, description, price, is_paid")
-      .eq("ChatPump", true) // <-- corrigido aqui
+      .eq("chatpump", true)
       .order("price", { ascending: true })
       .then(({ data, error }) => {
         if (error) {
@@ -65,11 +64,9 @@ export default function Signup() {
           console.log("Planos recebidos:", data);
           if (data && data.length > 0) {
             setPlans(data as Plan[]);
-            // Selecione automaticamente o primeiro plano
             setSelectedPlan(data[0] as Plan);
           } else {
-            console.log("Nenhum plano encontrado com ChatPump=true");
-            // Adicione temporariamente alguns planos de demonstração se não houver planos no banco de dados
+            console.log("Nenhum plano encontrado com chatpump=true");
             const demoPlans = [
               {
                 id: "free-plan",
@@ -178,7 +175,7 @@ export default function Signup() {
               setCardCvc={setCardCvc}
               isLoading={isLoading}
               setIsLoading={setIsLoading}
-              hidePayment // Esconda pagamento desta etapa
+              hidePayment
             />
             <div className="flex gap-2 mt-6">
               <Button
@@ -201,7 +198,6 @@ export default function Signup() {
           </div>
         )}
 
-        {/* Etapa PAGAMENTO somente se plano pago */}
         {step === 2 && selectedPlan?.is_paid && (
           <div>
             <SignupPaymentFields
@@ -224,7 +220,6 @@ export default function Signup() {
               </Button>
               <Button
                 className="flex-1 bg-pump-purple text-white"
-                // Aqui submeteria o cadastro definitivo
                 onClick={() => toast.info("Fluxo visual concluído! (sem integração de pagamento)")}
                 disabled={isLoading}
               >

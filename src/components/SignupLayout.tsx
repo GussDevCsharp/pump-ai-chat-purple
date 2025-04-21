@@ -1,7 +1,6 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
-import { SignupStepper } from "./SignupStepper";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 
 interface SignupLayoutProps {
@@ -29,8 +28,42 @@ export function SignupLayout({ children, steps, current }: SignupLayoutProps) {
             Cadastre-se para acessar todas as funcionalidades
           </p>
         </div>
-        <SignupStepper steps={steps} current={current} />
+
+        <Tabs defaultValue={steps[current]} className="mb-8">
+          <TabsList className="w-full justify-between bg-gray-100 p-1">
+            {steps.map((step, index) => (
+              <TabsTrigger
+                key={step}
+                value={step}
+                disabled={index !== current}
+                className={`flex-1 ${
+                  index < current
+                    ? "text-green-600 bg-white"
+                    : index === current
+                    ? "text-pump-purple"
+                    : "text-gray-500"
+                }`}
+              >
+                <span className="flex items-center gap-2">
+                  <span className={`w-6 h-6 rounded-full flex items-center justify-center text-sm
+                    ${index < current
+                      ? "bg-green-500 text-white"
+                      : index === current
+                      ? "bg-pump-purple text-white"
+                      : "bg-gray-200"
+                    }`}
+                  >
+                    {index < current ? "✓" : index + 1}
+                  </span>
+                  {step}
+                </span>
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+
         <div>{children}</div>
+        
         <div className="text-center pt-4 border-t mt-10">
           <p className="text-sm text-gray-600 mb-2">Já tem uma conta?</p>
           <Link to="/login">

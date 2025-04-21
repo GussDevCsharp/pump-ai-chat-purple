@@ -2,18 +2,21 @@
 import React from "react";
 import { SignupLayout } from "@/components/SignupLayout";
 import { SignupStepperFlow } from "@/components/SignupStepperFlow";
+import { useState } from "react";
 
 // Etapas do cadastro
 const STEPS = [
-  "Plano e Cadastro Básico",
-  "Perfil da Empresa"
+  "Escolha do Plano",
+  "Cadastro Básico",
+  "Perfil da Empresa",
+  "Perfil do Usuário"
 ];
 
 export default function Signup() {
-  // Por simplicidade, o controle do stepper agora é feito dentro do SignupStepperFlow
-  // A prop current recebe "0" apenas para manter o passo visual correto no SignupLayout (pode ser adaptado)
+  const [currentStep, setCurrentStep] = useState(0);
+
   return (
-    <SignupLayout steps={STEPS} current={0}>
+    <SignupLayout steps={STEPS} current={currentStep}>
       <SignupStepperFlow />
     </SignupLayout>
   );

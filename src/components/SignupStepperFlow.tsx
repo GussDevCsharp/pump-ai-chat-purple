@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { SignupForm } from "./SignupForm";
 import { SignupPlansStep } from "./SignupPlansStep";
 import { SignupCompanyProfileStep } from "./SignupCompanyProfileStep";
 import { SignupProfileFields } from "./SignupProfileFields";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
 
 type Plan = {
   id: string;
@@ -145,141 +144,137 @@ export function SignupStepperFlow() {
     fetchPlans();
   }, []);
 
-  function nextStep() {
-    setStep(prev => prev + 1);
-  }
-
-  function prevStep() {
-    setStep(prev => prev - 1);
-  }
-
-  if (step === 0) {
-    return (
-      <div className="mt-10">
-        {loadingPlans ? (
-          <div className="text-center py-10">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-pump-purple border-t-transparent"></div>
-            <p className="mt-2 text-pump-purple">Carregando planos...</p>
-          </div>
-        ) : (
-          <div className="flex flex-col gap-8 justify-center items-start w-full max-w-[1200px] mx-auto px-4">
-            <div className="w-full">
-              <SignupPlansStep
-                plans={plans}
-                selectedPlanId={selectedPlan?.id ?? null}
-                onSelect={plan => setSelectedPlan(plan)}
-                disabled={isLoading}
-              />
-              <Button
-                className="bg-pump-purple text-white w-full mt-6"
-                disabled={!selectedPlan || isLoading}
-                onClick={nextStep}
-              >
-                Próxima etapa: Cadastro Básico
-              </Button>
+  return (
+    <>
+      {step === 0 && (
+        <div className="mt-10">
+          {loadingPlans ? (
+            <div className="text-center py-10">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-pump-purple border-t-transparent"></div>
+              <p className="mt-2 text-pump-purple">Carregando planos...</p>
             </div>
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  if (step === 1) {
-    return (
-      <div className="mt-10 max-w-xl mx-auto">
-        <SignupForm
-          email={email}
-          setEmail={setEmail}
-          password={password}
-          setPassword={setPassword}
-          confirmPassword={confirmPassword}
-          setConfirmPassword={setConfirmPassword}
-          isLoading={isLoading}
-          setIsLoading={setIsLoading}
-          hidePayment
-        />
-        <div className="flex gap-2 mt-6">
-          <Button variant="outline" className="flex-1 text-pump-purple" onClick={prevStep} disabled={isLoading}>Voltar</Button>
-          <Button
-            className="flex-1 bg-pump-purple text-white"
-            onClick={nextStep}
-            disabled={
-              !email ||
-              !password ||
-              !confirmPassword ||
-              password !== confirmPassword ||
-              isLoading
-            }
-          >
-            Próxima etapa: Perfil da Empresa
-          </Button>
+          ) : (
+            <div className="flex flex-col gap-8 justify-center items-start w-full max-w-[1200px] mx-auto px-4">
+              <div className="w-full">
+                <SignupPlansStep
+                  plans={plans}
+                  selectedPlanId={selectedPlan?.id ?? null}
+                  onSelect={plan => setSelectedPlan(plan)}
+                  disabled={isLoading}
+                />
+                <Button
+                  className="bg-pump-purple text-white w-full mt-6"
+                  disabled={!selectedPlan || isLoading}
+                  onClick={() => setStep(prev => prev + 1)}
+                >
+                  Próxima etapa: Cadastro Básico
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
-      </div>
-    );
-  }
+      )}
 
-  if (step === 2) {
-    return (
-      <SignupCompanyProfileStep
-        companyName={companyName}
-        setCompanyName={setCompanyName}
-        mainProducts={mainProducts}
-        setMainProducts={setMainProducts}
-        employeesCount={employeesCount}
-        setEmployeesCount={setEmployeesCount}
-        averageRevenue={averageRevenue}
-        setAverageRevenue={setAverageRevenue}
-        address={address}
-        setAddress={setAddress}
-        isLoading={isLoading}
-        onPrev={prevStep}
-        onFinish={nextStep}
-      />
-    );
-  }
-
-  if (step === 3) {
-    return (
-      <div className="mt-10 max-w-xl mx-auto bg-white rounded shadow p-8">
-        <h3 className="font-semibold text-lg mb-6 text-center text-gray-900">Perfil do Usuário</h3>
-        <form
-          onSubmit={e => {
-            e.preventDefault();
-            toast.info("Cadastro concluído! (fluxo visual, sem integração)");
-          }}
-          className="space-y-5"
-        >
-          <SignupProfileFields
-            firstName={firstName}
-            setFirstName={setFirstName}
-            lastName={lastName}
-            setLastName={setLastName}
-            cpf={cpf}
-            setCpf={setCpf}
-            disabled={isLoading}
+      {step === 1 && (
+        <div className="mt-10 max-w-xl mx-auto">
+          <SignupForm
+            email={email}
+            setEmail={setEmail}
+            password={password}
+            setPassword={setPassword}
+            confirmPassword={confirmPassword}
+            setConfirmPassword={setConfirmPassword}
+            isLoading={isLoading}
+            setIsLoading={setIsLoading}
+            hidePayment
           />
-
           <div className="flex gap-2 mt-6">
-            <Button variant="outline" className="flex-1 text-pump-purple" onClick={prevStep} type="button" disabled={isLoading}>
+            <Button 
+              variant="outline" 
+              className="flex-1 text-pump-purple" 
+              onClick={() => setStep(prev => prev - 1)} 
+              disabled={isLoading}
+            >
               Voltar
             </Button>
             <Button
-              type="submit"
               className="flex-1 bg-pump-purple text-white"
+              onClick={() => setStep(prev => prev + 1)}
               disabled={
-                !firstName ||
-                !lastName ||
-                !cpf ||
+                !email ||
+                !password ||
+                !confirmPassword ||
+                password !== confirmPassword ||
                 isLoading
               }
             >
-              Finalizar cadastro
+              Próxima etapa: Perfil da Empresa
             </Button>
           </div>
-        </form>
-      </div>
-    );
-  }
+        </div>
+      )}
 
-  return null;
+      {step === 2 && (
+        <SignupCompanyProfileStep
+          companyName={companyName}
+          setCompanyName={setCompanyName}
+          mainProducts={mainProducts}
+          setMainProducts={setMainProducts}
+          employeesCount={employeesCount}
+          setEmployeesCount={setEmployeesCount}
+          averageRevenue={averageRevenue}
+          setAverageRevenue={setAverageRevenue}
+          address={address}
+          setAddress={setAddress}
+          isLoading={isLoading}
+          onPrev={() => setStep(prev => prev - 1)}
+          onFinish={() => setStep(prev => prev + 1)}
+        />
+      )}
+
+      {step === 3 && (
+        <div className="mt-10 max-w-xl mx-auto bg-white rounded shadow p-8">
+          <h3 className="font-semibold text-lg mb-6 text-center text-gray-900">
+            Perfil do Usuário
+          </h3>
+          <form
+            onSubmit={e => {
+              e.preventDefault();
+              toast.info("Cadastro concluído! (fluxo visual, sem integração)");
+            }}
+            className="space-y-5"
+          >
+            <SignupProfileFields
+              firstName={firstName}
+              setFirstName={setFirstName}
+              lastName={lastName}
+              setLastName={setLastName}
+              cpf={cpf}
+              setCpf={setCpf}
+              disabled={isLoading}
+            />
+
+            <div className="flex gap-2 mt-6">
+              <Button 
+                variant="outline" 
+                className="flex-1 text-pump-purple" 
+                onClick={() => setStep(prev => prev - 1)}
+                type="button" 
+                disabled={isLoading}
+              >
+                Voltar
+              </Button>
+              <Button
+                type="submit"
+                className="flex-1 bg-pump-purple text-white"
+                disabled={!firstName || !lastName || !cpf || isLoading}
+              >
+                Finalizar cadastro
+              </Button>
+            </div>
+          </form>
+        </div>
+      )}
+    </>
+  );
 }

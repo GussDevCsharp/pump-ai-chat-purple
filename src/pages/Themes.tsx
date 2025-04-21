@@ -1,17 +1,16 @@
-import { Card, CardContent } from "@/components/ui/card";
+
+import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { useChatThemes } from "@/hooks/useChatThemes";
 import { useChatSessions } from "@/hooks/useChatSessions";
 import { UserCardMenu } from "@/components/common/UserCardMenu";
 import { Button } from "@/components/ui/button";
-import { MessageCircle, RefreshCw } from "lucide-react";
-import { useMotivationalQuote } from "@/hooks/useMotivationalQuote";
+import { MessageCircle } from "lucide-react";
 
 export default function Themes() {
   const { themes, isLoading } = useChatThemes();
   const { createSession } = useChatSessions();
   const navigate = useNavigate();
-  const { quote, isLoading: quoteLoading, refreshQuote } = useMotivationalQuote();
 
   const handleSelectTheme = async (themeId: string, themeName: string) => {
     const session = await createSession(`Chat sobre ${themeName}`, undefined, undefined, themeId);
@@ -58,31 +57,6 @@ export default function Themes() {
               Novo Chat
             </Button>
           </div>
-
-          <Card className="w-full md:w-1/3 bg-transparent border-none shadow-none min-h-[120px]">
-            <CardContent className="p-6 flex flex-col items-center justify-center h-full">
-              {quoteLoading ? (
-                <p className="text-pump-gray animate-pulse text-center">
-                  Carregando sua frase do dia...
-                </p>
-              ) : quote ? (
-                <>
-                  <p className="text-lg text-pump-purple font-medium italic text-center mb-4">
-                    "{quote}"
-                  </p>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={refreshQuote}
-                    className="text-pump-gray hover:text-pump-purple"
-                  >
-                    <RefreshCw className="h-4 w-4 mr-1" />
-                    Nova frase
-                  </Button>
-                </>
-              ) : null}
-            </CardContent>
-          </Card>
         </div>
 
         {isLoading ? (
@@ -104,7 +78,7 @@ export default function Themes() {
                   borderColor: theme.color || undefined
                 }}
               >
-                <CardContent className="p-6">
+                <div className="p-6">
                   <div className="flex items-start gap-4">
                     <div className="w-10 h-10 rounded-full flex items-center justify-center"
                       style={{
@@ -121,7 +95,7 @@ export default function Themes() {
                       )}
                     </div>
                   </div>
-                </CardContent>
+                </div>
               </Card>
             ))}
           </div>

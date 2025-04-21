@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -14,21 +15,22 @@ interface SignupFormProps {
   setPassword: (val: string) => void;
   confirmPassword: string;
   setConfirmPassword: (val: string) => void;
-  firstName: string;
-  setFirstName: (val: string) => void;
-  lastName: string;
-  setLastName: (val: string) => void;
-  cpf: string;
-  setCpf: (val: string) => void;
-  cardNumber: string;
-  setCardNumber: (val: string) => void;
-  cardExpiry: string;
-  setCardExpiry: (val: string) => void;
-  cardCvc: string;
-  setCardCvc: (val: string) => void;
   isLoading: boolean;
   setIsLoading: (val: boolean) => void;
   hidePayment?: boolean;
+  // These props are optional when hidePayment is true
+  firstName?: string;
+  setFirstName?: (val: string) => void;
+  lastName?: string;
+  setLastName?: (val: string) => void;
+  cpf?: string;
+  setCpf?: (val: string) => void;
+  cardNumber?: string;
+  setCardNumber?: (val: string) => void;
+  cardExpiry?: string;
+  setCardExpiry?: (val: string) => void;
+  cardCvc?: string;
+  setCardCvc?: (val: string) => void;
 }
 
 export function SignupForm(props: SignupFormProps) {
@@ -37,20 +39,25 @@ export function SignupForm(props: SignupFormProps) {
   const handleSignup = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (
-      !props.email ||
-      !props.password ||
-      !props.confirmPassword ||
-      !props.firstName ||
-      !props.lastName ||
-      !props.cpf ||
-      !props.cardNumber ||
-      !props.cardExpiry ||
-      !props.cardCvc
-    ) {
+    // Modified validation to account for optional fields
+    const needsProfileFields = !props.hidePayment;
+    const needsPaymentFields = !props.hidePayment;
+
+    if (!props.email || !props.password || !props.confirmPassword) {
       toast.error("Preencha todos os campos obrigatórios");
       return;
     }
+
+    if (needsProfileFields && (!props.firstName || !props.lastName || !props.cpf)) {
+      toast.error("Preencha todos os campos de perfil");
+      return;
+    }
+
+    if (needsPaymentFields && (!props.cardNumber || !props.cardExpiry || !props.cardCvc)) {
+      toast.error("Preencha todos os campos de pagamento");
+      return;
+    }
+
     if (props.password !== props.confirmPassword) {
       toast.error("As senhas não coincidem");
       return;
@@ -63,9 +70,9 @@ export function SignupForm(props: SignupFormProps) {
       password: props.password,
       options: {
         data: {
-          first_name: props.firstName,
-          last_name: props.lastName,
-          cpf: props.cpf,
+          first_name: props.firstName || "",
+          last_name: props.lastName || "",
+          cpf: props.cpf || "",
         },
       },
     });
@@ -141,23 +148,25 @@ export function SignupForm(props: SignupFormProps) {
           disabled={props.isLoading}
         />
       </div>
-      <SignupProfileFields
-        firstName={props.firstName}
-        lastName={props.lastName}
-        cpf={props.cpf}
-        setFirstName={props.setFirstName}
-        setLastName={props.setLastName}
-        setCpf={props.setCpf}
-        disabled={props.isLoading}
-      />
-      {!props.hidePayment && (
+      {!props.hidePayment && props.firstName !== undefined && props.lastName !== undefined && props.cpf !== undefined && (
+        <SignupProfileFields
+          firstName={props.firstName}
+          lastName={props.lastName}
+          cpf={props.cpf}
+          setFirstName={props.setFirstName!}
+          setLastName={props.setLastName!}
+          setCpf={props.setCpf!}
+          disabled={props.isLoading}
+        />
+      )}
+      {!props.hidePayment && props.cardNumber !== undefined && props.cardExpiry !== undefined && props.cardCvc !== undefined && (
         <SignupPaymentFields
           cardNumber={props.cardNumber}
           cardExpiry={props.cardExpiry}
           cardCvc={props.cardCvc}
-          setCardNumber={props.setCardNumber}
-          setCardExpiry={props.setCardExpiry}
-          setCardCvc={props.setCardCvc}
+          setCardNumber={props.setCardNumber!}
+          setCardExpiry={props.setCardExpiry!}
+          setCardCvc={props.setCardCvc!}
           disabled={props.isLoading}
         />
       )}

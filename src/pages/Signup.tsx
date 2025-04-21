@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { SignupForm } from "@/components/SignupForm";
 import { SignupStepper } from "@/components/SignupStepper";
 import { SignupPlansStep } from "@/components/SignupPlansStep";
-import { SignupPaymentFields } from "@/components/SignupPaymentFields";
+import { SignupCompanyProfileStep } from "@/components/SignupCompanyProfileStep";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -20,17 +20,16 @@ type Plan = {
 };
 type Benefit = string;
 
-// Atualizado: só duas etapas (1: plano+formulário | 2: cobrança/pagamento)
+// Novas etapas: 1. Dados + Plano, 2. Perfil empresa
 const STEPS = [
-  "Plano e Dados Básicos",
-  "Cobrança"
+  "Plano e Cadastro Básico",
+  "Perfil da Empresa"
 ];
 
 export default function Signup() {
   // Estado dos passos
   const [step, setStep] = useState(0);
   const [plans, setPlans] = useState<Plan[]>([]);
-  const [allBenefits, setAllBenefits] = useState<Benefit[]>([]);
   const [loadingPlans, setLoadingPlans] = useState(true);
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
 
@@ -47,15 +46,21 @@ export default function Signup() {
   const [cardExpiry, setCardExpiry] = useState("");
   const [cardCvc, setCardCvc] = useState("");
 
+  // Dados perfil empresa (etapa 2)
+  const [companyName, setCompanyName] = useState("");
+  const [mainProducts, setMainProducts] = useState("");
+  const [employeesCount, setEmployeesCount] = useState("");
+  const [averageRevenue, setAverageRevenue] = useState("");
+  const [address, setAddress] = useState("");
+
   const [isLoading, setIsLoading] = useState(false);
 
-  // Buscar planos + benefícios do Supabase
+  // Buscar planos do Supabase
   useEffect(() => {
-    const fetchPlansAndBenefits = async () => {
+    const fetchPlans = async () => {
       setLoadingPlans(true);
       console.log("Buscando planos...");
 
-      // Busca planos
       const { data: planData, error: planError } = await supabase
         .from("pricing")
         .select("id, name, description, price, is_paid, chatpump")
@@ -68,72 +73,15 @@ export default function Signup() {
         return;
       }
 
-      // Busca benefícios (todos)
-      const { data: allBenefitsData, error: allBenefitsError } = await supabase
-        .from("benefits")
-        .select("description")
-        .order("description", { ascending: true });
-
-      if (allBenefitsError) {
-        console.error("Erro ao buscar todos os benefícios:", allBenefitsError);
-        toast.error("Erro ao buscar benefícios");
-      }
-      const allBenefitsArr = (allBenefitsData || []).map(b => b.description) as string[];
-      setAllBenefits(allBenefitsArr);
-
       if (planData && planData.length > 0) {
-        // Para cada plano, buscar os benefícios associados
-        const planIds = planData.map(plan => plan.id);
-
-        const { data: mappings, error: mappingsError } = await supabase
-          .from("plan_benefit_mappings")
-          .select("plan_id, benefit:benefit_id (description)")
-          .in("plan_id", planIds);
-
-        if (mappingsError) {
-          console.error("Erro ao buscar os mapeamentos de benefícios:", mappingsError);
-          toast.error("Erro ao buscar benefícios");
-        }
-
-        // Montar benefits por plan_id
-        const benefitsMap: Record<string, string[]> = {};
-        if (mappings) {
-          for (const mapping of mappings) {
-            if (!benefitsMap[mapping.plan_id]) benefitsMap[mapping.plan_id] = [];
-            if (mapping.benefit && mapping.benefit.description) {
-              benefitsMap[mapping.plan_id].push(mapping.benefit.description);
-            }
-          }
-        }
-
-        // Junta benefícios aos planos
-        const enrichedPlans = planData.map(plan => ({
-          ...plan,
-          benefits: benefitsMap[plan.id] || [],
-        }));
-
-        const filteredPlans = enrichedPlans.filter(plan => plan.chatpump === true);
-
-        if (filteredPlans.length > 0) {
-          setPlans(filteredPlans as Plan[]);
-          setSelectedPlan(filteredPlans[0] as Plan);
-        } else {
-          setPlans(enrichedPlans as Plan[]);
-          setSelectedPlan(enrichedPlans[0] as Plan);
-          toast.warning("Usando todos os planos disponíveis", {
-            duration: 5000
-          });
+        const filteredPlans = planData.filter(plan => plan.chatpump === true);
+        setPlans(filteredPlans.length > 0 ? filteredPlans : planData);
+        setSelectedPlan((filteredPlans.length > 0 ? filteredPlans : planData)[0]);
+        if (filteredPlans.length === 0) {
+          toast.warning("Usando todos os planos disponíveis", { duration: 5000 });
         }
       } else {
-        console.log("Nenhum plano encontrado na tabela pricing");
-        // Em modo demonstração, mostre todos benefícios conhecidos
-        const demoBenefits = allBenefitsArr.length > 0 ? allBenefitsArr : [
-          "Chat especializado para empresa",
-          "Limite de interações diárias: 10",
-          "Agrupamento das conversas por tema empresarial",
-          "Criação do perfil da sua empresa",
-          "Criação do perfil do empresário"
-        ];
+        // Modo demonstração
         const demoPlans = [
           {
             id: "free-plan",
@@ -159,16 +107,13 @@ export default function Signup() {
           }
         ];
         setPlans(demoPlans);
-        setAllBenefits(demoBenefits);
         setSelectedPlan(demoPlans[0]);
-        toast.warning("Usando planos de demonstração - Configure no Supabase", {
-          duration: 5000
-        });
+        toast.warning("Usando planos de demonstração - Configure no Supabase", { duration: 5000 });
       }
       setLoadingPlans(false);
     };
 
-    fetchPlansAndBenefits();
+    fetchPlans();
   }, []);
 
   function nextStep() {
@@ -179,12 +124,9 @@ export default function Signup() {
     setStep(prev => prev - 1);
   }
 
-  // Novo fluxo: Etapa 0 = plano + formulário básico juntos
-  // Step 1 (só para planos pagos): pagamento
-
   return (
     <div className="min-h-screen bg-white flex flex-col px-4 py-12 w-full justify-center items-center">
-      <div className="max-w-md w-full mx-auto">
+      <div className="max-w-2xl w-full mx-auto">
         <div className="text-center mb-8">
           <Link to="/">
             <img
@@ -217,7 +159,6 @@ export default function Signup() {
                   selectedPlanId={selectedPlan?.id ?? null}
                   onSelect={plan => setSelectedPlan(plan)}
                   disabled={isLoading}
-                  allBenefits={allBenefits}
                 />
                 <div className="mt-8">
                   <SignupForm
@@ -258,42 +199,29 @@ export default function Signup() {
                   }
                   onClick={nextStep}
                 >
-                  {selectedPlan?.is_paid ? "Próxima etapa" : "Finalizar cadastro"}
+                  Próxima etapa
                 </Button>
               </>
             )}
           </div>
         )}
 
-        {step === 1 && selectedPlan?.is_paid && (
-          <div>
-            <SignupPaymentFields
-              cardNumber={cardNumber}
-              cardExpiry={cardExpiry}
-              cardCvc={cardCvc}
-              setCardNumber={setCardNumber}
-              setCardExpiry={setCardExpiry}
-              setCardCvc={setCardCvc}
-              disabled={isLoading}
-            />
-            <div className="flex gap-2 mt-6">
-              <Button
-                variant="outline"
-                className="flex-1 text-pump-purple"
-                onClick={prevStep}
-                disabled={isLoading}
-              >
-                Voltar
-              </Button>
-              <Button
-                className="flex-1 bg-pump-purple text-white"
-                onClick={() => toast.info("Fluxo visual concluído! (sem integração de pagamento)")}
-                disabled={isLoading}
-              >
-                Finalizar cadastro
-              </Button>
-            </div>
-          </div>
+        {step === 1 && (
+          <SignupCompanyProfileStep
+            companyName={companyName}
+            setCompanyName={setCompanyName}
+            mainProducts={mainProducts}
+            setMainProducts={setMainProducts}
+            employeesCount={employeesCount}
+            setEmployeesCount={setEmployeesCount}
+            averageRevenue={averageRevenue}
+            setAverageRevenue={setAverageRevenue}
+            address={address}
+            setAddress={setAddress}
+            isLoading={isLoading}
+            onPrev={prevStep}
+            onFinish={() => toast.info("Cadastro concluído! (fluxo visual, sem integração)")}
+          />
         )}
 
         <div className="text-center pt-4 border-t mt-10">
@@ -311,3 +239,4 @@ export default function Signup() {
     </div>
   );
 }
+// O arquivo ficou longo! Peça para refatorar se desejar.

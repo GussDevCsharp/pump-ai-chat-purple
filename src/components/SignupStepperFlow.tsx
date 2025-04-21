@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { SignupForm } from "./SignupForm";
@@ -17,6 +18,10 @@ type Plan = {
   benefits?: string[];
 };
 
+interface SignupStepperFlowProps {
+  onStepChange: (step: number) => void;
+}
+
 const STEPS = [
   "Planos",
   "Cadastro Básico",
@@ -24,7 +29,7 @@ const STEPS = [
   "Perfil do Usuário"
 ];
 
-export function SignupStepperFlow() {
+export function SignupStepperFlow({ onStepChange }: SignupStepperFlowProps) {
   const [step, setStep] = useState(0);
   const [plans, setPlans] = useState<Plan[]>([]);
   const [loadingPlans, setLoadingPlans] = useState(true);
@@ -49,6 +54,10 @@ export function SignupStepperFlow() {
   const [address, setAddress] = useState("");
 
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    onStepChange(step);
+  }, [step, onStepChange]);
 
   useEffect(() => {
     const fetchPlans = async () => {

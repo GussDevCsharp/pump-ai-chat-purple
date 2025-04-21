@@ -2,7 +2,6 @@
 import React from "react";
 import { SignupLayout } from "@/components/SignupLayout";
 import { SignupStepperFlow } from "@/components/SignupStepperFlow";
-import { useState } from "react";
 
 // Etapas do cadastro
 const STEPS = [
@@ -13,11 +12,11 @@ const STEPS = [
 ];
 
 export default function Signup() {
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentStep, setCurrentStep] = React.useState(0);
 
   return (
     <SignupLayout steps={STEPS} current={currentStep}>
-      <SignupStepperFlow />
+      <SignupStepperFlow onStepChange={setCurrentStep} />
     </SignupLayout>
   );
 }

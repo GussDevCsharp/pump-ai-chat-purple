@@ -5,6 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 export default function Signup() {
   // Login info
@@ -23,6 +26,13 @@ export default function Signup() {
   const [employeesCount, setEmployeesCount] = useState<number | "">("");
   const [averageRevenue, setAverageRevenue] = useState<number | "">("");
   const [isLoading, setIsLoading] = useState(false);
+
+  // Perfil do empresário
+  const [vision, setVision] = useState("");
+  const [mainChallenge, setMainChallenge] = useState("");
+  const [decisionProfile, setDecisionProfile] = useState(""); // conservador, equilibrado, agressivo
+  const [innovationHabit, setInnovationHabit] = useState(""); // sempre, as vezes, raramente
+  const [goalForYear, setGoalForYear] = useState("");
 
   const navigate = useNavigate();
 
@@ -62,7 +72,7 @@ export default function Signup() {
       return;
     }
 
-    // Insere o perfil da empresa
+    // Insere o perfil da empresa + perfil do empresário
     const { error: companyError } = await supabase
       .from("company_profiles")
       .insert([{
@@ -77,6 +87,14 @@ export default function Signup() {
         social_linkedin: socialLinkedin,
         employees_count: employeesCount === "" ? null : Number(employeesCount),
         average_revenue: averageRevenue === "" ? null : Number(averageRevenue),
+        // Esses dados vão no campo metadata (se existir) ou como campos extras se você adicionar via migration depois
+        metadata: {
+          vision,
+          main_challenge: mainChallenge,
+          decision_profile: decisionProfile,
+          innovation_habit: innovationHabit,
+          goal_for_year: goalForYear,
+        }
       }]);
 
     setIsLoading(false);
@@ -161,6 +179,7 @@ export default function Signup() {
                   disabled={isLoading}
                 />
               </div>
+
               {/* Perfil da Empresa */}
               <div className="pt-4 border-t mt-4">
                 <h3 className="font-semibold text-lg mb-2 text-gray-900">Dados da Empresa</h3>
@@ -269,6 +288,85 @@ export default function Signup() {
                     step={0.01}
                     value={averageRevenue}
                     onChange={e => setAverageRevenue(e.target.value === "" ? "" : Number(e.target.value))}
+                    className="mt-1"
+                    disabled={isLoading}
+                  />
+                </div>
+              </div>
+
+              {/* Perfil do Empresário */}
+              <div className="pt-4 border-t mt-4">
+                <h3 className="font-semibold text-lg mb-2 text-gray-900">Perfil do Empresário</h3>
+                <div>
+                  <Label htmlFor="vision">Qual é a sua maior visão para a empresa?</Label>
+                  <Textarea
+                    id="vision"
+                    value={vision}
+                    onChange={e => setVision(e.target.value)}
+                    className="mt-1"
+                    disabled={isLoading}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="mainChallenge">Que desafio é mais recorrente no seu dia a dia como empresário?</Label>
+                  <Textarea
+                    id="mainChallenge"
+                    value={mainChallenge}
+                    onChange={e => setMainChallenge(e.target.value)}
+                    className="mt-1"
+                    disabled={isLoading}
+                  />
+                </div>
+                <div>
+                  <Label>Como você se descreveria em relação à tomada de decisões?</Label>
+                  <RadioGroup
+                    className="mt-2 flex flex-col gap-2"
+                    value={decisionProfile}
+                    onValueChange={setDecisionProfile}
+                    disabled={isLoading}
+                  >
+                    <div className="flex items-center gap-2">
+                      <RadioGroupItem id="decision-conservador" value="conservador" />
+                      <Label htmlFor="decision-conservador">Conservador</Label>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <RadioGroupItem id="decision-equilibrado" value="equilibrado" />
+                      <Label htmlFor="decision-equilibrado">Equilibrado</Label>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <RadioGroupItem id="decision-agressivo" value="agressivo" />
+                      <Label htmlFor="decision-agressivo">Agressivo</Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+                <div>
+                  <Label>Você costuma buscar inovação para o seu negócio?</Label>
+                  <RadioGroup
+                    className="mt-2 flex flex-col gap-2"
+                    value={innovationHabit}
+                    onValueChange={setInnovationHabit}
+                    disabled={isLoading}
+                  >
+                    <div className="flex items-center gap-2">
+                      <RadioGroupItem id="innovacao-sempre" value="sempre" />
+                      <Label htmlFor="innovacao-sempre">Sempre</Label>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <RadioGroupItem id="innovacao-asvezes" value="asvezes" />
+                      <Label htmlFor="innovacao-asvezes">Às vezes</Label>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <RadioGroupItem id="innovacao-raramente" value="raramente" />
+                      <Label htmlFor="innovacao-raramente">Raramente</Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+                <div>
+                  <Label htmlFor="goalForYear">Qual seria o maior objetivo que deseja alcançar no próximo ano?</Label>
+                  <Textarea
+                    id="goalForYear"
+                    value={goalForYear}
+                    onChange={e => setGoalForYear(e.target.value)}
                     className="mt-1"
                     disabled={isLoading}
                   />

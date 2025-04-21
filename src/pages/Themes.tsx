@@ -1,4 +1,3 @@
-
 import { useChatThemes } from "@/hooks/useChatThemes";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
@@ -6,11 +5,13 @@ import { useChatSessions } from "@/hooks/useChatSessions";
 import { UserCardMenu } from "@/components/common/UserCardMenu";
 import { Button } from "@/components/ui/button";
 import { MessageCircle } from "lucide-react";
+import { useMotivationalQuote } from "@/hooks/useMotivationalQuote";
 
 export default function Themes() {
   const { themes, isLoading } = useChatThemes();
   const { createSession } = useChatSessions();
   const navigate = useNavigate();
+  const { quote, isLoading: quoteLoading } = useMotivationalQuote();
 
   const handleSelectTheme = async (themeId: string, themeName: string) => {
     const session = await createSession(`Chat sobre ${themeName}`, undefined, undefined, themeId);
@@ -40,21 +41,35 @@ export default function Themes() {
       </header>
 
       <main className="container mx-auto px-4 py-12">
-        <div className="max-w-4xl mx-auto text-center mb-16">
-          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
-            Central de Controle
-          </h1>
-          <p className="text-lg text-pump-gray mb-8">
-            Gerencie seus temas, chats e configurações de forma centralizada.
-          </p>
-          <Button 
-            onClick={handleNewChat}
-            size="lg"
-            className="bg-pump-purple hover:bg-pump-purple/90 text-white mb-12"
-          >
-            <MessageCircle className="w-5 h-5 mr-2" />
-            Novo Chat
-          </Button>
+        <div className="flex justify-between items-start gap-8 mb-16">
+          <div className="max-w-2xl">
+            <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6 text-left">
+              Central de Controle
+            </h1>
+            <p className="text-lg text-pump-gray mb-8 text-left">
+              Gerencie seus temas, chats e configurações de forma centralizada.
+            </p>
+            <Button 
+              onClick={handleNewChat}
+              size="lg"
+              className="bg-pump-purple hover:bg-pump-purple/90 text-white"
+            >
+              <MessageCircle className="w-5 h-5 mr-2" />
+              Novo Chat
+            </Button>
+          </div>
+
+          <Card className="w-96 bg-gradient-to-br from-pump-purple/5 to-pump-purple/10 border-none shadow-sm">
+            <CardContent className="p-6">
+              {quoteLoading ? (
+                <p className="text-pump-gray animate-pulse">Carregando frase...</p>
+              ) : (
+                <p className="text-lg text-pump-purple font-medium italic">
+                  "{quote}"
+                </p>
+              )}
+            </CardContent>
+          </Card>
         </div>
 
         {isLoading ? (

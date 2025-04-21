@@ -29,12 +29,16 @@ export function SignupPlansStep({ plans, selectedPlanId, onSelect, disabled }: S
   return (
     <div>
       <h3 className="font-semibold text-lg mb-4 text-gray-900">Escolha o seu plano</h3>
-      <div className="flex gap-4 overflow-x-auto pb-2 [-webkit-overflow-scrolling:touch] scrollbar-thin scrollbar-thumb-pump-purple/30 scrollbar-track-transparent">
+      <div
+        className="
+          flex flex-wrap gap-4 justify-center
+        "
+      >
         {plans.map(plan => (
           <button
             type="button"
             key={plan.id}
-            className={`min-w-[250px] max-w-[280px] flex-shrink-0 border rounded-lg p-4 text-left transition-all duration-150 ${selectedPlanId === plan.id ? 'border-pump-purple bg-pump-purple/5 shadow' : 'border-gray-200 bg-white'} ${disabled ? "opacity-70" : "hover:shadow-md"}`}
+            className={`min-w-[220px] max-w-[320px] w-full sm:w-auto flex-shrink-0 border rounded-lg p-4 text-left transition-all duration-150 ${selectedPlanId === plan.id ? 'border-pump-purple bg-pump-purple/5 shadow' : 'border-gray-200 bg-white'} ${disabled ? "opacity-70" : "hover:shadow-md"}`}
             onClick={() => !disabled && onSelect(plan)}
             disabled={disabled}
             tabIndex={0}
@@ -55,3 +59,4 @@ export function SignupPlansStep({ plans, selectedPlanId, onSelect, disabled }: S
     </div>
   );
 }
+

@@ -17,6 +17,7 @@ type Plan = {
   description?: string;
   price: number;
   is_paid: boolean;
+  chatpump?: boolean;  // Added chatpump property as optional
 };
 
 const STEPS = [
@@ -55,7 +56,7 @@ export default function Signup() {
     // Consulta direta sem filtros para debug
     supabase
       .from("pricing")
-      .select("id, name, description, price, is_paid")
+      .select("id, name, description, price, is_paid, chatpump")
       .order("price", { ascending: true })
       .then(({ data, error }) => {
         if (error) {

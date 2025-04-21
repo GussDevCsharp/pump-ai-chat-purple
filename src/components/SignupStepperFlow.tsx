@@ -3,10 +3,12 @@ import React, { useEffect, useState } from "react";
 import { SignupForm } from "./SignupForm";
 import { SignupPlansStep } from "./SignupPlansStep";
 import { SignupCompanyProfileStep } from "./SignupCompanyProfileStep";
+import { SignupProfileFields } from "./SignupProfileFields";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 
+// Type for plan data
 type Plan = {
   id: string;
   name: string;
@@ -17,9 +19,12 @@ type Plan = {
   benefits?: string[];
 };
 
+// NOVAS ETAPAS (usando a ordem desejada)
 const STEPS = [
-  "Plano e Cadastro Básico",
-  "Perfil da Empresa"
+  "Planos",
+  "Cadastro Básico",
+  "Perfil da Empresa",
+  "Perfil do Usuário"
 ];
 
 export function SignupStepperFlow() {
@@ -28,20 +33,22 @@ export function SignupStepperFlow() {
   const [loadingPlans, setLoadingPlans] = useState(true);
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
 
-  // User data
+  // User data (básico)
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  // Perfil do usuário
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [cpf, setCpf] = useState("");
 
-  // Payment data
+  // Payment data (deixado mas oculto)
   const [cardNumber, setCardNumber] = useState("");
   const [cardExpiry, setCardExpiry] = useState("");
   const [cardCvc, setCardCvc] = useState("");
 
-  // Company profile data (step 2)
+  // Company profile data
   const [companyName, setCompanyName] = useState("");
   const [mainProducts, setMainProducts] = useState("");
   const [employeesCount, setEmployeesCount] = useState("");
@@ -50,16 +57,17 @@ export function SignupStepperFlow() {
 
   const [isLoading, setIsLoading] = useState(false);
 
+  // Busca planos (igual antes, mas corrigindo tipagem para garantir compatibilidade)
   useEffect(() => {
     const fetchPlans = async () => {
       setLoadingPlans(true);
       console.log("Buscando planos...");
 
-      // First, fetch all plans from the pricing table
+      // Busca os planos (sem benefits direto)
       const { data: planData, error: planError } = await supabase
         .from("pricing")
         .select("id, name, description, price, is_paid, chatpump");
-      
+
       if (planError) {
         console.error("Erro ao buscar planos:", planError);
         toast.error("Erro ao buscar planos");
@@ -68,62 +76,53 @@ export function SignupStepperFlow() {
       }
 
       if (planData && planData.length > 0) {
-        // Create an array to hold the plans with their benefits
         const plansWithBenefits: Plan[] = [];
-        
-        // For each plan, fetch its benefits through the mapping table
         for (const plan of planData) {
-          // Get benefit descriptions for this plan through the mapping table
+          // busca os benefícios para este plano
           const { data: benefitMappings, error: benefitError } = await supabase
             .from("plan_benefit_mappings")
             .select("benefit_id")
             .eq("plan_id", plan.id);
-          
+
           if (benefitError) {
             console.error(`Erro ao buscar benefícios para o plano ${plan.id}:`, benefitError);
             continue;
           }
 
           let benefitDescriptions: string[] = [];
-          
           if (benefitMappings && benefitMappings.length > 0) {
-            // Extract benefit IDs
             const benefitIds = benefitMappings.map(mapping => mapping.benefit_id);
-            
-            // Fetch the actual benefit descriptions
+
             const { data: benefits, error: descriptionsError } = await supabase
               .from("benefits")
               .select("description")
               .in("id", benefitIds);
-            
+
             if (descriptionsError) {
               console.error("Erro ao buscar descrições dos benefícios:", descriptionsError);
             } else if (benefits) {
               benefitDescriptions = benefits.map(benefit => benefit.description);
             }
           }
-          
-          // Add the plan with its benefits to our array
+
           plansWithBenefits.push({
             ...plan,
             benefits: benefitDescriptions
           });
         }
-        
-        // Filter plans that have chatpump=true if any exist
+
+        // Se existir algum plano com chatpump = true, mostrar só esses
         const filteredPlans = plansWithBenefits.filter(plan => plan.chatpump === true);
-        
-        // Use filtered plans if available, otherwise use all plans
         const finalPlans = filteredPlans.length > 0 ? filteredPlans : plansWithBenefits;
-        
+
         setPlans(finalPlans);
         setSelectedPlan(finalPlans[0]);
-        
+
         if (filteredPlans.length === 0 && plansWithBenefits.length > 0) {
           toast.warning("Usando todos os planos disponíveis", { duration: 5000 });
         }
       } else {
-        // No plans found, use demo plans
+        // Demo-mode, fallback
         const demoPlans = [
           {
             id: "free-plan",
@@ -152,7 +151,6 @@ export function SignupStepperFlow() {
         setSelectedPlan(demoPlans[0]);
         toast.warning("Usando planos de demonstração - Configure no Supabase", { duration: 5000 });
       }
-      
       setLoadingPlans(false);
     };
 
@@ -167,7 +165,7 @@ export function SignupStepperFlow() {
     setStep(prev => prev - 1);
   }
 
-  // Step 0: 2 columns: form + plans
+  // PASSO 0: Planos
   if (step === 0) {
     return (
       <div className="mt-10">
@@ -177,49 +175,8 @@ export function SignupStepperFlow() {
             <p className="mt-2 text-pump-purple">Carregando planos...</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-            <div className="order-2 md:order-1">
-              <SignupForm
-                email={email}
-                setEmail={setEmail}
-                password={password}
-                setPassword={setPassword}
-                confirmPassword={confirmPassword}
-                setConfirmPassword={setConfirmPassword}
-                firstName={firstName}
-                setFirstName={setFirstName}
-                lastName={lastName}
-                setLastName={setLastName}
-                cpf={cpf}
-                setCpf={setCpf}
-                cardNumber={cardNumber}
-                setCardNumber={setCardNumber}
-                cardExpiry={cardExpiry}
-                setCardExpiry={setCardExpiry}
-                cardCvc={cardCvc}
-                setCardCvc={setCardCvc}
-                isLoading={isLoading}
-                setIsLoading={setIsLoading}
-                hidePayment
-              />
-              <Button
-                className="bg-pump-purple text-white w-full mt-6"
-                disabled={
-                  !selectedPlan ||
-                  !email ||
-                  !password ||
-                  !confirmPassword ||
-                  !firstName ||
-                  !lastName ||
-                  !cpf ||
-                  isLoading
-                }
-                onClick={nextStep}
-              >
-                Próxima etapa
-              </Button>
-            </div>
-            <div className="order-1 md:order-2">
+          <div className="flex flex-col md:flex-row gap-8 justify-center items-start">
+            <div className="md:w-2/3 w-full mx-auto">
               <SignupPlansStep
                 plans={plans}
                 selectedPlanId={selectedPlan?.id ?? null}
@@ -227,6 +184,13 @@ export function SignupStepperFlow() {
                 disabled={isLoading}
                 forceColumn
               />
+              <Button
+                className="bg-pump-purple text-white w-full mt-6"
+                disabled={!selectedPlan || isLoading}
+                onClick={nextStep}
+              >
+                Próxima etapa: Cadastro Básico
+              </Button>
             </div>
           </div>
         )}
@@ -234,8 +198,43 @@ export function SignupStepperFlow() {
     );
   }
 
-  // Step 1: Company profile
+  // PASSO 1: Cadastro Básico
   if (step === 1) {
+    return (
+      <div className="mt-10 max-w-xl mx-auto">
+        <SignupForm
+          email={email}
+          setEmail={setEmail}
+          password={password}
+          setPassword={setPassword}
+          confirmPassword={confirmPassword}
+          setConfirmPassword={setConfirmPassword}
+          isLoading={isLoading}
+          setIsLoading={setIsLoading}
+          hidePayment // pagamentos removido/oculto
+        />
+        <div className="flex gap-2 mt-6">
+          <Button variant="outline" className="flex-1 text-pump-purple" onClick={prevStep} disabled={isLoading}>Voltar</Button>
+          <Button
+            className="flex-1 bg-pump-purple text-white"
+            onClick={nextStep}
+            disabled={
+              !email ||
+              !password ||
+              !confirmPassword ||
+              password !== confirmPassword ||
+              isLoading
+            }
+          >
+            Próxima etapa: Perfil da Empresa
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // PASSO 2: Perfil da Empresa
+  if (step === 2) {
     return (
       <SignupCompanyProfileStep
         companyName={companyName}
@@ -250,10 +249,55 @@ export function SignupStepperFlow() {
         setAddress={setAddress}
         isLoading={isLoading}
         onPrev={prevStep}
-        onFinish={() => toast.info("Cadastro concluído! (fluxo visual, sem integração)")}
+        onFinish={nextStep}
       />
+    );
+  }
+
+  // PASSO 3: Perfil do Usuário
+  if (step === 3) {
+    return (
+      <div className="mt-10 max-w-xl mx-auto bg-white rounded shadow p-8">
+        <h3 className="font-semibold text-lg mb-6 text-center text-gray-900">Perfil do Usuário</h3>
+        <form
+          onSubmit={e => {
+            e.preventDefault();
+            toast.info("Cadastro concluído! (fluxo visual, sem integração)");
+          }}
+          className="space-y-5"
+        >
+          <SignupProfileFields
+            firstName={firstName}
+            setFirstName={setFirstName}
+            lastName={lastName}
+            setLastName={setLastName}
+            cpf={cpf}
+            setCpf={setCpf}
+            disabled={isLoading}
+          />
+
+          <div className="flex gap-2 mt-6">
+            <Button variant="outline" className="flex-1 text-pump-purple" onClick={prevStep} type="button" disabled={isLoading}>
+              Voltar
+            </Button>
+            <Button
+              type="submit"
+              className="flex-1 bg-pump-purple text-white"
+              disabled={
+                !firstName ||
+                !lastName ||
+                !cpf ||
+                isLoading
+              }
+            >
+              Finalizar cadastro
+            </Button>
+          </div>
+        </form>
+      </div>
     );
   }
 
   return null;
 }
+// ... FIM DO ARQUIVO

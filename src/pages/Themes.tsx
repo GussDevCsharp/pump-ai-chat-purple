@@ -1,3 +1,4 @@
+
 import { useEffect } from "react"
 import { useChatThemes } from "@/hooks/useChatThemes" 
 import { Card, CardContent } from "@/components/ui/card"
@@ -8,6 +9,7 @@ import {
 } from "lucide-react"
 import { useChatSessions } from "@/hooks/useChatSessions"
 import { UserCardMenu } from "@/components/common/UserCardMenu"
+import { Button } from "@/components/ui/button"
 
 function getThemeIcon(themeName: string) {
   const name = themeName.toLowerCase();
@@ -47,6 +49,13 @@ export default function Themes() {
     }
   }
 
+  const handleNewChat = async () => {
+    const session = await createSession("Nova conversa")
+    if(session) {
+      navigate(`/chat?session=${session.id}`)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-white">
       <header className="border-b border-pump-gray/20 p-4 px-4 sm:px-8 bg-white relative">
@@ -56,7 +65,8 @@ export default function Themes() {
             alt="Pump.ia"
             className="h-8"
           />
-          <div className="absolute right-4 top-1/2 -translate-y-1/2 sm:static sm:translate-y-0">
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 sm:static sm:translate-y-0 flex items-center gap-4">
+            <Button size="sm" onClick={handleNewChat}>Nova conversa</Button>
             <UserCardMenu />
           </div>
         </div>
@@ -106,3 +116,4 @@ export default function Themes() {
     </div>
   )
 }
+

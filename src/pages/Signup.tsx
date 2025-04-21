@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { SignupForm } from "@/components/SignupForm";
 import { SignupStepper } from "@/components/SignupStepper";
 import { SignupPlansStep } from "@/components/SignupPlansStep";
@@ -21,14 +20,14 @@ type Plan = {
 };
 type Benefit = string;
 
+// Atualizado: só duas etapas (1: plano+formulário | 2: cobrança/pagamento)
 const STEPS = [
-  "Plano",
-  "Cadastro",
+  "Plano e Dados Básicos",
   "Cobrança"
 ];
 
 export default function Signup() {
-  // Formulário geral
+  // Estado dos passos
   const [step, setStep] = useState(0);
   const [plans, setPlans] = useState<Plan[]>([]);
   const [allBenefits, setAllBenefits] = useState<Benefit[]>([]);
@@ -172,16 +171,17 @@ export default function Signup() {
     fetchPlansAndBenefits();
   }, []);
 
-  // Passar para próximo/voltar
   function nextStep() {
     setStep(prev => prev + 1);
   }
-  
+
   function prevStep() {
     setStep(prev => prev - 1);
   }
 
-  // Render fluxo
+  // Novo fluxo: Etapa 0 = plano + formulário básico juntos
+  // Step 1 (só para planos pagos): pagamento
+
   return (
     <div className="min-h-screen bg-white flex flex-col px-4 py-12 w-full justify-center items-center">
       <div className="max-w-md w-full mx-auto">
@@ -219,65 +219,53 @@ export default function Signup() {
                   disabled={isLoading}
                   allBenefits={allBenefits}
                 />
+                <div className="mt-8">
+                  <SignupForm
+                    email={email}
+                    setEmail={setEmail}
+                    password={password}
+                    setPassword={setPassword}
+                    confirmPassword={confirmPassword}
+                    setConfirmPassword={setConfirmPassword}
+                    firstName={firstName}
+                    setFirstName={setFirstName}
+                    lastName={lastName}
+                    setLastName={setLastName}
+                    cpf={cpf}
+                    setCpf={setCpf}
+                    cardNumber={cardNumber}
+                    setCardNumber={setCardNumber}
+                    cardExpiry={cardExpiry}
+                    setCardExpiry={setCardExpiry}
+                    cardCvc={cardCvc}
+                    setCardCvc={setCardCvc}
+                    isLoading={isLoading}
+                    setIsLoading={setIsLoading}
+                    hidePayment
+                  />
+                </div>
                 <Button
                   className="bg-pump-purple text-white w-full mt-6"
-                  disabled={!selectedPlan}
+                  disabled={
+                    !selectedPlan ||
+                    !email ||
+                    !password ||
+                    !confirmPassword ||
+                    !firstName ||
+                    !lastName ||
+                    !cpf ||
+                    isLoading
+                  }
                   onClick={nextStep}
                 >
-                  {selectedPlan?.is_paid ? "Prosseguir para cadastro" : "Prosseguir"}
+                  {selectedPlan?.is_paid ? "Próxima etapa" : "Finalizar cadastro"}
                 </Button>
               </>
             )}
           </div>
         )}
 
-        {step === 1 && selectedPlan && (
-          <div>
-            <SignupForm
-              email={email}
-              setEmail={setEmail}
-              password={password}
-              setPassword={setPassword}
-              confirmPassword={confirmPassword}
-              setConfirmPassword={setConfirmPassword}
-              firstName={firstName}
-              setFirstName={setFirstName}
-              lastName={lastName}
-              setLastName={setLastName}
-              cpf={cpf}
-              setCpf={setCpf}
-              cardNumber={cardNumber}
-              setCardNumber={setCardNumber}
-              cardExpiry={cardExpiry}
-              setCardExpiry={setCardExpiry}
-              cardCvc={cardCvc}
-              setCardCvc={setCardCvc}
-              isLoading={isLoading}
-              setIsLoading={setIsLoading}
-              hidePayment
-            />
-            <div className="flex gap-2 mt-6">
-              <Button
-                variant="outline"
-                className="flex-1 text-pump-purple"
-                onClick={prevStep}
-                disabled={isLoading}
-              >
-                Voltar
-              </Button>
-              <Button
-                className="flex-1 bg-pump-purple text-white"
-                onClick={nextStep}
-                disabled={isLoading}
-                type="button"
-              >
-                {selectedPlan.is_paid ? "Próxima etapa" : "Finalizar cadastro"}
-              </Button>
-            </div>
-          </div>
-        )}
-
-        {step === 2 && selectedPlan?.is_paid && (
+        {step === 1 && selectedPlan?.is_paid && (
           <div>
             <SignupPaymentFields
               cardNumber={cardNumber}

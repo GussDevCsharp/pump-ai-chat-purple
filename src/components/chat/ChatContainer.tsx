@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react"
 import { ChatMessages } from "@/components/chat/ChatMessages"
 import { ChatInput } from "@/components/chat/ChatInput"
@@ -232,7 +231,7 @@ export const ChatContainer = () => {
 
       if (!currentSessionId) {
         const defaultTitle = content.split(' ').slice(0, 5).join(' ') + '...'
-
+        
         const session = await createSession(defaultTitle)
         if (!session) throw new Error("Failed to create chat session")
 
@@ -348,6 +347,21 @@ export const ChatContainer = () => {
     console.log('Temas:', temasUnicos.join(', '));
   }, []);
 
+  const handleStartNewChat = async () => {
+    const session = await createSession("Nova conversa");
+    if (session) {
+      setSearchParams(prev => {
+        prev.set("session", session.id);
+        return prev;
+      }, { replace: true });
+      // Limpa mensagens antigas
+      setMessages([{
+        role: 'assistant',
+        content: 'Olá! Como posso ajudar você hoje?'
+      }]);
+    }
+  };
+
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden">
       {authStatus === 'anonymous' && (
@@ -365,6 +379,18 @@ export const ChatContainer = () => {
           >
             <LogIn className="w-4 h-4 mr-2" />
             Entrar para recursos avançados
+          </Button>
+        </div>
+      )}
+      
+      {authStatus === 'authenticated' && (
+        <div className="px-4 pt-4 flex justify-end">
+          <Button
+            variant="outline"
+            onClick={handleStartNewChat}
+            className="border-pump-purple text-pump-purple hover:bg-pump-purple/10"
+          >
+            Novo Chat
           </Button>
         </div>
       )}

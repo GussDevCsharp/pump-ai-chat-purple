@@ -70,7 +70,7 @@ export const BusinessCard = ({ title, description, prompts, gradient, themeName,
 
   return (
     <Card 
-      className="border bg-white shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+      className="border bg-offwhite shadow-sm hover:shadow-md transition-shadow cursor-pointer"
       onClick={handleCardClick}
     >
       <CardHeader>

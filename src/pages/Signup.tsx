@@ -55,7 +55,7 @@ export default function Signup() {
     supabase
       .from("pricing")
       .select("id, name, description, price, is_paid")
-      .eq("chatpump", true)
+      .eq("ChatPump", true) // <-- corrigido aqui
       .order("price", { ascending: true })
       .then(({ data, error }) => {
         if (error) {
@@ -68,7 +68,7 @@ export default function Signup() {
             // Selecione automaticamente o primeiro plano
             setSelectedPlan(data[0] as Plan);
           } else {
-            console.log("Nenhum plano encontrado com chatpump=true");
+            console.log("Nenhum plano encontrado com ChatPump=true");
             // Adicione temporariamente alguns planos de demonstração se não houver planos no banco de dados
             const demoPlans = [
               {

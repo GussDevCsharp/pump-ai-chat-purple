@@ -42,10 +42,10 @@ export default function Themes() {
       <main className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto text-center mb-16">
           <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
-            Central de Temas
+            Central de Controle
           </h1>
           <p className="text-lg text-pump-gray mb-8">
-            Explore e escolha um tema para sua conversa. Personalize o atendimento conforme a área do seu interesse!
+            Gerencie seus temas, chats e configurações de forma centralizada.
           </p>
           <Button 
             onClick={handleNewChat}

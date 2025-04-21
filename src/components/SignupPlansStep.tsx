@@ -7,6 +7,7 @@ interface Plan {
   description?: string;
   price: number;
   is_paid: boolean;
+  chatpump?: boolean; // Garantir compatibilidade, pois chega do backend via select
 }
 
 interface SignupPlansStepProps {
@@ -28,18 +29,19 @@ export function SignupPlansStep({ plans, selectedPlanId, onSelect, disabled }: S
   return (
     <div>
       <h3 className="font-semibold text-lg mb-4 text-gray-900">Escolha o seu plano</h3>
-      <div className="grid gap-4">
+      <div className="flex gap-4 overflow-x-auto pb-2 [-webkit-overflow-scrolling:touch] scrollbar-thin scrollbar-thumb-pump-purple/30 scrollbar-track-transparent">
         {plans.map(plan => (
           <button
             type="button"
             key={plan.id}
-            className={`border rounded-lg p-4 text-left ${selectedPlanId === plan.id ? 'border-pump-purple bg-pump-purple/5' : 'border-gray-200'} ${disabled ? "opacity-70" : ""}`}
+            className={`min-w-[250px] max-w-[280px] flex-shrink-0 border rounded-lg p-4 text-left transition-all duration-150 ${selectedPlanId === plan.id ? 'border-pump-purple bg-pump-purple/5 shadow' : 'border-gray-200 bg-white'} ${disabled ? "opacity-70" : "hover:shadow-md"}`}
             onClick={() => !disabled && onSelect(plan)}
             disabled={disabled}
+            tabIndex={0}
           >
             <div className="flex justify-between items-center">
               <span className="font-medium text-lg">{plan.name}</span>
-              <span className="">
+              <span>
                 {plan.is_paid 
                   ? <span className="font-bold text-pump-purple">R$ {plan.price.toFixed(2)}</span>
                   : <span className="font-medium text-green-600">Grátis</span>

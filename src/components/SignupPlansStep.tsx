@@ -2,6 +2,7 @@
 import React from "react";
 import { ArrowRight, User, Database, Smartphone, Upload, Clock, FileText, Shield, Users, Folder, Key, Activity, AlertTriangle, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 
 // Mapeamento simples de ícones (você pode adaptar conforme os nomes dos benefícios)
 const iconMap: { [key: string]: React.ReactNode } = {
@@ -42,7 +43,7 @@ function getBenefitIcon(benefit: string) {
   // Busca o ícone que mais casa com a palavra-chave do benefício:
   const lower = benefit.toLowerCase();
   const entry = Object.entries(iconMap).find(([key]) =>
-    lower.includes(key)
+    lower.includes(key.toLowerCase())
   );
   return entry ? entry[1] : <FileText className="w-4 h-4" />;
 }
@@ -65,7 +66,7 @@ export function SignupPlansStep({ plans, selectedPlanId, onSelect, disabled, for
           ? "flex flex-col w-full gap-6"
           : "flex w-full overflow-x-auto gap-6 p-2 justify-center"
       }>
-        {plans.slice(0, 3).map((plan, idx) => {
+        {plans.map((plan, idx) => {
           const selected = selectedPlanId === plan.id;
           return (
             <div
@@ -111,18 +112,21 @@ export function SignupPlansStep({ plans, selectedPlanId, onSelect, disabled, for
                 {/* Descrição */}
                 <p className="text-sm text-gray-700 mb-4 min-h-[32px]">{plan.description}</p>
                 {/* Benefícios */}
-                <ul className="flex flex-col gap-3 mb-6">
-                  {plan.benefits && plan.benefits.length > 0 ? (
-                    plan.benefits.map((benefit, idxb) => (
-                      <li key={idxb} className="flex gap-2 text-[15px] items-center text-gray-900">
-                        <span className="text-pump-purple">{getBenefitIcon(benefit)}</span>
-                        <span className="leading-tight">{benefit}</span>
-                      </li>
-                    ))
-                  ) : (
-                    <li className="text-gray-400 italic text-[15px]">Sem benefícios informados</li>
-                  )}
-                </ul>
+                <div className="flex-grow">
+                  <h4 className="font-semibold text-sm mb-3 text-gray-900">Benefícios incluídos:</h4>
+                  <ul className="flex flex-col gap-3 mb-6">
+                    {plan.benefits && plan.benefits.length > 0 ? (
+                      plan.benefits.map((benefit, idxb) => (
+                        <li key={idxb} className="flex gap-2 text-[15px] items-center text-gray-900">
+                          <span className="text-pump-purple">{getBenefitIcon(benefit)}</span>
+                          <span className="leading-tight">{benefit}</span>
+                        </li>
+                      ))
+                    ) : (
+                      <li className="text-gray-400 italic text-[15px]">Sem benefícios informados</li>
+                    )}
+                  </ul>
+                </div>
                 <div className="mt-auto">
                   <a
                     href="#"

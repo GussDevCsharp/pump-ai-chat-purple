@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -29,6 +28,7 @@ interface SignupFormProps {
   setCardCvc: (val: string) => void;
   isLoading: boolean;
   setIsLoading: (val: boolean) => void;
+  hidePayment?: boolean;
 }
 
 export function SignupForm(props: SignupFormProps) {
@@ -92,7 +92,7 @@ export function SignupForm(props: SignupFormProps) {
   };
 
   return (
-    <form onSubmit={handleSignup} className="space-y-5 bg-white rounded shadow px-6 py-8">
+    <form className="space-y-5 bg-white rounded shadow px-6 py-8">
       <div>
         <label htmlFor="email" className="block text-sm font-medium text-gray-700">
           Email *
@@ -150,22 +150,17 @@ export function SignupForm(props: SignupFormProps) {
         setCpf={props.setCpf}
         disabled={props.isLoading}
       />
-      <SignupPaymentFields
-        cardNumber={props.cardNumber}
-        cardExpiry={props.cardExpiry}
-        cardCvc={props.cardCvc}
-        setCardNumber={props.setCardNumber}
-        setCardExpiry={props.setCardExpiry}
-        setCardCvc={props.setCardCvc}
-        disabled={props.isLoading}
-      />
-      <Button
-        type="submit"
-        className="bg-pump-purple text-white w-full mt-4"
-        disabled={props.isLoading}
-      >
-        {props.isLoading ? "Criando conta..." : "Cadastrar"}
-      </Button>
+      {!props.hidePayment && (
+        <SignupPaymentFields
+          cardNumber={props.cardNumber}
+          cardExpiry={props.cardExpiry}
+          cardCvc={props.cardCvc}
+          setCardNumber={props.setCardNumber}
+          setCardExpiry={props.setCardExpiry}
+          setCardCvc={props.setCardCvc}
+          disabled={props.isLoading}
+        />
+      )}
     </form>
   );
 }

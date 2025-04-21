@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { SignupRoadmap } from "@/components/SignupRoadmap";
 
 export default function Signup() {
   // Login info
@@ -41,6 +42,16 @@ export default function Signup() {
   const [goalForYear, setGoalForYear] = useState("");
 
   const navigate = useNavigate();
+
+  const [tab, setTab] = useState("conta");
+  const stepIndex = ["conta", "empresario", "empresa"].indexOf(tab);
+
+  // redefine roadmap steps, in order
+  const roadmapSteps = [
+    { title: "Conta" },
+    { title: "Perfil Empresário" },
+    { title: "Perfil Empresa" },
+  ];
 
   const handleSignup = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -120,6 +131,292 @@ export default function Signup() {
     }, 1000);
   };
 
+  const renderContaTab = () => (
+    <div className="space-y-4">
+      <div>
+        <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+          Email *
+        </label>
+        <Input
+          id="email"
+          name="email"
+          type="email"
+          autoComplete="email"
+          required
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          className="mt-1"
+          disabled={isLoading}
+        />
+      </div>
+      <div>
+        <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+          Senha *
+        </label>
+        <Input
+          id="password"
+          name="password"
+          type="password"
+          autoComplete="new-password"
+          required
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+          className="mt-1"
+          disabled={isLoading}
+        />
+      </div>
+      <div>
+        <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+          Confirmar senha *
+        </label>
+        <Input
+          id="confirmPassword"
+          name="confirmPassword"
+          type="password"
+          autoComplete="new-password"
+          required
+          value={confirmPassword}
+          onChange={e => setConfirmPassword(e.target.value)}
+          className="mt-1"
+          disabled={isLoading}
+        />
+      </div>
+      <div className="flex justify-end mt-4">
+        <Button
+          type="button"
+          className="bg-pump-purple text-white"
+          onClick={() => setTab("empresario")}
+          disabled={isLoading}
+        >
+          Próxima etapa
+        </Button>
+      </div>
+    </div>
+  );
+
+  const renderEmpresarioTab = () => (
+    <div className="space-y-4">
+      <h3 className="font-semibold text-lg mb-2 text-gray-900">Dados do Empresário</h3>
+      <div>
+        <Label htmlFor="nomeEmpresario">Nome do empresário *</Label>
+        <Input
+          id="nomeEmpresario"
+          type="text"
+          required
+          value={nomeEmpresario}
+          onChange={e => setNomeEmpresario(e.target.value)}
+          className="mt-1"
+          disabled={isLoading}
+        />
+      </div>
+      <div>
+        <Label htmlFor="idadeEmpresario">Idade *</Label>
+        <Input
+          id="idadeEmpresario"
+          type="number"
+          min={0}
+          required
+          value={idadeEmpresario}
+          onChange={e => setIdadeEmpresario(e.target.value === "" ? "" : Number(e.target.value))}
+          className="mt-1"
+          disabled={isLoading}
+        />
+      </div>
+      <div>
+        <Label>Gênero *</Label>
+        <RadioGroup
+          className="mt-2 flex flex-row gap-5"
+          value={generoEmpresario}
+          onValueChange={setGeneroEmpresario}
+          disabled={isLoading}
+        >
+          <div className="flex items-center gap-2">
+            <RadioGroupItem id="genero-masculino" value="masculino" />
+            <Label htmlFor="genero-masculino">Masculino</Label>
+          </div>
+          <div className="flex items-center gap-2">
+            <RadioGroupItem id="genero-feminino" value="feminino" />
+            <Label htmlFor="genero-feminino">Feminino</Label>
+          </div>
+          <div className="flex items-center gap-2">
+            <RadioGroupItem id="genero-outro" value="outro" />
+            <Label htmlFor="genero-outro">Outro</Label>
+          </div>
+        </RadioGroup>
+      </div>
+      <div>
+        <Label htmlFor="perfilPessoalPergunta1">O que te inspira no dia a dia?</Label>
+        <Textarea
+          id="perfilPessoalPergunta1"
+          value={perfilPessoalPergunta1}
+          onChange={e => setPerfilPessoalPergunta1(e.target.value)}
+          className="mt-1"
+          disabled={isLoading}
+        />
+      </div>
+      <div>
+        <Label htmlFor="perfilPessoalPergunta2">Como você se define pessoalmente?</Label>
+        <Textarea
+          id="perfilPessoalPergunta2"
+          value={perfilPessoalPergunta2}
+          onChange={e => setPerfilPessoalPergunta2(e.target.value)}
+          className="mt-1"
+          disabled={isLoading}
+        />
+      </div>
+      <div className="flex justify-between mt-4">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => setTab("conta")}
+          disabled={isLoading}
+        >
+          Voltar
+        </Button>
+        <Button
+          type="button"
+          className="bg-pump-purple text-white"
+          onClick={() => setTab("empresa")}
+          disabled={isLoading}
+        >
+          Próxima etapa
+        </Button>
+      </div>
+    </div>
+  );
+
+  const renderEmpresaTab = () => (
+    <div className="space-y-4">
+      <h3 className="font-semibold text-lg mb-2 text-gray-900">Dados da Empresa</h3>
+      <div>
+        <label className="block text-sm font-medium text-gray-700">Nome da empresa *</label>
+        <Input
+          type="text"
+          required
+          value={companyName}
+          onChange={e => setCompanyName(e.target.value)}
+          className="mt-1"
+          disabled={isLoading}
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700">Segmento</label>
+        <Input
+          type="text"
+          placeholder="Ex: Restaurante, Loja de Roupas, etc."
+          value={businessSegment}
+          onChange={e => setBusinessSegment(e.target.value)}
+          className="mt-1"
+          disabled={isLoading}
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700">Produtos/Serviços principais</label>
+        <Input
+          type="text"
+          placeholder="Separe por vírgula"
+          value={mainProducts}
+          onChange={e => setMainProducts(e.target.value)}
+          className="mt-1"
+          disabled={isLoading}
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700">Endereço</label>
+        <Input
+          type="text"
+          value={address}
+          onChange={e => setAddress(e.target.value)}
+          className="mt-1"
+          disabled={isLoading}
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700">Telefone</label>
+        <Input
+          type="tel"
+          value={phone}
+          onChange={e => setPhone(e.target.value)}
+          className="mt-1"
+          disabled={isLoading}
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700">Instagram</label>
+        <Input
+          type="text"
+          placeholder="@empresa"
+          value={socialInstagram}
+          onChange={e => setSocialInstagram(e.target.value)}
+          className="mt-1"
+          disabled={isLoading}
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700">Facebook</label>
+        <Input
+          type="text"
+          placeholder="/empresa"
+          value={socialFacebook}
+          onChange={e => setSocialFacebook(e.target.value)}
+          className="mt-1"
+          disabled={isLoading}
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700">LinkedIn</label>
+        <Input
+          type="text"
+          placeholder="/empresa"
+          value={socialLinkedin}
+          onChange={e => setSocialLinkedin(e.target.value)}
+          className="mt-1"
+          disabled={isLoading}
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700">Quantidade de funcionários</label>
+        <Input
+          type="number"
+          min={0}
+          value={employeesCount}
+          onChange={e => setEmployeesCount(e.target.value === "" ? "" : Number(e.target.value))}
+          className="mt-1"
+          disabled={isLoading}
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700">Faturamento médio mensal (R$)</label>
+        <Input
+          type="number"
+          min={0}
+          step={0.01}
+          value={averageRevenue}
+          onChange={e => setAverageRevenue(e.target.value === "" ? "" : Number(e.target.value))}
+          className="mt-1"
+          disabled={isLoading}
+        />
+      </div>
+      <div className="flex justify-between mt-4">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => setTab("empresario")}
+          disabled={isLoading}
+        >
+          Voltar
+        </Button>
+        <Button
+          type="submit"
+          className="bg-pump-purple text-white w-full"
+          disabled={isLoading}
+        >
+          {isLoading ? "Criando conta..." : "Cadastrar"}
+        </Button>
+      </div>
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-white flex">
       <div className="flex-1 flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8">
@@ -139,328 +436,18 @@ export default function Signup() {
               Cadastre-se para acessar todas as funcionalidades
             </p>
           </div>
-          <form onSubmit={handleSignup} className="mt-8 space-y-6">
-            <div className="space-y-4">
-              {/* Campos de login */}
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                  Email *
-                </label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  className="mt-1"
-                  disabled={isLoading}
-                />
-              </div>
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                  Senha *
-                </label>
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="new-password"
-                  required
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  className="mt-1"
-                  disabled={isLoading}
-                />
-              </div>
-              <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                  Confirmar senha *
-                </label>
-                <Input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  autoComplete="new-password"
-                  required
-                  value={confirmPassword}
-                  onChange={e => setConfirmPassword(e.target.value)}
-                  className="mt-1"
-                  disabled={isLoading}
-                />
-              </div>
-
-              {/* Campos extras do Empresário */}
-              <div className="pt-4 border-t mt-4 space-y-4">
-                <h3 className="font-semibold text-lg mb-2 text-gray-900">Dados do Empresário</h3>
-                <div>
-                  <Label htmlFor="nomeEmpresario">Nome do empresário</Label>
-                  <Input
-                    id="nomeEmpresario"
-                    type="text"
-                    value={nomeEmpresario}
-                    onChange={e => setNomeEmpresario(e.target.value)}
-                    className="mt-1"
-                    disabled={isLoading}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="idadeEmpresario">Idade</Label>
-                  <Input
-                    id="idadeEmpresario"
-                    type="number"
-                    min={0}
-                    value={idadeEmpresario}
-                    onChange={e => setIdadeEmpresario(e.target.value === "" ? "" : Number(e.target.value))}
-                    className="mt-1"
-                    disabled={isLoading}
-                  />
-                </div>
-                <div>
-                  <Label>Gênero</Label>
-                  <RadioGroup
-                    className="mt-2 flex flex-row gap-5"
-                    value={generoEmpresario}
-                    onValueChange={setGeneroEmpresario}
-                    disabled={isLoading}
-                  >
-                    <div className="flex items-center gap-2">
-                      <RadioGroupItem id="genero-masculino" value="masculino" />
-                      <Label htmlFor="genero-masculino">Masculino</Label>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <RadioGroupItem id="genero-feminino" value="feminino" />
-                      <Label htmlFor="genero-feminino">Feminino</Label>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <RadioGroupItem id="genero-outro" value="outro" />
-                      <Label htmlFor="genero-outro">Outro</Label>
-                    </div>
-                  </RadioGroup>
-                </div>
-                <div>
-                  <Label htmlFor="perfilPessoalPergunta1">O que te inspira no dia a dia?</Label>
-                  <Textarea
-                    id="perfilPessoalPergunta1"
-                    value={perfilPessoalPergunta1}
-                    onChange={e => setPerfilPessoalPergunta1(e.target.value)}
-                    className="mt-1"
-                    disabled={isLoading}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="perfilPessoalPergunta2">Como você se define pessoalmente?</Label>
-                  <Textarea
-                    id="perfilPessoalPergunta2"
-                    value={perfilPessoalPergunta2}
-                    onChange={e => setPerfilPessoalPergunta2(e.target.value)}
-                    className="mt-1"
-                    disabled={isLoading}
-                  />
-                </div>
-              </div>
-
-              {/* Perfil da Empresa */}
-              <div className="pt-4 border-t mt-4">
-                <h3 className="font-semibold text-lg mb-2 text-gray-900">Dados da Empresa</h3>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Nome da empresa *</label>
-                  <Input
-                    type="text"
-                    required
-                    value={companyName}
-                    onChange={e => setCompanyName(e.target.value)}
-                    className="mt-1"
-                    disabled={isLoading}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Segmento</label>
-                  <Input
-                    type="text"
-                    placeholder="Ex: Restaurante, Loja de Roupas, etc."
-                    value={businessSegment}
-                    onChange={e => setBusinessSegment(e.target.value)}
-                    className="mt-1"
-                    disabled={isLoading}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Produtos/Serviços principais</label>
-                  <Input
-                    type="text"
-                    placeholder="Separe por vírgula"
-                    value={mainProducts}
-                    onChange={e => setMainProducts(e.target.value)}
-                    className="mt-1"
-                    disabled={isLoading}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Endereço</label>
-                  <Input
-                    type="text"
-                    value={address}
-                    onChange={e => setAddress(e.target.value)}
-                    className="mt-1"
-                    disabled={isLoading}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Telefone</label>
-                  <Input
-                    type="tel"
-                    value={phone}
-                    onChange={e => setPhone(e.target.value)}
-                    className="mt-1"
-                    disabled={isLoading}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Instagram</label>
-                  <Input
-                    type="text"
-                    placeholder="@empresa"
-                    value={socialInstagram}
-                    onChange={e => setSocialInstagram(e.target.value)}
-                    className="mt-1"
-                    disabled={isLoading}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Facebook</label>
-                  <Input
-                    type="text"
-                    placeholder="/empresa"
-                    value={socialFacebook}
-                    onChange={e => setSocialFacebook(e.target.value)}
-                    className="mt-1"
-                    disabled={isLoading}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">LinkedIn</label>
-                  <Input
-                    type="text"
-                    placeholder="/empresa"
-                    value={socialLinkedin}
-                    onChange={e => setSocialLinkedin(e.target.value)}
-                    className="mt-1"
-                    disabled={isLoading}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Quantidade de funcionários</label>
-                  <Input
-                    type="number"
-                    min={0}
-                    value={employeesCount}
-                    onChange={e => setEmployeesCount(e.target.value === "" ? "" : Number(e.target.value))}
-                    className="mt-1"
-                    disabled={isLoading}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Faturamento médio mensal (R$)</label>
-                  <Input
-                    type="number"
-                    min={0}
-                    step={0.01}
-                    value={averageRevenue}
-                    onChange={e => setAverageRevenue(e.target.value === "" ? "" : Number(e.target.value))}
-                    className="mt-1"
-                    disabled={isLoading}
-                  />
-                </div>
-              </div>
-
-              {/* Perfil do Empresário */}
-              <div className="pt-4 border-t mt-4">
-                <h3 className="font-semibold text-lg mb-2 text-gray-900">Perfil do Empresário</h3>
-                <div>
-                  <Label htmlFor="vision">Qual é a sua maior visão para a empresa?</Label>
-                  <Textarea
-                    id="vision"
-                    value={vision}
-                    onChange={e => setVision(e.target.value)}
-                    className="mt-1"
-                    disabled={isLoading}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="mainChallenge">Que desafio é mais recorrente no seu dia a dia como empresário?</Label>
-                  <Textarea
-                    id="mainChallenge"
-                    value={mainChallenge}
-                    onChange={e => setMainChallenge(e.target.value)}
-                    className="mt-1"
-                    disabled={isLoading}
-                  />
-                </div>
-                <div>
-                  <Label>Como você se descreveria em relação à tomada de decisões?</Label>
-                  <RadioGroup
-                    className="mt-2 flex flex-col gap-2"
-                    value={decisionProfile}
-                    onValueChange={setDecisionProfile}
-                    disabled={isLoading}
-                  >
-                    <div className="flex items-center gap-2">
-                      <RadioGroupItem id="decision-conservador" value="conservador" />
-                      <Label htmlFor="decision-conservador">Conservador</Label>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <RadioGroupItem id="decision-equilibrado" value="equilibrado" />
-                      <Label htmlFor="decision-equilibrado">Equilibrado</Label>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <RadioGroupItem id="decision-agressivo" value="agressivo" />
-                      <Label htmlFor="decision-agressivo">Agressivo</Label>
-                    </div>
-                  </RadioGroup>
-                </div>
-                <div>
-                  <Label>Você costuma buscar inovação para o seu negócio?</Label>
-                  <RadioGroup
-                    className="mt-2 flex flex-col gap-2"
-                    value={innovationHabit}
-                    onValueChange={setInnovationHabit}
-                    disabled={isLoading}
-                  >
-                    <div className="flex items-center gap-2">
-                      <RadioGroupItem id="innovacao-sempre" value="sempre" />
-                      <Label htmlFor="innovacao-sempre">Sempre</Label>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <RadioGroupItem id="innovacao-asvezes" value="asvezes" />
-                      <Label htmlFor="innovacao-asvezes">Às vezes</Label>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <RadioGroupItem id="innovacao-raramente" value="raramente" />
-                      <Label htmlFor="innovacao-raramente">Raramente</Label>
-                    </div>
-                  </RadioGroup>
-                </div>
-                <div>
-                  <Label htmlFor="goalForYear">Qual seria o maior objetivo que deseja alcançar no próximo ano?</Label>
-                  <Textarea
-                    id="goalForYear"
-                    value={goalForYear}
-                    onChange={e => setGoalForYear(e.target.value)}
-                    className="mt-1"
-                    disabled={isLoading}
-                  />
-                </div>
-              </div>
-            </div>
-            <Button
-              type="submit"
-              className="w-full bg-pump-purple hover:bg-pump-purple/90"
-              disabled={isLoading}
-            >
-              {isLoading ? "Criando conta..." : "Cadastrar"}
-            </Button>
+          <SignupRoadmap steps={roadmapSteps} currentStep={stepIndex} />
+          <form onSubmit={handleSignup} className="mt-8 w-full">
+            <Tabs value={tab} onValueChange={setTab}>
+              <TabsList className="mb-6 grid grid-cols-3 w-full">
+                <TabsTrigger value="conta">Conta</TabsTrigger>
+                <TabsTrigger value="empresario">Perfil Empresário</TabsTrigger>
+                <TabsTrigger value="empresa">Perfil Empresa</TabsTrigger>
+              </TabsList>
+              <TabsContent value="conta">{renderContaTab()}</TabsContent>
+              <TabsContent value="empresario">{renderEmpresarioTab()}</TabsContent>
+              <TabsContent value="empresa">{renderEmpresaTab()}</TabsContent>
+            </Tabs>
           </form>
           <div className="text-center pt-4 border-t mt-6">
             <p className="text-sm text-gray-600 mb-2">Já tem uma conta?</p>

@@ -46,6 +46,14 @@ export default function Themes() {
           <p className="text-lg text-pump-gray mb-8">
             Explore e escolha um tema para sua conversa. Personalize o atendimento conforme a área do seu interesse!
           </p>
+          <Button 
+            onClick={handleNewChat}
+            size="lg"
+            className="bg-pump-purple hover:bg-pump-purple/90 text-white mb-12"
+          >
+            <MessageCircle className="w-5 h-5 mr-2" />
+            Novo Chat
+          </Button>
         </div>
 
         {isLoading ? (

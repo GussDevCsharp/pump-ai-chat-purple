@@ -1,9 +1,16 @@
+
 import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Home } from "lucide-react"
 import { UserCardMenu } from "@/components/common/UserCardMenu"
+import { useChatAuth } from "@/hooks/useChatAuth"
 
 export const ChatHeader = ({ mobileMenuButton }: { mobileMenuButton?: React.ReactNode }) => {
+  const { authStatus } = useChatAuth();
+
+  // Redirect logged in users to /dashboard; guests go to /
+  const homeLink = authStatus === 'authenticated' ? "/dashboard" : "/";
+
   return (
     <header className="border-b border-pump-gray/20 p-4 flex justify-between items-center sticky top-0 bg-white z-10">
       <div className="flex items-center gap-2">
@@ -20,7 +27,7 @@ export const ChatHeader = ({ mobileMenuButton }: { mobileMenuButton?: React.Reac
       </div>
       <div className="flex items-center gap-4">
         <UserCardMenu />
-        <Link to="/">
+        <Link to={homeLink}>
           <Button variant="ghost" size="icon" className="text-pump-purple hover:text-pump-purple/90">
             <Home className="h-5 w-5" />
             <span className="sr-only">Voltar para página inicial</span>

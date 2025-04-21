@@ -7,7 +7,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 
-// Type for plan data
 type Plan = {
   id: string;
   name: string;
@@ -18,7 +17,6 @@ type Plan = {
   benefits?: string[];
 };
 
-// NOVAS ETAPAS (usando a ordem desejada)
 const STEPS = [
   "Planos",
   "Cadastro Básico",
@@ -32,22 +30,18 @@ export function SignupStepperFlow() {
   const [loadingPlans, setLoadingPlans] = useState(true);
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
 
-  // User data (básico)
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  // Perfil do usuário
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [cpf, setCpf] = useState("");
 
-  // Payment data (deixado mas oculto)
   const [cardNumber, setCardNumber] = useState("");
   const [cardExpiry, setCardExpiry] = useState("");
   const [cardCvc, setCardCvc] = useState("");
 
-  // Company profile data
   const [companyName, setCompanyName] = useState("");
   const [mainProducts, setMainProducts] = useState("");
   const [employeesCount, setEmployeesCount] = useState("");
@@ -56,13 +50,11 @@ export function SignupStepperFlow() {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  // Busca planos (igual antes, mas corrigindo tipagem para garantir compatibilidade)
   useEffect(() => {
     const fetchPlans = async () => {
       setLoadingPlans(true);
       console.log("Buscando planos...");
 
-      // Busca os planos (sem benefits direto)
       const { data: planData, error: planError } = await supabase
         .from("pricing")
         .select("id, name, description, price, is_paid, chatpump");
@@ -77,7 +69,6 @@ export function SignupStepperFlow() {
       if (planData && planData.length > 0) {
         const plansWithBenefits: Plan[] = [];
         for (const plan of planData) {
-          // busca os benefícios para este plano
           const { data: benefitMappings, error: benefitError } = await supabase
             .from("plan_benefit_mappings")
             .select("benefit_id")
@@ -110,7 +101,6 @@ export function SignupStepperFlow() {
           });
         }
 
-        // Se existir algum plano com chatpump = true, mostrar só esses
         const filteredPlans = plansWithBenefits.filter(plan => plan.chatpump === true);
         const finalPlans = filteredPlans.length > 0 ? filteredPlans : plansWithBenefits;
 
@@ -121,7 +111,6 @@ export function SignupStepperFlow() {
           toast.warning("Usando todos os planos disponíveis", { duration: 5000 });
         }
       } else {
-        // Demo-mode, fallback
         const demoPlans = [
           {
             id: "free-plan",
@@ -164,7 +153,6 @@ export function SignupStepperFlow() {
     setStep(prev => prev - 1);
   }
 
-  // PASSO 0: Planos
   if (step === 0) {
     return (
       <div className="mt-10">
@@ -174,8 +162,8 @@ export function SignupStepperFlow() {
             <p className="mt-2 text-pump-purple">Carregando planos...</p>
           </div>
         ) : (
-          <div className="flex flex-col md:flex-row gap-8 justify-center items-start">
-            <div className="md:w-2/3 w-full mx-auto">
+          <div className="flex flex-col gap-8 justify-center items-start w-full max-w-[1200px] mx-auto px-4">
+            <div className="w-full">
               <SignupPlansStep
                 plans={plans}
                 selectedPlanId={selectedPlan?.id ?? null}
@@ -196,7 +184,6 @@ export function SignupStepperFlow() {
     );
   }
 
-  // PASSO 1: Cadastro Básico
   if (step === 1) {
     return (
       <div className="mt-10 max-w-xl mx-auto">
@@ -209,7 +196,7 @@ export function SignupStepperFlow() {
           setConfirmPassword={setConfirmPassword}
           isLoading={isLoading}
           setIsLoading={setIsLoading}
-          hidePayment // pagamentos removido/oculto
+          hidePayment
         />
         <div className="flex gap-2 mt-6">
           <Button variant="outline" className="flex-1 text-pump-purple" onClick={prevStep} disabled={isLoading}>Voltar</Button>
@@ -231,7 +218,6 @@ export function SignupStepperFlow() {
     );
   }
 
-  // PASSO 2: Perfil da Empresa
   if (step === 2) {
     return (
       <SignupCompanyProfileStep
@@ -252,7 +238,6 @@ export function SignupStepperFlow() {
     );
   }
 
-  // PASSO 3: Perfil do Usuário
   if (step === 3) {
     return (
       <div className="mt-10 max-w-xl mx-auto bg-white rounded shadow p-8">

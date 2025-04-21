@@ -418,57 +418,43 @@ export default function Signup() {
   );
 
   return (
-    <div className="min-h-screen bg-white flex">
-      <div className="flex-1 flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full space-y-8">
-          <div className="text-center">
-            <Link to="/">
-              <img
-                src="/lovable-uploads/5f403064-9209-4921-b73b-0f70c739981a.png"
-                alt="Pump.ia"
-                className="h-12 mx-auto"
-              />
-            </Link>
-            <h2 className="mt-6 text-3xl font-bold text-gray-900">
-              Crie sua conta grátis
-            </h2>
-            <p className="mt-2 text-sm text-pump-gray">
-              Cadastre-se para acessar todas as funcionalidades
-            </p>
-          </div>
-          <SignupRoadmap steps={roadmapSteps} currentStep={stepIndex} />
-          <form onSubmit={handleSignup} className="mt-8 w-full">
-            <Tabs value={tab} onValueChange={setTab}>
-              <TabsList className="mb-6 grid grid-cols-3 w-full">
-                <TabsTrigger value="conta">Conta</TabsTrigger>
-                <TabsTrigger value="empresario">Perfil Empresário</TabsTrigger>
-                <TabsTrigger value="empresa">Perfil Empresa</TabsTrigger>
-              </TabsList>
-              <TabsContent value="conta">{renderContaTab()}</TabsContent>
-              <TabsContent value="empresario">{renderEmpresarioTab()}</TabsContent>
-              <TabsContent value="empresa">{renderEmpresaTab()}</TabsContent>
-            </Tabs>
-          </form>
-          <div className="text-center pt-4 border-t mt-6">
-            <p className="text-sm text-gray-600 mb-2">Já tem uma conta?</p>
-            <Link to="/login">
-              <Button variant="outline" className="text-pump-purple hover:bg-pump-purple/10">
-                Fazer login
-              </Button>
-            </Link>
-          </div>
+    <div className="min-h-screen bg-white flex flex-col px-6 py-8 max-w-none w-full">
+      <div className="max-w-4xl mx-auto w-full">
+        <div className="text-center mb-8">
+          <Link to="/">
+            <img
+              src="/lovable-uploads/5f403064-9209-4921-b73b-0f70c739981a.png"
+              alt="Pump.ia"
+              className="h-12 mx-auto"
+            />
+          </Link>
+          <h2 className="mt-6 text-3xl font-bold text-gray-900">
+            Crie sua conta grátis
+          </h2>
+          <p className="mt-2 text-sm text-pump-gray">
+            Cadastre-se para acessar todas as funcionalidades
+          </p>
         </div>
-      </div>
-      <div className="hidden lg:block relative flex-1 bg-pump-gray-light">
-        <div className="absolute inset-0 flex items-center justify-center p-12">
-          <div className="max-w-xl space-y-4">
-            <h3 className="text-2xl font-bold text-gray-900">
-              Transforme sua empresa com IA
-            </h3>
-            <p className="text-pump-gray">
-              Use inteligência artificial de ponta para turbinar o seu negócio.
-            </p>
-          </div>
+        <SignupRoadmap steps={roadmapSteps} currentStep={stepIndex} />
+        <form onSubmit={handleSignup} className="w-full">
+          <Tabs value={tab} onValueChange={setTab} className="w-full">
+            <TabsList className="mb-6 grid grid-cols-3 w-full">
+              <TabsTrigger value="conta">Conta</TabsTrigger>
+              <TabsTrigger value="empresario">Perfil Empresário</TabsTrigger>
+              <TabsTrigger value="empresa">Perfil Empresa</TabsTrigger>
+            </TabsList>
+            <TabsContent value="conta">{renderContaTab()}</TabsContent>
+            <TabsContent value="empresario">{renderEmpresarioTab()}</TabsContent>
+            <TabsContent value="empresa">{renderEmpresaTab()}</TabsContent>
+          </Tabs>
+        </form>
+        <div className="text-center pt-4 border-t mt-10">
+          <p className="text-sm text-gray-600 mb-2">Já tem uma conta?</p>
+          <Link to="/login">
+            <Button variant="outline" className="text-pump-purple hover:bg-pump-purple/10">
+              Fazer login
+            </Button>
+          </Link>
         </div>
       </div>
     </div>

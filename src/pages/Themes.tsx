@@ -1,3 +1,4 @@
+
 import { useChatThemes } from "@/hooks/useChatThemes";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
@@ -41,12 +42,12 @@ export default function Themes() {
       </header>
 
       <main className="container mx-auto px-4 py-12">
-        <div className="flex justify-between items-start gap-8 mb-16">
-          <div className="max-w-2xl">
-            <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6 text-left">
+        <div className="flex flex-col md:flex-row justify-between items-start gap-8 mb-16">
+          <div className="w-full md:w-2/3 text-left">
+            <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
               Central de Controle
             </h1>
-            <p className="text-lg text-pump-gray mb-8 text-left">
+            <p className="text-lg text-pump-gray mb-8">
               Gerencie seus temas, chats e configurações de forma centralizada.
             </p>
             <Button 
@@ -59,12 +60,12 @@ export default function Themes() {
             </Button>
           </div>
 
-          <Card className="w-96 bg-gradient-to-br from-pump-purple/5 to-pump-purple/10 border-none shadow-sm">
-            <CardContent className="p-6">
+          <Card className="w-full md:w-1/3 bg-gradient-to-br from-pump-purple/5 to-pump-purple/10 border-none shadow-sm">
+            <CardContent className="p-6 flex items-center justify-center h-full">
               {quoteLoading ? (
-                <p className="text-pump-gray animate-pulse">Carregando frase...</p>
+                <p className="text-pump-gray animate-pulse text-center">Carregando frase...</p>
               ) : (
-                <p className="text-lg text-pump-purple font-medium italic">
+                <p className="text-lg text-pump-purple font-medium italic text-center">
                   "{quote}"
                 </p>
               )}

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/components/ui/use-toast"
 import { useAudioTranscription } from "@/hooks/useAudioTranscription"
+import LoadingDots from "./LoadingDots"
 
 interface ChatInputProps {
   suggestedPrompts?: string[]
@@ -92,11 +93,18 @@ export const ChatInput = ({ suggestedPrompts, onSendMessage }: ChatInputProps) =
               handleSubmit()
             }
           }}
-          className="w-full resize-none rounded-lg border border-pump-gray/20 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-pump-purple/20 pr-20" // aumenta padding para botão mic
+          className="w-full resize-none rounded-lg border border-pump-gray/20 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-pump-purple/20 pr-20"
           rows={1}
           placeholder="Digite sua mensagem..."
           disabled={isLoading || isAudioLoading}
         />
+        {/* Loader de transcrição de áudio */}
+        {isAudioLoading && (
+          <span className="absolute flex items-center gap-1 right-28 text-xs text-gray-500">
+            <LoadingDots />
+            <span className="ml-1">Transcrevendo...</span>
+          </span>
+        )}
         {/* Botão de microfone */}
         <button
           type="button"
@@ -118,12 +126,6 @@ export const ChatInput = ({ suggestedPrompts, onSendMessage }: ChatInputProps) =
         >
           <SendHorizontal className="w-5 h-5" />
         </button>
-        {/* Feedback loading de transcrição */}
-        {isAudioLoading && (
-          <span className="absolute right-20 text-xs text-gray-500 animate-pulse">
-            Transcrevendo...
-          </span>
-        )}
       </div>
     </div>
   )

@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useChatSessions } from "@/hooks/useChatSessions";
 import { UserCardMenu } from "@/components/common/UserCardMenu";
 import { Button } from "@/components/ui/button";
+import { MessageCircle } from "lucide-react";
 
 export default function Themes() {
   const { themes, isLoading } = useChatThemes();

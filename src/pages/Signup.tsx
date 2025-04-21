@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -126,7 +127,7 @@ export default function Signup() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col px-4 py-12 w-full justify-center items-center">
-      <div className="max-w-2xl w-full mx-auto">
+      <div className="max-w-5xl w-full mx-auto">
         <div className="text-center mb-8">
           <Link to="/">
             <img
@@ -146,21 +147,16 @@ export default function Signup() {
         <SignupStepper steps={STEPS} current={step} />
 
         {step === 0 && (
-          <div>
+          <div className="mt-10">
             {loadingPlans ? (
               <div className="text-center py-10">
                 <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-pump-purple border-t-transparent"></div>
                 <p className="mt-2 text-pump-purple">Carregando planos...</p>
               </div>
             ) : (
-              <>
-                <SignupPlansStep
-                  plans={plans}
-                  selectedPlanId={selectedPlan?.id ?? null}
-                  onSelect={plan => setSelectedPlan(plan)}
-                  disabled={isLoading}
-                />
-                <div className="mt-8">
+              // Grid Responsivo: 2 colunas no desktop, 1 no mobile
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                <div className="order-2 md:order-1">
                   <SignupForm
                     email={email}
                     setEmail={setEmail}
@@ -184,24 +180,33 @@ export default function Signup() {
                     setIsLoading={setIsLoading}
                     hidePayment
                   />
+                  <Button
+                    className="bg-pump-purple text-white w-full mt-6"
+                    disabled={
+                      !selectedPlan ||
+                      !email ||
+                      !password ||
+                      !confirmPassword ||
+                      !firstName ||
+                      !lastName ||
+                      !cpf ||
+                      isLoading
+                    }
+                    onClick={nextStep}
+                  >
+                    Próxima etapa
+                  </Button>
                 </div>
-                <Button
-                  className="bg-pump-purple text-white w-full mt-6"
-                  disabled={
-                    !selectedPlan ||
-                    !email ||
-                    !password ||
-                    !confirmPassword ||
-                    !firstName ||
-                    !lastName ||
-                    !cpf ||
-                    isLoading
-                  }
-                  onClick={nextStep}
-                >
-                  Próxima etapa
-                </Button>
-              </>
+                <div className="order-1 md:order-2">
+                  <SignupPlansStep
+                    plans={plans}
+                    selectedPlanId={selectedPlan?.id ?? null}
+                    onSelect={plan => setSelectedPlan(plan)}
+                    disabled={isLoading}
+                    forceColumn
+                  />
+                </div>
+              </div>
             )}
           </div>
         )}
@@ -240,3 +245,4 @@ export default function Signup() {
   );
 }
 // O arquivo ficou longo! Peça para refatorar se desejar.
+

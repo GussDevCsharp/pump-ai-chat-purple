@@ -35,6 +35,7 @@ interface SignupPlansStepProps {
   selectedPlanId: string | null;
   onSelect: (plan: Plan) => void;
   disabled?: boolean;
+  forceColumn?: boolean; // Força exibição em coluna (vertical)
 }
 
 function getBenefitIcon(benefit: string) {
@@ -46,7 +47,7 @@ function getBenefitIcon(benefit: string) {
   return entry ? entry[1] : <FileText className="w-4 h-4" />;
 }
 
-export function SignupPlansStep({ plans, selectedPlanId, onSelect, disabled }: SignupPlansStepProps) {
+export function SignupPlansStep({ plans, selectedPlanId, onSelect, disabled, forceColumn }: SignupPlansStepProps) {
   if (plans.length === 0) {
     return (
       <div className="text-center py-8">
@@ -55,10 +56,15 @@ export function SignupPlansStep({ plans, selectedPlanId, onSelect, disabled }: S
     );
   }
 
+  // Layout: cards em coluna ocupando toda a largura (sem overflow)
   return (
     <div>
       <h3 className="font-semibold text-xl mb-6 text-gray-900 text-center">Escolha o seu plano</h3>
-      <div className="flex w-full overflow-x-auto gap-6 p-2 justify-center">
+      <div className={
+        forceColumn
+          ? "flex flex-col w-full gap-6"
+          : "flex w-full overflow-x-auto gap-6 p-2 justify-center"
+      }>
         {plans.slice(0, 3).map((plan, idx) => {
           const selected = selectedPlanId === plan.id;
           return (
@@ -102,12 +108,8 @@ export function SignupPlansStep({ plans, selectedPlanId, onSelect, disabled }: S
                   {plan.is_paid ? "Comprar agora" : "Avaliação grátis"}
                   <ArrowRight className="ml-2 w-4 h-4" />
                 </Button>
-                {/* Texto "ou compre agora" para testes futuros */}
-                {/* <span className="block text-xs text-pump-purple hover:underline mb-4">ou compre agora &rarr;</span> */}
-
                 {/* Descrição */}
                 <p className="text-sm text-gray-700 mb-4 min-h-[32px]">{plan.description}</p>
-
                 {/* Benefícios */}
                 <ul className="flex flex-col gap-3 mb-6">
                   {plan.benefits && plan.benefits.length > 0 ? (
@@ -138,4 +140,3 @@ export function SignupPlansStep({ plans, selectedPlanId, onSelect, disabled }: S
     </div>
   );
 }
-

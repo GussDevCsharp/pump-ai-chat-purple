@@ -55,11 +55,11 @@ export function SignupStepperFlow() {
       setLoadingPlans(true);
       console.log("Buscando planos...");
 
+      // First, fetch all plans from the pricing table
       const { data: planData, error: planError } = await supabase
         .from("pricing")
-        .select("id, name, description, price, is_paid, chatpump, benefits")
-        .order("price", { ascending: true });
-
+        .select("id, name, description, price, is_paid, chatpump");
+      
       if (planError) {
         console.error("Erro ao buscar planos:", planError);
         toast.error("Erro ao buscar planos");
@@ -68,14 +68,62 @@ export function SignupStepperFlow() {
       }
 
       if (planData && planData.length > 0) {
-        const filteredPlans = planData.filter(plan => plan.chatpump === true);
-        setPlans(filteredPlans.length > 0 ? filteredPlans : planData);
-        setSelectedPlan((filteredPlans.length > 0 ? filteredPlans : planData)[0]);
-        if (filteredPlans.length === 0) {
+        // Create an array to hold the plans with their benefits
+        const plansWithBenefits: Plan[] = [];
+        
+        // For each plan, fetch its benefits through the mapping table
+        for (const plan of planData) {
+          // Get benefit descriptions for this plan through the mapping table
+          const { data: benefitMappings, error: benefitError } = await supabase
+            .from("plan_benefit_mappings")
+            .select("benefit_id")
+            .eq("plan_id", plan.id);
+          
+          if (benefitError) {
+            console.error(`Erro ao buscar benefícios para o plano ${plan.id}:`, benefitError);
+            continue;
+          }
+
+          let benefitDescriptions: string[] = [];
+          
+          if (benefitMappings && benefitMappings.length > 0) {
+            // Extract benefit IDs
+            const benefitIds = benefitMappings.map(mapping => mapping.benefit_id);
+            
+            // Fetch the actual benefit descriptions
+            const { data: benefits, error: descriptionsError } = await supabase
+              .from("benefits")
+              .select("description")
+              .in("id", benefitIds);
+            
+            if (descriptionsError) {
+              console.error("Erro ao buscar descrições dos benefícios:", descriptionsError);
+            } else if (benefits) {
+              benefitDescriptions = benefits.map(benefit => benefit.description);
+            }
+          }
+          
+          // Add the plan with its benefits to our array
+          plansWithBenefits.push({
+            ...plan,
+            benefits: benefitDescriptions
+          });
+        }
+        
+        // Filter plans that have chatpump=true if any exist
+        const filteredPlans = plansWithBenefits.filter(plan => plan.chatpump === true);
+        
+        // Use filtered plans if available, otherwise use all plans
+        const finalPlans = filteredPlans.length > 0 ? filteredPlans : plansWithBenefits;
+        
+        setPlans(finalPlans);
+        setSelectedPlan(finalPlans[0]);
+        
+        if (filteredPlans.length === 0 && plansWithBenefits.length > 0) {
           toast.warning("Usando todos os planos disponíveis", { duration: 5000 });
         }
       } else {
-        // Demo mode
+        // No plans found, use demo plans
         const demoPlans = [
           {
             id: "free-plan",
@@ -104,6 +152,7 @@ export function SignupStepperFlow() {
         setSelectedPlan(demoPlans[0]);
         toast.warning("Usando planos de demonstração - Configure no Supabase", { duration: 5000 });
       }
+      
       setLoadingPlans(false);
     };
 

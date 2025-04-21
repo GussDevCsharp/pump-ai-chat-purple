@@ -8,7 +8,6 @@ const corsHeaders = {
 }
 
 serve(async (req) => {
-  // Handle preflight CORS
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
@@ -46,7 +45,6 @@ serve(async (req) => {
         throw new Error(`Could not fetch API key: ${error.message}`)
       }
 
-      // Return the full API key
       return new Response(
         JSON.stringify({ apiKey: data.apikey }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -81,7 +79,7 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'You are a helpful AI assistant focused on providing guidance and expertise.'
+            content: 'You are a helpful AI assistant focused on providing guidance and expertise. You MUST always respond in the same language that the user writes their message in.'
           },
           { 
             role: 'user', 

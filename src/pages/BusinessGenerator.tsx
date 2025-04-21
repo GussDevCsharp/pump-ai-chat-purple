@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -28,7 +29,7 @@ export default function BusinessGenerator() {
 
   if (businessPlan) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-[#FFFDF3]">
         <FormHeader />
         <main className="container mx-auto px-4 py-8">
           <UserCard />
@@ -39,7 +40,7 @@ export default function BusinessGenerator() {
   }
 
   return (
-    <div className="min-h-screen bg-white relative">
+    <div className="min-h-screen bg-[#FFFDF3] relative">
       <Watermark />
       <FormHeader />
 

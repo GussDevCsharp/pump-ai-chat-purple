@@ -13,10 +13,17 @@ serve(async (req) => {
   }
 
   try {
+    console.log("Generating motivational quote...");
+    
+    const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
+    if (!openaiApiKey) {
+      throw new Error('OPENAI_API_KEY environment variable not set');
+    }
+
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
+        'Authorization': `Bearer ${openaiApiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -30,15 +37,31 @@ serve(async (req) => {
       }),
     });
 
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('OpenAI API error:', response.status, errorText);
+      throw new Error(`OpenAI API error: ${response.status}`);
+    }
+
     const data = await response.json();
-    const quote = data.choices[0].message.content;
+    console.log("OpenAI response received:", data);
+    
+    if (!data.choices || !data.choices.length || !data.choices[0].message) {
+      throw new Error('Unexpected response format from OpenAI');
+    }
+
+    const quote = data.choices[0].message.content.trim();
+    console.log("Generated quote:", quote);
 
     return new Response(JSON.stringify({ quote }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    console.error('Error:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    console.error('Error generating quote:', error);
+    return new Response(JSON.stringify({ 
+      error: error.message,
+      quote: "Transforme desafios em oportunidades de crescimento." 
+    }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

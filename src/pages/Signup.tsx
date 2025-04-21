@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -46,27 +47,42 @@ export default function Signup() {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  // Buscar planos do Supabase
+  // Buscar planos do Supabase - versão corrigida
   useEffect(() => {
     setLoadingPlans(true);
     console.log("Buscando planos...");
 
+    // Consulta direta sem filtros para debug
     supabase
       .from("pricing")
       .select("id, name, description, price, is_paid")
-      .eq("chatpump", true)
       .order("price", { ascending: true })
       .then(({ data, error }) => {
         if (error) {
           console.error("Erro ao buscar planos:", error);
           toast.error("Erro ao buscar planos");
+          setLoadingPlans(false);
         } else {
-          console.log("Planos recebidos:", data);
+          console.log("Todos os planos recebidos:", data);
+          
+          // Se tiver dados, usa os que têm chatpump = true, se existirem
           if (data && data.length > 0) {
-            setPlans(data as Plan[]);
-            setSelectedPlan(data[0] as Plan);
+            const filteredPlans = data.filter(plan => plan.chatpump === true);
+            console.log("Planos filtrados por chatpump=true:", filteredPlans);
+            
+            if (filteredPlans.length > 0) {
+              setPlans(filteredPlans as Plan[]);
+              setSelectedPlan(filteredPlans[0] as Plan);
+            } else {
+              // Se não encontrar planos com chatpump=true, usa todos para não deixar vazio
+              setPlans(data as Plan[]);
+              setSelectedPlan(data[0] as Plan);
+              toast.warning("Usando todos os planos disponíveis", {
+                duration: 5000
+              });
+            }
           } else {
-            console.log("Nenhum plano encontrado com chatpump=true");
+            console.log("Nenhum plano encontrado na tabela pricing");
             const demoPlans = [
               {
                 id: "free-plan",
@@ -89,8 +105,8 @@ export default function Signup() {
               duration: 5000
             });
           }
+          setLoadingPlans(false);
         }
-        setLoadingPlans(false);
       });
   }, []);
 

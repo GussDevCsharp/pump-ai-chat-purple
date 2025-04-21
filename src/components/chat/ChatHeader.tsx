@@ -8,8 +8,8 @@ import { useChatAuth } from "@/hooks/useChatAuth"
 export const ChatHeader = ({ mobileMenuButton }: { mobileMenuButton?: React.ReactNode }) => {
   const { authStatus } = useChatAuth();
 
-  // Redirect logged in users to /dashboard; guests go to /
-  const homeLink = authStatus === 'authenticated' ? "/dashboard" : "/";
+  // Redirect logged in users to /themes; guests go to /
+  const homeLink = authStatus === 'authenticated' ? "/themes" : "/";
 
   return (
     <header className="border-b border-pump-gray/20 p-4 flex justify-between items-center sticky top-0 bg-white z-10">

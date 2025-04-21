@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -17,7 +16,8 @@ type Plan = {
   description?: string;
   price: number;
   is_paid: boolean;
-  chatpump?: boolean;  // Added chatpump property as optional
+  chatpump?: boolean;
+  benefits?: string[];
 };
 
 const STEPS = [
@@ -48,66 +48,94 @@ export default function Signup() {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  // Buscar planos do Supabase - versão corrigida
+  // Buscar planos do Supabase
   useEffect(() => {
     setLoadingPlans(true);
     console.log("Buscando planos...");
 
-    // Consulta direta sem filtros para debug
+    // Busca primeiro os planos
     supabase
       .from("pricing")
       .select("id, name, description, price, is_paid, chatpump")
       .order("price", { ascending: true })
-      .then(({ data, error }) => {
+      .then(async ({ data, error }) => {
         if (error) {
           console.error("Erro ao buscar planos:", error);
           toast.error("Erro ao buscar planos");
           setLoadingPlans(false);
-        } else {
-          console.log("Todos os planos recebidos:", data);
-          
-          // Se tiver dados, usa os que têm chatpump = true, se existirem
-          if (data && data.length > 0) {
-            const filteredPlans = data.filter(plan => plan.chatpump === true);
-            console.log("Planos filtrados por chatpump=true:", filteredPlans);
-            
-            if (filteredPlans.length > 0) {
-              setPlans(filteredPlans as Plan[]);
-              setSelectedPlan(filteredPlans[0] as Plan);
-            } else {
-              // Se não encontrar planos com chatpump=true, usa todos para não deixar vazio
-              setPlans(data as Plan[]);
-              setSelectedPlan(data[0] as Plan);
-              toast.warning("Usando todos os planos disponíveis", {
-                duration: 5000
-              });
+          return;
+        }
+        console.log("Todos os planos recebidos:", data);
+
+        if (data && data.length > 0) {
+          // Busca os benefícios para TODOS os planos obtidos
+          const planIds = data.map(plan => plan.id);
+          // Busca benefícios relacionados a esses planos
+          const { data: benefitsData, error: benefitsError } = await supabase
+            .from("plan_benefits")
+            .select("plan_id, benefit")
+            .in("plan_id", planIds);
+
+          if (benefitsError) {
+            console.error("Erro ao buscar benefícios:", benefitsError);
+            toast.error("Erro ao buscar benefícios");
+          }
+
+          // Organiza os benefícios por plano
+          const benefitsMap: Record<string, string[]> = {};
+          if (benefitsData) {
+            for (const entry of benefitsData) {
+              if (!benefitsMap[entry.plan_id]) benefitsMap[entry.plan_id] = [];
+              benefitsMap[entry.plan_id].push(entry.benefit);
             }
+          }
+
+          // Junta benefícios aos planos
+          const enrichedPlans = data.map(plan => ({
+            ...plan,
+            benefits: benefitsMap[plan.id] || [],
+          }));
+
+          // Mantém o filtro do chatpump se houver
+          const filteredPlans = enrichedPlans.filter(plan => plan.chatpump === true);
+
+          if (filteredPlans.length > 0) {
+            setPlans(filteredPlans as Plan[]);
+            setSelectedPlan(filteredPlans[0] as Plan);
           } else {
-            console.log("Nenhum plano encontrado na tabela pricing");
-            const demoPlans = [
-              {
-                id: "free-plan",
-                name: "Plano Gratuito",
-                description: "Acesso básico às funcionalidades",
-                price: 0,
-                is_paid: false
-              },
-              {
-                id: "premium-plan",
-                name: "Plano Premium",
-                description: "Acesso completo a todas as funcionalidades",
-                price: 29.90,
-                is_paid: true
-              }
-            ];
-            setPlans(demoPlans);
-            setSelectedPlan(demoPlans[0]);
-            toast.warning("Usando planos de demonstração - Configure no Supabase", {
+            setPlans(enrichedPlans as Plan[]);
+            setSelectedPlan(enrichedPlans[0] as Plan);
+            toast.warning("Usando todos os planos disponíveis", {
               duration: 5000
             });
           }
-          setLoadingPlans(false);
+        } else {
+          console.log("Nenhum plano encontrado na tabela pricing");
+          const demoPlans = [
+            {
+              id: "free-plan",
+              name: "Plano Gratuito",
+              description: "Acesso básico às funcionalidades",
+              price: 0,
+              is_paid: false,
+              benefits: ["Acesso limitado", "Suporte básico"]
+            },
+            {
+              id: "premium-plan",
+              name: "Plano Premium",
+              description: "Acesso completo a todas as funcionalidades",
+              price: 29.90,
+              is_paid: true,
+              benefits: ["Todas as funções", "Suporte prioritário"]
+            }
+          ];
+          setPlans(demoPlans);
+          setSelectedPlan(demoPlans[0]);
+          toast.warning("Usando planos de demonstração - Configure no Supabase", {
+            duration: 5000
+          });
         }
+        setLoadingPlans(false);
       });
   }, []);
 

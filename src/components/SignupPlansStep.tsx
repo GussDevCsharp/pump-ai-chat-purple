@@ -7,7 +7,8 @@ interface Plan {
   description?: string;
   price: number;
   is_paid: boolean;
-  chatpump?: boolean; // Garantir compatibilidade, pois chega do backend via select
+  chatpump?: boolean;
+  benefits?: string[]; // novo campo para os benefícios
 }
 
 interface SignupPlansStepProps {
@@ -30,9 +31,9 @@ export function SignupPlansStep({ plans, selectedPlanId, onSelect, disabled }: S
     <div>
       <h3 className="font-semibold text-lg mb-4 text-gray-900">Escolha o seu plano</h3>
       <div
-        className="
+        className={`
           flex flex-wrap gap-4 justify-center
-        "
+        `}
       >
         {plans.map(plan => (
           <button
@@ -53,10 +54,16 @@ export function SignupPlansStep({ plans, selectedPlanId, onSelect, disabled }: S
               </span>
             </div>
             <p className="text-sm text-gray-600 mt-1">{plan.description}</p>
+            {plan.benefits && plan.benefits.length > 0 && (
+              <ul className="text-sm mt-3 space-y-1 pl-4 list-disc text-gray-800">
+                {plan.benefits.map((b, idx) => (
+                  <li key={idx}>{b}</li>
+                ))}
+              </ul>
+            )}
           </button>
         ))}
       </div>
     </div>
   );
 }
-

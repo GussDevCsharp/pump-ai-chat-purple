@@ -274,6 +274,32 @@ export type Database = {
         }
         Relationships: []
       }
+      plan_benefits: {
+        Row: {
+          benefit: string
+          id: string
+          plan_id: string
+        }
+        Insert: {
+          benefit: string
+          id?: string
+          plan_id: string
+        }
+        Update: {
+          benefit?: string
+          id?: string
+          plan_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plan_benefits_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "pricing"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pricing: {
         Row: {
           chatpump: boolean

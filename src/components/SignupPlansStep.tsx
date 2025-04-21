@@ -8,7 +8,7 @@ interface Plan {
   price: number;
   is_paid: boolean;
   chatpump?: boolean;
-  benefits?: string[]; // novo campo para os benefícios
+  benefits?: string[];
 }
 
 interface SignupPlansStepProps {
@@ -28,65 +28,72 @@ export function SignupPlansStep({ plans, selectedPlanId, onSelect, disabled, all
     );
   }
 
-  // Para evitar issues se não passar allBenefits
+  // Lista completa e única de benefícios (sem duplicatas e definidos)
   const uniqueAllBenefits = (allBenefits ?? [])
     .filter((benefit, idx, arr) => benefit && arr.indexOf(benefit) === idx);
 
   return (
     <div>
-      <h3 className="font-semibold text-lg mb-4 text-gray-900">Escolha o seu plano</h3>
+      <h3 className="font-semibold text-lg mb-4 text-gray-900 text-center">Escolha o seu plano</h3>
       <div
-        className={`
-          flex flex-wrap gap-4 justify-center
-        `}
+        className="
+          flex flex-row gap-4 justify-center 
+          flex-wrap md:flex-nowrap
+          w-full
+        "
       >
-        {plans.map(plan => (
+        {plans.slice(0,3).map(plan => (
           <button
             type="button"
             key={plan.id}
-            className={`relative min-w-[220px] max-w-[320px] w-full sm:w-auto flex-shrink-0 border rounded-lg p-4 text-left transition-all duration-150 ${selectedPlanId === plan.id ? 'border-pump-purple bg-pump-purple/5 shadow' : 'border-gray-200 bg-white'} ${disabled ? "opacity-70" : "hover:shadow-md"}`}
+            className={`
+              relative flex-1 max-w-[350px] min-w-[260px] 
+              flex-shrink-0 border rounded-xl p-5 text-left 
+              transition-all duration-150
+              ${selectedPlanId === plan.id ? 'border-pump-purple bg-pump-purple/5 shadow-xl scale-105 ring-2 ring-pump-purple/40' : 'border-gray-200 bg-white'}
+              ${disabled ? "opacity-70 pointer-events-none" : "hover:shadow-md"}
+            `}
             onClick={() => !disabled && onSelect(plan)}
             disabled={disabled}
             tabIndex={0}
           >
-            {/* Marca d'água com todos os benefícios */}
-            {uniqueAllBenefits.length > 0 && (
-              <ul className="absolute inset-0 p-4 z-0 opacity-15 pointer-events-none select-none list-none text-xs" aria-hidden="true">
-                {uniqueAllBenefits.map((b, idx) => (
-                  <li key={idx} className="mb-1 text-gray-500" style={{
-                    whiteSpace: 'nowrap',
-                    textShadow: '0 1px 8px #fff, 0 0px 1px #fff',
-                  }}>
-                    {b}
-                  </li>
-                ))}
-              </ul>
-            )}
-
-            <div className="relative z-10">
-              <div className="flex justify-between items-center">
-                <span className="font-medium text-lg">{plan.name}</span>
-                <span>
-                  {plan.is_paid
-                    ? <span className="font-bold text-pump-purple">R$ {plan.price.toFixed(2)}</span>
-                    : <span className="font-medium text-green-600">Grátis</span>
-                  }
-                </span>
-              </div>
-              <p className="text-sm text-gray-600 mt-1">{plan.description}</p>
-              {/* Destaque só os benefícios do plano */}
-              {plan.benefits && plan.benefits.length > 0 && (
-                <ul className="text-sm mt-3 space-y-1 pl-4 list-disc text-gray-800 font-medium">
-                  {plan.benefits.map((b, idx) => (
-                    <li key={idx} className="text-pump-purple">{b}</li>
-                  ))}
-                </ul>
-              )}
+            <div className="flex justify-between items-center mb-2">
+              <span className="font-bold text-lg">{plan.name}</span>
+              <span>
+                {plan.is_paid
+                  ? <span className="font-bold text-pump-purple text-xl">R$ {plan.price.toFixed(2)}</span>
+                  : <span className="font-bold text-green-500 text-xl">Grátis</span>
+                }
+              </span>
             </div>
+            <p className="text-sm text-gray-600 mb-3 min-h-[32px]">{plan.description}</p>
+            <ul className="mt-2 space-y-1 text-sm font-medium">
+              {uniqueAllBenefits.map((benefit, idx) => {
+                const isActive = plan.benefits?.includes(benefit);
+                return (
+                  <li
+                    key={idx}
+                    className={`
+                      flex items-center gap-2
+                      ${isActive 
+                        ? "text-pump-purple font-semibold"
+                        : "text-gray-400 line-through opacity-60"
+                      }
+                    `}
+                  >
+                    {isActive ? (
+                      <span className="inline-block w-2 h-2 bg-pump-purple rounded-full" />
+                    ) : (
+                      <span className="inline-block w-2 h-2 border border-gray-300 rounded-full" />
+                    )}
+                    {benefit}
+                  </li>
+                )
+              })}
+            </ul>
           </button>
         ))}
       </div>
     </div>
   );
 }
-

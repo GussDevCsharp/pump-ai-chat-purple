@@ -25,7 +25,7 @@ export const ChatLayout = () => {
       )}
 
       {!isMobile && (
-        <div className="hidden md:block">
+        <div className="hidden md:block w-64 border-r border-pump-gray/20">
           <ChatSidebar />
         </div>
       )}

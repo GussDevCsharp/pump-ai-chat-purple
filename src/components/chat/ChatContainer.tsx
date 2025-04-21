@@ -349,7 +349,7 @@ export const ChatContainer = () => {
   }, []);
 
   return (
-    <div className="flex-1 flex flex-col">
+    <div className="flex-1 flex flex-col h-full overflow-hidden">
       {authStatus === 'anonymous' && (
         <div className="bg-blue-50 p-3 flex items-center justify-between border-b">
           <div className="flex items-center gap-2">
@@ -372,11 +372,11 @@ export const ChatContainer = () => {
       {showWelcomeScreen ? (
         <WelcomeScreen onSendMessage={handleSendMessage} />
       ) : (
-        <>
+        <div className="flex-1 flex flex-col overflow-hidden h-full">
           <ChatMessages messages={messages} isThinking={isThinking} />
           <ChatInput onSendMessage={handleSendMessage} />
           <ApiKeyDisplay />
-        </>
+        </div>
       )}
     </div>
   )

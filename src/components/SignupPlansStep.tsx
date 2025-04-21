@@ -38,7 +38,7 @@ export function SignupPlansStep({ plans, selectedPlanId, onSelect, disabled }: S
             className={`
               relative flex-1 max-w-[350px] min-w-[260px]
               flex-shrink-0 border rounded-xl p-5 text-left
-              transition-all duration-150
+              transition-all duration-150 flex flex-col
               ${selectedPlanId === plan.id ? 'border-pump-purple bg-pump-purple/5 shadow-xl scale-105 ring-2 ring-pump-purple/40' : 'border-gray-200 bg-white'}
               ${disabled ? "opacity-70 pointer-events-none" : "hover:shadow-md"}
             `}
@@ -56,18 +56,20 @@ export function SignupPlansStep({ plans, selectedPlanId, onSelect, disabled }: S
               </span>
             </div>
             <p className="text-sm text-gray-600 mb-3 min-h-[32px]">{plan.description}</p>
-            <ul className="mt-3 space-y-2 text-sm font-medium">
-              {plan.benefits && plan.benefits.length > 0 ? (
-                plan.benefits.map((benefit, idx) => (
-                  <li key={idx} className="flex items-center gap-2 text-pump-purple font-semibold">
-                    <span className="inline-block w-2 h-2 bg-pump-purple rounded-full" />
-                    {benefit}
-                  </li>
-                ))
-              ) : (
-                <li className="text-gray-400 italic">Sem benefícios informados</li>
-              )}
-            </ul>
+            <div className="mt-auto">
+              <ul className="mt-3 space-y-2 text-sm">
+                {plan.benefits && plan.benefits.length > 0 ? (
+                  plan.benefits.map((benefit, idx) => (
+                    <li key={idx} className="flex items-center gap-2 text-pump-purple font-semibold">
+                      <span className="inline-block w-2 h-2 bg-pump-purple rounded-full flex-shrink-0" />
+                      <span>{benefit}</span>
+                    </li>
+                  ))
+                ) : (
+                  <li className="text-gray-400 italic">Sem benefícios informados</li>
+                )}
+              </ul>
+            </div>
           </button>
         ))}
       </div>

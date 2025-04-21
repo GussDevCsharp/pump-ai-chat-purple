@@ -381,6 +381,7 @@ export type Database = {
           created_at: string
           id: string
           pattern_prompt: string
+          prompt_furtive: string | null
           theme_id: string
           title: string
           updated_at: string
@@ -389,6 +390,7 @@ export type Database = {
           created_at?: string
           id?: string
           pattern_prompt: string
+          prompt_furtive?: string | null
           theme_id: string
           title: string
           updated_at?: string
@@ -397,6 +399,7 @@ export type Database = {
           created_at?: string
           id?: string
           pattern_prompt?: string
+          prompt_furtive?: string | null
           theme_id?: string
           title?: string
           updated_at?: string

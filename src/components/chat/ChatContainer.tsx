@@ -11,6 +11,7 @@ import { useChatAuth } from "@/hooks/useChatAuth"
 import { Button } from "@/components/ui/button"
 import { LogIn } from "lucide-react"
 import { useThemePrompt } from "@/hooks/useThemePrompt"
+import { Watermark } from "../common/Watermark"
 
 const demoPrompts = [
   { title: "Campanha Digital para Lançamento de Produto", tema: "marketing e vendas", tags: ["nome_empresa", "segmento", "tipo_produto", "plataforma_marketing"], prompt: "Crie uma campanha de marketing digital para lançar o produto {{tipo_produto}} da empresa {{nome_empresa}}, que atua no segmento de {{segmento}}. A campanha deve ser focada em atrair novos clientes e aumentar o reconhecimento da marca nas plataformas {{plataforma_marketing}}." },
@@ -40,7 +41,6 @@ interface Message {
   content: string
 }
 
-// Interface para mensagens locais
 interface LocalMessage extends Message {
   session_id: string
   created_at: string
@@ -65,7 +65,6 @@ export const ChatContainer = () => {
         return;
       }
       
-      // Para sessões locais, verificamos no localStorage
       if (authStatus === 'anonymous') {
         try {
           const localSessions = JSON.parse(localStorage.getItem('anonymous_chat_sessions') || '[]');
@@ -77,7 +76,6 @@ export const ChatContainer = () => {
         return;
       }
       
-      // Para sessões no banco
       const { data, error } = await supabase
         .from('chat_sessions')
         .select('theme_id')
@@ -98,10 +96,8 @@ export const ChatContainer = () => {
     focus: "Soluções inovadoras",
   });
   
-  // Chave para armazenar mensagens locais
   const LOCAL_MESSAGES_KEY = 'anonymous_chat_messages';
   
-  // Carregar mensagens locais do localStorage
   const getLocalMessages = (chatSessionId: string): Message[] => {
     try {
       const allMessages = JSON.parse(localStorage.getItem(LOCAL_MESSAGES_KEY) || '[]');
@@ -119,18 +115,14 @@ export const ChatContainer = () => {
     }
   };
   
-  // Salvar mensagens locais no localStorage
   const saveLocalMessages = (sessionId: string, newMessages: Message[]) => {
     try {
-      // Pegar todas as mensagens salvas
       const allMessages = JSON.parse(localStorage.getItem(LOCAL_MESSAGES_KEY) || '[]');
       
-      // Remover mensagens antigas desta sessão
       const otherSessionsMessages = allMessages.filter(
         (msg: LocalMessage) => msg.session_id !== sessionId
       );
       
-      // Adicionar novas mensagens com id da sessão
       const updatedMessages = [
         ...otherSessionsMessages,
         ...newMessages.map((msg) => ({
@@ -149,7 +141,6 @@ export const ChatContainer = () => {
   useEffect(() => {
     if (sessionId) {
       if (authStatus === 'anonymous') {
-        // Carregar mensagens do localStorage para usuários anônimos
         const localMessages = getLocalMessages(sessionId);
         if (localMessages.length > 0) {
           setMessages(localMessages);
@@ -160,7 +151,6 @@ export const ChatContainer = () => {
           }]);
         }
       } else {
-        // Carregar mensagens do banco para usuários autenticados
         loadMessages(sessionId);
       }
     } else {
@@ -278,12 +268,10 @@ export const ChatContainer = () => {
       }
 
       if (authStatus === 'anonymous') {
-        // Salvar mensagens localmente para usuários anônimos
         saveLocalMessages(currentSessionId, [userMessage, assistantMessage]);
         setMessages(prev => [...prev, assistantMessage]);
         await refreshSessions();
       } else if (isFirstMessage) {
-        // Salvar a primeira mensagem para usuários autenticados
         try {
           await supabase
             .from('chat_messages')
@@ -305,7 +293,6 @@ export const ChatContainer = () => {
         setMessages(prev => [...prev, assistantMessage])
         await refreshSessions()
       } else {
-        // Salvar mensagens subsequentes para usuários autenticados
         try {
           await supabase
             .from('chat_messages')
@@ -348,7 +335,8 @@ export const ChatContainer = () => {
   }, []);
 
   return (
-    <div className="flex-1 flex flex-col h-full overflow-hidden">
+    <div className="flex-1 flex flex-col h-full overflow-hidden relative">
+      <Watermark />
       {authStatus === 'anonymous' && (
         <div className="bg-blue-50 p-3 flex items-center justify-between border-b">
           <div className="flex items-center gap-2">

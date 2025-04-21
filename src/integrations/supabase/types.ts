@@ -200,6 +200,27 @@ export type Database = {
         }
         Relationships: []
       }
+      Leads: {
+        Row: {
+          created_at: string
+          id: number
+          Name: string | null
+          whatsapp: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          Name?: string | null
+          whatsapp?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          Name?: string | null
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
       model: {
         Row: {
           created_at: string

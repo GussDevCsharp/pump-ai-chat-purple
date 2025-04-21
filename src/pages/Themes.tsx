@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { useChatThemes } from "@/hooks/useChatThemes";
@@ -104,4 +103,3 @@ export default function Themes() {
     </div>
   );
 }
-

@@ -9,6 +9,24 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      benefits: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+        }
+        Relationships: []
+      }
       chat_messages: {
         Row: {
           content: string
@@ -274,23 +292,30 @@ export type Database = {
         }
         Relationships: []
       }
-      plan_benefits: {
+      plan_benefit_mappings: {
         Row: {
-          benefit: string
+          benefit_id: string
           id: string
           plan_id: string
         }
         Insert: {
-          benefit: string
+          benefit_id: string
           id?: string
           plan_id: string
         }
         Update: {
-          benefit?: string
+          benefit_id?: string
           id?: string
           plan_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_benefit"
+            columns: ["benefit_id"]
+            isOneToOne: false
+            referencedRelation: "benefits"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "plan_benefits_plan_id_fkey"
             columns: ["plan_id"]

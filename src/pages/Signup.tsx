@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -53,7 +54,7 @@ export default function Signup() {
     setLoadingPlans(true);
     console.log("Buscando planos...");
 
-    // Busca primeiro os planos
+    // Busca planos
     supabase
       .from("pricing")
       .select("id, name, description, price, is_paid, chatpump")
@@ -68,25 +69,30 @@ export default function Signup() {
         console.log("Todos os planos recebidos:", data);
 
         if (data && data.length > 0) {
-          // Busca os benefícios para TODOS os planos obtidos
+          // Para cada plano, buscar os benefícios associados via o novo relacionamento muitos-para-muitos
           const planIds = data.map(plan => plan.id);
-          // Busca benefícios relacionados a esses planos
-          const { data: benefitsData, error: benefitsError } = await supabase
-            .from("plan_benefits")
-            .select("plan_id, benefit")
+
+          // Obter todos os mapeamentos plan_benefit_mappings para esses planos, incluindo benefícios associados
+          // Fazendo join direto: benefit_id -> benefits.description
+          const { data: mappings, error: mappingsError } = await supabase
+            .from("plan_benefit_mappings")
+            .select("plan_id, benefit:benefit_id (description)")
             .in("plan_id", planIds);
 
-          if (benefitsError) {
-            console.error("Erro ao buscar benefícios:", benefitsError);
+          if (mappingsError) {
+            console.error("Erro ao buscar os mapeamentos de benefícios:", mappingsError);
             toast.error("Erro ao buscar benefícios");
           }
 
-          // Organiza os benefícios por plano
+          // Estratégia: montar benefits por plan_id
           const benefitsMap: Record<string, string[]> = {};
-          if (benefitsData) {
-            for (const entry of benefitsData) {
-              if (!benefitsMap[entry.plan_id]) benefitsMap[entry.plan_id] = [];
-              benefitsMap[entry.plan_id].push(entry.benefit);
+          if (mappings) {
+            for (const mapping of mappings) {
+              if (!benefitsMap[mapping.plan_id]) benefitsMap[mapping.plan_id] = [];
+              // mapping.benefit?.description pode ser nulo se relacionamento quebrar
+              if (mapping.benefit && mapping.benefit.description) {
+                benefitsMap[mapping.plan_id].push(mapping.benefit.description);
+              }
             }
           }
 

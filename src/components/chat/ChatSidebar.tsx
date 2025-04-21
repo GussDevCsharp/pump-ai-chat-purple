@@ -102,7 +102,7 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
 
   return (
     <>
-      <div className="w-64 max-w-full h-full md:h-screen bg-white border-r border-pump-gray/20 p-4 flex flex-col">
+      <div className="w-64 max-w-full h-full md:h-screen bg-offwhite border-r border-pump-gray/20 p-4 flex flex-col">
         {onClose && (
           <button
             type="button"

@@ -32,7 +32,9 @@ export default function BusinessGenerator() {
       <div className="min-h-screen bg-white">
         <FormHeader />
         <main className="container mx-auto px-4 py-8">
-          <UserCard />
+          <div className="flex justify-end mb-6">
+            <UserCard />
+          </div>
           <BusinessPlanDisplay businessPlan={businessPlan} onStartNew={startNewPlan} />
         </main>
       </div>
@@ -45,7 +47,9 @@ export default function BusinessGenerator() {
       <FormHeader />
 
       <main className="container mx-auto px-4 py-8 relative z-10">
-        <UserCard />
+        <div className="flex justify-end mb-6">
+          <UserCard />
+        </div>
         <div className="max-w-5xl mx-auto">
           <FormTitle />
           

@@ -1,12 +1,10 @@
-
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { useChatThemes } from "@/hooks/useChatThemes";
 import { useChatSessions } from "@/hooks/useChatSessions";
 import { UserCardMenu } from "@/components/common/UserCardMenu";
 import { Button } from "@/components/ui/button";
-import { Download, MessageCircle } from "lucide-react";
-import { exportThemesToCSV } from "@/utils/exportThemes";
+import { MessageCircle } from "lucide-react";
 
 export default function Themes() {
   const { themes, isLoading } = useChatThemes();
@@ -57,15 +55,6 @@ export default function Themes() {
               >
                 <MessageCircle className="w-5 h-5 mr-2" />
                 Novo Chat
-              </Button>
-              <Button
-                onClick={exportThemesToCSV}
-                size="lg"
-                variant="outline"
-                className="border-pump-purple text-pump-purple hover:bg-pump-purple/10"
-              >
-                <Download className="w-5 h-5 mr-2" />
-                Exportar Temas
               </Button>
             </div>
           </div>

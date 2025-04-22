@@ -29,7 +29,7 @@ export default function BusinessGenerator() {
 
   if (businessPlan) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-pump-offwhite">
         <FormHeader />
         <main className="container mx-auto px-4 py-8">
           <div className="flex justify-end mb-6">
@@ -42,7 +42,7 @@ export default function BusinessGenerator() {
   }
 
   return (
-    <div className="min-h-screen bg-white relative">
+    <div className="min-h-screen bg-pump-offwhite relative">
       <Watermark />
       <FormHeader />
 

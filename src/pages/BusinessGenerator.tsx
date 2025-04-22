@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,6 +10,7 @@ import { FormHeader } from "@/components/business-generator/FormHeader";
 import { FormTitle } from "@/components/business-generator/FormTitle";
 import { useBusinessForm } from "@/hooks/useBusinessForm";
 import { steps } from "@/config/business-generator-steps";
+import { Header } from "@/components/common/Header";
 
 export default function BusinessGenerator() {
   const {
@@ -29,7 +29,7 @@ export default function BusinessGenerator() {
   if (businessPlan) {
     return (
       <div className="min-h-screen bg-pump-offwhite">
-        <FormHeader />
+        <Header />
         <main className="container mx-auto px-4 py-8">
           <BusinessPlanDisplay businessPlan={businessPlan} onStartNew={startNewPlan} />
         </main>
@@ -40,8 +40,7 @@ export default function BusinessGenerator() {
   return (
     <div className="min-h-screen bg-pump-offwhite relative">
       <Watermark />
-      <FormHeader />
-
+      <Header />
       <main className="container mx-auto px-4 py-8 relative z-10">
         <div className="max-w-5xl mx-auto">
           <FormTitle />

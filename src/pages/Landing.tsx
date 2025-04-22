@@ -2,6 +2,7 @@ import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Building, ChartBar, Users, TrendingUp, MessageSquare } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
+import { Header } from "@/components/common/Header"
 
 export default function Landing() {
   const businessPrompts = [
@@ -29,28 +30,7 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-offwhite">
-      <header className="border-b border-pump-gray/20 p-4">
-        <div className="container mx-auto flex items-center justify-between">
-          <img 
-            src="/lovable-uploads/5f403064-9209-4921-b73b-0f70c739981a.png" 
-            alt="Pump.ia"
-            className="h-8"
-          />
-          <div className="flex gap-4">
-            <Link to="/business-generator">
-              <Button variant="outline" className="text-pump-purple hover:text-pump-purple/90">
-                Gerar um Negócio
-              </Button>
-            </Link>
-            <Link to="/login">
-              <Button variant="outline" className="text-pump-purple hover:text-pump-purple/90">
-                Entrar
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </header>
-
+      <Header />
       <main className="container mx-auto px-4 py-12 bg-offwhite">
         <div className="max-w-4xl mx-auto text-center mb-16">
           <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">

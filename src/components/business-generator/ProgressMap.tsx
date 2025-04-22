@@ -16,7 +16,7 @@ export const ProgressMap = ({ steps, currentStep, completedFields }: ProgressMap
     <div className="mb-8 relative">
       <Progress value={progress} className="h-2 mb-6" />
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="flex justify-between items-center px-4">
         {steps.map((step, index) => {
           const isCompleted = index < currentStep
           const isCurrent = index === currentStep
@@ -24,37 +24,20 @@ export const ProgressMap = ({ steps, currentStep, completedFields }: ProgressMap
           return (
             <div
               key={step.id}
-              className={`p-4 rounded-lg border ${
-                isCurrent ? 'border-pump-purple bg-pump-purple/5' :
-                isCompleted ? 'border-green-500 bg-green-50' :
-                'border-gray-200'
-              }`}
+              className={`flex items-center justify-center`}
             >
-              <div className="flex items-center justify-center">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center
-                  ${isCompleted ? 'bg-green-500' :
-                    isCurrent ? 'bg-pump-purple' :
-                    'bg-gray-200'
-                  }`}
-                >
-                  {isCompleted ? (
-                    <CheckCircle className="w-6 h-6 text-white" />
-                  ) : (
-                    <span className="text-lg text-white font-medium">{index + 1}</span>
-                  )}
-                </div>
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center
+                ${isCompleted ? 'bg-green-500' :
+                  isCurrent ? 'bg-pump-purple' :
+                  'bg-gray-200'
+                }`}
+              >
+                {isCompleted ? (
+                  <CheckCircle className="w-6 h-6 text-white" />
+                ) : (
+                  <span className="text-lg text-white font-medium">{index + 1}</span>
+                )}
               </div>
-              
-              {isCompleted && (
-                <div className="mt-4 text-sm text-gray-600">
-                  {step.fields.map(field => (
-                    <div key={field.id} className="flex gap-2">
-                      <span className="font-medium">{field.label}:</span>
-                      <span>{completedFields[field.id]}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
           )
         })}

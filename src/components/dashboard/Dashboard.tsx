@@ -54,7 +54,7 @@ const businessSectors = [
 
 export const Dashboard = () => {
   return (
-    <div className="p-8 bg-white">
+    <div className="p-8 bg-[#fafaf9]">
       <h1 className="text-2xl font-bold text-gray-900 mb-6">
         Bem-vindo ao Pump.ia
       </h1>

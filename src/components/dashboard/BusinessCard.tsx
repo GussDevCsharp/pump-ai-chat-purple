@@ -9,11 +9,11 @@ import { useThemePrompts } from "@/hooks/useThemePrompts"
 interface BusinessCardProps {
   title: string
   description: string
-  prompts: string[]
   gradient: string
   themeName?: string
   themeColor?: string
   themeId?: string
+  prompts?: any[]
 }
 
 export const BusinessCard = ({ 
@@ -28,7 +28,6 @@ export const BusinessCard = ({
   const { prompts, isLoading } = useThemePrompts(themeId);
 
   const handleCardClick = async () => {
-    // Primeiro, encontrar ou criar o tema
     const { data: themeData, error: themeError } = await supabase
       .from('chat_themes')
       .select('id')
@@ -67,7 +66,6 @@ export const BusinessCard = ({
     })
   }
 
-  // Helper function for badge color
   const getBadgeColor = (gradient: string) => {
     if (gradient.includes('purple')) return 'bg-purple-100 text-purple-800';
     if (gradient.includes('green')) return 'bg-green-100 text-green-800';

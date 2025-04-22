@@ -41,8 +41,9 @@ export function useThemePrompt(themeId?: string) {
             theme_id: data.theme_id,
             title: data.title,
             prompt_furtive: data.prompt_furtive,
-            // For backwards compatibility, map prompt_furtive to pattern_prompt if needed
-            pattern_prompt: data.pattern_prompt || data.prompt_furtive
+            // For backwards compatibility - since pattern_prompt doesn't exist in database
+            // we use prompt_furtive as a fallback
+            pattern_prompt: data.prompt_furtive 
           };
           setPatternPrompt(themePromptData);
         }

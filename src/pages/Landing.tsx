@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Building, ChartBar, Users, TrendingUp, MessageSquare } from "lucide-react"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card } from "@/components/ui/card"
 import { Header } from "@/components/common/Header"
 
 export default function Landing() {
@@ -31,23 +31,19 @@ export default function Landing() {
   const companies = [
     {
       name: "TechCorp",
-      description: "Otimização de processos internos",
-      image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=300&h=150",
+      logo: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=300&h=150",
     },
     {
       name: "InnovateX",
-      description: "Análise preditiva de mercado",
-      image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&w=300&h=150",
+      logo: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&w=300&h=150",
     },
     {
       name: "SmartSolutions",
-      description: "Gestão financeira inteligente",
-      image: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=300&h=150",
+      logo: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=300&h=150",
     },
     {
       name: "DataFlow",
-      description: "Automação de decisões",
-      image: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=300&h=150",
+      logo: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=300&h=150",
     },
   ];
 
@@ -104,7 +100,7 @@ export default function Landing() {
           ))}
         </div>
 
-        <section className="mt-24">
+        <section className="mt-24 container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
               Empresas que confiam na nossa IA
@@ -114,19 +110,18 @@ export default function Landing() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-center opacity-70 grayscale">
             {companies.map((company, index) => (
-              <Card key={index} className="overflow-hidden hover:shadow-lg transition-shadow border-pump-gray/20 bg-transparent">
+              <div 
+                key={index} 
+                className="flex items-center justify-center"
+              >
                 <img
-                  src={company.image}
+                  src={company.logo}
                   alt={company.name}
-                  className="w-full h-40 object-cover"
+                  className="max-h-16 max-w-full object-contain"
                 />
-                <CardContent className="p-4">
-                  <h3 className="font-semibold text-gray-900 mb-2">{company.name}</h3>
-                  <p className="text-sm text-pump-gray">{company.description}</p>
-                </CardContent>
-              </Card>
+              </div>
             ))}
           </div>
         </section>

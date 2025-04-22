@@ -11,7 +11,6 @@ import { FormHeader } from "@/components/business-generator/FormHeader";
 import { FormTitle } from "@/components/business-generator/FormTitle";
 import { useBusinessForm } from "@/hooks/useBusinessForm";
 import { steps } from "@/config/business-generator-steps";
-import { UserCard } from "@/components/common/UserCard";
 
 export default function BusinessGenerator() {
   const {
@@ -32,9 +31,6 @@ export default function BusinessGenerator() {
       <div className="min-h-screen bg-pump-offwhite">
         <FormHeader />
         <main className="container mx-auto px-4 py-8">
-          <div className="flex justify-end mb-6">
-            <UserCard />
-          </div>
           <BusinessPlanDisplay businessPlan={businessPlan} onStartNew={startNewPlan} />
         </main>
       </div>
@@ -47,9 +43,6 @@ export default function BusinessGenerator() {
       <FormHeader />
 
       <main className="container mx-auto px-4 py-8 relative z-10">
-        <div className="flex justify-end mb-6">
-          <UserCard />
-        </div>
         <div className="max-w-5xl mx-auto">
           <FormTitle />
           
@@ -119,4 +112,4 @@ export default function BusinessGenerator() {
       </main>
     </div>
   );
-}
+};

@@ -24,10 +24,8 @@ export default {
         },
         pump: {
           purple: '#7E1CC6',
-          'purple-light': '#D6BCFA',
           gray: '#8E9196',
           'gray-light': '#F5F5F5',
-          'gray-dark': '#2D2D2D',
           'offwhite': '#FFFDF3'
         },
         border: "hsl(var(--border))",

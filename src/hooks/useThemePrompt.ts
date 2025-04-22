@@ -6,7 +6,8 @@ export interface ThemePrompt {
   id: string;
   theme_id: string;
   title: string;
-  pattern_prompt: string;
+  prompt_furtive?: string | null;
+  pattern_prompt?: string; // Make pattern_prompt optional since it's not in the database
 }
 
 export function useThemePrompt(themeId?: string) {
@@ -31,9 +32,19 @@ export function useThemePrompt(themeId?: string) {
           .maybeSingle();
           
         if (error) {
+          console.error("Error fetching theme prompt:", error);
           setPatternPrompt(null);
         } else if (data) {
-          setPatternPrompt(data);
+          // Map the data to match our interface
+          const themePromptData: ThemePrompt = {
+            id: data.id,
+            theme_id: data.theme_id,
+            title: data.title,
+            prompt_furtive: data.prompt_furtive,
+            // For backwards compatibility, map prompt_furtive to pattern_prompt if needed
+            pattern_prompt: data.pattern_prompt || data.prompt_furtive
+          };
+          setPatternPrompt(themePromptData);
         }
       } catch (err) {
         console.error("Error fetching theme prompt:", err);

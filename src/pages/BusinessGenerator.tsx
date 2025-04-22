@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,7 +7,6 @@ import { BusinessFormField } from "@/components/business-generator/FormField";
 import { BusinessPlanDisplay } from "@/components/business-generator/BusinessPlanDisplay";
 import { ProgressMap } from "@/components/business-generator/ProgressMap";
 import { Watermark } from "@/components/common/Watermark";
-import { FormHeader } from "@/components/business-generator/FormHeader";
 import { FormTitle } from "@/components/business-generator/FormTitle";
 import { useBusinessForm } from "@/hooks/useBusinessForm";
 import { steps } from "@/config/business-generator-steps";

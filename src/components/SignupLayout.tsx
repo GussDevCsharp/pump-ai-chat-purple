@@ -11,7 +11,7 @@ interface SignupLayoutProps {
 
 export function SignupLayout({ children, steps, current }: SignupLayoutProps) {
   return (
-    <div className="min-h-screen bg-white flex flex-col px-4 py-12 w-full justify-center items-center">
+    <div className="min-h-screen bg-offwhite flex flex-col px-4 py-12 w-full justify-center items-center">
       <div className="max-w-5xl w-full mx-auto">
         <div className="text-center mb-8">
           <Link to="/">

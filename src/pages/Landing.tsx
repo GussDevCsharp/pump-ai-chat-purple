@@ -1,7 +1,8 @@
+
 import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Building, ChartBar, Users, TrendingUp, MessageSquare } from "lucide-react"
-import { Card } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Header } from "@/components/common/Header"
 
 export default function Landing() {

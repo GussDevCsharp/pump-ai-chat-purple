@@ -9,6 +9,30 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      agents: {
+        Row: {
+          created_at: string
+          evolutionapikey: string | null
+          function: string | null
+          id: number
+          whatsapp_number: string | null
+        }
+        Insert: {
+          created_at?: string
+          evolutionapikey?: string | null
+          function?: string | null
+          id?: number
+          whatsapp_number?: string | null
+        }
+        Update: {
+          created_at?: string
+          evolutionapikey?: string | null
+          function?: string | null
+          id?: number
+          whatsapp_number?: string | null
+        }
+        Relationships: []
+      }
       benefits: {
         Row: {
           created_at: string
@@ -179,6 +203,21 @@ export type Database = {
         }
         Relationships: []
       }
+      configurations: {
+        Row: {
+          created_at: string
+          id: number
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+        }
+        Update: {
+          created_at?: string
+          id?: number
+        }
+        Relationships: []
+      }
       documents: {
         Row: {
           content: string | null
@@ -205,18 +244,21 @@ export type Database = {
           created_at: string
           id: number
           Name: string | null
+          step: string | null
           whatsapp: string | null
         }
         Insert: {
           created_at?: string
           id?: number
           Name?: string | null
+          step?: string | null
           whatsapp?: string | null
         }
         Update: {
           created_at?: string
           id?: number
           Name?: string | null
+          step?: string | null
           whatsapp?: string | null
         }
         Relationships: []

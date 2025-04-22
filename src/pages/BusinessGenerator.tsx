@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -57,8 +58,7 @@ export default function BusinessGenerator() {
           <Card className="mb-8">
             <CardContent className="pt-8">
               <div className="mb-8">
-                <h2 className="text-2xl md:text-3xl font-semibold mb-3">{currentStepData.title}</h2>
-                <p className="text-lg md:text-xl text-gray-600">{currentStepData.description}</p>
+                <h2 className="text-2xl md:text-3xl font-semibold mb-3">{currentStepData.description}</h2>
               </div>
               
               <div className="space-y-6">

@@ -1,4 +1,3 @@
-
 import React, { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
@@ -43,7 +42,7 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-white flex">
+    <div className="min-h-screen bg-pump-offwhite flex">
       <div className="flex-1 flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
           <div className="text-center">
@@ -124,7 +123,7 @@ export default function Login() {
           </div>
         </div>
       </div>
-      <div className="hidden lg:block relative flex-1 bg-pump-gray-light">
+      <div className="hidden lg:block relative flex-1 bg-pump-offwhite">
         <div className="absolute inset-0 flex items-center justify-center p-12">
           <div className="max-w-xl space-y-4">
             <h3 className="text-2xl font-bold text-gray-900">

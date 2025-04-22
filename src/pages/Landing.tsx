@@ -28,6 +28,29 @@ export default function Landing() {
     }
   ]
 
+  const companies = [
+    {
+      name: "TechCorp",
+      description: "Otimização de processos internos",
+      image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=300&h=150",
+    },
+    {
+      name: "InnovateX",
+      description: "Análise preditiva de mercado",
+      image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&w=300&h=150",
+    },
+    {
+      name: "SmartSolutions",
+      description: "Gestão financeira inteligente",
+      image: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=300&h=150",
+    },
+    {
+      name: "DataFlow",
+      description: "Automação de decisões",
+      image: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=300&h=150",
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-offwhite">
       <Header />
@@ -80,6 +103,33 @@ export default function Landing() {
             </Link>
           ))}
         </div>
+
+        <section className="mt-24">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              Empresas que confiam na nossa IA
+            </h2>
+            <p className="text-lg text-pump-gray max-w-2xl mx-auto">
+              Descubra como empresas estão transformando seus negócios com nossa inteligência artificial
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {companies.map((company, index) => (
+              <Card key={index} className="overflow-hidden hover:shadow-lg transition-shadow border-pump-gray/20 bg-transparent">
+                <img
+                  src={company.image}
+                  alt={company.name}
+                  className="w-full h-40 object-cover"
+                />
+                <CardContent className="p-4">
+                  <h3 className="font-semibold text-gray-900 mb-2">{company.name}</h3>
+                  <p className="text-sm text-pump-gray">{company.description}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
       </main>
     </div>
   )

@@ -2,15 +2,15 @@
 import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { UserCardMenu } from "@/components/common/UserCardMenu"
-import { Home } from "lucide-react"
+import { Home, LogIn } from "lucide-react"
 import { useChatAuth } from "@/hooks/useChatAuth"
 
 export const Header = () => {
-  const { authStatus } = useChatAuth();
+  const { authStatus, user } = useChatAuth();
   const homeLink = authStatus === 'authenticated' ? "/themes" : "/";
 
   return (
-    <header className="border-b border-pump-gray/20 p-4 bg-white sticky top-0 z-10">
+    <header className="border-b border-pump-gray/20 p-4 bg-white sticky top-0 z-10 dark:bg-gray-900">
       <div className="container mx-auto flex items-center justify-between">
         <Link to="/">
           <img 
@@ -20,7 +20,16 @@ export const Header = () => {
           />
         </Link>
         <div className="flex items-center gap-4">
-          <UserCardMenu />
+          {authStatus === 'authenticated' ? (
+            <UserCardMenu />
+          ) : (
+            <Link to="/login">
+              <Button variant="ghost" className="text-pump-purple hover:text-pump-purple/90 gap-2">
+                <LogIn className="h-5 w-5" />
+                Entrar
+              </Button>
+            </Link>
+          )}
           <Link to={homeLink}>
             <Button variant="ghost" size="icon" className="text-pump-purple hover:text-pump-purple/90">
               <Home className="h-5 w-5" />

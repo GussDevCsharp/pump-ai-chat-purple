@@ -1,10 +1,10 @@
-
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { MessageSquare } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { Badge } from "@/components/ui/badge"
 import { supabase } from "@/integrations/supabase/client"
+import { useThemePrompts } from "@/hooks/useThemePrompts"
 
 interface BusinessCardProps {
   title: string
@@ -13,10 +13,19 @@ interface BusinessCardProps {
   gradient: string
   themeName?: string
   themeColor?: string
+  themeId?: string
 }
 
-export const BusinessCard = ({ title, description, prompts, gradient, themeName, themeColor }: BusinessCardProps) => {
+export const BusinessCard = ({ 
+  title, 
+  description, 
+  gradient, 
+  themeName, 
+  themeColor,
+  themeId 
+}: BusinessCardProps) => {
   const navigate = useNavigate()
+  const { prompts, isLoading } = useThemePrompts(themeId);
 
   const handleCardClick = async () => {
     // Primeiro, encontrar ou criar o tema
@@ -58,7 +67,7 @@ export const BusinessCard = ({ title, description, prompts, gradient, themeName,
     })
   }
 
-  // Extract color from gradient for the badge
+  // Helper function for badge color
   const getBadgeColor = (gradient: string) => {
     if (gradient.includes('purple')) return 'bg-purple-100 text-purple-800';
     if (gradient.includes('green')) return 'bg-green-100 text-green-800';
@@ -76,7 +85,7 @@ export const BusinessCard = ({ title, description, prompts, gradient, themeName,
     >
       <CardHeader>
         <div className="flex items-center justify-between mb-2">
-          <Badge className={`${getBadgeColor(gradient)} font-normal`}>
+          <Badge className={getBadgeColor(gradient)}>
             <MessageSquare className="h-3 w-3 mr-1" />
             {title}
           </Badge>
@@ -98,18 +107,23 @@ export const BusinessCard = ({ title, description, prompts, gradient, themeName,
       </CardHeader>
       <CardContent>
         <div className="space-y-2">
-          {prompts.map((prompt, index) => (
-            <Button 
-              key={index} 
-              variant="outline" 
-              className="w-full justify-start text-gray-700 hover:bg-gray-50 border-gray-200"
-            >
-              {prompt}
-            </Button>
-          ))}
+          {isLoading ? (
+            <div className="text-sm text-pump-gray">Carregando tópicos...</div>
+          ) : prompts && prompts.length > 0 ? (
+            prompts.map((prompt) => (
+              <Button 
+                key={prompt.id}
+                variant="outline" 
+                className="w-full justify-start text-gray-700 hover:bg-gray-50 border-gray-200"
+              >
+                {prompt.title}
+              </Button>
+            ))
+          ) : (
+            <div className="text-sm text-pump-gray">Nenhum tópico encontrado</div>
+          )}
         </div>
       </CardContent>
     </Card>
   )
 }
-

@@ -6,73 +6,49 @@ const businessSectors = [
     title: "Marketing e Vendas",
     description: "Estratégias e conteúdo para sua equipe comercial",
     gradient: "purple",
-    prompts: [
-      "Criar estratégia de marketing digital",
-      "Otimizar funil de vendas",
-      "Desenvolver pitch comercial"
-    ],
     themeName: "Marketing",
-    themeColor: "#9b87f5"
+    themeColor: "#9b87f5",
+    themeId: "marketing-theme-id" // You'll need to replace these IDs with actual theme IDs from your database
   },
   {
     title: "Recursos Humanos",
     description: "Gestão de pessoas e desenvolvimento organizacional",
     gradient: "green",
-    prompts: [
-      "Criar descrição de cargo",
-      "Desenvolver programa de treinamento",
-      "Avaliar desempenho de equipe"
-    ],
     themeName: "RH",
-    themeColor: "#4ADE80"
+    themeColor: "#4ADE80",
+    themeId: "rh-theme-id"
   },
   {
     title: "Finanças",
     description: "Análise financeira e planejamento estratégico",
     gradient: "blue",
-    prompts: [
-      "Análise de viabilidade financeira",
-      "Planejamento orçamentário",
-      "Gestão de custos"
-    ],
     themeName: "Financeiro",
-    themeColor: "#0EA5E9"
+    themeColor: "#0EA5E9",
+    themeId: "financas-theme-id"
   },
   {
     title: "Operações",
     description: "Otimização de processos e gestão operacional",
     gradient: "orange",
-    prompts: [
-      "Mapear processos internos",
-      "Otimizar cadeia de suprimentos",
-      "Implementar metodologia ágil"
-    ],
     themeName: "Operações",
-    themeColor: "#F97316"
+    themeColor: "#F97316",
+    themeId: "operacoes-theme-id"
   },
   {
     title: "Tecnologia",
     description: "Inovação e transformação digital",
     gradient: "indigo",
-    prompts: [
-      "Planejar transformação digital",
-      "Avaliar soluções tecnológicas",
-      "Desenvolver arquitetura de sistemas"
-    ],
     themeName: "Tecnologia",
-    themeColor: "#6366F1"
+    themeColor: "#6366F1",
+    themeId: "tecnologia-theme-id"
   },
   {
     title: "Jurídico",
     description: "Compliance e gestão de contratos",
     gradient: "gray",
-    prompts: [
-      "Análise de contratos",
-      "Adequação à LGPD",
-      "Gestão de propriedade intelectual"
-    ],
     themeName: "Jurídico",
-    themeColor: "#6B7280"
+    themeColor: "#6B7280",
+    themeId: "juridico-theme-id"
   }
 ]
 
@@ -90,4 +66,3 @@ export const Dashboard = () => {
     </div>
   )
 }
-

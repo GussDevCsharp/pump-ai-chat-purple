@@ -422,7 +422,6 @@ export type Database = {
         Row: {
           created_at: string
           id: string
-          pattern_prompt: string
           prompt_furtive: string | null
           theme_id: string
           title: string
@@ -431,7 +430,6 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
-          pattern_prompt: string
           prompt_furtive?: string | null
           theme_id: string
           title: string
@@ -440,7 +438,6 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
-          pattern_prompt?: string
           prompt_furtive?: string | null
           theme_id?: string
           title?: string

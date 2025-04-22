@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Building, ChartBar, Users, TrendingUp, MessageSquare } from "lucide-react"
@@ -10,22 +9,50 @@ export default function Landing() {
     {
       title: "Análise Financeira",
       icon: <TrendingUp className="w-5 h-5" />,
-      prompts: ["Análise de fluxo de caixa", "Projeção financeira", "Indicadores KPI"]
+      prompts: [
+        "Análise de fluxo de caixa",
+        "Projeção financeira",
+        "Indicadores KPI",
+        "Análise de custos",
+        "Relatórios financeiros",
+        "Gestão de investimentos"
+      ]
     },
     {
       title: "Gestão de Pessoas",
       icon: <Users className="w-5 h-5" />,
-      prompts: ["Feedback de desempenho", "Plano de desenvolvimento", "Cultura organizacional"]
+      prompts: [
+        "Feedback de desempenho",
+        "Plano de desenvolvimento",
+        "Cultura organizacional",
+        "Recrutamento e seleção",
+        "Treinamento de equipe",
+        "Avaliação de competências"
+      ]
     },
     {
       title: "Estratégia Comercial",
       icon: <ChartBar className="w-5 h-5" />,
-      prompts: ["Análise de mercado", "Plano de vendas", "Estratégia de preços"]
+      prompts: [
+        "Análise de mercado",
+        "Plano de vendas",
+        "Estratégia de preços",
+        "Marketing digital",
+        "Gestão de clientes",
+        "Táticas de negociação"
+      ]
     },
     {
       title: "Gestão Empresarial",
       icon: <Building className="w-5 h-5" />,
-      prompts: ["Processos internos", "Governança corporativa", "Gestão de riscos"]
+      prompts: [
+        "Processos internos",
+        "Governança corporativa",
+        "Gestão de riscos",
+        "Planejamento estratégico",
+        "Indicadores de desempenho",
+        "Transformação digital"
+      ]
     }
   ]
 
@@ -90,7 +117,7 @@ export default function Landing() {
                     </div>
                     <h3 className="font-semibold text-gray-900">{category.title}</h3>
                     <ul className="space-y-2 text-sm text-pump-gray">
-                      {category.prompts.map((prompt, idx) => (
+                      {category.prompts.slice(0, 6).map((prompt, idx) => (
                         <li key={idx}>{prompt}</li>
                       ))}
                     </ul>

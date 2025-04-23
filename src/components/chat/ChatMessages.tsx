@@ -1,6 +1,6 @@
 
 import { FormDataType } from "@/types/business-generator"
-import { useLocation, useSearchParams } from "react-router-dom"
+import { useLocation } from "react-router-dom"
 import ReactMarkdown from 'react-markdown'
 import LoadingDots from "./LoadingDots"
 import { useEffect, useRef } from "react"
@@ -21,7 +21,6 @@ interface ChatMessagesProps {
 
 export const ChatMessages = ({ messages, isThinking }: ChatMessagesProps) => {
   const location = useLocation()
-  const [searchParams] = useSearchParams();
   const businessData = location.state?.businessData as FormDataType
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const { toast } = useToast()
@@ -47,24 +46,6 @@ export const ChatMessages = ({ messages, isThinking }: ChatMessagesProps) => {
       })
     }
   }
-
-  // Detecta prompt pré-preenchido pela query
-  useEffect(() => {
-    const promptFromQuery = searchParams.get("prompt");
-    if (promptFromQuery) {
-      // Foca na textarea.
-      setTimeout(() => {
-        const textarea = document.querySelector('textarea');
-        if (textarea && textarea instanceof HTMLTextAreaElement) {
-          textarea.value = promptFromQuery;
-          textarea.dispatchEvent(new Event('input', { bubbles: true }));
-          textarea.focus();
-        }
-      }, 200);
-    }
-    // Só na montagem
-    // eslint-disable-next-line
-  }, []);
 
   return (
     <ScrollArea className="flex-1 h-full font-sans antialiased subpixel-antialiased text-[16px] text-gray-900 selection:bg-pump-purple/10 selection:text-pump-purple">
@@ -106,9 +87,8 @@ export const ChatMessages = ({ messages, isThinking }: ChatMessagesProps) => {
                   style={{
                     wordBreak: 'break-word',
                     lineHeight: '1.6',
-                    maxWidth: 'unset', // Máximo dinâmico, acompanha o texto
-                    minWidth: '40px',
-                    width: "auto"
+                    maxWidth: '70%',
+                    textAlign: 'left',
                   }}
                 >
                   {message.content}
@@ -134,19 +114,19 @@ export const ChatMessages = ({ messages, isThinking }: ChatMessagesProps) => {
                   <ReactMarkdown 
                     components={{
                       h1: ({children}) =>
-                        <h1 className="font-sans text-3xl md:text-4xl font-extrabold text-pump-purple mb-4">{children}</h1>,
+                        <h1 className="font-sans text-2xl md:text-3xl font-extrabold text-pump-purple mb-3">{children}</h1>,
                       h2: ({children}) =>
-                        <h2 className="font-sans text-2xl md:text-3xl font-bold text-pump-purple mb-3">{children}</h2>,
+                        <h2 className="font-sans text-xl md:text-2xl font-bold text-pump-purple mb-2">{children}</h2>,
                       h3: ({children}) =>
-                        <h3 className="font-sans text-xl font-semibold text-pump-purple mb-2">{children}</h3>,
+                        <h3 className="font-sans text-lg font-semibold text-pump-purple mb-2">{children}</h3>,
                       ul: ({children}) =>
-                        <ul className="font-sans list-disc ml-6 mb-2 text-base text-pump-purple">{children}</ul>,
+                        <ul className="font-sans list-disc ml-5 mb-2 text-base text-pump-purple">{children}</ul>,
                       li: ({children}) =>
                         <li className="font-sans text-base text-gray-800 mb-1 leading-relaxed">{children}</li>,
                       p: ({children}) =>
                         <p className="mb-3 last:mb-0 font-sans text-[16px] text-gray-900">{children}</p>,
                       strong: ({children}) =>
-                        <strong className="font-sans font-extrabold text-pump-purple bg-pump-purple/10 px-1 rounded">{children}</strong>,
+                        <strong className="font-sans font-bold text-pump-purple">{children}</strong>,
                       em: ({children}) =>
                         <em className="font-sans italic">{children}</em>,
                       a: ({href, children}) =>
@@ -177,3 +157,4 @@ export const ChatMessages = ({ messages, isThinking }: ChatMessagesProps) => {
     </ScrollArea>
   )
 }
+

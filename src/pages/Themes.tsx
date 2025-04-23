@@ -9,7 +9,6 @@ import { Header } from "@/components/common/Header";
 import { useThemePrompts } from "@/hooks/useThemePrompts";
 import React from "react";
 
-// Novo tipo para os prompts do tema
 type ThemeCardProps = {
   theme: {
     id: string;
@@ -18,10 +17,9 @@ type ThemeCardProps = {
     color: string | null;
   };
   onSelect: (themeId: string, themeName: string) => void;
-  onPromptClick: (themeId: string, themeName: string, prompt: string) => void;
 };
 
-const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect, onPromptClick }) => {
+const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
   const { prompts, isLoading } = useThemePrompts(theme.id);
 
   return (
@@ -47,7 +45,9 @@ const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect, onPromptClick })
             >
               <span 
                 className="font-bold text-2xl"
-                style={{ color: theme.color || "#7E1CC6" }}
+                style={{
+                  color: theme.color || "#7E1CC6"
+                }}
               >{theme.name.charAt(0)}</span>
             </div>
             <h3 className="font-bold text-xl text-gray-900">{theme.name}</h3>
@@ -57,29 +57,14 @@ const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect, onPromptClick })
           )}
         </div>
         {/* Tópicos dos prompts */}
-        <div className="flex flex-col gap-2 mt-2 flex-1 justify-end min-h-[93px]">
+        <div className="flex flex-col gap-1 mt-2 flex-1 justify-end min-h-[93px]">
           {isLoading ? (
             <span className="text-pump-gray text-sm">Carregando tópicos...</span>
           ) : (
             prompts && prompts.length > 0 ? (
-              <ul className="flex flex-col gap-1 pl-0 text-sm">
+              <ul className="list-disc pl-5 text-sm text-gray-700">
                 {prompts.map((prompt) => (
-                  <li 
-                    key={prompt.id} 
-                    className="flex"
-                  >
-                    <button
-                      type="button"
-                      className="w-full truncate text-pump-purple font-semibold hover:underline text-sm text-left rounded py-1 px-2 hover:bg-pump-purple/10 transition-all"
-                      style={{ background: "transparent"}}
-                      onClick={e => {
-                        e.stopPropagation(); // Não abrir card inteiro, só ação do prompt!
-                        onPromptClick(theme.id, theme.name, prompt.title);
-                      }}
-                    >
-                      {prompt.title}
-                    </button>
-                  </li>
+                  <li key={prompt.id} className="truncate">{prompt.title}</li>
                 ))}
               </ul>
             ) : (
@@ -106,20 +91,10 @@ export default function Themes() {
   const { createSession } = useChatSessions();
   const navigate = useNavigate();
 
-  // Navega para o tema apenas
   const handleSelectTheme = async (themeId: string, themeName: string) => {
     const session = await createSession(`Chat sobre ${themeName}`, undefined, undefined, themeId);
     if (session) {
       navigate(`/chat?session=${session.id}`);
-    }
-  };
-
-  // Navega para o tema e já envia o prompt (via query string)
-  const handlePromptClick = async (themeId: string, themeName: string, prompt: string) => {
-    const session = await createSession(`Chat sobre ${themeName}`, undefined, undefined, themeId);
-    if (session) {
-      // Passa o prompt pela query string
-      navigate(`/chat?session=${session.id}&prompt=${encodeURIComponent(prompt)}`);
     }
   };
 
@@ -131,13 +106,15 @@ export default function Themes() {
   };
 
   return (
-    <div className="min-h-screen bg-offwhite w-full">
+    <div className="min-h-screen bg-offwhite">
       <Header />
-      <main className="w-full max-w-full px-0 sm:px-0 md:px-0 py-6 flex flex-col items-center">
-        <div className="w-full max-w-[1850px] mx-auto bg-white/90 rounded-2xl shadow-lg p-2 sm:p-6 md:p-10 flex flex-col gap-10">
+      <main className="w-full px-2 sm:px-4 md:px-8 py-8 flex flex-col items-center">
+        <div className="w-full bg-white/90 rounded-2xl shadow-lg p-7 md:p-12 flex flex-col gap-10">
           <div className="flex flex-col md:flex-row justify-between items-start gap-8 mb-8">
             <div className="w-full text-left">
-              <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-3">Central de Controle</h1>
+              <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-3">
+                Central de Controle
+              </h1>
               <p className="text-lg text-pump-gray mb-6">
                 Gerencie seus temas, chats e configurações de forma centralizada.
               </p>
@@ -162,13 +139,18 @@ export default function Themes() {
               <p className="text-pump-gray">Nenhum tema encontrado. Você pode criar um novo tema ou iniciar uma conversa geral.</p>
             </div>
           ) : (
-            <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 w-full">
+            <div className="grid gap-8 
+              grid-cols-1
+              sm:grid-cols-2 
+              md:grid-cols-3 
+              lg:grid-cols-4
+              w-full"
+            >
               {themes.map((theme) => (
                 <ThemeCard
                   key={theme.id}
                   theme={theme}
                   onSelect={handleSelectTheme}
-                  onPromptClick={handlePromptClick}
                 />
               ))}
             </div>

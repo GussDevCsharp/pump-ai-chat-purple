@@ -14,7 +14,7 @@ export const useAppointments = () => {
         .select(
           `
             *,
-            category:appointment_categories(id, name, color)
+            theme:chat_themes(id, name, color)
           `
         )
         .order("start_time", { ascending: true });
@@ -23,12 +23,12 @@ export const useAppointments = () => {
     }
   });
 
-  // Fetch appointment categories
-  const { data: categories } = useQuery({
-    queryKey: ["appointment_categories"],
+  // Fetch themes
+  const { data: themes } = useQuery({
+    queryKey: ["chat_themes"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("appointment_categories")
+        .from("chat_themes")
         .select("*")
         .order("name", { ascending: true });
       if (error) throw error;
@@ -66,24 +66,13 @@ export const useAppointments = () => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["appointments"] }),
   });
 
-  // Create category
-  const createCategoryMutation = useMutation({
-    mutationFn: async (cat: any) => {
-      const { data, error } = await supabase.from("appointment_categories").insert([cat]).select().single();
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["appointment_categories"] }),
-  });
-
   return {
     appointments: data,
     isLoading,
     error,
-    categories,
+    themes,
     create: createMutation.mutateAsync,
     update: updateMutation.mutateAsync,
     remove: deleteMutation.mutateAsync,
-    createCategory: createCategoryMutation.mutateAsync,
   };
 };

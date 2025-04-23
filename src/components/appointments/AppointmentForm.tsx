@@ -11,10 +11,10 @@ interface AppointmentFormProps {
   onClose: () => void;
   onSubmit: (data: any) => Promise<void>;
   initialData?: any;
-  categories?: { id: string; name: string; color: string }[];
+  themes?: { id: string; name: string; color: string }[];
 }
 
-export function AppointmentForm({ open, onClose, onSubmit, initialData, categories }: AppointmentFormProps) {
+export function AppointmentForm({ open, onClose, onSubmit, initialData, themes }: AppointmentFormProps) {
   const [form, setForm] = useState(
     initialData || {
       title: "",
@@ -23,10 +23,16 @@ export function AppointmentForm({ open, onClose, onSubmit, initialData, categori
       start_time: "",
       end_time: "",
       location: "",
-      category_id: categories?.[0]?.id ?? null,
+      theme_id: themes?.[0]?.id ?? null,
     }
   );
   const [saving, setSaving] = useState(false);
+
+  React.useEffect(() => {
+    if (!initialData && themes && themes[0] && !form.theme_id) {
+      setForm((f) => ({ ...f, theme_id: themes[0].id }));
+    }
+  }, [themes, initialData]);
 
   const handleChange = (e: any) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -95,16 +101,16 @@ export function AppointmentForm({ open, onClose, onSubmit, initialData, categori
             className="bg-pump-offwhite"
           />
           <div>
-            <label className="text-sm mb-1 block">Categoria</label>
+            <label className="text-sm mb-1 block">Tema</label>
             <select
-              name="category_id"
-              value={form.category_id ?? ""}
+              name="theme_id"
+              value={form.theme_id ?? ""}
               onChange={handleChange}
               className="w-full bg-pump-offwhite rounded border px-2 py-1"
               required
             >
-              {categories?.map((c) => (
-                <option value={c.id} key={c.id}>{c.name}</option>
+              {themes?.map((t) => (
+                <option value={t.id} key={t.id}>{t.name}</option>
               ))}
             </select>
           </div>

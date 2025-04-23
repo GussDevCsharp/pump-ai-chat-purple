@@ -17,11 +17,10 @@ export default function AppointmentsPage() {
   const {
     appointments,
     isLoading,
-    categories,
+    themes,
     create,
     update,
     remove,
-    createCategory,
   } = useAppointments();
 
   function openCreateForm() {
@@ -35,6 +34,7 @@ export default function AppointmentsPage() {
       date: parseISO(appt.start_time),
       start_time: appt.start_time && appt.start_time.slice(11, 16),
       end_time: appt.end_time && appt.end_time.slice(11, 16),
+      theme_id: appt.theme_id,
     });
     setShowForm(true);
   }
@@ -53,7 +53,7 @@ export default function AppointmentsPage() {
       await update({
         id: form.id,
         title: form.title,
-        category_id: form.category_id,
+        theme_id: form.theme_id,
         description: form.description,
         location: form.location,
         start_time: startDateTime.toISOString(),
@@ -62,7 +62,7 @@ export default function AppointmentsPage() {
     } else {
       await create({
         title: form.title,
-        category_id: form.category_id,
+        theme_id: form.theme_id,
         description: form.description,
         location: form.location,
         start_time: startDateTime.toISOString(),
@@ -100,8 +100,8 @@ export default function AppointmentsPage() {
                 <li key={appt.id} className="border rounded p-3 flex justify-between items-center bg-white">
                   <div>
                     <div className="font-medium text-lg">{appt.title}</div>
-                    {appt.category && (
-                      <Badge style={{ background: appt.category.color }}>{appt.category.name}</Badge>
+                    {appt.theme && (
+                      <Badge style={{ background: appt.theme.color }}>{appt.theme.name}</Badge>
                     )}
                     <div className="text-xs">
                       {format(new Date(appt.start_time), "HH:mm")} - {format(new Date(appt.end_time), "HH:mm")}
@@ -123,7 +123,7 @@ export default function AppointmentsPage() {
           onClose={() => setShowForm(false)}
           onSubmit={handleSave}
           initialData={formInitialData}
-          categories={categories}
+          themes={themes}
         />
       </div>
     </div>

@@ -61,12 +61,12 @@ export function WeeklyKanban({
                     )}
                     <div className="flex gap-1 mt-1">
                       {onEdit && (
-                        <Button size="xs" variant="outline" onClick={() => onEdit(appt)}>
+                        <Button size="sm" variant="outline" onClick={() => onEdit(appt)} className="h-7 px-2 text-xs">
                           Editar
                         </Button>
                       )}
                       {onDelete && (
-                        <Button size="xs" variant="destructive" onClick={() => onDelete(appt.id)}>
+                        <Button size="sm" variant="destructive" onClick={() => onDelete(appt.id)} className="h-7 px-2 text-xs">
                           Excluir
                         </Button>
                       )}

@@ -1,16 +1,4 @@
-import React, { useState } from "react";
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./Index";
-import Login from "./Login";
-import NotFound from "./NotFound";
-import BusinessGenerator from "./BusinessGenerator";
-import ThemesPage from "./Themes";
-import Signup from "./Signup";
-import AppointmentsPage from "./Appointments";
+
 import React, { useState } from "react";
 import { useAppointments } from "@/hooks/useAppointments";
 import { AppointmentForm } from "@/components/appointments/AppointmentForm";

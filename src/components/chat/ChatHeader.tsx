@@ -20,7 +20,7 @@ export const ChatHeader = ({ mobileMenuButton }: { mobileMenuButton?: React.Reac
           </div>
         )}
         <img 
-          src="/lovable-uploads/5f403064-9209-4921-b73b-0f70c739981a.png" 
+          src="/uploads/logo.png" 
           alt="Pump.ia"
           className="h-8"
         />

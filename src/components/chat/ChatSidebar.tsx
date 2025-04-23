@@ -136,16 +136,16 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
               {Object.entries(groupedSessions).map(([groupKey, { themeObj, sessions: themeSessions }]) => (
                 <div key={groupKey} className="space-y-2">
                   <h3 className="flex items-center text-xs font-medium text-pump-gray px-3">
-                      {themeObj && themeObj.color && (
-                        <span
-                          className="inline-block w-3 h-3 rounded-full mr-2 border border-pump-gray/30"
-                          style={{ backgroundColor: themeObj.color }}
-                        />
-                      )}
-                      <span style={themeObj?.color ? { color: themeObj.color } : {}}>
-                        {themeObj ? themeObj.name : "Sem tema"}
-                      </span>
-                    </h3>
+                    {themeObj && themeObj.color && (
+                      <span
+                        className="inline-block w-3 h-3 rounded-full mr-2 border border-pump-gray/30"
+                        style={{ backgroundColor: themeObj.color }}
+                      />
+                    )}
+                    <span style={themeObj?.color ? { color: themeObj.color } : {}}>
+                      {themeObj ? themeObj.name : "Sem tema"}
+                    </span>
+                  </h3>
                   {themeSessions.map((session) => (
                     <div key={session.id} className="group relative">
                       <button

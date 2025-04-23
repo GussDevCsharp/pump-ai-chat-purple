@@ -1,4 +1,4 @@
-import { MessageCircle, Plus, User, Settings, Pencil, Trash2 } from "lucide-react"
+import { MessageCircle, Plus, Pencil, Trash2 } from "lucide-react"
 import { useChatSessions } from "@/hooks/useChatSessions"
 import { Button } from "@/components/ui/button"
 import { useNavigate, useSearchParams } from "react-router-dom"
@@ -174,31 +174,38 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
                                 if (onClose) onClose()
                               }}
                               className={`
-                                flex items-center gap-3 px-4 py-4 w-full
+                                relative flex flex-col justify-between gap-3 px-4 py-4 w-full
                                 bg-white border-2 border-pump-gray/10 rounded-2xl shadow-md
                                 transition-all duration-200
                                 hover:scale-105 hover:shadow-xl 
-                                group/card
+                                group/card min-h-[120px]
                               `}
                               style={{
                                 borderColor: themeColor || "#e9e3fc",
-                                minHeight: 76,
                                 boxShadow: "0 8px 18px 0 rgba(54,40,90,0.06)"
                               }}
                             >
-                              <span className="flex items-center justify-center w-10 h-10 rounded-full"
-                                style={{
-                                  background: themeColor ? `${themeColor}20` : "#f4ebfd"
-                                }}>
-                                <MessageCircle
-                                  className="w-6 h-6"
-                                  style={{ color: themeColor || "#7E1CC6" }}
-                                />
-                              </span>
-                              <span className="text-sm text-pump-gray font-medium truncate flex-1 text-left">
-                                {session.title}
-                              </span>
-                              <div className="opacity-0 group-hover/card:opacity-100 transition-opacity flex items-center gap-1">
+                              <div className="flex items-center gap-3">
+                                <span className="flex items-center justify-center w-10 h-10 rounded-full"
+                                  style={{
+                                    background: themeColor ? `${themeColor}20` : "#f4ebfd"
+                                  }}>
+                                  <MessageCircle
+                                    className="w-6 h-6"
+                                    style={{ color: themeColor || "#7E1CC6" }}
+                                  />
+                                </span>
+                                <span className="text-sm text-pump-gray font-medium truncate flex-1 text-left">
+                                  {session.title}
+                                </span>
+                              </div>
+                              
+                              <div className="
+                                absolute bottom-2 right-2
+                                opacity-0 group-hover/card:opacity-100 
+                                transition-opacity 
+                                flex items-center gap-1
+                              ">
                                 <ThemeSelect 
                                   sessionId={session.id} 
                                   currentTheme={session.theme_id}

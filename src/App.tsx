@@ -23,8 +23,7 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Index />} />
-            {/* <Route path="/" element={<Landing />} /> */}
+            <Route path="/" element={<Login />} />
             <Route path="/chat" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
@@ -39,3 +38,4 @@ const App = () => (
 );
 
 export default App;
+

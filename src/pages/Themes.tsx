@@ -7,7 +7,6 @@ import { WeeklyKanban } from "@/components/appointments/WeeklyKanban";
 import { Plus } from "lucide-react";
 import { format, isSameWeek, parseISO } from "date-fns";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 
 export default function Themes() {
   const {
@@ -23,7 +22,7 @@ export default function Themes() {
   const [formInitialData, setFormInitialData] = useState<any>(null);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
-  // Função para filtrar apenas os agendamentos da semana visível
+  // Filtra os agendamentos só da semana selecionada
   const weekAppointments = appointments?.filter((a: any) =>
     isSameWeek(new Date(a.start_time), selectedDate, { weekStartsOn: 0 })
   ) || [];
@@ -85,28 +84,36 @@ export default function Themes() {
             <Plus size={18} className="mr-2" /> Novo agendamento
           </Button>
         </div>
-        {/* Lista de temas em linha */}
-        <div className="overflow-x-auto mb-8">
-          <div className="flex gap-2 min-w-[320px]">
-            {themes && themes.length > 0 ? (
-              themes.map((theme: any) => (
-                <Badge
-                  key={theme.id}
-                  className="flex-shrink-0 text-base px-4 py-2 mr-2"
-                  style={{
-                    background: theme.color ? theme.color : "#ede9fe",
-                    color: "#3b0764",
-                  }}
+
+        {/* Linha de temas com cards e rolagem horizontal */}
+        <div className="flex overflow-x-auto gap-4 mb-10 pb-2">
+          {themes && themes.length > 0 ? (
+            themes.map((theme: any) => (
+              <div
+                key={theme.id}
+                className="min-w-[200px] rounded-lg shadow-md border bg-white flex flex-col px-4 py-6 mr-2"
+                style={{
+                  borderLeft: `6px solid ${theme.color || "#9b87f5"}`,
+                  boxShadow: "0 1px 10px 0 #e8e1f960",
+                }}
+              >
+                <span
+                  className="font-semibold text-lg mb-1"
+                  style={{ color: theme.color || "#7E1CC6" }}
                 >
                   {theme.name}
-                </Badge>
-              ))
-            ) : (
-              <div className="text-pump-gray text-sm">Nenhum tema encontrado.</div>
-            )}
-          </div>
+                </span>
+                {theme.description && (
+                  <span className="text-sm text-gray-500">{theme.description}</span>
+                )}
+              </div>
+            ))
+          ) : (
+            <div className="text-pump-gray text-sm">Nenhum tema encontrado.</div>
+          )}
         </div>
-        {/* Grid com calendário e kanban */}
+
+        {/* Linha com calendário e kanban */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="shadow rounded-lg p-4 bg-pump-offwhite">
             <Calendar

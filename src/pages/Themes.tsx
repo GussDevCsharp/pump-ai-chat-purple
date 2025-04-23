@@ -1,4 +1,3 @@
-
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { useChatThemes } from "@/hooks/useChatThemes";
@@ -77,20 +76,22 @@ export default function Themes() {
                 >
                   <div className="flex flex-col flex-1 justify-between p-8">
                     <div>
-                      <div 
-                        className="w-14 h-14 flex items-center justify-center rounded-full mb-4 mx-auto border-4 border-white group-hover:shadow-xl"
-                        style={{
-                          background: theme.color ? `${theme.color}20` : "#f4ebfd",
-                        }}
-                      >
-                        <span 
-                          className="font-bold text-2xl"
+                      <div className="flex items-center gap-3 mb-4">
+                        <div 
+                          className="w-12 h-12 flex items-center justify-center rounded-full"
                           style={{
-                            color: theme.color || "#7E1CC6"
+                            background: theme.color ? `${theme.color}20` : "#f4ebfd",
                           }}
-                        >{theme.name.charAt(0)}</span>
+                        >
+                          <span 
+                            className="font-bold text-2xl"
+                            style={{
+                              color: theme.color || "#7E1CC6"
+                            }}
+                          >{theme.name.charAt(0)}</span>
+                        </div>
+                        <h3 className="font-bold text-xl text-gray-900">{theme.name}</h3>
                       </div>
-                      <h3 className="font-bold text-xl text-gray-900 text-center">{theme.name}</h3>
                       {theme.description && (
                         <p className="text-center text-base text-pump-gray mt-2 mb-3 px-2 min-h-[42px]">{theme.description}</p>
                       )}

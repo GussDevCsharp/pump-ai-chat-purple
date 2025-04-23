@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react"
 import { SendHorizontal } from "lucide-react"
 import { Mic, MicOff } from "lucide-react"
@@ -11,9 +10,18 @@ import LoadingDots from "./LoadingDots"
 interface ChatInputProps {
   suggestedPrompts?: string[]
   onSendMessage: (message: string) => void
+  // Novo para receber o prompt furtivo selecionado (exibir no ui)
+  furtivePromptTitle?: string
+  // Callback limpar prompt furtivo quando usuário limpar o campo
+  setFurtivePromptCleared?: () => void
 }
 
-export const ChatInput = ({ suggestedPrompts, onSendMessage }: ChatInputProps) => {
+export const ChatInput = ({
+  suggestedPrompts,
+  onSendMessage,
+  furtivePromptTitle,
+  setFurtivePromptCleared,
+}: ChatInputProps) => {
   const [message, setMessage] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const { toast } = useToast()
@@ -48,8 +56,16 @@ export const ChatInput = ({ suggestedPrompts, onSendMessage }: ChatInputProps) =
     }
   }, [audioError, toast])
 
+  // Limpando prompt furtivo se o usuário limpar o campo manualmente
+  useEffect(() => {
+    if (furtivePromptTitle && message.trim() === "") {
+      setFurtivePromptCleared && setFurtivePromptCleared();
+    }
+    // eslint-disable-next-line
+  }, [message]);
+
   const handleSubmit = async () => {
-    if (!message.trim()) return
+    if (!message.trim() && !furtivePromptTitle) return
 
     try {
       setIsLoading(true)
@@ -68,6 +84,12 @@ export const ChatInput = ({ suggestedPrompts, onSendMessage }: ChatInputProps) =
 
   return (
     <div className="w-full max-w-3xl mx-auto p-4 border-t border-pump-gray/20 bg-white">
+      {/* Exibe que há tópico/ prompt furtivo selecionado */}
+      {furtivePromptTitle && (
+        <div className="mb-2 text-xs text-pump-purple font-medium">
+          Tópico selecionado: <b>{furtivePromptTitle}</b>
+        </div>
+      )}
       {suggestedPrompts && (
         <div className="mb-4 flex flex-wrap gap-2">
           {suggestedPrompts.map((prompt, index) => (

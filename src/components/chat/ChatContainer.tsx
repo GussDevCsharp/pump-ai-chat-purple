@@ -13,6 +13,7 @@ import { LogIn } from "lucide-react"
 import { useThemePrompt } from "@/hooks/useThemePrompt"
 import { useThemePrompts } from "@/hooks/useThemePrompts"
 import { Watermark } from "../common/Watermark"
+import { PromptSuggestionCards } from "./PromptSuggestionCards"
 
 const demoPrompts = [
   { title: "Campanha Digital para Lançamento de Produto", tema: "marketing e vendas", tags: ["nome_empresa", "segmento", "tipo_produto", "plataforma_marketing"], prompt: "Crie uma campanha de marketing digital para lançar o produto {{tipo_produto}} da empresa {{nome_empresa}}, que atua no segmento de {{segmento}}. A campanha deve ser focada em atrair novos clientes e aumentar o reconhecimento da marca nas plataformas {{plataforma_marketing}}." },
@@ -56,8 +57,8 @@ export const ChatContainer = () => {
   const [isThinking, setIsThinking] = useState(false)
   const { createSession, refreshSessions } = useChatSessions()
   const { authStatus, recordInteraction, remainingInteractions } = useChatAuth()
-
   const [currentThemeId, setCurrentThemeId] = useState<string | null>(null);
+  const [furtivePrompt, setFurtivePrompt] = useState<{ text: string; title: string } | null>(null);
 
   useEffect(() => {
     async function fetchThemeId() {
@@ -207,41 +208,69 @@ export const ChatContainer = () => {
     return filled;
   };
 
+  const substitutePromptTags = (prompt: string, business: Record<string, string>) => {
+    let result = prompt;
+    for (const key in business) {
+      result = result.replace(new RegExp(`{{\\s*${key}\\s*}}`, "g"), business[key]);
+    }
+    return result;
+  };
+
+  const handlePromptCardSelect = (prompt: any) => {
+    setFurtivePrompt({
+      text: prompt.prompt_furtive ?? prompt.title,
+      title: prompt.title
+    });
+    const textArea = document.querySelector('textarea');
+    if (textArea) {
+      textArea.value = prompt.title;
+      textArea.dispatchEvent(new Event('input', { bubbles: true }));
+      textArea.focus();
+    }
+  };
+
   const handleSendMessage = async (content: string) => {
     if (authStatus === 'anonymous' && !recordInteraction()) {
       return;
     }
-
     try {
-      const userMessage = { role: 'user' as const, content }
-      setMessages(prev => [...prev, userMessage])
-      setIsThinking(true)
+      const userMessage = { role: 'user' as const, content };
+      setMessages(prev => [...prev, userMessage]);
+      setIsThinking(true);
 
-      let currentSessionId = sessionId
-      let isFirstMessage = !currentSessionId
+      let currentSessionId = sessionId;
+      let isFirstMessage = !currentSessionId;
 
       if (!currentSessionId) {
-        const defaultTitle = content.split(' ').slice(0, 5).join(' ') + '...'
-        
-        const session = await createSession(defaultTitle)
-        if (!session) throw new Error("Failed to create chat session")
+        const defaultTitle = content.split(' ').slice(0, 5).join(' ') + '...';
+        const session = await createSession(defaultTitle);
+        if (!session) throw new Error("Failed to create chat session");
 
-        currentSessionId = session.id
+        currentSessionId = session.id;
         setSearchParams(prev => {
-          prev.set('session', currentSessionId!)
-          return prev
-        })
+          prev.set('session', currentSessionId!);
+          return prev;
+        });
       }
 
-      let aiMessageToSend: string;
-      if (patternPrompt?.pattern_prompt) {
+      let aiMessageToSend = content;
+      let furtivePromptSnapshot = furtivePrompt;
+
+      if (furtivePromptSnapshot) {
+        if (!content.trim()) {
+          aiMessageToSend = substitutePromptTags(furtivePromptSnapshot.text, businessData);
+        } else {
+          aiMessageToSend =
+            substitutePromptTags(furtivePromptSnapshot.text, businessData) +
+            " " +
+            content;
+        }
+      } else if (patternPrompt?.pattern_prompt) {
         aiMessageToSend = interpolatePatternPrompt(
           patternPrompt.pattern_prompt,
           content,
           businessData
         );
-      } else {
-        aiMessageToSend = content;
       }
 
       const response = await fetch("https://spyfzrgwbavmntiginap.supabase.co/functions/v1/chat", {
@@ -251,22 +280,22 @@ export const ChatContainer = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ message: aiMessageToSend }),
-      })
+      });
 
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to connect to service')
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to connect to service');
       }
 
-      const data = await response.json()
+      const data = await response.json();
       if (!data.choices || data.choices.length === 0) {
-        throw new Error('Invalid response format from AI service')
+        throw new Error('Invalid response format from AI service');
       }
 
       const assistantMessage = {
         role: 'assistant' as const,
         content: data.choices[0].message.content
-      }
+      };
 
       if (authStatus === 'anonymous') {
         saveLocalMessages(currentSessionId, [userMessage, assistantMessage]);
@@ -287,12 +316,12 @@ export const ChatContainer = () => {
                 role: 'assistant',
                 content: assistantMessage.content
               }
-            ])
+            ]);
         } catch (error: any) {
-          console.error("Erro ao salvar a primeira conversa:", error)
+          console.error("Erro ao salvar a primeira conversa:", error);
         }
-        setMessages(prev => [...prev, assistantMessage])
-        await refreshSessions()
+        setMessages(prev => [...prev, assistantMessage]);
+        await refreshSessions();
       } else {
         try {
           await supabase
@@ -308,24 +337,27 @@ export const ChatContainer = () => {
                 role: 'assistant',
                 content: assistantMessage.content
               }
-            ])
-          setMessages(prev => [...prev, assistantMessage])
-          await refreshSessions()
+            ]);
+          setMessages(prev => [...prev, assistantMessage]);
+          await refreshSessions();
         } catch (error: any) {
-          throw new Error(`Failed to save messages: ${error.message}`)
+          throw new Error(`Failed to save messages: ${error.message}`);
         }
       }
+
+      setFurtivePrompt(null);
+
     } catch (error: any) {
-      console.error("Chat error:", error)
+      console.error("Chat error:", error);
       toast({
         variant: "destructive",
         title: "Erro",
         description: `Falha ao obter resposta: ${error.message}`
-      })
+      });
     } finally {
-      setIsThinking(false)
+      setIsThinking(false);
     }
-  }
+  };
 
   const showWelcomeScreen = !sessionId || (messages.length === 1 && messages[0].role === 'assistant' && 
     messages[0].content === 'Olá! Como posso ajudar você hoje?')
@@ -334,41 +366,6 @@ export const ChatContainer = () => {
     const temasUnicos = Array.from(new Set(demoPrompts.map(p => p.tema)));
     console.log('Temas:', temasUnicos.join(', '));
   }, []);
-
-  const PromptsSuggestionCards = () => {
-    if (!currentThemeId || isThemePromptsLoading) {
-      return (
-        <div className="mb-4 flex flex-wrap gap-3">
-          <div className="bg-pump-gray/20 rounded-lg h-10 w-36 animate-pulse" />
-          <div className="bg-pump-gray/20 rounded-lg h-10 w-48 animate-pulse" />
-          <div className="bg-pump-gray/20 rounded-lg h-10 w-28 animate-pulse" />
-        </div>
-      )
-    }
-    if (!themePrompts || themePrompts.length === 0) return null;
-    return (
-      <div className="mb-4 flex flex-wrap gap-3">
-        {themePrompts.map(prompt => (
-          <button
-            type="button"
-            key={prompt.id}
-            className="bg-white border border-pump-purple/20 rounded-lg px-4 py-2 shadow hover:bg-pump-purple/10 text-pump-purple font-medium text-sm transition-colors cursor-pointer"
-            onClick={() => {
-              const textArea = document.querySelector('textarea');
-              if (textArea) {
-                textArea.value = prompt.title;
-                textArea.dispatchEvent(new Event('input', { bubbles: true }));
-                textArea.focus();
-              }
-            }}
-            style={{ minWidth: 120 }}
-          >
-            {prompt.title}
-          </button>
-        ))}
-      </div>
-    )
-  }
 
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden relative">
@@ -397,8 +394,16 @@ export const ChatContainer = () => {
       ) : (
         <div className="flex-1 flex flex-col overflow-hidden h-full">
           <ChatMessages messages={messages} isThinking={isThinking} />
-          <PromptsSuggestionCards />
-          <ChatInput onSendMessage={handleSendMessage} />
+          <PromptSuggestionCards
+            prompts={themePrompts}
+            onSelect={handlePromptCardSelect}
+            loading={isThemePromptsLoading}
+          />
+          <ChatInput 
+            onSendMessage={handleSendMessage} 
+            furtivePromptTitle={furtivePrompt ? furtivePrompt.title : undefined}
+            setFurtivePromptCleared={() => setFurtivePrompt(null)}
+          />
           <ApiKeyDisplay />
         </div>
       )}

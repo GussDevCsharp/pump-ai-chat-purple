@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
@@ -50,24 +51,24 @@ const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
                 }}
               >{theme.name.charAt(0)}</span>
             </div>
-            <h3 className="font-bold text-2xl text-gray-900 leading-tight font-sans">{theme.name}</h3>
+            <h3 className="font-normal text-xl text-gray-900 leading-tight">{theme.name}</h3>
           </div>
           {theme.description && (
-            <p className="text-center text-sm text-pump-gray mt-0 mb-2 px-1 min-h-[28px] font-sans">{theme.description}</p>
+            <p className="text-center text-sm text-pump-gray mt-0 mb-2 px-1 min-h-[28px]">{theme.description}</p>
           )}
         </div>
         <div className="flex flex-col gap-1 mt-1 flex-1 justify-start min-h-[74px]">
           {isLoading ? (
-            <span className="text-pump-gray text-sm font-sans">Carregando tópicos...</span>
+            <span className="text-pump-gray text-sm">Carregando tópicos...</span>
           ) : (
             prompts && prompts.length > 0 ? (
-              <ul className="list-disc pl-4 text-sm text-gray-700 font-sans">
+              <ul className="list-disc pl-4 text-sm text-gray-700">
                 {prompts.map((prompt) => (
                   <li key={prompt.id} className="truncate">{prompt.title}</li>
                 ))}
               </ul>
             ) : (
-              <span className="text-pump-gray text-sm font-sans">Nenhum tópico encontrado</span>
+              <span className="text-pump-gray text-sm">Nenhum tópico encontrado</span>
             )
           )}
         </div>
@@ -75,7 +76,7 @@ const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
           <Button
             size="lg"
             variant="outline"
-            className="w-full py-2 px-5 rounded-lg font-semibold border-pump-purple text-pump-purple hover:bg-pump-purple/10 hover:text-pump-purple bg-white transition-all"
+            className="w-full py-2 px-5 rounded-lg font-normal border-pump-purple text-pump-purple hover:bg-pump-purple/10 hover:text-pump-purple bg-white transition-all"
           >
             Entrar no chat deste tema
           </Button>

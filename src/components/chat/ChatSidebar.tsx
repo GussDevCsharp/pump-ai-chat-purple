@@ -147,11 +147,14 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
                       )}
                       <span style={themeColor ? { color: themeColor } : {}}>{themeName}</span>
                     </h3>
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col gap-3">
                       {themeSessions.map((session) => (
                         <div key={session.id} className="group relative">
                           {editingId === session.id ? (
-                            <div className="flex items-center gap-2 p-3 rounded-lg bg-pump-gray-light">
+                            <div className="
+                              flex items-center gap-2 px-4 py-3 
+                              rounded-2xl bg-white border-2 border-pump-gray/10 shadow-lg
+                            ">
                               <Input
                                 value={newTitle}
                                 onChange={(e) => setNewTitle(e.target.value)}
@@ -161,7 +164,7 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
                                 }}
                                 onBlur={() => handleRename(session.id)}
                                 autoFocus
-                                className="text-sm"
+                                className="text-sm bg-transparent"
                               />
                             </div>
                           ) : (
@@ -170,13 +173,32 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
                                 navigate(`/chat?session=${session.id}`)
                                 if (onClose) onClose()
                               }}
-                              className="flex items-center gap-2 p-3 w-full hover:bg-pump-gray-light rounded-lg transition-colors"
+                              className={`
+                                flex items-center gap-3 px-4 py-4 w-full
+                                bg-white border-2 border-pump-gray/10 rounded-2xl shadow-md
+                                transition-all duration-200
+                                hover:scale-105 hover:shadow-xl 
+                                group/card
+                              `}
+                              style={{
+                                borderColor: themeColor || "#e9e3fc",
+                                minHeight: 76,
+                                boxShadow: "0 8px 18px 0 rgba(54,40,90,0.06)"
+                              }}
                             >
-                              <MessageCircle className="w-4 h-4 text-pump-gray" />
+                              <span className="flex items-center justify-center w-10 h-10 rounded-full"
+                                style={{
+                                  background: themeColor ? `${themeColor}20` : "#f4ebfd"
+                                }}>
+                                <MessageCircle
+                                  className="w-6 h-6"
+                                  style={{ color: themeColor || "#7E1CC6" }}
+                                />
+                              </span>
                               <span className="text-sm text-pump-gray font-medium truncate flex-1 text-left">
                                 {session.title}
                               </span>
-                              <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
+                              <div className="opacity-0 group-hover/card:opacity-100 transition-opacity flex items-center gap-1">
                                 <ThemeSelect 
                                   sessionId={session.id} 
                                   currentTheme={session.theme_id}
@@ -187,6 +209,7 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
                                     e.stopPropagation()
                                     startEditing(session.id, session.title)
                                   }}
+                                  className="rounded hover:bg-pump-gray-light p-1"
                                 >
                                   <Pencil className="w-4 h-4 text-pump-gray hover:text-pump-purple" />
                                 </button>
@@ -195,6 +218,7 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
                                     e.stopPropagation()
                                     setSessionToDelete(session.id)
                                   }}
+                                  className="rounded hover:bg-red-50 p-1"
                                 >
                                   <Trash2 className="w-4 h-4 text-pump-gray hover:text-red-500" />
                                 </button>

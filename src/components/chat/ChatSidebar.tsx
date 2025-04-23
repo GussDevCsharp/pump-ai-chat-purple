@@ -1,4 +1,4 @@
-import { MessageCircle, Plus, Pencil, Trash2 } from "lucide-react"
+import { MessageCircle, Plus, Pencil, Trash2, UserRound, Settings } from "lucide-react"
 import { useChatSessions } from "@/hooks/useChatSessions"
 import { Button } from "@/components/ui/button"
 import { useNavigate, useSearchParams } from "react-router-dom"
@@ -246,7 +246,7 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-pump-purple/10 flex items-center justify-center">
-                <User className="w-4 h-4 text-pump-purple" />
+                <UserRound className="w-4 h-4 text-pump-purple" />
               </div>
               <div className="flex flex-col">
                 <span className="text-sm font-medium text-gray-900">Usuário</span>

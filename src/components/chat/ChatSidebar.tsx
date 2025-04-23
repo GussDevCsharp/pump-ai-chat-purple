@@ -133,111 +133,88 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
             </div>
           ) : (
             <div className="flex flex-col gap-4">
-              {Object.entries(groupedSessions).map(([groupKey, { themeObj, sessions: themeSessions }]) => {
-                const themeName = themeObj ? themeObj.name : 'Outras conversas';
-                const themeColor = themeObj && themeObj.color ? themeObj.color : undefined;
-                return (
-                  <div key={groupKey} className="space-y-2">
-                    <h3 className="flex items-center text-xs font-medium text-pump-gray px-3">
-                      {themeColor && (
+              {Object.entries(groupedSessions).map(([groupKey, { themeObj, sessions: themeSessions }]) => (
+                <div key={groupKey} className="space-y-2">
+                  <h3 className="flex items-center text-xs font-medium text-pump-gray px-3">
+                      {themeObj && themeObj.color && (
                         <span
                           className="inline-block w-3 h-3 rounded-full mr-2 border border-pump-gray/30"
-                          style={{ backgroundColor: themeColor }}
+                          style={{ backgroundColor: themeObj.color }}
                         />
                       )}
-                      <span style={themeColor ? { color: themeColor } : {}}>{themeName}</span>
+                      <span style={themeObj?.color ? { color: themeObj.color } : {}}></span>
                     </h3>
-                    <div className="flex flex-col gap-3">
-                      {themeSessions.map((session) => (
-                        <div key={session.id} className="group relative">
-                          {editingId === session.id ? (
-                            <div className="
-                              flex items-center gap-2 px-4 py-3 
-                              rounded-2xl bg-white border-2 border-pump-gray/10 shadow-lg
-                            ">
-                              <Input
-                                value={newTitle}
-                                onChange={(e) => setNewTitle(e.target.value)}
-                                onKeyDown={(e) => {
-                                  if (e.key === 'Enter') handleRename(session.id)
-                                  if (e.key === 'Escape') setEditingId(null)
-                                }}
-                                onBlur={() => handleRename(session.id)}
-                                autoFocus
-                                className="text-sm bg-transparent"
-                              />
-                            </div>
-                          ) : (
-                            <button
-                              onClick={() => {
-                                navigate(`/chat?session=${session.id}`)
-                                if (onClose) onClose()
-                              }}
-                              className={`
-                                relative flex items-center justify-between gap-3 px-4 py-3 w-full
-                                bg-white border-2 border-pump-gray/10 rounded-2xl shadow-md
-                                transition-all duration-200
-                                hover:scale-105 hover:shadow-xl 
-                                group/card min-h-[80px]
-                              `}
-                              style={{
-                                borderColor: themeObj?.color || "#e9e3fc",
-                                boxShadow: "0 8px 18px 0 rgba(54,40,90,0.06)"
-                              }}
-                            >
-                              <div className="flex items-center gap-3">
-                                <span className="flex items-center justify-center w-10 h-10 rounded-full"
-                                  style={{
-                                    background: themeObj?.color ? `${themeObj.color}20` : "#f4ebfd"
-                                  }}>
-                                  <MessageCircle
-                                    className="w-6 h-6"
-                                    style={{ color: themeObj?.color || "#7E1CC6" }}
-                                  />
-                                </span>
-                                <span className="text-sm text-pump-gray font-medium truncate">
-                                  {session.title}
-                                </span>
-                              </div>
-                              
-                              <div className="
-                                absolute bottom-2 right-2
-                                opacity-0 group-hover/card:opacity-100 
-                                transition-opacity 
-                                flex items-center gap-1
-                              ">
-                                <ThemeSelect 
-                                  sessionId={session.id} 
-                                  currentTheme={session.theme_id}
-                                  onThemeChange={refreshSessions}
-                                />
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    startEditing(session.id, session.title)
-                                  }}
-                                  className="rounded hover:bg-pump-gray-light p-1"
-                                >
-                                  <Pencil className="w-4 h-4 text-pump-gray hover:text-pump-purple" />
-                                </button>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    setSessionToDelete(session.id)
-                                  }}
-                                  className="rounded hover:bg-red-50 p-1"
-                                >
-                                  <Trash2 className="w-4 h-4 text-pump-gray hover:text-red-500" />
-                                </button>
-                              </div>
-                            </button>
-                          )}
+                  {themeSessions.map((session) => (
+                    <div key={session.id} className="group relative">
+                      <button
+                        onClick={() => {
+                          navigate(`/chat?session=${session.id}`)
+                          if (onClose) onClose()
+                        }}
+                        className={`
+                          relative flex items-center justify-between gap-3 px-4 py-3 w-full
+                          bg-white border-2 border-pump-gray/10 rounded-2xl shadow-md
+                          transition-all duration-200
+                          hover:scale-105 hover:shadow-xl 
+                          group/card min-h-[80px]
+                        `}
+                        style={{
+                          borderColor: themeObj?.color || "#e9e3fc",
+                          boxShadow: "0 8px 18px 0 rgba(54,40,90,0.06)"
+                        }}
+                      >
+                        <div className="flex items-center gap-3">
+                          <span 
+                            className="flex items-center justify-center w-10 h-10 rounded-full"
+                            style={{
+                              background: themeObj?.color ? `${themeObj.color}20` : "#f4ebfd"
+                            }}
+                          >
+                            <MessageCircle
+                              className="w-6 h-6"
+                              style={{ color: themeObj?.color || "#7E1CC6" }}
+                            />
+                          </span>
+                          <span className="text-sm text-pump-gray font-medium truncate">
+                            {session.title}
+                          </span>
                         </div>
-                      ))}
+                        
+                        <div className="
+                          absolute bottom-2 right-2
+                          opacity-0 group-hover/card:opacity-100 
+                          transition-opacity 
+                          flex items-center gap-1
+                        ">
+                          <ThemeSelect 
+                            sessionId={session.id} 
+                            currentTheme={session.theme_id}
+                            onThemeChange={refreshSessions}
+                          />
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              startEditing(session.id, session.title)
+                            }}
+                            className="rounded hover:bg-pump-gray-light p-1"
+                          >
+                            <Pencil className="w-4 h-4 text-pump-gray hover:text-pump-purple" />
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setSessionToDelete(session.id)
+                            }}
+                            className="rounded hover:bg-red-50 p-1"
+                          >
+                            <Trash2 className="w-4 h-4 text-pump-gray hover:text-red-500" />
+                          </button>
+                        </div>
+                      </button>
                     </div>
-                  </div>
-                )
-              })}
+                  ))}
+                </div>
+              ))}
             </div>
           )}
         </div>

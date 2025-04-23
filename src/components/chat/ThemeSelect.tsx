@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button"
-import { Check, Tag } from "lucide-react"
+import { Tag } from "lucide-react"
 import {
   Popover,
   PopoverContent,
@@ -87,10 +87,14 @@ export const ThemeSelect = ({ sessionId, currentTheme, onThemeChange }: ThemeSel
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 relative">
-          <Tag className="h-4 w-4 text-pump-gray" />
-          {selectedThemeName && (
-            <Badge variant="secondary" className="absolute -top-2 -right-2 text-xs px-1 py-0">
+        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 relative group">
+          <Tag className="h-4 w-4 text-pump-gray group-hover:hidden" />
+          <Tag className="h-4 w-4 text-pump-gray hidden group-hover:block" />
+          {selectedThemeName && !selectedThemeName.startsWith("group-hover") && (
+            <Badge 
+              variant="secondary" 
+              className="absolute -top-2 -right-2 text-xs px-1 py-0 group-hover:hidden"
+            >
               {selectedThemeName}
             </Badge>
           )}
@@ -125,3 +129,4 @@ export const ThemeSelect = ({ sessionId, currentTheme, onThemeChange }: ThemeSel
     </Popover>
   )
 }
+

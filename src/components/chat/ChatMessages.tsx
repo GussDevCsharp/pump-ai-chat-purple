@@ -1,3 +1,4 @@
+
 import { FormDataType } from "@/types/business-generator"
 import { useLocation } from "react-router-dom"
 import ReactMarkdown from 'react-markdown'
@@ -47,10 +48,10 @@ export const ChatMessages = ({ messages, isThinking }: ChatMessagesProps) => {
   }
 
   return (
-    <ScrollArea className="flex-1 h-full">
-      <div className="w-full mx-auto space-y-6 py-4 px-2.5">
+    <ScrollArea className="flex-1 h-full font-sans antialiased text-[16px] text-gray-900">
+      <div className="w-full mx-auto space-y-6 py-4 px-[10px]">
         {businessData && (
-          <div className="flex gap-4 px-4 bg-pump-purple/5 py-4 rounded-lg mb-6">
+          <div className="flex gap-4 px-[10px] bg-pump-purple/5 py-4 rounded-lg mb-6">
             <div className="w-8 h-8 rounded-full bg-pump-purple flex items-center justify-center flex-shrink-0">
               <span className="text-sm font-medium text-white">B</span>
             </div>
@@ -68,7 +69,7 @@ export const ChatMessages = ({ messages, isThinking }: ChatMessagesProps) => {
         {messages.map((message, index) => (
           <div 
             key={index} 
-            className={`flex gap-4 px-2.5 sm:px-2.5 ${
+            className={`flex gap-4 px-[10px] ${
               message.role === 'user' ? 'flex-row-reverse' : ''
             }`}
           >
@@ -85,7 +86,8 @@ export const ChatMessages = ({ messages, isThinking }: ChatMessagesProps) => {
                   message.role === 'user' 
                     ? 'bg-pump-purple text-white ml-auto' 
                     : 'bg-pump-gray-light text-gray-800'
-                }`}
+                } font-sans antialiased`}
+                style={{ wordBreak: 'break-word', lineHeight: '1.6' }}
               >
                 {message.role === 'assistant' && (
                   <Button
@@ -105,19 +107,19 @@ export const ChatMessages = ({ messages, isThinking }: ChatMessagesProps) => {
                 {message.role === 'assistant' ? (
                   <ReactMarkdown 
                     components={{
-                      p: ({children}) => <p className="mb-3 last:mb-0">{children}</p>,
-                      h1: ({children}) => <h1 className="text-2xl font-bold mb-3 text-pump-purple">{children}</h1>,
-                      h2: ({children}) => <h2 className="text-xl font-semibold mb-2 text-pump-purple">{children}</h2>,
-                      h3: ({children}) => <h3 className="text-lg font-semibold mb-2 text-pump-purple">{children}</h3>,
-                      ul: ({children}) => <ul className="list-disc ml-4 mb-3 space-y-1">{children}</ul>,
-                      li: ({children}) => <li>{children}</li>,
-                      strong: ({children}) => <strong className="font-semibold">{children}</strong>,
+                      p: ({children}) => <p className="mb-3 last:mb-0 font-sans">{children}</p>,
+                      h1: ({children}) => <h1 className="text-2xl font-bold mb-3 text-pump-purple font-sans">{children}</h1>,
+                      h2: ({children}) => <h2 className="text-xl font-semibold mb-2 text-pump-purple font-sans">{children}</h2>,
+                      h3: ({children}) => <h3 className="text-lg font-semibold mb-2 text-pump-purple font-sans">{children}</h3>,
+                      ul: ({children}) => <ul className="list-disc ml-4 mb-3 space-y-1 font-sans">{children}</ul>,
+                      li: ({children}) => <li className="font-sans">{children}</li>,
+                      strong: ({children}) => <strong className="font-semibold font-sans">{children}</strong>,
                     }}
                   >
                     {message.content}
                   </ReactMarkdown>
                 ) : (
-                  message.content
+                  <span className="font-sans">{message.content}</span>
                 )}
               </div>
             </div>
@@ -125,12 +127,12 @@ export const ChatMessages = ({ messages, isThinking }: ChatMessagesProps) => {
         ))}
 
         {isThinking && (
-          <div className="flex gap-4 px-2.5 sm:px-2.5">
+          <div className="flex gap-4 px-[10px]">
             <div className="w-8 h-8 rounded-full bg-pump-purple flex items-center justify-center flex-shrink-0">
               <span className="text-sm font-medium text-white">A</span>
             </div>
             <div className="flex-1">
-              <div className="inline-block px-4 py-2 rounded-lg bg-pump-gray-light text-gray-800">
+              <div className="inline-block px-4 py-2 rounded-lg bg-pump-gray-light text-gray-800 font-sans antialiased">
                 <LoadingDots />
               </div>
             </div>

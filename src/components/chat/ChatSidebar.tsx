@@ -181,19 +181,22 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
                                 group/card min-h-[80px]
                               `}
                               style={{
-                                borderColor: themeColor || "#e9e3fc",
+                                borderColor: themeObj?.color || "#e9e3fc",
                                 boxShadow: "0 8px 18px 0 rgba(54,40,90,0.06)"
                               }}
                             >
                               <div className="flex items-center gap-3">
                                 <span className="flex items-center justify-center w-10 h-10 rounded-full"
                                   style={{
-                                    background: themeColor ? `${themeColor}20` : "#f4ebfd"
+                                    background: themeObj?.color ? `${themeObj.color}20` : "#f4ebfd"
                                   }}>
                                   <MessageCircle
                                     className="w-6 h-6"
-                                    style={{ color: themeColor || "#7E1CC6" }}
+                                    style={{ color: themeObj?.color || "#7E1CC6" }}
                                   />
+                                </span>
+                                <span className="text-sm text-pump-gray font-medium truncate">
+                                  {session.title}
                                 </span>
                               </div>
                               

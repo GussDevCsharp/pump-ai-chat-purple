@@ -3,7 +3,6 @@ import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { useChatThemes } from "@/hooks/useChatThemes";
 import { useChatSessions } from "@/hooks/useChatSessions";
-import { UserCardMenu } from "@/components/common/UserCardMenu";
 import { Button } from "@/components/ui/button";
 import { MessageCircle } from "lucide-react";
 import { Header } from "@/components/common/Header";
@@ -31,7 +30,7 @@ export default function Themes() {
     <div className="min-h-screen bg-offwhite">
       <Header />
       <main className="container mx-auto px-4 py-12 flex flex-col items-center">
-        <div className="w-full max-w-4xl bg-white/90 rounded-xl shadow-lg p-9 flex flex-col gap-6">
+        <div className="w-full max-w-6xl bg-white/90 rounded-2xl shadow-lg p-9 flex flex-col gap-10">
           <div className="flex flex-col md:flex-row justify-between items-start gap-8 mb-8">
             <div className="w-full md:w-2/3 text-left">
               <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-3">
@@ -52,7 +51,6 @@ export default function Themes() {
               </div>
             </div>
           </div>
-
           {isLoading ? (
             <div className="flex justify-center items-center h-40">
               <p className="text-pump-gray">Carregando temas...</p>
@@ -62,30 +60,49 @@ export default function Themes() {
               <p className="text-pump-gray">Nenhum tema encontrado. Você pode criar um novo tema ou iniciar uma conversa geral.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-7">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full">
               {themes.map((theme) => (
-                <Card 
+                <Card
                   key={theme.id}
                   onClick={() => handleSelectTheme(theme.id, theme.name)}
-                  className="cursor-pointer hover:shadow-md transition-shadow border-pump-gray/20 bg-white/90 rounded-xl"
+                  className={`
+                    flex flex-col h-[370px] bg-white rounded-2xl border-2 border-pump-gray/10 hover:shadow-2xl 
+                    transform transition-all duration-200 cursor-pointer
+                    hover:scale-105 shadow-md
+                    group
+                  `}
                   style={{
-                    borderColor: theme.color || undefined
+                    borderColor: theme.color || "#e9e3fc"
                   }}
                 >
-                  <div className="p-6 flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-full flex items-center justify-center"
-                      style={{
-                        backgroundColor: (theme.color ? theme.color + '20' : '#9b87f520')
-                      }}>
-                      <span style={{ color: theme.color || '#9b87f5', fontWeight: 600, fontSize: 22 }}>
-                        {theme.name.charAt(0)}
-                      </span>
-                    </div>
+                  <div className="flex flex-col flex-1 justify-between p-8">
                     <div>
-                      <h3 className="font-medium text-lg text-gray-900">{theme.name}</h3>
+                      <div 
+                        className="w-14 h-14 flex items-center justify-center rounded-full mb-4 mx-auto border-4 border-white group-hover:shadow-xl"
+                        style={{
+                          background: theme.color ? `${theme.color}20` : "#f4ebfd",
+                        }}
+                      >
+                        <span 
+                          className="font-bold text-2xl"
+                          style={{
+                            color: theme.color || "#7E1CC6"
+                          }}
+                        >{theme.name.charAt(0)}</span>
+                      </div>
+                      <h3 className="font-bold text-xl text-gray-900 text-center">{theme.name}</h3>
                       {theme.description && (
-                        <p className="text-sm text-pump-gray mt-1">{theme.description}</p>
+                        <p className="text-center text-base text-pump-gray mt-2 mb-3 px-2 min-h-[42px]">{theme.description}</p>
                       )}
+                    </div>
+                    <div className="flex justify-center mt-4">
+                      <Button
+                        size="lg"
+                        variant="outline"
+                        className="w-full py-2 px-5 rounded-lg font-semibold border-pump-purple text-pump-purple hover:bg-pump-purple/10 hover:text-pump-purple bg-white transition-all"
+                      >
+                        Entrar no chat deste tema
+                      </Button>
                     </div>
                   </div>
                 </Card>

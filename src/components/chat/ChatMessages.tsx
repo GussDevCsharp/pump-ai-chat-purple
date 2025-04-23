@@ -53,11 +53,11 @@ export const ChatMessages = ({ messages, isThinking }: ChatMessagesProps) => {
         {businessData && (
           <div className="flex gap-4 px-[10px] bg-pump-purple/5 py-4 rounded-lg mb-6">
             <div className="w-8 h-8 rounded-full bg-pump-purple flex items-center justify-center flex-shrink-0">
-              <span className="text-sm font-medium text-white">B</span>
+              <span className="text-sm font-medium text-white font-sans">B</span>
             </div>
             <div className="flex-1">
-              <h3 className="text-sm font-medium mb-2">Informações do seu negócio:</h3>
-              <div className="text-sm text-gray-600 space-y-1">
+              <h3 className="text-sm font-medium mb-2 font-sans">Informações do seu negócio:</h3>
+              <div className="text-sm text-gray-600 space-y-1 font-sans">
                 {Object.entries(businessData).map(([key, value]) => (
                   <p key={key}><strong>{key}:</strong> {value}</p>
                 ))}
@@ -88,7 +88,7 @@ export const ChatMessages = ({ messages, isThinking }: ChatMessagesProps) => {
                     wordBreak: 'break-word',
                     lineHeight: '1.6',
                     maxWidth: '70%',
-                    textAlign: 'left'
+                    textAlign: 'left',
                   }}
                 >
                   {message.content}
@@ -113,13 +113,24 @@ export const ChatMessages = ({ messages, isThinking }: ChatMessagesProps) => {
                   </Button>
                   <ReactMarkdown 
                     components={{
-                      p: ({children}) => <p className="mb-3 last:mb-0 font-sans">{children}</p>,
-                      h1: ({children}) => <h1 className="text-2xl font-bold mb-3 text-pump-purple font-sans">{children}</h1>,
-                      h2: ({children}) => <h2 className="text-xl font-semibold mb-2 text-pump-purple font-sans">{children}</h2>,
-                      h3: ({children}) => <h3 className="text-lg font-semibold mb-2 text-pump-purple font-sans">{children}</h3>,
-                      ul: ({children}) => <ul className="list-disc ml-4 mb-3 space-y-1 font-sans">{children}</ul>,
-                      li: ({children}) => <li className="font-sans">{children}</li>,
-                      strong: ({children}) => <strong className="font-semibold font-sans">{children}</strong>,
+                      h1: ({children}) =>
+                        <h1 className="font-sans text-2xl md:text-3xl font-extrabold text-pump-purple mb-3">{children}</h1>,
+                      h2: ({children}) =>
+                        <h2 className="font-sans text-xl md:text-2xl font-bold text-pump-purple mb-2">{children}</h2>,
+                      h3: ({children}) =>
+                        <h3 className="font-sans text-lg font-semibold text-pump-purple mb-2">{children}</h3>,
+                      ul: ({children}) =>
+                        <ul className="font-sans list-disc ml-5 mb-2 text-base text-pump-purple">{children}</ul>,
+                      li: ({children}) =>
+                        <li className="font-sans text-base text-gray-800 mb-1 leading-relaxed">{children}</li>,
+                      p: ({children}) =>
+                        <p className="mb-3 last:mb-0 font-sans text-[16px] text-gray-900">{children}</p>,
+                      strong: ({children}) =>
+                        <strong className="font-sans font-bold text-pump-purple">{children}</strong>,
+                      em: ({children}) =>
+                        <em className="font-sans italic">{children}</em>,
+                      a: ({href, children}) =>
+                        <a className="font-sans underline text-pump-purple hover:text-pump-purple/90" href={href as string} target="_blank" rel="noopener noreferrer">{children}</a>
                     }}
                   >
                     {message.content}
@@ -146,3 +157,4 @@ export const ChatMessages = ({ messages, isThinking }: ChatMessagesProps) => {
     </ScrollArea>
   )
 }
+

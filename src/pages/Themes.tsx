@@ -1,4 +1,5 @@
 
+import React from 'react';
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { useChatThemes } from "@/hooks/useChatThemes";
@@ -7,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { MessageCircle } from "lucide-react";
 import { Header } from "@/components/common/Header";
 import { useThemePrompts } from "@/hooks/useThemePrompts";
-import React from "react";
 
 type ThemeCardProps = {
   theme: {
@@ -51,7 +51,7 @@ const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
                 }}
               >{theme.name.charAt(0)}</span>
             </div>
-            <h3 className="font-bold text-lg text-gray-900">{theme.name}</h3>
+            <h3 className="font-bold text-2xl text-gray-900 leading-tight">{theme.name}</h3>
           </div>
           {theme.description && (
             <p className="text-center text-sm text-pump-gray mt-0 mb-2 px-1 min-h-[28px]">{theme.description}</p>

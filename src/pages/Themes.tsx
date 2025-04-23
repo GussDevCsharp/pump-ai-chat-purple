@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
@@ -29,7 +28,7 @@ const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
         flex flex-col h-[340px] bg-white rounded-2xl border-2 border-pump-gray/10 hover:shadow-2xl 
         transform transition-all duration-200 cursor-pointer
         hover:scale-105 shadow-md group
-        px-4 py-3
+        px-4 py-3 font-sans
       `}
       style={{
         borderColor: theme.color || "#e9e3fc"
@@ -51,25 +50,24 @@ const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
                 }}
               >{theme.name.charAt(0)}</span>
             </div>
-            <h3 className="font-bold text-2xl text-gray-900 leading-tight">{theme.name}</h3>
+            <h3 className="font-bold text-2xl text-gray-900 leading-tight font-sans">{theme.name}</h3>
           </div>
           {theme.description && (
-            <p className="text-center text-sm text-pump-gray mt-0 mb-2 px-1 min-h-[28px]">{theme.description}</p>
+            <p className="text-center text-sm text-pump-gray mt-0 mb-2 px-1 min-h-[28px] font-sans">{theme.description}</p>
           )}
         </div>
-        {/* Tópicos dos prompts */}
         <div className="flex flex-col gap-1 mt-1 flex-1 justify-start min-h-[74px]">
           {isLoading ? (
-            <span className="text-pump-gray text-sm">Carregando tópicos...</span>
+            <span className="text-pump-gray text-sm font-sans">Carregando tópicos...</span>
           ) : (
             prompts && prompts.length > 0 ? (
-              <ul className="list-disc pl-4 text-sm text-gray-700">
+              <ul className="list-disc pl-4 text-sm text-gray-700 font-sans">
                 {prompts.map((prompt) => (
                   <li key={prompt.id} className="truncate">{prompt.title}</li>
                 ))}
               </ul>
             ) : (
-              <span className="text-pump-gray text-sm">Nenhum tópico encontrado</span>
+              <span className="text-pump-gray text-sm font-sans">Nenhum tópico encontrado</span>
             )
           )}
         </div>
@@ -107,23 +105,23 @@ export default function Themes() {
   };
 
   return (
-    <div className="min-h-screen bg-offwhite">
+    <div className="min-h-screen bg-offwhite font-sans">
       <Header />
-      <main className="w-full px-2 sm:px-4 md:px-8 py-8 flex flex-col items-center">
-        <div className="w-full bg-white/90 rounded-2xl shadow-lg p-7 md:p-12 flex flex-col gap-10">
+      <main className="w-full px-2 sm:px-4 md:px-8 py-8 flex flex-col items-center font-sans">
+        <div className="w-full bg-white/90 rounded-2xl shadow-lg p-7 md:p-12 flex flex-col gap-10 font-sans">
           <div className="flex flex-col md:flex-row justify-between items-start gap-8 mb-8">
             <div className="w-full text-left">
-              <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-3">
+              <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-3 font-sans">
                 Central de Controle
               </h1>
-              <p className="text-lg text-pump-gray mb-6">
+              <p className="text-lg text-pump-gray mb-6 font-sans">
                 Gerencie seus temas, chats e configurações de forma centralizada.
               </p>
               <div className="flex gap-4">
                 <Button 
                   onClick={handleNewChat}
                   size="lg"
-                  className="bg-pump-purple hover:bg-pump-purple/90 text-white rounded-lg px-7 py-3 text-lg"
+                  className="bg-pump-purple hover:bg-pump-purple/90 text-white rounded-lg px-7 py-3 text-lg font-sans"
                 >
                   <MessageCircle className="w-5 h-5 mr-2" />
                   Novo Chat
@@ -132,11 +130,11 @@ export default function Themes() {
             </div>
           </div>
           {isLoading ? (
-            <div className="flex justify-center items-center h-40">
+            <div className="flex justify-center items-center h-40 font-sans">
               <p className="text-pump-gray">Carregando temas...</p>
             </div>
           ) : themes.length === 0 ? (
-            <div className="text-center p-8">
+            <div className="text-center p-8 font-sans">
               <p className="text-pump-gray">Nenhum tema encontrado. Você pode criar um novo tema ou iniciar uma conversa geral.</p>
             </div>
           ) : (

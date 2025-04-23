@@ -11,6 +11,7 @@ import { useChatAuth } from "@/hooks/useChatAuth"
 import { Button } from "@/components/ui/button"
 import { LogIn } from "lucide-react"
 import { useThemePrompt } from "@/hooks/useThemePrompt"
+import { useThemePrompts } from "@/hooks/useThemePrompts"
 import { Watermark } from "../common/Watermark"
 
 const demoPrompts = [
@@ -64,7 +65,6 @@ export const ChatContainer = () => {
         setCurrentThemeId(null);
         return;
       }
-      
       if (authStatus === 'anonymous') {
         try {
           const localSessions = JSON.parse(localStorage.getItem('anonymous_chat_sessions') || '[]');
@@ -75,7 +75,6 @@ export const ChatContainer = () => {
         }
         return;
       }
-      
       const { data, error } = await supabase
         .from('chat_sessions')
         .select('theme_id')
@@ -88,6 +87,8 @@ export const ChatContainer = () => {
   }, [sessionId, authStatus]);
 
   const { patternPrompt } = useThemePrompt(currentThemeId ?? undefined);
+
+  const { prompts: themePrompts, isLoading: isThemePromptsLoading } = useThemePrompts(currentThemeId ?? undefined);
 
   const [businessData] = useState({
     company_name: "Minha Empresa",
@@ -334,6 +335,41 @@ export const ChatContainer = () => {
     console.log('Temas:', temasUnicos.join(', '));
   }, []);
 
+  const PromptsSuggestionCards = () => {
+    if (!currentThemeId || isThemePromptsLoading) {
+      return (
+        <div className="mb-4 flex flex-wrap gap-3">
+          <div className="bg-pump-gray/20 rounded-lg h-10 w-36 animate-pulse" />
+          <div className="bg-pump-gray/20 rounded-lg h-10 w-48 animate-pulse" />
+          <div className="bg-pump-gray/20 rounded-lg h-10 w-28 animate-pulse" />
+        </div>
+      )
+    }
+    if (!themePrompts || themePrompts.length === 0) return null;
+    return (
+      <div className="mb-4 flex flex-wrap gap-3">
+        {themePrompts.map(prompt => (
+          <button
+            type="button"
+            key={prompt.id}
+            className="bg-white border border-pump-purple/20 rounded-lg px-4 py-2 shadow hover:bg-pump-purple/10 text-pump-purple font-medium text-sm transition-colors cursor-pointer"
+            onClick={() => {
+              const textArea = document.querySelector('textarea');
+              if (textArea) {
+                textArea.value = prompt.title;
+                textArea.dispatchEvent(new Event('input', { bubbles: true }));
+                textArea.focus();
+              }
+            }}
+            style={{ minWidth: 120 }}
+          >
+            {prompt.title}
+          </button>
+        ))}
+      </div>
+    )
+  }
+
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden relative">
       <Watermark />
@@ -361,6 +397,7 @@ export const ChatContainer = () => {
       ) : (
         <div className="flex-1 flex flex-col overflow-hidden h-full">
           <ChatMessages messages={messages} isThinking={isThinking} />
+          <PromptsSuggestionCards />
           <ChatInput onSendMessage={handleSendMessage} />
           <ApiKeyDisplay />
         </div>

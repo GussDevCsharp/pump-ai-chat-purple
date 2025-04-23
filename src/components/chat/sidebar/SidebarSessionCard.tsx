@@ -83,3 +83,4 @@ export function SidebarSessionCard({
     </div>
   );
 }
+

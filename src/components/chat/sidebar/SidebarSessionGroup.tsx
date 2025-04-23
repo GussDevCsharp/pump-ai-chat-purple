@@ -31,9 +31,7 @@ export function SidebarSessionGroup({
             style={{ backgroundColor: themeObj.color }}
           />
         )}
-        <span style={themeObj?.color ? { color: themeObj.color } : {}}>
-          {themeObj ? themeObj.name : "Sem tema"}
-        </span>
+        {/* Theme name removed */}
       </h3>
       {sessions.map(session => (
         <SidebarSessionCard
@@ -50,3 +48,4 @@ export function SidebarSessionGroup({
     </div>
   );
 }
+

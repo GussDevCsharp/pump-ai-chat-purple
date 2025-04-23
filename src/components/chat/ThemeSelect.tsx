@@ -1,6 +1,5 @@
-
 import { Button } from "@/components/ui/button"
-import { Tag } from "lucide-react"
+import { Check, Tag } from "lucide-react"
 import {
   Popover,
   PopoverContent,
@@ -24,7 +23,6 @@ export const ThemeSelect = ({ sessionId, currentTheme, onThemeChange }: ThemeSel
   const { toast } = useToast()
   const [selectedThemeName, setSelectedThemeName] = useState<string | null>(null)
 
-  // Fetch the current theme name when component loads or currentTheme changes
   useEffect(() => {
     const fetchThemeName = async () => {
       if (!currentTheme) {
@@ -62,7 +60,6 @@ export const ThemeSelect = ({ sessionId, currentTheme, onThemeChange }: ThemeSel
 
       if (error) throw error
       
-      // Find the theme name for UI feedback
       const selectedTheme = themes.find(t => t.id === themeId)
       if (selectedTheme) {
         setSelectedThemeName(selectedTheme.name)
@@ -129,4 +126,3 @@ export const ThemeSelect = ({ sessionId, currentTheme, onThemeChange }: ThemeSel
     </Popover>
   )
 }
-

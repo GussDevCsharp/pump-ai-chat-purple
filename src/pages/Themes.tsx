@@ -1,117 +1,134 @@
-import { Card } from "@/components/ui/card";
-import { useNavigate } from "react-router-dom";
-import { useChatThemes } from "@/hooks/useChatThemes";
-import { useChatSessions } from "@/hooks/useChatSessions";
+import React, { useState } from "react";
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Index from "./Index";
+import Login from "./Login";
+import NotFound from "./NotFound";
+import BusinessGenerator from "./BusinessGenerator";
+import ThemesPage from "./Themes";
+import Signup from "./Signup";
+import AppointmentsPage from "./Appointments";
+import React, { useState } from "react";
+import { useAppointments } from "@/hooks/useAppointments";
+import { AppointmentForm } from "@/components/appointments/AppointmentForm";
+import { Calendar } from "@/components/ui/calendar";
+import { WeeklyKanban } from "@/components/appointments/WeeklyKanban";
+import { Plus } from "lucide-react";
+import { format, isSameWeek, parseISO } from "date-fns";
 import { Button } from "@/components/ui/button";
-import { MessageCircle } from "lucide-react";
-import { Header } from "@/components/common/Header";
 
 export default function Themes() {
-  const { themes, isLoading } = useChatThemes();
-  const { createSession } = useChatSessions();
-  const navigate = useNavigate();
+  const {
+    appointments,
+    isLoading,
+    themes,
+    create,
+    update,
+    remove,
+  } = useAppointments();
 
-  const handleSelectTheme = async (themeId: string, themeName: string) => {
-    const session = await createSession(`Chat sobre ${themeName}`, undefined, undefined, themeId);
-    if (session) {
-      navigate(`/chat?session=${session.id}`);
-    }
-  };
+  const [showForm, setShowForm] = useState(false);
+  const [formInitialData, setFormInitialData] = useState<any>(null);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
-  const handleNewChat = async () => {
-    const session = await createSession("Nova conversa");
-    if(session) {
-      navigate(`/chat?session=${session.id}`);
+  // Função para filtrar apenas os agendamentos da semana visível
+  const weekAppointments = appointments?.filter((a: any) =>
+    isSameWeek(new Date(a.start_time), selectedDate, { weekStartsOn: 0 })
+  ) || [];
+
+  function openCreateForm() {
+    setFormInitialData(null);
+    setShowForm(true);
+  }
+
+  function openEditForm(appt: any) {
+    setFormInitialData({
+      ...appt,
+      date: parseISO(appt.start_time),
+      start_time: appt.start_time && appt.start_time.slice(11, 16),
+      end_time: appt.end_time && appt.end_time.slice(11, 16),
+      theme_id: appt.theme_id,
+    });
+    setShowForm(true);
+  }
+
+  const handleSave = async (form: any) => {
+    const date = form.date || selectedDate;
+    const startDateTime = new Date(date);
+    startDateTime.setHours(Number(form.start_time.split(":")[0]));
+    startDateTime.setMinutes(Number(form.start_time.split(":")[1]));
+
+    const endDateTime = new Date(date);
+    endDateTime.setHours(Number(form.end_time.split(":")[0]));
+    endDateTime.setMinutes(Number(form.end_time.split(":")[1]));
+
+    if (form.id) {
+      await update({
+        id: form.id,
+        title: form.title,
+        theme_id: form.theme_id,
+        description: form.description,
+        location: form.location,
+        start_time: startDateTime.toISOString(),
+        end_time: endDateTime.toISOString(),
+      });
+    } else {
+      await create({
+        title: form.title,
+        theme_id: form.theme_id,
+        description: form.description,
+        location: form.location,
+        start_time: startDateTime.toISOString(),
+        end_time: endDateTime.toISOString(),
+      });
     }
   };
 
   return (
-    <div className="min-h-screen bg-offwhite">
-      <Header />
-      <main className="container mx-auto px-4 py-12 flex flex-col items-center">
-        <div className="w-full max-w-6xl bg-white/90 rounded-2xl shadow-lg p-9 flex flex-col gap-10">
-          <div className="flex flex-col md:flex-row justify-between items-start gap-8 mb-8">
-            <div className="w-full md:w-2/3 text-left">
-              <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-3">
-                Central de Controle
-              </h1>
-              <p className="text-lg text-pump-gray mb-6">
-                Gerencie seus temas, chats e configurações de forma centralizada.
-              </p>
-              <div className="flex gap-4">
-                <Button 
-                  onClick={handleNewChat}
-                  size="lg"
-                  className="bg-pump-purple hover:bg-pump-purple/90 text-white rounded-lg px-7 py-3 text-lg"
-                >
-                  <MessageCircle className="w-5 h-5 mr-2" />
-                  Novo Chat
-                </Button>
-              </div>
-            </div>
-          </div>
-          {isLoading ? (
-            <div className="flex justify-center items-center h-40">
-              <p className="text-pump-gray">Carregando temas...</p>
-            </div>
-          ) : themes.length === 0 ? (
-            <div className="text-center p-8">
-              <p className="text-pump-gray">Nenhum tema encontrado. Você pode criar um novo tema ou iniciar uma conversa geral.</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full">
-              {themes.map((theme) => (
-                <Card
-                  key={theme.id}
-                  onClick={() => handleSelectTheme(theme.id, theme.name)}
-                  className={`
-                    flex flex-col h-[370px] bg-white rounded-2xl border-2 border-pump-gray/10 hover:shadow-2xl 
-                    transform transition-all duration-200 cursor-pointer
-                    hover:scale-105 shadow-md
-                    group
-                  `}
-                  style={{
-                    borderColor: theme.color || "#e9e3fc"
-                  }}
-                >
-                  <div className="flex flex-col flex-1 justify-between p-8">
-                    <div>
-                      <div className="flex items-center gap-3 mb-4">
-                        <div 
-                          className="w-12 h-12 flex items-center justify-center rounded-full"
-                          style={{
-                            background: theme.color ? `${theme.color}20` : "#f4ebfd",
-                          }}
-                        >
-                          <span 
-                            className="font-bold text-2xl"
-                            style={{
-                              color: theme.color || "#7E1CC6"
-                            }}
-                          >{theme.name.charAt(0)}</span>
-                        </div>
-                        <h3 className="font-bold text-xl text-gray-900">{theme.name}</h3>
-                      </div>
-                      {theme.description && (
-                        <p className="text-center text-base text-pump-gray mt-2 mb-3 px-2 min-h-[42px]">{theme.description}</p>
-                      )}
-                    </div>
-                    <div className="flex justify-center mt-4">
-                      <Button
-                        size="lg"
-                        variant="outline"
-                        className="w-full py-2 px-5 rounded-lg font-semibold border-pump-purple text-pump-purple hover:bg-pump-purple/10 hover:text-pump-purple bg-white transition-all"
-                      >
-                        Entrar no chat deste tema
-                      </Button>
-                    </div>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          )}
+    <div className="min-h-screen bg-pump-offwhite p-4">
+      <div className="container max-w-6xl mx-auto">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-2xl font-bold">Temas & Agendamentos</h1>
+          <Button onClick={openCreateForm}>
+            <Plus size={18} className="mr-2" /> Novo agendamento
+          </Button>
         </div>
-      </main>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="shadow rounded-lg p-4 bg-pump-offwhite">
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              onSelect={setSelectedDate}
+              className="bg-white rounded"
+            />
+          </div>
+          <div className="rounded-lg p-4 shadow-md bg-pump-offwhite">
+            <h2 className="text-xl font-semibold mb-4">
+              Agendamentos da semana de{" "}
+              {format(selectedDate, "'Domingo' dd/MM")} a {format(selectedDate, "'Sábado' dd/MM")}
+            </h2>
+            {isLoading && <div>Carregando...</div>}
+            {!isLoading && weekAppointments.length === 0 && <div>Nenhum agendamento esta semana.</div>}
+            <WeeklyKanban
+              baseDate={selectedDate}
+              appointments={weekAppointments}
+              onEdit={openEditForm}
+              onDelete={remove}
+            />
+          </div>
+        </div>
+
+        <AppointmentForm
+          open={showForm}
+          onClose={() => setShowForm(false)}
+          onSubmit={handleSave}
+          initialData={formInitialData}
+          themes={themes}
+        />
+      </div>
     </div>
   );
 }

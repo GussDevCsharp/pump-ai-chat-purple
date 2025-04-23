@@ -142,7 +142,9 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
                           style={{ backgroundColor: themeObj.color }}
                         />
                       )}
-                      <span style={themeObj?.color ? { color: themeObj.color } : {}}></span>
+                      <span style={themeObj?.color ? { color: themeObj.color } : {}}>
+                        {themeObj ? themeObj.name : "Sem tema"}
+                      </span>
                     </h3>
                   {themeSessions.map((session) => (
                     <div key={session.id} className="group relative">

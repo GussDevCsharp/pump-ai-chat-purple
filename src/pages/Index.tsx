@@ -1,7 +1,6 @@
 
 import { useLocation } from "react-router-dom"
 import { ChatLayout } from "@/components/chat/ChatLayout"
-import { Dashboard } from "@/components/dashboard/Dashboard"
 import { Header } from "@/components/common/Header"
 
 const Index = () => {
@@ -15,7 +14,7 @@ const Index = () => {
     <div className="min-h-screen bg-white">
       <Header />
       <main>
-        <Dashboard />
+        {/* Dashboard removido */}
       </main>
     </div>
   )

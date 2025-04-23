@@ -174,11 +174,11 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
                                 if (onClose) onClose()
                               }}
                               className={`
-                                relative flex flex-col justify-between gap-3 px-4 py-4 w-full
+                                relative flex items-center justify-between gap-3 px-4 py-3 w-full
                                 bg-white border-2 border-pump-gray/10 rounded-2xl shadow-md
                                 transition-all duration-200
                                 hover:scale-105 hover:shadow-xl 
-                                group/card min-h-[120px]
+                                group/card min-h-[80px]
                               `}
                               style={{
                                 borderColor: themeColor || "#e9e3fc",
@@ -194,9 +194,6 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
                                     className="w-6 h-6"
                                     style={{ color: themeColor || "#7E1CC6" }}
                                   />
-                                </span>
-                                <span className="text-sm text-pump-gray font-medium truncate flex-1 text-left">
-                                  {session.title}
                                 </span>
                               </div>
                               

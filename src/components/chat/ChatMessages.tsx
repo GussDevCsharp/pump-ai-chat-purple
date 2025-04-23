@@ -107,7 +107,9 @@ export const ChatMessages = ({ messages, isThinking }: ChatMessagesProps) => {
                   <ReactMarkdown 
                     components={{
                       p: ({children}) => <p className="mb-3 last:mb-0">{children}</p>,
-                      h3: ({children}) => <h3 className="text-base font-semibold mb-2">{children}</h3>,
+                      h1: ({children}) => <h1 className="text-2xl font-bold mb-3 text-pump-purple">{children}</h1>,
+                      h2: ({children}) => <h2 className="text-xl font-semibold mb-2 text-pump-purple">{children}</h2>,
+                      h3: ({children}) => <h3 className="text-lg font-semibold mb-2 text-pump-purple">{children}</h3>,
                       ul: ({children}) => <ul className="list-disc ml-4 mb-3 space-y-1">{children}</ul>,
                       li: ({children}) => <li>{children}</li>,
                       strong: ({children}) => <strong className="font-semibold">{children}</strong>,

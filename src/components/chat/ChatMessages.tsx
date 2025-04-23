@@ -49,7 +49,7 @@ export const ChatMessages = ({ messages, isThinking }: ChatMessagesProps) => {
 
   return (
     <ScrollArea className="flex-1 h-full">
-      <div className="w-full max-w-3xl mx-auto space-y-6 py-4 px-2">
+      <div className="w-full max-w-2xl mx-auto space-y-6 py-4 px-4 lg:px-2">
         {businessData && (
           <div className="flex gap-4 px-4 bg-pump-purple/5 py-4 rounded-lg mb-6">
             <div className="w-8 h-8 rounded-full bg-pump-purple flex items-center justify-center flex-shrink-0">
@@ -69,7 +69,7 @@ export const ChatMessages = ({ messages, isThinking }: ChatMessagesProps) => {
         {messages.map((message, index) => (
           <div 
             key={index} 
-            className={`flex gap-4 px-4 ${
+            className={`flex gap-4 px-2 sm:px-4 ${
               message.role === 'user' ? 'flex-row-reverse' : ''
             }`}
           >
@@ -82,7 +82,7 @@ export const ChatMessages = ({ messages, isThinking }: ChatMessagesProps) => {
             </div>
             <div className={`flex-1 ${message.role === 'user' ? 'text-right' : ''}`}>
               <div 
-                className={`group relative text-sm inline-block px-4 py-2 rounded-lg ${
+                className={`group relative text-sm inline-block px-4 py-2 rounded-lg w-full ${
                   message.role === 'user' 
                     ? 'bg-pump-purple text-white ml-auto' 
                     : 'bg-pump-gray-light text-gray-800'
@@ -126,7 +126,7 @@ export const ChatMessages = ({ messages, isThinking }: ChatMessagesProps) => {
         ))}
 
         {isThinking && (
-          <div className="flex gap-4 px-4">
+          <div className="flex gap-4 px-2 sm:px-4">
             <div className="w-8 h-8 rounded-full bg-pump-purple flex items-center justify-center flex-shrink-0">
               <span className="text-sm font-medium text-white">A</span>
             </div>

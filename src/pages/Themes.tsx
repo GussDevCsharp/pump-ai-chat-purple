@@ -7,6 +7,7 @@ import { WeeklyKanban } from "@/components/appointments/WeeklyKanban";
 import { Plus } from "lucide-react";
 import { format, isSameWeek, parseISO } from "date-fns";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 export default function Themes() {
   const {
@@ -84,6 +85,28 @@ export default function Themes() {
             <Plus size={18} className="mr-2" /> Novo agendamento
           </Button>
         </div>
+        {/* Lista de temas em linha */}
+        <div className="overflow-x-auto mb-8">
+          <div className="flex gap-2 min-w-[320px]">
+            {themes && themes.length > 0 ? (
+              themes.map((theme: any) => (
+                <Badge
+                  key={theme.id}
+                  className="flex-shrink-0 text-base px-4 py-2 mr-2"
+                  style={{
+                    background: theme.color ? theme.color : "#ede9fe",
+                    color: "#3b0764",
+                  }}
+                >
+                  {theme.name}
+                </Badge>
+              ))
+            ) : (
+              <div className="text-pump-gray text-sm">Nenhum tema encontrado.</div>
+            )}
+          </div>
+        </div>
+        {/* Grid com calendário e kanban */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="shadow rounded-lg p-4 bg-pump-offwhite">
             <Calendar

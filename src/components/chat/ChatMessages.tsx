@@ -48,7 +48,7 @@ export const ChatMessages = ({ messages, isThinking }: ChatMessagesProps) => {
   }
 
   return (
-    <ScrollArea className="flex-1 h-full font-sans antialiased text-[16px] text-gray-900">
+    <ScrollArea className="flex-1 h-full font-sans antialiased subpixel-antialiased text-[16px] text-gray-900 selection:bg-pump-purple/10 selection:text-pump-purple">
       <div className="w-full mx-auto space-y-6 py-4 px-[10px]">
         {businessData && (
           <div className="flex gap-4 px-[10px] bg-pump-purple/5 py-4 rounded-lg mb-6">
@@ -76,20 +76,28 @@ export const ChatMessages = ({ messages, isThinking }: ChatMessagesProps) => {
             <div className={`w-8 h-8 rounded-full ${
               message.role === 'assistant' ? 'bg-pump-purple' : 'bg-gray-600'
             } flex items-center justify-center flex-shrink-0`}>
-              <span className="text-sm font-medium text-white">
-                {message.role === 'assistant' ? 'A' : 'U'}
-              </span>
+              <span className="text-sm font-medium text-white font-sans">{
+                message.role === 'assistant' ? 'A' : 'U'
+              }</span>
             </div>
             <div className={`flex-1 ${message.role === 'user' ? 'text-right' : ''}`}>
-              <div 
-                className={`group relative text-sm inline-block px-4 py-2 rounded-lg w-full ${
-                  message.role === 'user' 
-                    ? 'bg-pump-purple text-white ml-auto' 
-                    : 'bg-pump-gray-light text-gray-800'
-                } font-sans antialiased`}
-                style={{ wordBreak: 'break-word', lineHeight: '1.6' }}
-              >
-                {message.role === 'assistant' && (
+              {message.role === 'user' ? (
+                <span
+                  className="inline-block px-4 py-2 rounded-lg bg-pump-purple text-white font-sans antialiased subpixel-antialiased"
+                  style={{
+                    wordBreak: 'break-word',
+                    lineHeight: '1.6',
+                    maxWidth: '70%',
+                    textAlign: 'left'
+                  }}
+                >
+                  {message.content}
+                </span>
+              ) : (
+                <div 
+                  className="group relative text-sm inline-block font-sans antialiased subpixel-antialiased w-full"
+                  style={{ wordBreak: 'break-word', lineHeight: '1.6' }}
+                >
                   <Button
                     variant="ghost"
                     size="icon"
@@ -103,8 +111,6 @@ export const ChatMessages = ({ messages, isThinking }: ChatMessagesProps) => {
                     <Copy className="h-4 w-4" />
                     <span className="sr-only">Copiar mensagem</span>
                   </Button>
-                )}
-                {message.role === 'assistant' ? (
                   <ReactMarkdown 
                     components={{
                       p: ({children}) => <p className="mb-3 last:mb-0 font-sans">{children}</p>,
@@ -118,27 +124,23 @@ export const ChatMessages = ({ messages, isThinking }: ChatMessagesProps) => {
                   >
                     {message.content}
                   </ReactMarkdown>
-                ) : (
-                  <span className="font-sans">{message.content}</span>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           </div>
         ))}
-
         {isThinking && (
           <div className="flex gap-4 px-[10px]">
             <div className="w-8 h-8 rounded-full bg-pump-purple flex items-center justify-center flex-shrink-0">
-              <span className="text-sm font-medium text-white">A</span>
+              <span className="text-sm font-medium text-white font-sans">A</span>
             </div>
             <div className="flex-1">
-              <div className="inline-block px-4 py-2 rounded-lg bg-pump-gray-light text-gray-800 font-sans antialiased">
+              <div className="inline-block px-4 py-2 rounded-lg bg-pump-gray-light text-gray-800 font-sans antialiased subpixel-antialiased">
                 <LoadingDots />
               </div>
             </div>
           </div>
         )}
-
         <div ref={messagesEndRef} />
       </div>
     </ScrollArea>

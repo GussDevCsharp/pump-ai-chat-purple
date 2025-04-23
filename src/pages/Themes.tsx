@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
@@ -63,10 +62,11 @@ const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
             </div>
             <h3
               className="
-                font-black text-3xl md:text-[2.1rem] lg:text-4xl leading-tight
+                font-black text-2xl md:text-[2rem] lg:text-3xl leading-tight
                 transition-all duration-300
                 text-pump-purple drop-shadow-[0_1.5px_0_rgba(126,28,198,0.10)] font-sans
                 group-hover:text-pump-purple/90
+                truncate
                 "
               style={{
                 letterSpacing: "-0.01em",

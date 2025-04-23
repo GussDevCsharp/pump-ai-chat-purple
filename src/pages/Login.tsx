@@ -1,9 +1,11 @@
+
 import React, { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
 import { supabase } from "@/integrations/supabase/client"
+import { Header } from "@/components/common/Header"
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -42,9 +44,10 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-pump-offwhite flex">
-      <div className="flex-1 flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full space-y-8">
+    <div className="min-h-screen bg-offwhite">
+      <Header />
+      <div className="flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8 w-full min-h-[calc(100vh-80px)]">
+        <div className="max-w-md w-full bg-white/85 shadow-lg rounded-xl p-8 mx-auto">
           <div className="text-center">
             <Link to="/">
               <img 
@@ -53,10 +56,10 @@ export default function Login() {
                 className="h-12 mx-auto"
               />
             </Link>
-            <h2 className="mt-6 text-3xl font-bold text-gray-900">
+            <h2 className="mt-7 text-3xl font-bold text-gray-900">
               Bem-vindo de volta
             </h2>
-            <p className="mt-2 text-sm text-pump-gray">
+            <p className="mt-2 text-base text-pump-gray">
               Entre para acessar sua conta
             </p>
           </div>
@@ -98,7 +101,7 @@ export default function Login() {
 
             <Button 
               type="submit" 
-              className="w-full bg-pump-purple hover:bg-pump-purple/90"
+              className="w-full bg-pump-purple hover:bg-pump-purple/90 text-lg rounded-lg py-3"
               disabled={isLoading}
             >
               {isLoading ? "Entrando..." : "Entrar"}
@@ -108,7 +111,7 @@ export default function Login() {
           <div className="text-center pt-4 border-t mt-6">
             <p className="text-sm text-gray-600 mb-2">Empreendedor? Experimente nossa ferramenta:</p>
             <Link to="/business-generator">
-              <Button variant="outline" className="text-pump-purple hover:bg-pump-purple/10">
+              <Button variant="outline" className="text-pump-purple hover:bg-pump-purple/10 rounded-lg">
                 Gerar Plano de Negócios
               </Button>
             </Link>
@@ -120,18 +123,6 @@ export default function Login() {
                 </Button>
               </Link>
             </div>
-          </div>
-        </div>
-      </div>
-      <div className="hidden lg:block relative flex-1 bg-pump-offwhite">
-        <div className="absolute inset-0 flex items-center justify-center p-12">
-          <div className="max-w-xl space-y-4">
-            <h3 className="text-2xl font-bold text-gray-900">
-              Transforme sua empresa com IA
-            </h3>
-            <p className="text-pump-gray">
-              Acesse ferramentas poderosas de IA desenvolvidas especialmente para empresas como a sua.
-            </p>
           </div>
         </div>
       </div>

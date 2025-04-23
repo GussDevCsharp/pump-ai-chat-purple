@@ -28,7 +28,7 @@ export default function BusinessGenerator() {
 
   if (businessPlan) {
     return (
-      <div className="min-h-screen bg-pump-offwhite">
+      <div className="min-h-screen bg-offwhite">
         <Header />
         <main className="container mx-auto px-4 py-8">
           <BusinessPlanDisplay businessPlan={businessPlan} onStartNew={startNewPlan} />
@@ -38,11 +38,11 @@ export default function BusinessGenerator() {
   }
 
   return (
-    <div className="min-h-screen bg-pump-offwhite relative">
-      <Watermark />
+    <div className="min-h-screen bg-offwhite relative">
       <Header />
-      <main className="container mx-auto px-4 py-8 relative z-10">
-        <div className="max-w-5xl mx-auto">
+      <Watermark />
+      <main className="container mx-auto px-4 py-10 flex flex-col items-center relative z-10">
+        <div className="max-w-3xl mx-auto w-full bg-white/95 rounded-xl shadow-lg p-8 mt-8">
           <FormTitle />
           
           <ProgressMap 
@@ -51,7 +51,7 @@ export default function BusinessGenerator() {
             completedFields={formData}
           />
           
-          <Card className="mb-8">
+          <Card className="mb-8 bg-white/95 rounded-xl shadow-none border-0">
             <CardContent className="pt-8">
               <div className="mb-8">
                 <h2 className="text-2xl md:text-3xl font-semibold mb-3">{currentStepData.description}</h2>
@@ -81,7 +81,7 @@ export default function BusinessGenerator() {
                 onClick={handlePrevious} 
                 disabled={currentStep === 0}
                 variant="outline"
-                className="text-lg gap-2 px-6 py-3 h-auto"
+                className="text-lg gap-2 px-6 py-3 h-auto rounded-lg"
               >
                 <ArrowLeft size={20} />
                 Voltar
@@ -92,7 +92,7 @@ export default function BusinessGenerator() {
               <Button 
                 onClick={handleNext}
                 disabled={isGenerating}
-                className="text-lg gap-2 px-6 py-3 h-auto bg-pump-purple hover:bg-pump-purple/90"
+                className="text-lg gap-2 px-6 py-3 h-auto bg-pump-purple hover:bg-pump-purple/90 rounded-lg"
               >
                 {isGenerating ? (
                   "Gerando..."

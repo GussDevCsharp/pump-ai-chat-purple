@@ -26,11 +26,11 @@ export function SidebarSessionCard({
       <button
         onClick={onOpen}
         className={`
-          relative flex items-center justify-between gap-3 px-4 py-3 w-full
+          relative flex items-center justify-between gap-3 px-3 py-2 w-full
           bg-white border-2 border-pump-gray/10 rounded-2xl shadow-md
           transition-all duration-200
           hover:scale-105 hover:shadow-xl 
-          group/card min-h-[80px]
+          group/card min-h-[64px]
           ${isActive ? "ring-2 ring-pump-purple" : ""}
         `}
         style={{
@@ -38,19 +38,19 @@ export function SidebarSessionCard({
           boxShadow: "0 8px 18px 0 rgba(54,40,90,0.06)"
         }}
       >
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <span 
-            className="flex items-center justify-center w-10 h-10 rounded-full"
+            className="flex items-center justify-center w-8 h-8 rounded-full"
             style={{
               background: themeObj?.color ? `${themeObj.color}20` : "#f4ebfd"
             }}
           >
             <MessageCircle
-              className="w-6 h-6"
+              className="w-5 h-5"
               style={{ color: themeObj?.color || "#7E1CC6" }}
             />
           </span>
-          <span className="text-sm text-pump-gray font-medium truncate">
+          <span className="text-sm text-pump-gray font-medium truncate max-w-[120px]">
             {session.title}
           </span>
         </div>
@@ -59,7 +59,7 @@ export function SidebarSessionCard({
           absolute bottom-2 right-2
           opacity-0 group-hover/card:opacity-100 
           transition-opacity 
-          flex items-center gap-1
+          flex items-center gap-2
         ">
           <ThemeSelect 
             sessionId={session.id} 

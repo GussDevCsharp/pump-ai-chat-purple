@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
@@ -59,11 +58,11 @@ function SignupFormContent() {
   };
 
   return (
-    <Card className="w-full h-[90vh] max-w-4xl mx-auto bg-white/90 backdrop-blur-sm shadow-lg rounded-2xl overflow-hidden border border-white/20">
+    <Card className="w-full max-w-[95vw] mx-auto bg-white/90 backdrop-blur-sm shadow-lg rounded-2xl overflow-hidden border border-white/20">
       <Tabs 
         value={activeTab} 
         onValueChange={setActiveTab} 
-        className="h-full flex flex-col"
+        className="flex flex-col"
       >
         <TabsList className="grid w-full grid-cols-3 p-1 bg-pump-gray-light rounded-t-2xl">
           <TabsTrigger 
@@ -112,7 +111,7 @@ function SignupFormContent() {
           </TabsTrigger>
         </TabsList>
 
-        <div className="flex-grow overflow-auto p-6">
+        <div className="flex-1 overflow-auto p-6">
           <TabsContent value="client-data" className="h-full">
             <ClientDataForm />
             <FormNavigation
@@ -175,4 +174,3 @@ export function SignupForm() {
 }
 
 export default SignupForm;
-

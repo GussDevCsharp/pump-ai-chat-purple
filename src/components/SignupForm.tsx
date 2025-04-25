@@ -59,8 +59,12 @@ function SignupFormContent() {
   };
 
   return (
-    <Card className="bg-white/80 backdrop-blur-sm shadow-lg rounded-2xl overflow-hidden border border-white/20 transition-all duration-300">
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+    <Card className="w-full h-[90vh] max-w-4xl mx-auto bg-white/90 backdrop-blur-sm shadow-lg rounded-2xl overflow-hidden border border-white/20">
+      <Tabs 
+        value={activeTab} 
+        onValueChange={setActiveTab} 
+        className="h-full flex flex-col"
+      >
         <TabsList className="grid w-full grid-cols-3 p-1 bg-pump-gray-light rounded-t-2xl">
           <TabsTrigger 
             value="client-data" 
@@ -108,8 +112,8 @@ function SignupFormContent() {
           </TabsTrigger>
         </TabsList>
 
-        <div className="p-6 space-y-6">
-          <TabsContent value="client-data" className="mt-0 space-y-6">
+        <div className="flex-grow overflow-auto p-6">
+          <TabsContent value="client-data" className="h-full">
             <ClientDataForm />
             <FormNavigation
               activeTab={activeTab}
@@ -119,7 +123,7 @@ function SignupFormContent() {
             />
           </TabsContent>
 
-          <TabsContent value="plan-selection" className="mt-0 space-y-6">
+          <TabsContent value="plan-selection" className="h-full">
             <PlanSelectionForm />
             <FormNavigation
               activeTab={activeTab}
@@ -132,7 +136,7 @@ function SignupFormContent() {
             />
           </TabsContent>
 
-          <TabsContent value="payment-method" className="mt-0 space-y-6">
+          <TabsContent value="payment-method" className="h-full">
             <PaymentMethodForm />
             <FormNavigation
               activeTab={activeTab}
@@ -144,20 +148,20 @@ function SignupFormContent() {
             />
           </TabsContent>
         </div>
-      </Tabs>
 
-      <div className="text-center p-6 border-t border-gray-100 bg-gray-50">
-        <p className="text-sm text-gray-600 mb-2">Já tem uma conta?</p>
-        <Link to="/login">
-          <Button
-            variant="outline"
-            className="border-pump-purple text-pump-purple hover:bg-pump-purple/10 transition-all duration-300"
-            disabled={isLoading}
-          >
-            Fazer login
-          </Button>
-        </Link>
-      </div>
+        <div className="text-center p-4 border-t border-gray-100 bg-gray-50">
+          <p className="text-sm text-gray-600 mb-2">Já tem uma conta?</p>
+          <Link to="/login">
+            <Button
+              variant="outline"
+              className="border-pump-purple text-pump-purple hover:bg-pump-purple/10 transition-all duration-300"
+              disabled={isLoading}
+            >
+              Fazer login
+            </Button>
+          </Link>
+        </div>
+      </Tabs>
     </Card>
   );
 }
@@ -169,3 +173,6 @@ export function SignupForm() {
     </SignupProvider>
   );
 }
+
+export default SignupForm;
+

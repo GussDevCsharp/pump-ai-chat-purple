@@ -1,3 +1,4 @@
+
 import React, { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
@@ -131,7 +132,7 @@ export default function Login() {
         <NeuralBackground />
         <div className="relative z-[5] flex items-center justify-center h-full">
           <h1 className="text-5xl font-bold text-pump-purple text-center leading-tight max-w-lg">
-            A nova inteligência para empresas
+            A Nova inteligência da sua empresa
           </h1>
         </div>
       </div>

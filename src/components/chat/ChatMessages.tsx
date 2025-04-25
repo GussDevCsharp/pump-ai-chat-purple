@@ -48,7 +48,7 @@ export const ChatMessages = ({ messages, isThinking }: ChatMessagesProps) => {
 
   return (
     <ScrollArea className="flex-1 h-full font-sans antialiased subpixel-antialiased text-[16px] text-gray-900 selection:bg-pump-purple/10 selection:text-pump-purple">
-      <div className="w-full mx-auto space-y-6 py-4 px-[10px] bg-white">
+      <div className="w-full mx-auto space-y-6 py-4 px-[10px] bg-white min-h-full">
         {businessData && (
           <div className="flex gap-4 px-[10px] bg-pump-purple/5 py-4 rounded-lg mb-6">
             <div className="w-8 h-8 rounded-full bg-pump-purple flex items-center justify-center flex-shrink-0">

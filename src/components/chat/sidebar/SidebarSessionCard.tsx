@@ -27,15 +27,14 @@ export function SidebarSessionCard({
         onClick={onOpen}
         className={`
           relative flex flex-col px-3 py-2 w-full
-          bg-white border-2 border-pump-gray/10 rounded-2xl shadow-md
+          border-2 border-transparent rounded-2xl
           transition-all duration-200
           hover:scale-105 hover:shadow-xl 
           group/card min-h-[80px]
           ${isActive ? "ring-2 ring-pump-purple" : ""}
         `}
         style={{
-          borderColor: themeObj?.color || "#e9e3fc",
-          boxShadow: "0 8px 18px 0 rgba(54,40,90,0.06)"
+          boxShadow: isActive ? "0 8px 18px 0 rgba(54,40,90,0.06)" : "none"
         }}
       >
         <div className="flex items-center gap-2 w-full overflow-hidden">

@@ -1,4 +1,4 @@
-
+import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react"
 import { useSearchParams, useNavigate } from "react-router-dom"
 import { ChatMessages } from "@/components/chat/ChatMessages"

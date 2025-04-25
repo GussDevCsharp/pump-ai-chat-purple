@@ -2,48 +2,53 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-export interface ThemePrompt {
+export interface ThemeTopic {
   id: string;
-  theme_id: string;
   title: string;
-  prompt_furtive?: string | null;
+  theme_id: string;
+  usage_count?: number;
+  created_at?: string;
 }
 
-export function useThemePrompts(themeId?: string) {
-  const [prompts, setPrompts] = useState<ThemePrompt[]>([]);
+export function useThemeTopics() {
+  const [latestTopics, setLatestTopics] = useState<ThemeTopic[]>([]);
+  const [popularTopics, setPopularTopics] = useState<ThemeTopic[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (!themeId) {
-      setPrompts([]);
-      return;
-    }
-    
-    const fetchPrompts = async () => {
+    const fetchTopics = async () => {
       setIsLoading(true);
       try {
-        const { data, error } = await supabase
+        // Fetch latest topics
+        const { data: latestData, error: latestError } = await supabase
           .from("theme_prompts")
           .select("*")
-          .eq("theme_id", themeId)
-          .limit(6); // Limit to 6 prompts per theme
-          
-        if (error) {
-          console.error("Error fetching theme prompts:", error);
-          setPrompts([]);
+          .order('created_at', { ascending: false })
+          .limit(3);
+
+        // Fetch most used topics
+        const { data: popularData, error: popularError } = await supabase
+          .from("theme_prompts")
+          .select("*")
+          .order('usage_count', { ascending: false })
+          .limit(3);
+
+        if (latestError || popularError) {
+          console.error("Error fetching topics:", latestError || popularError);
         } else {
-          setPrompts(data || []);
+          setLatestTopics(latestData || []);
+          setPopularTopics(popularData || []);
         }
       } catch (err) {
-        console.error("Error fetching theme prompts:", err);
-        setPrompts([]);
+        console.error("Error fetching theme topics:", err);
       } finally {
         setIsLoading(false);
       }
     };
     
-    fetchPrompts();
-  }, [themeId]);
+    fetchTopics();
+  }, []);
 
-  return { prompts, isLoading };
+  return { latestTopics, popularTopics, isLoading };
 }
+

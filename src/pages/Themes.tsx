@@ -8,6 +8,7 @@ import { MessageCircle } from "lucide-react";
 import { Header } from "@/components/common/Header";
 import { useThemePrompts } from "@/hooks/useThemePrompts";
 import { TrendingTopics } from "@/components/themes/TrendingTopics";
+import { useThemeTopics } from "@/hooks/useThemeTopics";
 
 type ThemeCardProps = {
   theme: {
@@ -90,6 +91,7 @@ export default function Themes() {
   const { themes, isLoading } = useChatThemes();
   const { createSession } = useChatSessions();
   const navigate = useNavigate();
+  const { latestTopics, popularTopics, isLoading: isTopicsLoading } = useThemeTopics();
 
   const mockLatestTopics = [
     { id: '1', title: 'Campanha Digital para Lançamento', created_at: '2025-04-24' },
@@ -143,10 +145,16 @@ export default function Themes() {
             </div>
           </div>
 
-          <TrendingTopics 
-            latestTopics={mockLatestTopics}
-            popularTopics={mockPopularTopics}
-          />
+          {isTopicsLoading ? (
+            <div className="flex justify-center items-center h-40">
+              <p className="text-pump-gray">Carregando tópicos...</p>
+            </div>
+          ) : (
+            <TrendingTopics 
+              latestTopics={latestTopics}
+              popularTopics={popularTopics}
+            />
+          )}
 
           {isLoading ? (
             <div className="flex justify-center items-center h-40">

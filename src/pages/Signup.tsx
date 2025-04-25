@@ -1,4 +1,3 @@
-
 import React from "react";
 import { SignupForm } from "@/components/SignupForm";
 import NeuralBackground from "@/components/effects/NeuralBackground";
@@ -7,7 +6,7 @@ export default function Signup() {
   return (
     <div className="min-h-screen relative overflow-hidden">
       <NeuralBackground />
-      <div className="relative z-10 flex items-center justify-center min-h-screen px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 flex items-center justify-center min-h-screen px-2 sm:px-4 lg:px-6">
         <div className="w-full max-w-2xl">
           <div className="text-center mb-8 animate-fade-in">
             <img
@@ -29,4 +28,3 @@ export default function Signup() {
     </div>
   );
 }
-

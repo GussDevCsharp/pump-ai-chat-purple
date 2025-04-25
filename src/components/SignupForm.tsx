@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
@@ -11,10 +12,12 @@ import { PlanSelectionForm } from "./signup/PlanSelectionForm";
 import { PaymentMethodForm } from "./signup/PaymentMethodForm";
 import { FormNavigation } from "./signup/FormNavigation";
 import { useSignupSubmit } from "@/hooks/useSignupSubmit";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 function SignupFormContent() {
   const [activeTab, setActiveTab] = useState("client-data");
   const { handleSubmit } = useSignupSubmit();
+  const isMobile = useIsMobile();
   const {
     email,
     password,
@@ -58,7 +61,7 @@ function SignupFormContent() {
   };
 
   return (
-    <Card className="w-full max-w-screen-2xl mx-auto bg-white/90 backdrop-blur-sm shadow-lg rounded-2xl overflow-hidden border border-white/20">
+    <Card className="w-full bg-white/90 backdrop-blur-sm shadow-lg rounded-2xl overflow-hidden border border-white/20">
       <Tabs 
         value={activeTab} 
         onValueChange={setActiveTab} 
@@ -70,13 +73,15 @@ function SignupFormContent() {
             className="data-[state=active]:bg-white data-[state=active]:text-pump-purple data-[state=active]:shadow-md transition-all duration-300 rounded-xl"
             disabled={isLoading}
           >
-            <div className="flex items-center gap-2 py-2">
-              <div className={`rounded-full h-8 w-8 flex items-center justify-center transition-colors duration-300 ${
+            <div className="flex items-center gap-2 py-1 sm:py-2">
+              <div className={`rounded-full h-6 w-6 sm:h-8 sm:w-8 flex items-center justify-center transition-colors duration-300 ${
                 activeTab === "client-data" ? "bg-pump-purple text-white" : "bg-gray-200"
               }`}>
-                <User className="h-4 w-4" />
+                <User className="h-3 w-3 sm:h-4 sm:w-4" />
               </div>
-              <span className="hidden md:inline">Dados do Cliente</span>
+              <span className="text-xs sm:text-sm">
+                {isMobile ? "Dados" : "Dados do Cliente"}
+              </span>
             </div>
           </TabsTrigger>
           
@@ -85,13 +90,15 @@ function SignupFormContent() {
             className="data-[state=active]:bg-white data-[state=active]:text-pump-purple data-[state=active]:shadow-md transition-all duration-300 rounded-xl"
             disabled={isLoading}
           >
-            <div className="flex items-center gap-2 py-2">
-              <div className={`rounded-full h-8 w-8 flex items-center justify-center transition-colors duration-300 ${
+            <div className="flex items-center gap-2 py-1 sm:py-2">
+              <div className={`rounded-full h-6 w-6 sm:h-8 sm:w-8 flex items-center justify-center transition-colors duration-300 ${
                 activeTab === "plan-selection" ? "bg-pump-purple text-white" : "bg-gray-200"
               }`}>
-                <Check className="h-4 w-4" />
+                <Check className="h-3 w-3 sm:h-4 sm:w-4" />
               </div>
-              <span className="hidden md:inline">Escolha do Plano</span>
+              <span className="text-xs sm:text-sm">
+                {isMobile ? "Plano" : "Escolha do Plano"}
+              </span>
             </div>
           </TabsTrigger>
           
@@ -100,18 +107,20 @@ function SignupFormContent() {
             className="data-[state=active]:bg-white data-[state=active]:text-pump-purple data-[state=active]:shadow-md transition-all duration-300 rounded-xl"
             disabled={isLoading}
           >
-            <div className="flex items-center gap-2 py-2">
-              <div className={`rounded-full h-8 w-8 flex items-center justify-center transition-colors duration-300 ${
+            <div className="flex items-center gap-2 py-1 sm:py-2">
+              <div className={`rounded-full h-6 w-6 sm:h-8 sm:w-8 flex items-center justify-center transition-colors duration-300 ${
                 activeTab === "payment-method" ? "bg-pump-purple text-white" : "bg-gray-200"
               }`}>
-                <CreditCard className="h-4 w-4" />
+                <CreditCard className="h-3 w-3 sm:h-4 sm:w-4" />
               </div>
-              <span className="hidden md:inline">Pagamento</span>
+              <span className="text-xs sm:text-sm">
+                {isMobile ? "Pagamento" : "Pagamento"}
+              </span>
             </div>
           </TabsTrigger>
         </TabsList>
 
-        <div className="flex-1 overflow-auto p-6">
+        <div className="flex-1 overflow-auto p-3 sm:p-6">
           <TabsContent value="client-data" className="h-full">
             <ClientDataForm />
             <FormNavigation
@@ -148,12 +157,12 @@ function SignupFormContent() {
           </TabsContent>
         </div>
 
-        <div className="text-center p-4 border-t border-gray-100 bg-gray-50">
+        <div className="text-center p-3 sm:p-4 border-t border-gray-100 bg-gray-50">
           <p className="text-sm text-gray-600 mb-2">Já tem uma conta?</p>
           <Link to="/login">
             <Button
               variant="outline"
-              className="border-pump-purple text-pump-purple hover:bg-pump-purple/10 transition-all duration-300"
+              className="w-full sm:w-auto border-pump-purple text-pump-purple hover:bg-pump-purple/10 transition-all duration-300"
               disabled={isLoading}
             >
               Fazer login

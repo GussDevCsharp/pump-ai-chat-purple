@@ -66,13 +66,19 @@ export function SidebarSessionGroup({
   return (
     <div className="space-y-2">
       <h3 className="flex items-center text-xs font-medium text-pump-gray px-3 mb-2">
-        {themeObj && themeObj.color && (
-          <span
-            className="inline-block w-3 h-3 rounded-full mr-2 border border-pump-gray/30"
-            style={{ backgroundColor: themeObj.color }}
-          />
+        {themeObj && themeObj.name ? (
+          <>
+            {themeObj.color && (
+              <span
+                className="inline-block w-3 h-3 rounded-full mr-2 border border-pump-gray/30"
+                style={{ backgroundColor: themeObj.color }}
+              />
+            )}
+            {themeObj.name}
+          </>
+        ) : (
+          <span className="text-pump-gray">Sem tema</span>
         )}
-        {themeObj?.name || "Sem tema"}
       </h3>
       {sessions.map(session => (
         <div key={session.id} className="relative">
@@ -119,3 +125,4 @@ export function SidebarSessionGroup({
     </div>
   );
 }
+

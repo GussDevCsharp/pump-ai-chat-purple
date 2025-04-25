@@ -148,9 +148,15 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
             <div className="flex flex-col gap-4">
               {Object.entries(groupedSessions).map(([themeId, themeSessions]) => {
                 // Find theme object from the first session in the group
-                const themeObj = themeSessions[0]?.theme_id ? 
-                  { id: themeSessions[0]?.theme_id, name: themeSessions[0]?.card_theme, color: themeSessions[0]?.card_theme } : 
-                  { id: 'default', name: 'Sem tema', color: '#7E1CC6' };
+                const themeObj = themeSessions[0]?.theme_id ? {
+                  id: themeSessions[0]?.theme_id,
+                  name: themeSessions[0]?.card_theme || 'Sem tema',
+                  color: themeSessions[0]?.card_theme ? '#7E1CC6' : null
+                } : {
+                  id: 'default',
+                  name: 'Sem tema',
+                  color: null
+                };
                 
                 return (
                   <SidebarSessionGroup
@@ -185,5 +191,6 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
         onConfirm={handleDeleteConfirm}
       />
     </>
-  )
+  );
 }
+

@@ -19,11 +19,7 @@ export const ChatHeader = ({ mobileMenuButton }: { mobileMenuButton?: React.Reac
             {mobileMenuButton}
           </div>
         )}
-        <img 
-          src="/uploads/logo.png" 
-          alt="Pump.ia"
-          className="h-8"
-        />
+        {/* Logo removed as per user request */}
       </div>
       <div className="flex items-center gap-4">
         <UserCardMenu />

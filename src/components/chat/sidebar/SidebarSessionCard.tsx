@@ -57,6 +57,7 @@ export function SidebarSessionCard({
           
           <div className="flex items-center gap-1">
             <button
+              type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 onThemeChange();
@@ -72,6 +73,7 @@ export function SidebarSessionCard({
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
+                  type="button"
                   onClick={(e) => e.stopPropagation()}
                   className="p-1 rounded hover:bg-pump-gray-light"
                   aria-label="Menu de opções"

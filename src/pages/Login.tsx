@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
 import { supabase } from "@/integrations/supabase/client"
+import NeuralBackground from "@/components/effects/NeuralBackground"
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -42,8 +43,9 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-offwhite">
-      <div className="flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8 w-full min-h-[calc(100vh-0px)]">
+    <div className="min-h-screen bg-offwhite relative">
+      <NeuralBackground />
+      <div className="relative flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8 w-full min-h-[calc(100vh-0px)] z-10">
         <div className="max-w-md w-full bg-white/85 shadow-lg rounded-xl p-8 mx-auto">
           <div className="text-center">
             <Link to="/">

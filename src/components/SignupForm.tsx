@@ -112,130 +112,146 @@ export function SignupForm() {
   };
 
   return (
-    <Card className="bg-white shadow-md rounded-lg overflow-hidden">
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid grid-cols-3 w-full">
-          <TabsTrigger value="client-data" className="rounded-none" disabled={isLoading}>
-            <div className="flex items-center gap-2">
-              <div className={`rounded-full h-6 w-6 flex items-center justify-center ${
+    <Card className="bg-white/80 backdrop-blur-sm shadow-lg rounded-2xl overflow-hidden border border-white/20 transition-all duration-300">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-3 p-1 bg-pump-gray-light rounded-t-2xl">
+          <TabsTrigger 
+            value="client-data" 
+            className="data-[state=active]:bg-white data-[state=active]:text-pump-purple data-[state=active]:shadow-md transition-all duration-300 rounded-xl"
+            disabled={isLoading}
+          >
+            <div className="flex items-center gap-2 py-2">
+              <div className={`rounded-full h-8 w-8 flex items-center justify-center transition-colors duration-300 ${
                 activeTab === "client-data" ? "bg-pump-purple text-white" : "bg-gray-200"
               }`}>
                 <User className="h-4 w-4" />
               </div>
-              <span>Dados do Cliente</span>
+              <span className="hidden md:inline">Dados do Cliente</span>
             </div>
           </TabsTrigger>
-          <TabsTrigger value="plan-selection" className="rounded-none" disabled={isLoading}>
-            <div className="flex items-center gap-2">
-              <div className={`rounded-full h-6 w-6 flex items-center justify-center ${
+          
+          <TabsTrigger 
+            value="plan-selection"
+            className="data-[state=active]:bg-white data-[state=active]:text-pump-purple data-[state=active]:shadow-md transition-all duration-300 rounded-xl"
+            disabled={isLoading}
+          >
+            <div className="flex items-center gap-2 py-2">
+              <div className={`rounded-full h-8 w-8 flex items-center justify-center transition-colors duration-300 ${
                 activeTab === "plan-selection" ? "bg-pump-purple text-white" : "bg-gray-200"
               }`}>
                 <Check className="h-4 w-4" />
               </div>
-              <span>Escolha do Plano</span>
+              <span className="hidden md:inline">Escolha do Plano</span>
             </div>
           </TabsTrigger>
-          <TabsTrigger value="payment-method" className="rounded-none" disabled={isLoading}>
-            <div className="flex items-center gap-2">
-              <div className={`rounded-full h-6 w-6 flex items-center justify-center ${
+          
+          <TabsTrigger 
+            value="payment-method"
+            className="data-[state=active]:bg-white data-[state=active]:text-pump-purple data-[state=active]:shadow-md transition-all duration-300 rounded-xl"
+            disabled={isLoading}
+          >
+            <div className="flex items-center gap-2 py-2">
+              <div className={`rounded-full h-8 w-8 flex items-center justify-center transition-colors duration-300 ${
                 activeTab === "payment-method" ? "bg-pump-purple text-white" : "bg-gray-200"
               }`}>
                 <CreditCard className="h-4 w-4" />
               </div>
-              <span>Pagamento</span>
+              <span className="hidden md:inline">Pagamento</span>
             </div>
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="client-data" className="p-6">
-          <ClientDataForm 
-            email={email}
-            setEmail={setEmail}
-            password={password}
-            setPassword={setPassword}
-            confirmPassword={confirmPassword}
-            setConfirmPassword={setConfirmPassword}
-            firstName={firstName}
-            setFirstName={setFirstName}
-            lastName={lastName}
-            setLastName={setLastName}
-            cpf={cpf}
-            setCpf={setCpf}
-            isLoading={isLoading}
-          />
-          <div className="flex justify-end mt-6">
-            <Button 
-              className="bg-pump-purple text-white"
-              onClick={handleNextTab}
-              disabled={isLoading}
-            >
-              Próximo: Escolha do Plano
-            </Button>
-          </div>
-        </TabsContent>
+        <div className="p-6 space-y-6">
+          <TabsContent value="client-data" className="mt-0 space-y-6">
+            <ClientDataForm 
+              email={email}
+              setEmail={setEmail}
+              password={password}
+              setPassword={setPassword}
+              confirmPassword={confirmPassword}
+              setConfirmPassword={setConfirmPassword}
+              firstName={firstName}
+              setFirstName={setFirstName}
+              lastName={lastName}
+              setLastName={setLastName}
+              cpf={cpf}
+              setCpf={setCpf}
+              isLoading={isLoading}
+            />
+            <div className="flex justify-end">
+              <Button 
+                className="bg-pump-purple hover:bg-pump-purple/90 text-white transition-all duration-300"
+                onClick={handleNextTab}
+                disabled={isLoading}
+              >
+                Próximo: Escolha do Plano
+              </Button>
+            </div>
+          </TabsContent>
 
-        <TabsContent value="plan-selection" className="p-6">
-          <PlanSelectionForm 
-            selectedPlanId={selectedPlanId} 
-            setSelectedPlanId={setSelectedPlanId}
-            isLoading={isLoading}
-          />
-          <div className="flex justify-between mt-6">
-            <Button 
-              variant="outline" 
-              className="text-pump-purple"
-              onClick={handlePreviousTab}
-              disabled={isLoading}
-            >
-              Voltar
-            </Button>
-            <Button 
-              className="bg-pump-purple text-white"
-              onClick={handleNextTab}
-              disabled={isLoading || !selectedPlanId}
-            >
-              {selectedPlanId === 'free-plan' ? 'Finalizar Cadastro' : 'Próximo: Pagamento'}
-            </Button>
-          </div>
-        </TabsContent>
+          <TabsContent value="plan-selection" className="mt-0 space-y-6">
+            <PlanSelectionForm 
+              selectedPlanId={selectedPlanId}
+              setSelectedPlanId={setSelectedPlanId}
+              isLoading={isLoading}
+            />
+            <div className="flex justify-between">
+              <Button 
+                variant="outline"
+                className="border-pump-purple text-pump-purple hover:bg-pump-purple/10 transition-all duration-300"
+                onClick={handlePreviousTab}
+                disabled={isLoading}
+              >
+                Voltar
+              </Button>
+              <Button 
+                className="bg-pump-purple hover:bg-pump-purple/90 text-white transition-all duration-300"
+                onClick={handleNextTab}
+                disabled={isLoading || !selectedPlanId}
+              >
+                {selectedPlanId === 'free-plan' ? 'Finalizar Cadastro' : 'Próximo: Pagamento'}
+              </Button>
+            </div>
+          </TabsContent>
 
-        <TabsContent value="payment-method" className="p-6">
-          <PaymentMethodForm 
-            cardNumber={cardNumber}
-            setCardNumber={setCardNumber}
-            cardExpiry={cardExpiry}
-            setCardExpiry={setCardExpiry}
-            cardCvc={cardCvc}
-            setCardCvc={setCardCvc}
-            isLoading={isLoading}
-            selectedPlanId={selectedPlanId}
-          />
-          <div className="flex justify-between mt-6">
-            <Button 
-              variant="outline" 
-              className="text-pump-purple"
-              onClick={handlePreviousTab}
-              disabled={isLoading}
-            >
-              Voltar
-            </Button>
-            <Button 
-              className="bg-pump-purple text-white"
-              onClick={handleSubmit}
-              disabled={isLoading || (!cardNumber && selectedPlanId !== 'free-plan')}
-            >
-              Finalizar Cadastro
-            </Button>
-          </div>
-        </TabsContent>
+          <TabsContent value="payment-method" className="mt-0 space-y-6">
+            <PaymentMethodForm 
+              cardNumber={cardNumber}
+              setCardNumber={setCardNumber}
+              cardExpiry={cardExpiry}
+              setCardExpiry={setCardExpiry}
+              cardCvc={cardCvc}
+              setCardCvc={setCardCvc}
+              isLoading={isLoading}
+              selectedPlanId={selectedPlanId}
+            />
+            <div className="flex justify-between">
+              <Button 
+                variant="outline"
+                className="border-pump-purple text-pump-purple hover:bg-pump-purple/10 transition-all duration-300"
+                onClick={handlePreviousTab}
+                disabled={isLoading}
+              >
+                Voltar
+              </Button>
+              <Button 
+                className="bg-pump-purple hover:bg-pump-purple/90 text-white transition-all duration-300"
+                onClick={handleSubmit}
+                disabled={isLoading || (!cardNumber && selectedPlanId !== 'free-plan')}
+              >
+                Finalizar Cadastro
+              </Button>
+            </div>
+          </TabsContent>
+        </div>
       </Tabs>
 
-      <div className="text-center p-4 border-t">
+      <div className="text-center p-6 border-t border-gray-100 bg-gray-50">
         <p className="text-sm text-gray-600 mb-2">Já tem uma conta?</p>
         <Link to="/login">
           <Button
             variant="outline"
-            className="text-pump-purple hover:bg-pump-purple/10"
+            className="border-pump-purple text-pump-purple hover:bg-pump-purple/10 transition-all duration-300"
             disabled={isLoading}
           >
             Fazer login

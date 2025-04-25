@@ -9,7 +9,7 @@ export default function Signup() {
       <Header />
       <div className="flex flex-col justify-center items-center px-4 w-full min-h-[calc(100vh-80px)]">
         <div className="max-w-4xl w-full mx-auto py-8">
-          <div className="text-center mb-8">
+          <div className="text-center mb-8 animate-fade-in">
             <img
               src="/lovable-uploads/5f403064-9209-4921-b73b-0f70c739981a.png"
               alt="Pump.ia"

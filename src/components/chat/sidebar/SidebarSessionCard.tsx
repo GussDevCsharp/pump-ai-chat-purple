@@ -55,45 +55,51 @@ export function SidebarSessionCard({
             </span>
           </div>
           
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button
-                onClick={(e) => e.stopPropagation()}
-                className="p-1 rounded hover:bg-pump-gray-light"
-                aria-label="Menu de opções"
-              >
-                <Menu className="w-4 h-4 text-pump-gray hover:text-pump-purple" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuItem onClick={(e) => {
-                e.preventDefault();
-                onEdit();
-              }} className="cursor-pointer">
-                <Pencil className="w-4 h-4 mr-2" />
-                Editar conversa
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={(e) => {
-                e.preventDefault();
+          <div className="flex items-center gap-1">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
                 onThemeChange();
-              }} className="cursor-pointer">
-                <span className="w-4 h-4 mr-2 rounded-full inline-block"
-                  style={{ background: themeObj?.color || "#7E1CC6" }}
-                />
-                Mudar tema
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={(e) => {
+              }}
+              className="p-1 rounded hover:bg-pump-gray-light"
+              aria-label="Mudar tema"
+            >
+              <span className="w-4 h-4 rounded-full inline-block"
+                style={{ background: themeObj?.color || "#7E1CC6" }}
+              />
+            </button>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  onClick={(e) => e.stopPropagation()}
+                  className="p-1 rounded hover:bg-pump-gray-light"
+                  aria-label="Menu de opções"
+                >
+                  <Menu className="w-4 h-4 text-pump-gray hover:text-pump-purple" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem onClick={(e) => {
                   e.preventDefault();
-                  onDelete();
-                }}
-                className="cursor-pointer text-red-600 hover:text-red-600 hover:bg-red-50"
-              >
-                <Trash2 className="w-4 h-4 mr-2" />
-                Excluir conversa
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                  onEdit();
+                }} className="cursor-pointer">
+                  <Pencil className="w-4 h-4 mr-2" />
+                  Editar conversa
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onDelete();
+                  }}
+                  className="cursor-pointer text-red-600 hover:text-red-600 hover:bg-red-50"
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Excluir conversa
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </button>
     </div>

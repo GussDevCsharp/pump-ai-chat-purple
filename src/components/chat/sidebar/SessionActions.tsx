@@ -1,5 +1,5 @@
 
-import { Plus } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { useChatSessions } from "@/hooks/useChatSessions";
 import { useNavigate } from "react-router-dom";
 
@@ -20,12 +20,21 @@ export function SessionActions({ onClose }: SessionActionsProps) {
   };
 
   return (
-    <button 
-      onClick={handleNewChat}
-      className="w-full flex items-center gap-2 p-3 bg-white hover:bg-pump-gray-light rounded-lg border border-pump-gray/20 transition-colors"
-    >
-      <Plus className="w-4 h-4 text-pump-gray" />
-      <span className="text-sm text-pump-gray font-medium">Nova conversa</span>
-    </button>
+    <div className="flex gap-2 items-center">
+      <button 
+        onClick={() => {}} // Search functionality to be implemented
+        className="p-2 hover:bg-pump-gray-light rounded-lg transition-colors"
+        aria-label="Buscar conversas"
+      >
+        <Search className="w-5 h-5 text-pump-gray" />
+      </button>
+      <button 
+        onClick={handleNewChat}
+        className="p-2 hover:bg-pump-gray-light rounded-lg transition-colors"
+        aria-label="Nova conversa"
+      >
+        <Plus className="w-5 h-5 text-pump-gray" />
+      </button>
+    </div>
   );
 }

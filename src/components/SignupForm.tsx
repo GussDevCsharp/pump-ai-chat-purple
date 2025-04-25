@@ -1,175 +1,279 @@
 
-import React from "react";
-import { Input } from "@/components/ui/input";
+import React, { useState } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
+import { Link, useNavigate } from "react-router-dom";
+import { Check, CreditCard, User } from "lucide-react";
+import { ClientDataForm } from "./signup/ClientDataForm";
+import { PlanSelectionForm } from "./signup/PlanSelectionForm";
+import { PaymentMethodForm } from "./signup/PaymentMethodForm";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
-import { SignupProfileFields } from "./SignupProfileFields";
-import { SignupPaymentFields } from "./SignupPaymentFields";
 
-interface SignupFormProps {
-  email: string;
-  setEmail: (val: string) => void;
-  password: string;
-  setPassword: (val: string) => void;
-  confirmPassword: string;
-  setConfirmPassword: (val: string) => void;
-  isLoading: boolean;
-  setIsLoading: (val: boolean) => void;
-  hidePayment?: boolean;
-  // These props are optional when hidePayment is true
-  firstName?: string;
-  setFirstName?: (val: string) => void;
-  lastName?: string;
-  setLastName?: (val: string) => void;
-  cpf?: string;
-  setCpf?: (val: string) => void;
-  cardNumber?: string;
-  setCardNumber?: (val: string) => void;
-  cardExpiry?: string;
-  setCardExpiry?: (val: string) => void;
-  cardCvc?: string;
-  setCardCvc?: (val: string) => void;
-}
-
-export function SignupForm(props: SignupFormProps) {
+export function SignupForm() {
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState("client-data");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSignup = async (event: React.FormEvent) => {
-    event.preventDefault();
+  // Dados do cliente
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [cpf, setCpf] = useState("");
 
-    // Modified validation to account for optional fields
-    const needsProfileFields = !props.hidePayment;
-    const needsPaymentFields = !props.hidePayment;
+  // Dados do plano
+  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
 
-    if (!props.email || !props.password || !props.confirmPassword) {
-      toast.error("Preencha todos os campos obrigatórios");
-      return;
-    }
+  // Dados de pagamento
+  const [cardNumber, setCardNumber] = useState("");
+  const [cardExpiry, setCardExpiry] = useState("");
+  const [cardCvc, setCardCvc] = useState("");
+  
+  // Dados da empresa
+  const [companyName, setCompanyName] = useState("");
+  const [mainProducts, setMainProducts] = useState("");
+  const [employeesCount, setEmployeesCount] = useState("");
+  const [address, setAddress] = useState("");
 
-    if (needsProfileFields && (!props.firstName || !props.lastName || !props.cpf)) {
-      toast.error("Preencha todos os campos de perfil");
-      return;
-    }
-
-    if (needsPaymentFields && (!props.cardNumber || !props.cardExpiry || !props.cardCvc)) {
-      toast.error("Preencha todos os campos de pagamento");
-      return;
-    }
-
-    if (props.password !== props.confirmPassword) {
-      toast.error("As senhas não coincidem");
-      return;
-    }
-
-    props.setIsLoading(true);
-
-    const { data: signupData, error: signupError } = await supabase.auth.signUp({
-      email: props.email,
-      password: props.password,
-      options: {
-        data: {
-          first_name: props.firstName || "",
-          last_name: props.lastName || "",
-          cpf: props.cpf || "",
-        },
-      },
-    });
-
-    props.setIsLoading(false);
-
-    if (signupError) {
-      if (
-        signupError.message &&
-        signupError.message.includes("already registered")
-      ) {
-        toast.error("Este e-mail já está cadastrado");
-      } else {
-        toast.error(signupError.message || "Erro ao criar conta");
+  const handleNextTab = () => {
+    if (activeTab === "client-data") {
+      // Validação de dados do cliente
+      if (!email || !password || !confirmPassword || !firstName || !lastName || !cpf) {
+        toast.error("Por favor, preencha todos os campos obrigatórios");
+        return;
       }
+      
+      if (password !== confirmPassword) {
+        toast.error("As senhas não coincidem");
+        return;
+      }
+      
+      setActiveTab("plan-selection");
+    } else if (activeTab === "plan-selection") {
+      // Validação de seleção de plano
+      if (!selectedPlanId) {
+        toast.error("Por favor, selecione um plano");
+        return;
+      }
+      
+      setActiveTab("payment-method");
+    }
+  };
+
+  const handlePreviousTab = () => {
+    if (activeTab === "plan-selection") {
+      setActiveTab("client-data");
+    } else if (activeTab === "payment-method") {
+      setActiveTab("plan-selection");
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!selectedPlanId || (!cardNumber && selectedPlanId !== 'free-plan')) {
+      toast.error("Por favor, complete todos os campos obrigatórios");
       return;
     }
-
-    toast.success("Cadastro realizado! Verifique seu email.");
-
-    setTimeout(() => {
-      navigate("/login");
-    }, 1000);
+    
+    setIsLoading(true);
+    
+    try {
+      // Registro no Supabase
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            first_name: firstName,
+            last_name: lastName,
+            cpf
+          }
+        }
+      });
+      
+      if (error) {
+        throw error;
+      }
+      
+      // Se tivermos um plano pago e dados de cartão, simulamos processamento do pagamento
+      if (selectedPlanId !== 'free-plan' && cardNumber) {
+        // Simulação de processamento de pagamento (em produção seria integrado com Stripe, etc)
+        // Aqui seria feito o processamento real do pagamento
+      }
+      
+      // Criar perfil da empresa
+      if (data.user) {
+        const { error: profileError } = await supabase
+          .from('company_profiles')
+          .insert({
+            user_id: data.user.id,
+            company_name: companyName,
+            main_products: mainProducts,
+            employees_count: employeesCount ? parseInt(employeesCount) : null,
+            address
+          });
+          
+        if (profileError) {
+          console.error("Erro ao salvar perfil da empresa:", profileError);
+        }
+      }
+      
+      toast.success("Cadastro realizado com sucesso! Verifique seu email para confirmar a conta.");
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);
+      
+    } catch (error: any) {
+      console.error("Erro no cadastro:", error);
+      toast.error(error.message || "Ocorreu um erro durante o cadastro");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <form className="space-y-5 bg-white rounded shadow px-6 py-8">
-      <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-          Email *
-        </label>
-        <Input
-          id="email"
-          name="email"
-          type="email"
-          autoComplete="email"
-          required
-          value={props.email}
-          onChange={e => props.setEmail(e.target.value)}
-          className="mt-1"
-          disabled={props.isLoading}
-        />
+    <Card className="bg-white shadow-md rounded-lg overflow-hidden">
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="grid grid-cols-3 w-full">
+          <TabsTrigger value="client-data" className="rounded-none" disabled={isLoading}>
+            <div className="flex items-center gap-2">
+              <div className={`rounded-full h-6 w-6 flex items-center justify-center ${
+                activeTab === "client-data" ? "bg-pump-purple text-white" : "bg-gray-200"
+              }`}>
+                <User className="h-4 w-4" />
+              </div>
+              <span>Dados do Cliente</span>
+            </div>
+          </TabsTrigger>
+          <TabsTrigger value="plan-selection" className="rounded-none" disabled={isLoading}>
+            <div className="flex items-center gap-2">
+              <div className={`rounded-full h-6 w-6 flex items-center justify-center ${
+                activeTab === "plan-selection" ? "bg-pump-purple text-white" : "bg-gray-200"
+              }`}>
+                <Check className="h-4 w-4" />
+              </div>
+              <span>Escolha do Plano</span>
+            </div>
+          </TabsTrigger>
+          <TabsTrigger value="payment-method" className="rounded-none" disabled={isLoading}>
+            <div className="flex items-center gap-2">
+              <div className={`rounded-full h-6 w-6 flex items-center justify-center ${
+                activeTab === "payment-method" ? "bg-pump-purple text-white" : "bg-gray-200"
+              }`}>
+                <CreditCard className="h-4 w-4" />
+              </div>
+              <span>Pagamento</span>
+            </div>
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="client-data" className="p-6">
+          <ClientDataForm 
+            email={email}
+            setEmail={setEmail}
+            password={password}
+            setPassword={setPassword}
+            confirmPassword={confirmPassword}
+            setConfirmPassword={setConfirmPassword}
+            firstName={firstName}
+            setFirstName={setFirstName}
+            lastName={setLastName}
+            setLastName={setLastName}
+            cpf={cpf}
+            setCpf={setCpf}
+            companyName={companyName}
+            setCompanyName={setCompanyName}
+            mainProducts={mainProducts}
+            setMainProducts={setMainProducts}
+            employeesCount={employeesCount}
+            setEmployeesCount={setEmployeesCount}
+            address={address}
+            setAddress={setAddress}
+            isLoading={isLoading}
+          />
+          <div className="flex justify-end mt-6">
+            <Button 
+              className="bg-pump-purple text-white"
+              onClick={handleNextTab}
+              disabled={isLoading}
+            >
+              Próximo: Escolha do Plano
+            </Button>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="plan-selection" className="p-6">
+          <PlanSelectionForm 
+            selectedPlanId={selectedPlanId} 
+            setSelectedPlanId={setSelectedPlanId}
+            isLoading={isLoading}
+          />
+          <div className="flex justify-between mt-6">
+            <Button 
+              variant="outline" 
+              className="text-pump-purple"
+              onClick={handlePreviousTab}
+              disabled={isLoading}
+            >
+              Voltar
+            </Button>
+            <Button 
+              className="bg-pump-purple text-white"
+              onClick={handleNextTab}
+              disabled={isLoading || !selectedPlanId}
+            >
+              {selectedPlanId === 'free-plan' ? 'Finalizar Cadastro' : 'Próximo: Pagamento'}
+            </Button>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="payment-method" className="p-6">
+          <PaymentMethodForm 
+            cardNumber={cardNumber}
+            setCardNumber={setCardNumber}
+            cardExpiry={cardExpiry}
+            setCardExpiry={setCardExpiry}
+            cardCvc={cardCvc}
+            setCardCvc={setCardCvc}
+            isLoading={isLoading}
+            selectedPlanId={selectedPlanId}
+          />
+          <div className="flex justify-between mt-6">
+            <Button 
+              variant="outline" 
+              className="text-pump-purple"
+              onClick={handlePreviousTab}
+              disabled={isLoading}
+            >
+              Voltar
+            </Button>
+            <Button 
+              className="bg-pump-purple text-white"
+              onClick={handleSubmit}
+              disabled={isLoading || (!cardNumber && selectedPlanId !== 'free-plan')}
+            >
+              Finalizar Cadastro
+            </Button>
+          </div>
+        </TabsContent>
+      </Tabs>
+
+      <div className="text-center p-4 border-t">
+        <p className="text-sm text-gray-600 mb-2">Já tem uma conta?</p>
+        <Link to="/login">
+          <Button
+            variant="outline"
+            className="text-pump-purple hover:bg-pump-purple/10"
+            disabled={isLoading}
+          >
+            Fazer login
+          </Button>
+        </Link>
       </div>
-      <div>
-        <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-          Senha *
-        </label>
-        <Input
-          id="password"
-          name="password"
-          type="password"
-          autoComplete="new-password"
-          required
-          value={props.password}
-          onChange={e => props.setPassword(e.target.value)}
-          className="mt-1"
-          disabled={props.isLoading}
-        />
-      </div>
-      <div>
-        <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-          Confirmar senha *
-        </label>
-        <Input
-          id="confirmPassword"
-          name="confirmPassword"
-          type="password"
-          autoComplete="new-password"
-          required
-          value={props.confirmPassword}
-          onChange={e => props.setConfirmPassword(e.target.value)}
-          className="mt-1"
-          disabled={props.isLoading}
-        />
-      </div>
-      {!props.hidePayment && props.firstName !== undefined && props.lastName !== undefined && props.cpf !== undefined && (
-        <SignupProfileFields
-          firstName={props.firstName}
-          lastName={props.lastName}
-          cpf={props.cpf}
-          setFirstName={props.setFirstName!}
-          setLastName={props.setLastName!}
-          setCpf={props.setCpf!}
-          disabled={props.isLoading}
-        />
-      )}
-      {!props.hidePayment && props.cardNumber !== undefined && props.cardExpiry !== undefined && props.cardCvc !== undefined && (
-        <SignupPaymentFields
-          cardNumber={props.cardNumber}
-          cardExpiry={props.cardExpiry}
-          cardCvc={props.cardCvc}
-          setCardNumber={props.setCardNumber!}
-          setCardExpiry={props.setCardExpiry!}
-          setCardCvc={props.setCardCvc!}
-          disabled={props.isLoading}
-        />
-      )}
-    </form>
+    </Card>
   );
 }

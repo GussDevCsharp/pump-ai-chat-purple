@@ -40,8 +40,8 @@ const NeuralBackground = () => {
     const animate = () => {
       if (!ctx || !canvas) return;
       
-      // Limpar canvas com fundo levemente transparente para criar rastro
-      ctx.fillStyle = 'rgba(255, 253, 243, 0.1)';
+      // Limpar canvas completamente em cada frame (sem transparência)
+      ctx.fillStyle = 'rgb(255, 253, 243)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Atualizar e desenhar pontos

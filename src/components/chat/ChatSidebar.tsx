@@ -1,30 +1,16 @@
 
-import { MessageCircle, Plus, Pencil, Trash2, UserRound, Settings } from "lucide-react"
-import { useChatSessions } from "@/hooks/useChatSessions"
-import { Button } from "@/components/ui/button"
-import { useNavigate, useSearchParams } from "react-router-dom"
 import { useState, useEffect } from "react"
-import { Input } from "@/components/ui/input"
-import { supabase } from "@/integrations/supabase/client"
+import { useNavigate, useSearchParams } from "react-router-dom"
+import { useChatSessions } from "@/hooks/useChatSessions"
 import { useToast } from "@/hooks/use-toast"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
-import { ThemeSelect } from "@/components/chat/ThemeSelect"
-import { useChatThemes, ChatTheme } from "@/hooks/useChatThemes"
-import { SidebarSessionGroup } from "@/components/chat/sidebar/SidebarSessionGroup";
-import { SidebarFooter } from "@/components/chat/sidebar/SidebarFooter";
+import { supabase } from "@/integrations/supabase/client"
+import { SessionActions } from "./sidebar/SessionActions"
+import { DeleteSessionDialog } from "./sidebar/DeleteSessionDialog"
+import { SidebarSessionGroup } from "./sidebar/SidebarSessionGroup"
+import { SidebarFooter } from "./sidebar/SidebarFooter"
 
 export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
-  const { sessions, createSession, refreshSessions, deleteSession, isLoading } = useChatSessions()
-  const { themes } = useChatThemes()
+  const { sessions, refreshSessions, deleteSession, isLoading } = useChatSessions()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const currentSessionId = searchParams.get('session')
@@ -34,17 +20,10 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
   const { toast } = useToast()
 
   useEffect(() => {
-    console.log("Sessions in ChatSidebar:", sessions)
-    console.log("Available themes:", themes)
-  }, [sessions, themes])
-
-  const handleNewChat = async () => {
-    const session = await createSession("Nova conversa")
-    if (session) {
-      navigate(`/chat?session=${session.id}`)
-      if (onClose) onClose()
-    }
-  }
+    return () => {
+      setEditingId(null);
+    };
+  }, []);
 
   const startEditing = (id: string, currentTitle: string) => {
     setEditingId(id)
@@ -94,39 +73,13 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
     }
   }
 
-  const getThemeObject = (themeId: string | null) => {
-    if (!themeId) return null;
-    return themes.find(t => t.id === themeId) || null;
-  }
-
-  const groupedSessions: Record<string, { themeObj: ChatTheme | null, sessions: typeof sessions }> = {};
-  sessions.forEach(session => {
-    const themeObj = getThemeObject(session.theme_id);
-    const groupKey = themeObj ? themeObj.id : 'no-theme';
-    if (!groupedSessions[groupKey]) {
-      groupedSessions[groupKey] = { themeObj, sessions: [] };
-    }
-    groupedSessions[groupKey].sessions.push(session);
-  });
-
-  const handleCancelEdit = () => {
-    setEditingId(null);
-  }
-
   const handleKeyPress = (e: React.KeyboardEvent, id: string) => {
     if (e.key === 'Enter') {
-      handleRename(id);
+      handleRename(id)
     } else if (e.key === 'Escape') {
-      handleCancelEdit();
+      setEditingId(null)
     }
   }
-
-  // Resetar o modo de edição se o componente for desmontado ou quando o usuário clicar para fechar o sidebar
-  useEffect(() => {
-    return () => {
-      setEditingId(null);
-    };
-  }, []);
 
   return (
     <>
@@ -145,13 +98,7 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
           </button>
         )}
 
-        <button 
-          onClick={handleNewChat}
-          className="w-full flex items-center gap-2 p-3 bg-white hover:bg-pump-gray-light rounded-lg border border-pump-gray/20 transition-colors"
-        >
-          <Plus className="w-4 h-4 text-pump-gray" />
-          <span className="text-sm text-pump-gray font-medium">Nova conversa</span>
-        </button>
+        <SessionActions onClose={onClose} />
         
         <div className="mt-4 flex-1 overflow-y-auto">
           {isLoading ? (
@@ -164,28 +111,18 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
             </div>
           ) : (
             <div className="flex flex-col gap-4">
-              {Object.entries(groupedSessions).map(([groupKey, { themeObj, sessions: themeSessions }]) => (
-                <SidebarSessionGroup
-                  key={groupKey}
-                  groupId={groupKey}
-                  themeObj={themeObj}
-                  sessions={themeSessions}
-                  currentSessionId={currentSessionId}
-                  onOpen={(sessionId) => {
-                    navigate(`/chat?session=${sessionId}`)
-                    if (onClose) onClose()
-                  }}
-                  onEdit={startEditing}
-                  onDelete={setSessionToDelete}
-                  onThemeChange={refreshSessions}
-                  editingId={editingId}
-                  newTitle={newTitle}
-                  onTitleChange={(e) => setNewTitle(e.target.value)}
-                  onSaveEdit={handleRename}
-                  onCancelEdit={handleCancelEdit}
-                  onKeyPress={handleKeyPress}
-                />
-              ))}
+              <SidebarSessionGroup
+                sessions={sessions}
+                currentSessionId={currentSessionId}
+                editingId={editingId}
+                newTitle={newTitle}
+                onTitleChange={(e) => setNewTitle(e.target.value)}
+                onEdit={startEditing}
+                onDelete={setSessionToDelete}
+                onSaveEdit={handleRename}
+                onCancelEdit={() => setEditingId(null)}
+                onKeyPress={handleKeyPress}
+              />
             </div>
           )}
         </div>
@@ -193,22 +130,11 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
         <SidebarFooter />
       </div>
 
-      <AlertDialog open={!!sessionToDelete} onOpenChange={() => setSessionToDelete(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Excluir conversa</AlertDialogTitle>
-            <AlertDialogDescription>
-              Tem certeza que deseja excluir esta conversa? Esta ação não pode ser desfeita.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteConfirm} className="bg-red-500 hover:bg-red-600">
-              Excluir
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <DeleteSessionDialog
+        isOpen={!!sessionToDelete}
+        onClose={() => setSessionToDelete(null)}
+        onConfirm={handleDeleteConfirm}
+      />
     </>
   )
 }

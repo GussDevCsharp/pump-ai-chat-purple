@@ -8,27 +8,70 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { ThemeSelect } from "@/components/chat/ThemeSelect"
 import { useState } from "react"
+import { Input } from "@/components/ui/input"
 
-export interface SidebarSessionCardProps {
-  session: any
-  themeObj: any
-  isActive: boolean
-  onOpen: () => void
-  onEdit: () => void
-  onDelete: () => void
-  onThemeChange: () => void
+interface SidebarSessionCardProps {
+  session: any;
+  themeObj: any;
+  isActive: boolean;
+  isEditing?: boolean; // Made optional with default value
+  newTitle?: string; // Made optional
+  onOpen: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
+  onThemeChange: () => void;
+  onTitleChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onSaveEdit?: () => void;
+  onCancelEdit?: () => void;
+  onKeyPress?: (e: React.KeyboardEvent) => void;
 }
 
 export function SidebarSessionCard({
   session,
   themeObj,
   isActive,
+  isEditing = false, // Default value added
+  newTitle = "", // Default value added
   onOpen,
   onEdit,
   onDelete,
-  onThemeChange
+  onThemeChange,
+  onTitleChange,
+  onSaveEdit,
+  onCancelEdit,
+  onKeyPress
 }: SidebarSessionCardProps) {
   const [showThemeSelector, setShowThemeSelector] = useState(false);
+
+  if (isEditing) {
+    return (
+      <div className="bg-white p-3 rounded-xl border-2 border-pump-purple shadow-md">
+        <Input
+          value={newTitle}
+          onChange={onTitleChange}
+          onKeyDown={onKeyPress}
+          autoFocus
+          className="mb-2"
+        />
+        <div className="flex justify-end gap-2">
+          <button 
+            onClick={onCancelEdit} 
+            type="button"
+            className="text-xs text-gray-500 hover:text-gray-700"
+          >
+            Cancelar
+          </button>
+          <button 
+            onClick={onSaveEdit}
+            type="button" 
+            className="text-xs text-pump-purple hover:text-pump-purple/80"
+          >
+            Salvar
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const handleThemeButtonClick = (e: React.MouseEvent) => {
     e.stopPropagation();

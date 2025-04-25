@@ -81,19 +81,19 @@ export const BusinessCard = ({
       className="border bg-transparent shadow-sm hover:shadow-md transition-shadow cursor-pointer"
       onClick={handleCardClick}
     >
-      <CardHeader>
+      <CardHeader className="p-4 md:p-6">
         <div className="flex items-center justify-between mb-2">
           <Badge className={getBadgeColor(gradient)}>
             <MessageSquare className="h-3 w-3 mr-1" />
             {title}
           </Badge>
         </div>
-        <CardTitle className="text-xl text-gray-900">{title}</CardTitle>
-        <CardDescription className="text-pump-gray">{description}</CardDescription>
+        <CardTitle className="text-lg md:text-xl text-gray-900">{title}</CardTitle>
+        <CardDescription className="text-sm md:text-base text-pump-gray">{description}</CardDescription>
         {themeName && (
           <div className="mt-2">
             <span
-              className="font-semibold text-sm"
+              className="text-xs md:text-sm font-semibold"
               style={{
                 color: themeColor || "#9b87f5"
               }}
@@ -103,22 +103,22 @@ export const BusinessCard = ({
           </div>
         )}
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-4 md:p-6">
         <div className="space-y-2">
           {isLoading ? (
-            <div className="text-sm text-pump-gray">Carregando tópicos...</div>
+            <div className="text-xs md:text-sm text-pump-gray">Carregando tópicos...</div>
           ) : prompts && prompts.length > 0 ? (
             prompts.map((prompt) => (
               <Button 
                 key={prompt.id}
                 variant="outline" 
-                className="w-full justify-start text-gray-700 hover:bg-gray-50 border-gray-200"
+                className="w-full justify-start text-xs md:text-sm text-gray-700 hover:bg-gray-50 border-gray-200 py-2 px-3 md:px-4"
               >
                 {prompt.title}
               </Button>
             ))
           ) : (
-            <div className="text-sm text-pump-gray">Nenhum tópico encontrado</div>
+            <div className="text-xs md:text-sm text-pump-gray">Nenhum tópico encontrado</div>
           )}
         </div>
       </CardContent>

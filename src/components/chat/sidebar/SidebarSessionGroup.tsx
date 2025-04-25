@@ -1,6 +1,7 @@
 
 import { SidebarSessionCard } from "./SidebarSessionCard";
 import { Input } from "@/components/ui/input";
+import { useEffect, useRef } from "react";
 
 export interface SidebarSessionGroupProps {
   groupId: string;
@@ -35,6 +36,33 @@ export function SidebarSessionGroup({
   onCancelEdit,
   onKeyPress
 }: SidebarSessionGroupProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Effect for handling outside clicks when editing is active
+  useEffect(() => {
+    if (editingId) {
+      // Focus input when edit mode is activated
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+
+      // Add event to detect clicks outside the edit form
+      const handleClickOutside = (e: MouseEvent) => {
+        if (inputRef.current && !inputRef.current.contains(e.target as Node) && onCancelEdit) {
+          onCancelEdit();
+        }
+      };
+
+      // Add event to document
+      document.addEventListener('mousedown', handleClickOutside);
+
+      // Clean up event on component unmount
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }
+  }, [editingId, onCancelEdit]);
+
   return (
     <div className="space-y-2">
       <h3 className="flex items-center text-xs font-medium text-pump-gray px-3 mb-2">
@@ -51,6 +79,7 @@ export function SidebarSessionGroup({
           {editingId === session.id ? (
             <div className="bg-white p-3 rounded-xl border-2 border-pump-purple shadow-md">
               <Input
+                ref={inputRef}
                 value={newTitle}
                 onChange={onTitleChange}
                 onKeyDown={(e) => onKeyPress && onKeyPress(e, session.id)}
@@ -60,12 +89,14 @@ export function SidebarSessionGroup({
               <div className="flex justify-end gap-2">
                 <button 
                   onClick={onCancelEdit} 
+                  type="button"
                   className="text-xs text-gray-500 hover:text-gray-700"
                 >
                   Cancelar
                 </button>
                 <button 
-                  onClick={() => onSaveEdit && onSaveEdit(session.id)} 
+                  onClick={() => onSaveEdit && onSaveEdit(session.id)}
+                  type="button" 
                   className="text-xs text-pump-purple hover:text-pump-purple/80"
                 >
                   Salvar

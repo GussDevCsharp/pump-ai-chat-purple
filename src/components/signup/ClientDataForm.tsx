@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { useSignup } from "@/contexts/SignupContext";
@@ -35,37 +34,52 @@ export function ClientDataForm() {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-medium mb-6">Dados Pessoais</h3>
-        <div className="space-y-5">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div>
-              <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
-                Nome *
-              </label>
-              <Input
-                id="firstName"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                disabled={isLoading}
-                placeholder="Digite seu nome"
-                className="max-w-[350px]"
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
-                Sobrenome *
-              </label>
-              <Input
-                id="lastName"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                disabled={isLoading}
-                placeholder="Digite seu sobrenome"
-                className="max-w-[350px]"
-                required
-              />
-            </div>
+        <h3 className="text-lg font-medium mb-8">Dados Pessoais</h3>
+        <div className="space-y-6 max-w-[400px]">
+          <div>
+            <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
+              Nome *
+            </label>
+            <Input
+              id="firstName"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              disabled={isLoading}
+              placeholder="Digite seu nome"
+              className="max-w-[350px]"
+              required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
+              Sobrenome *
+            </label>
+            <Input
+              id="lastName"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              disabled={isLoading}
+              placeholder="Digite seu sobrenome"
+              className="max-w-[350px]"
+              required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="cpf" className="block text-sm font-medium text-gray-700 mb-2">
+              CPF *
+            </label>
+            <Input
+              id="cpf"
+              value={cpf}
+              onChange={handleCpfChange}
+              disabled={isLoading}
+              placeholder="000.000.000-00"
+              maxLength={14}
+              className="max-w-[200px] font-mono"
+              required
+            />
           </div>
 
           <div>
@@ -79,42 +93,25 @@ export function ClientDataForm() {
               onChange={(e) => setEmail(e.target.value)}
               disabled={isLoading}
               placeholder="seu@email.com"
-              className="max-w-[350px]"
+              className="max-w-[400px]"
               required
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div>
-              <label htmlFor="cpf" className="block text-sm font-medium text-gray-700 mb-2">
-                CPF *
-              </label>
-              <Input
-                id="cpf"
-                value={cpf}
-                onChange={handleCpfChange}
-                disabled={isLoading}
-                placeholder="000.000.000-00"
-                maxLength={14}
-                className="max-w-[350px] font-mono"
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                Senha *
-              </label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                disabled={isLoading}
-                placeholder="Digite sua senha"
-                className="max-w-[350px]"
-                required
-              />
-            </div>
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              Senha *
+            </label>
+            <Input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={isLoading}
+              placeholder="Digite sua senha"
+              className="max-w-[350px]"
+              required
+            />
           </div>
 
           <div>

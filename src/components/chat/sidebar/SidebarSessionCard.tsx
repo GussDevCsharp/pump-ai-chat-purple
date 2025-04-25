@@ -14,8 +14,8 @@ interface SidebarSessionCardProps {
   session: any;
   themeObj: any;
   isActive: boolean;
-  isEditing?: boolean; // Made optional with default value
-  newTitle?: string; // Made optional
+  isEditing?: boolean;
+  newTitle?: string;
   onOpen: () => void;
   onEdit: () => void;
   onDelete: () => void;
@@ -30,8 +30,8 @@ export function SidebarSessionCard({
   session,
   themeObj,
   isActive,
-  isEditing = false, // Default value added
-  newTitle = "", // Default value added
+  isEditing = false,
+  newTitle = "",
   onOpen,
   onEdit,
   onDelete,
@@ -80,13 +80,14 @@ export function SidebarSessionCard({
 
   return (
     <div className="group relative">
-      <button
+      <div
         onClick={onOpen}
         className={`
           relative flex items-center w-full px-2 py-1.5
           rounded-lg transition-all duration-200
           hover:bg-pump-gray-light/50
           ${isActive ? "bg-pump-gray-light/30" : ""}
+          cursor-pointer
         `}
       >
         <div className="flex items-center justify-between w-full gap-2">
@@ -107,7 +108,7 @@ export function SidebarSessionCard({
             </span>
           </div>
           
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
             {showThemeSelector ? (
               <ThemeSelect 
                 sessionId={session.id} 
@@ -120,7 +121,10 @@ export function SidebarSessionCard({
             ) : (
               <button
                 type="button"
-                onClick={handleThemeButtonClick}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleThemeButtonClick(e);
+                }}
                 className="p-1 rounded hover:bg-pump-gray-light"
                 aria-label="Mudar tema"
               >
@@ -161,7 +165,7 @@ export function SidebarSessionCard({
             </DropdownMenu>
           </div>
         </div>
-      </button>
+      </div>
     </div>
   );
 }

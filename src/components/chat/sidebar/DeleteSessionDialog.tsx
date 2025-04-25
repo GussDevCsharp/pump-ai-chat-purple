@@ -20,16 +20,12 @@ interface DeleteSessionDialogProps {
 
 export function DeleteSessionDialog({ isOpen, onClose, onConfirm }: DeleteSessionDialogProps) {
   const [isDeleting, setIsDeleting] = useState(false);
-  const confirmButtonRef = useRef<HTMLButtonElement>(null);
   
   // Reset state when dialog opens/closes
   useEffect(() => {
     if (!isOpen) {
-      // Small timeout to ensure React finishes any pending updates
-      const timeout = setTimeout(() => {
-        setIsDeleting(false);
-      }, 100);
-      return () => clearTimeout(timeout);
+      // Reset deleting state when dialog is closed
+      setIsDeleting(false);
     }
   }, [isOpen]);
 
@@ -42,17 +38,9 @@ export function DeleteSessionDialog({ isOpen, onClose, onConfirm }: DeleteSessio
     } catch (error) {
       console.error("Erro ao excluir sessão:", error);
     } finally {
-      // Use a short timeout to ensure React has time to process state updates
-      setTimeout(() => {
-        setIsDeleting(false);
-        onClose(); // Close the dialog explicitly
-      }, 10);
+      setIsDeleting(false);
+      onClose(); // Close the dialog after operation completes
     }
-  };
-
-  const handleCancel = () => {
-    setIsDeleting(false);
-    onClose();
   };
 
   return (
@@ -60,11 +48,8 @@ export function DeleteSessionDialog({ isOpen, onClose, onConfirm }: DeleteSessio
       open={isOpen} 
       onOpenChange={(open) => {
         if (!open) {
-          // When dialog is closed, ensure we reset states properly
-          setTimeout(() => {
-            setIsDeleting(false);
-            onClose();
-          }, 10);
+          setIsDeleting(false);
+          onClose();
         }
       }}
     >
@@ -78,7 +63,7 @@ export function DeleteSessionDialog({ isOpen, onClose, onConfirm }: DeleteSessio
         <AlertDialogFooter>
           <Button
             variant="outline"
-            onClick={handleCancel}
+            onClick={onClose}
             disabled={isDeleting}
             type="button"
             className="mt-2 sm:mt-0"
@@ -86,7 +71,6 @@ export function DeleteSessionDialog({ isOpen, onClose, onConfirm }: DeleteSessio
             Cancelar
           </Button>
           <Button 
-            ref={confirmButtonRef}
             onClick={handleConfirm} 
             className="bg-red-500 hover:bg-red-600"
             disabled={isDeleting}

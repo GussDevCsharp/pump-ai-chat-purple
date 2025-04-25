@@ -6,7 +6,7 @@ interface FormNavigationProps {
   activeTab: string;
   onPrevious?: () => void;
   onNext?: () => void;
-  onSubmit?: () => void;
+  onSubmit?: () => void; // This expects a function with no parameters
   isLastStep?: boolean;
   isLoading: boolean;
   selectedPlanId: string | null;

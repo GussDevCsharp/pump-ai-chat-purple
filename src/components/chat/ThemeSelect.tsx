@@ -1,5 +1,6 @@
+
 import { Button } from "@/components/ui/button"
-import { Check, Tag } from "lucide-react"
+import { Check, Tag, X } from "lucide-react"
 import {
   Popover,
   PopoverContent,
@@ -22,6 +23,7 @@ export const ThemeSelect = ({ sessionId, currentTheme, onThemeChange }: ThemeSel
   const { themes, isLoading } = useChatThemes()
   const { toast } = useToast()
   const [selectedThemeName, setSelectedThemeName] = useState<string | null>(null)
+  const [open, setOpen] = useState(true)
 
   useEffect(() => {
     const fetchThemeName = async () => {
@@ -72,6 +74,8 @@ export const ThemeSelect = ({ sessionId, currentTheme, onThemeChange }: ThemeSel
       if (onThemeChange) {
         onThemeChange()
       }
+      
+      setOpen(false)
     } catch (error) {
       console.error('Erro ao atualizar tema:', error)
       toast({
@@ -82,33 +86,39 @@ export const ThemeSelect = ({ sessionId, currentTheme, onThemeChange }: ThemeSel
   }
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 relative group">
-          <Tag className="h-4 w-4 text-pump-gray group-hover:hidden" />
-          <Tag className="h-4 w-4 text-pump-gray hidden group-hover:block" />
-          {selectedThemeName && !selectedThemeName.startsWith("group-hover") && (
-            <Badge 
-              variant="secondary" 
-              className="absolute -top-2 -right-2 text-xs px-1 py-0 group-hover:hidden"
-            >
-              {selectedThemeName}
-            </Badge>
-          )}
+        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 relative">
+          <Tag className="h-4 w-4 text-pump-purple" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-48 p-2">
+      <PopoverContent className="w-48 p-2 bg-white">
+        <div className="flex justify-between items-center mb-2 pb-1 border-b">
+          <span className="text-sm font-medium">Escolher tema</span>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="h-6 w-6 p-0" 
+            onClick={() => {
+              setOpen(false)
+              if (onThemeChange) onThemeChange()
+            }}
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+        
         {isLoading ? (
           <div className="text-center py-2">Carregando...</div>
         ) : themes.length === 0 ? (
           <div className="text-center py-2">Nenhum tema encontrado</div>
         ) : (
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1 max-h-[200px] overflow-y-auto">
             {themes.map((theme) => (
               <Button
                 key={theme.id}
                 variant="ghost"
-                className="justify-start gap-2"
+                className="justify-start gap-2 h-8 px-2"
                 onClick={() => handleSelectTheme(theme.id)}
               >
                 <Check
@@ -117,7 +127,11 @@ export const ThemeSelect = ({ sessionId, currentTheme, onThemeChange }: ThemeSel
                     theme.id === currentTheme ? "opacity-100" : "opacity-0"
                   )}
                 />
-                <span>{theme.name}</span>
+                <span 
+                  className="w-3 h-3 rounded-full inline-block" 
+                  style={{ background: theme.color || "#7E1CC6" }}
+                />
+                <span className="text-sm truncate">{theme.name}</span>
               </Button>
             ))}
           </div>

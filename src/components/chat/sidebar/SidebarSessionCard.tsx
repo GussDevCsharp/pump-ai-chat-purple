@@ -1,11 +1,13 @@
 
-import { MessageCircle, Menu, Pencil, Trash2 } from "lucide-react"
+import { MessageCircle, Menu, Pencil, Trash2, Tag } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { ThemeSelect } from "@/components/chat/ThemeSelect"
+import { useState } from "react"
 
 export interface SidebarSessionCardProps {
   session: any
@@ -26,6 +28,13 @@ export function SidebarSessionCard({
   onDelete,
   onThemeChange
 }: SidebarSessionCardProps) {
+  const [showThemeSelector, setShowThemeSelector] = useState(false);
+
+  const handleThemeButtonClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowThemeSelector(true);
+  };
+
   return (
     <div className="group relative">
       <button
@@ -56,19 +65,25 @@ export function SidebarSessionCard({
           </div>
           
           <div className="flex items-center gap-1">
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onThemeChange();
-              }}
-              className="p-1 rounded hover:bg-pump-gray-light"
-              aria-label="Mudar tema"
-            >
-              <span className="w-4 h-4 rounded-full inline-block"
-                style={{ background: themeObj?.color || "#7E1CC6" }}
+            {showThemeSelector ? (
+              <ThemeSelect 
+                sessionId={session.id} 
+                currentTheme={session.theme_id}
+                onThemeChange={() => {
+                  onThemeChange();
+                  setShowThemeSelector(false);
+                }}
               />
-            </button>
+            ) : (
+              <button
+                type="button"
+                onClick={handleThemeButtonClick}
+                className="p-1 rounded hover:bg-pump-gray-light"
+                aria-label="Mudar tema"
+              >
+                <Tag className="w-4 h-4 text-pump-gray hover:text-pump-purple" />
+              </button>
+            )}
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -81,7 +96,7 @@ export function SidebarSessionCard({
                   <Menu className="w-4 h-4 text-pump-gray hover:text-pump-purple" />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuContent align="end" className="w-48 bg-white">
                 <DropdownMenuItem onClick={(e) => {
                   e.preventDefault();
                   onEdit();

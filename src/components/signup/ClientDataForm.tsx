@@ -36,8 +36,8 @@ export function ClientDataForm() {
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-medium mb-4">Dados Pessoais</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="sm:col-span-1">
             <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
               Nome *
             </label>
@@ -47,10 +47,11 @@ export function ClientDataForm() {
               onChange={(e) => setFirstName(e.target.value)}
               disabled={isLoading}
               placeholder="Digite seu nome"
+              className="max-w-[250px]"
               required
             />
           </div>
-          <div>
+          <div className="sm:col-span-1">
             <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
               Sobrenome *
             </label>
@@ -60,10 +61,11 @@ export function ClientDataForm() {
               onChange={(e) => setLastName(e.target.value)}
               disabled={isLoading}
               placeholder="Digite seu sobrenome"
+              className="max-w-[250px]"
               required
             />
           </div>
-          <div>
+          <div className="sm:col-span-2">
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
               E-mail *
             </label>
@@ -74,10 +76,11 @@ export function ClientDataForm() {
               onChange={(e) => setEmail(e.target.value)}
               disabled={isLoading}
               placeholder="seu@email.com"
+              className="max-w-[400px]"
               required
             />
           </div>
-          <div>
+          <div className="sm:col-span-1">
             <label htmlFor="cpf" className="block text-sm font-medium text-gray-700 mb-1">
               CPF *
             </label>
@@ -88,10 +91,11 @@ export function ClientDataForm() {
               disabled={isLoading}
               placeholder="000.000.000-00"
               maxLength={14}
+              className="max-w-[200px] font-mono"
               required
             />
           </div>
-          <div>
+          <div className="sm:col-span-1">
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
               Senha *
             </label>
@@ -102,10 +106,11 @@ export function ClientDataForm() {
               onChange={(e) => setPassword(e.target.value)}
               disabled={isLoading}
               placeholder="Digite sua senha"
+              className="max-w-[250px]"
               required
             />
           </div>
-          <div>
+          <div className="sm:col-span-1">
             <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
               Confirme a Senha *
             </label>
@@ -116,6 +121,7 @@ export function ClientDataForm() {
               onChange={(e) => setConfirmPassword(e.target.value)}
               disabled={isLoading}
               placeholder="Confirme sua senha"
+              className="max-w-[250px]"
               required
             />
           </div>

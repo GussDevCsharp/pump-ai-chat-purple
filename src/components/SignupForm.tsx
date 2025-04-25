@@ -58,7 +58,7 @@ function SignupFormContent() {
   };
 
   return (
-    <Card className="w-full max-w-[95vw] mx-auto bg-white/90 backdrop-blur-sm shadow-lg rounded-2xl overflow-hidden border border-white/20">
+    <Card className="w-full max-w-screen-2xl mx-auto bg-white/90 backdrop-blur-sm shadow-lg rounded-2xl overflow-hidden border border-white/20">
       <Tabs 
         value={activeTab} 
         onValueChange={setActiveTab} 

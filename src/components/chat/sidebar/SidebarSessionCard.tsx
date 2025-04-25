@@ -1,6 +1,12 @@
 
-import { MessageCircle, Pencil, Trash2 } from "lucide-react"
+import { MessageCircle, Menu, Pencil, Trash2 } from "lucide-react"
 import { ThemeSelect } from "@/components/chat/ThemeSelect"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 export interface SidebarSessionCardProps {
   session: any
@@ -37,55 +43,63 @@ export function SidebarSessionCard({
           boxShadow: isActive ? "0 8px 18px 0 rgba(54,40,90,0.06)" : "none"
         }}
       >
-        <div className="flex items-center gap-2 w-full overflow-hidden">
-          <span 
-            className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full"
-            style={{
-              background: themeObj?.color ? `${themeObj.color}20` : "#f4ebfd"
-            }}
-          >
-            <MessageCircle
-              className="w-5 h-5"
-              style={{ color: themeObj?.color || "#7E1CC6" }}
-            />
-          </span>
-          <span className="text-sm text-pump-gray font-medium truncate">
-            {session.title}
-          </span>
-        </div>
-        
-        <div className="
-          mt-2 w-full flex justify-end items-center gap-2
-          opacity-0 group-hover/card:opacity-100 
-          transition-opacity
-        ">
-          <ThemeSelect 
-            sessionId={session.id} 
-            currentTheme={session.theme_id}
-            onThemeChange={onThemeChange}
-          />
-          <button
-            onClick={(e) => { 
-              e.stopPropagation(); 
-              e.preventDefault();
-              onEdit(); 
-            }}
-            className="rounded hover:bg-pump-gray-light p-1"
-            aria-label="Editar conversa"
-          >
-            <Pencil className="w-4 h-4 text-pump-gray hover:text-pump-purple" />
-          </button>
-          <button
-            onClick={(e) => { 
-              e.stopPropagation(); 
-              e.preventDefault();
-              onDelete(); 
-            }}
-            className="rounded hover:bg-red-50 p-1"
-            aria-label="Excluir conversa"
-          >
-            <Trash2 className="w-4 h-4 text-pump-gray hover:text-red-500" />
-          </button>
+        <div className="flex items-center justify-between w-full">
+          <div className="flex items-center gap-2 flex-grow overflow-hidden">
+            <span 
+              className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full"
+              style={{
+                background: themeObj?.color ? `${themeObj.color}20` : "#f4ebfd"
+              }}
+            >
+              <MessageCircle
+                className="w-5 h-5"
+                style={{ color: themeObj?.color || "#7E1CC6" }}
+              />
+            </span>
+            <span className="text-sm text-pump-gray font-medium truncate">
+              {session.title}
+            </span>
+          </div>
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                onClick={(e) => e.stopPropagation()}
+                className="p-1 rounded hover:bg-pump-gray-light"
+                aria-label="Menu de opções"
+              >
+                <Menu className="w-4 h-4 text-pump-gray hover:text-pump-purple" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem onClick={(e) => {
+                e.preventDefault();
+                onEdit();
+              }} className="cursor-pointer">
+                <Pencil className="w-4 h-4 mr-2" />
+                Editar conversa
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={(e) => {
+                e.preventDefault();
+                onThemeChange();
+              }} className="cursor-pointer">
+                <span className="w-4 h-4 mr-2 rounded-full inline-block"
+                  style={{ background: themeObj?.color || "#7E1CC6" }}
+                />
+                Mudar tema
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={(e) => {
+                  e.preventDefault();
+                  onDelete();
+                }}
+                className="cursor-pointer text-red-600 hover:text-red-600 hover:bg-red-50"
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Excluir conversa
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </button>
     </div>

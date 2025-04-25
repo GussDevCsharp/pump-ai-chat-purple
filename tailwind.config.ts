@@ -76,10 +76,31 @@ export default {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        glitch: {
+          "0%": {
+            transform: "translate(0)",
+          },
+          "20%": {
+            transform: "translate(-2px, 2px)",
+          },
+          "40%": {
+            transform: "translate(-2px, -2px)",
+          },
+          "60%": {
+            transform: "translate(2px, 2px)",
+          },
+          "80%": {
+            transform: "translate(2px, -2px)",
+          },
+          "100%": {
+            transform: "translate(0)",
+          },
+        }
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "glitch": "glitch 1s infinite",
       },
       fontFamily: {
         'sans': ['Noto Sans', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', "Segoe UI", 'Roboto', "Helvetica Neue", 'Arial', "Noto Sans", 'sans-serif'],

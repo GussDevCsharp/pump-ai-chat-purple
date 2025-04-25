@@ -8,70 +8,27 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { ThemeSelect } from "@/components/chat/ThemeSelect"
 import { useState } from "react"
-import { Input } from "@/components/ui/input"
 
-interface SidebarSessionCardProps {
-  session: any;
-  themeObj: any;
-  isActive: boolean;
-  isEditing?: boolean;
-  newTitle?: string;
-  onOpen: () => void;
-  onEdit: () => void;
-  onDelete: () => void;
-  onThemeChange: () => void;
-  onTitleChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onSaveEdit?: () => void;
-  onCancelEdit?: () => void;
-  onKeyPress?: (e: React.KeyboardEvent) => void;
+export interface SidebarSessionCardProps {
+  session: any
+  themeObj: any
+  isActive: boolean
+  onOpen: () => void
+  onEdit: () => void
+  onDelete: () => void
+  onThemeChange: () => void
 }
 
 export function SidebarSessionCard({
   session,
   themeObj,
   isActive,
-  isEditing = false,
-  newTitle = "",
   onOpen,
   onEdit,
   onDelete,
-  onThemeChange,
-  onTitleChange,
-  onSaveEdit,
-  onCancelEdit,
-  onKeyPress
+  onThemeChange
 }: SidebarSessionCardProps) {
   const [showThemeSelector, setShowThemeSelector] = useState(false);
-
-  if (isEditing) {
-    return (
-      <div className="bg-white p-3 rounded-xl border-2 border-pump-purple shadow-md">
-        <Input
-          value={newTitle}
-          onChange={onTitleChange}
-          onKeyDown={onKeyPress}
-          autoFocus
-          className="mb-2"
-        />
-        <div className="flex justify-end gap-2">
-          <button 
-            onClick={onCancelEdit} 
-            type="button"
-            className="text-xs text-gray-500 hover:text-gray-700"
-          >
-            Cancelar
-          </button>
-          <button 
-            onClick={onSaveEdit}
-            type="button" 
-            className="text-xs text-pump-purple hover:text-pump-purple/80"
-          >
-            Salvar
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   const handleThemeButtonClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -80,14 +37,13 @@ export function SidebarSessionCard({
 
   return (
     <div className="group relative">
-      <div
+      <button
         onClick={onOpen}
         className={`
           relative flex items-center w-full px-2 py-1.5
           rounded-lg transition-all duration-200
           hover:bg-pump-gray-light/50
           ${isActive ? "bg-pump-gray-light/30" : ""}
-          cursor-pointer
         `}
       >
         <div className="flex items-center justify-between w-full gap-2">
@@ -108,7 +64,7 @@ export function SidebarSessionCard({
             </span>
           </div>
           
-          <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
+          <div className="flex items-center gap-1">
             {showThemeSelector ? (
               <ThemeSelect 
                 sessionId={session.id} 
@@ -121,10 +77,7 @@ export function SidebarSessionCard({
             ) : (
               <button
                 type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleThemeButtonClick(e);
-                }}
+                onClick={handleThemeButtonClick}
                 className="p-1 rounded hover:bg-pump-gray-light"
                 aria-label="Mudar tema"
               >
@@ -165,7 +118,7 @@ export function SidebarSessionCard({
             </DropdownMenu>
           </div>
         </div>
-      </div>
+      </button>
     </div>
   );
 }

@@ -13,7 +13,7 @@ export const ChatLayout = () => {
   const { authStatus } = useChatAuth()
 
   return (
-    <div className="flex h-screen bg-offwhite relative overflow-hidden">
+    <div className="flex h-screen bg-white relative overflow-hidden">
       {/* Menu mobile só aparece se estiver autenticado */}
       {(isMobile && sidebarOpen && authStatus === "authenticated") && (
         <div className="fixed inset-0 z-40 flex">

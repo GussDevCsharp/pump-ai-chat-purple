@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef } from 'react';
 
 const NeuralBackground = () => {
@@ -19,105 +20,41 @@ const NeuralBackground = () => {
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    // Define click ripple properties
-    type Ripple = {
-      x: number;
-      y: number;
-      radius: number;
-      maxRadius: number;
-      alpha: number;
-    };
-
-    let ripples: Ripple[] = [];
-
-    // Handle mouse click
-    canvas.addEventListener('click', (e) => {
-      const rect = canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-
-      // Create new ripple
-      ripples.push({
-        x,
-        y,
-        radius: 0,
-        maxRadius: 150,
-        alpha: 0.6,
-      });
-    });
-
-    // Points setup
+    // Pontos que representam os neurônios
     type Point = {
       x: number;
       y: number;
       vx: number;
       vy: number;
-      size: number;
-      initialSize: number;
-      targetSize: number;
-      sizeChangeSpeed: number;
     };
 
-    // Create points with additional size animation properties
+    // Criar pontos iniciais
     const points: Point[] = Array.from({ length: 50 }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
       vx: (Math.random() - 0.5) * 0.5,
       vy: (Math.random() - 0.5) * 0.5,
-      size: 1 + Math.random() * 2,
-      initialSize: 1 + Math.random() * 2,
-      targetSize: 1 + Math.random() * 2,
-      sizeChangeSpeed: 0.05
     }));
 
+    // Função de animação
     const animate = () => {
       if (!ctx || !canvas) return;
       
+      // Limpar canvas completamente em cada frame (sem transparência)
       ctx.fillStyle = 'rgb(255, 253, 243)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Update and draw ripples
-      ripples = ripples.filter(ripple => {
-        ripple.radius += 2;
-        ripple.alpha *= 0.98;
-
-        ctx.beginPath();
-        ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(89, 20, 141, ${ripple.alpha})`;
-        ctx.lineWidth = 2;
-        ctx.stroke();
-
-        // Remove ripple when it's too large or transparent
-        return ripple.radius < ripple.maxRadius && ripple.alpha > 0.1;
-      });
-
-      // Update and draw points
+      // Atualizar e desenhar pontos
       points.forEach((point, i) => {
-        // Move points
+        // Mover pontos
         point.x += point.vx;
         point.y += point.vy;
 
-        // Check for ripple influence
-        ripples.forEach(ripple => {
-          const dx = point.x - ripple.x;
-          const dy = point.y - ripple.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-
-          if (distance < ripple.radius + 50 && distance > ripple.radius - 50) {
-            point.targetSize = point.initialSize * 2;
-          } else {
-            point.targetSize = point.initialSize;
-          }
-        });
-
-        // Animate point size
-        point.size += (point.targetSize - point.size) * point.sizeChangeSpeed;
-
-        // Bounce off walls
+        // Rebater nas bordas
         if (point.x < 0 || point.x > canvas.width) point.vx *= -1;
         if (point.y < 0 || point.y > canvas.height) point.vy *= -1;
 
-        // Draw connections
+        // Desenhar conexões
         points.forEach((otherPoint, j) => {
           if (i === j) return;
 
@@ -129,16 +66,16 @@ const NeuralBackground = () => {
             ctx.beginPath();
             ctx.moveTo(point.x, point.y);
             ctx.lineTo(otherPoint.x, otherPoint.y);
-            ctx.strokeStyle = `rgba(89, 20, 141, ${0.15 * (1 - distance / 150)})`;
-            ctx.lineWidth = 0.4;
+            ctx.strokeStyle = `rgba(126, 28, 198, ${0.1 * (1 - distance / 150)})`;
+            ctx.lineWidth = 0.3;
             ctx.stroke();
           }
         });
 
-        // Draw point
+        // Desenhar pontos
         ctx.beginPath();
-        ctx.arc(point.x, point.y, point.size, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(89, 20, 141, 0.6)';
+        ctx.arc(point.x, point.y, 2, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(126, 28, 198, 0.5)';
         ctx.fill();
       });
 
@@ -148,14 +85,14 @@ const NeuralBackground = () => {
     animate();
 
     return () => {
-      window.removeEventListener('resize', window.onresize);
+      window.removeEventListener('resize', resizeCanvas);
     };
   }, []);
 
   return (
     <canvas
       ref={canvasRef}
-      className="fixed top-0 left-0 w-full h-full cursor-pointer"
+      className="fixed top-0 left-0 w-full h-full pointer-events-none"
       style={{ zIndex: 0 }}
     />
   );

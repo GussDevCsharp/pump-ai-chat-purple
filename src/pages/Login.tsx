@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
 import { supabase } from "@/integrations/supabase/client"
 import NeuralBackground from "@/components/effects/NeuralBackground"
-import { Separator } from "@/components/ui/separator"
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -45,7 +44,7 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center relative">
+    <div className="min-h-screen flex">
       {/* Login Column */}
       <div className="w-1/2 bg-offwhite flex items-center justify-center px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-md w-full bg-white/85 shadow-lg rounded-xl p-8">
@@ -126,11 +125,6 @@ export default function Login() {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Gradient Separator */}
-      <div className="absolute left-1/2 top-0 bottom-0 -translate-x-1/2 w-[2px] flex items-center">
-        <div className="h-full w-full bg-gradient-to-b from-transparent via-[#7E1CC6]/30 to-transparent" />
       </div>
 
       {/* Effect Column */}

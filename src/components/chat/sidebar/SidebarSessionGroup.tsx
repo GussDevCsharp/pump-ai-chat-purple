@@ -38,25 +38,25 @@ export function SidebarSessionGroup({
 }: SidebarSessionGroupProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Efeito para adicionar um gerenciador de clique fora do componente de edição
+  // Effect for handling outside clicks when editing is active
   useEffect(() => {
     if (editingId) {
-      // Foca no input quando o modo de edição é ativado
+      // Focus input when edit mode is activated
       if (inputRef.current) {
         inputRef.current.focus();
       }
 
-      // Adiciona um evento para detectar cliques fora do formulário de edição
+      // Add event to detect clicks outside the edit form
       const handleClickOutside = (e: MouseEvent) => {
         if (inputRef.current && !inputRef.current.contains(e.target as Node) && onCancelEdit) {
           onCancelEdit();
         }
       };
 
-      // Adiciona o evento ao documento
+      // Add event to document
       document.addEventListener('mousedown', handleClickOutside);
 
-      // Limpa o evento ao desmontar o componente
+      // Clean up event on component unmount
       return () => {
         document.removeEventListener('mousedown', handleClickOutside);
       };

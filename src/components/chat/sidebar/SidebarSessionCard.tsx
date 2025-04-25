@@ -1,3 +1,4 @@
+
 import { MessageCircle, Menu, Pencil, Trash2, Tag } from "lucide-react"
 import {
   DropdownMenu,
@@ -7,13 +8,14 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { ThemeSelect } from "@/components/chat/ThemeSelect"
 import { useState } from "react"
+import { Input } from "@/components/ui/input"
 
 interface SidebarSessionCardProps {
   session: any;
   themeObj: any;
   isActive: boolean;
-  isEditing: boolean;
-  newTitle: string;
+  isEditing?: boolean; // Made optional with default value
+  newTitle?: string; // Made optional
   onOpen: () => void;
   onEdit: () => void;
   onDelete: () => void;
@@ -28,8 +30,8 @@ export function SidebarSessionCard({
   session,
   themeObj,
   isActive,
-  isEditing,
-  newTitle,
+  isEditing = false, // Default value added
+  newTitle = "", // Default value added
   onOpen,
   onEdit,
   onDelete,

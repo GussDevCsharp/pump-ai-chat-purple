@@ -30,6 +30,15 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
     setNewTitle(currentTitle)
   }
 
+  const handleOpenSession = (sessionId: string) => {
+    navigate(`/chat?session=${sessionId}`)
+    if (onClose) onClose()
+  }
+
+  const handleThemeChange = () => {
+    refreshSessions()
+  }
+
   const handleRename = async (id: string) => {
     try {
       if (!newTitle.trim()) {
@@ -81,6 +90,16 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
     }
   }
 
+  // Group sessions by theme for display
+  const groupedSessions = sessions.reduce((acc: Record<string, any[]>, session) => {
+    const themeId = session.theme_id || 'default';
+    if (!acc[themeId]) {
+      acc[themeId] = [];
+    }
+    acc[themeId].push(session);
+    return acc;
+  }, {});
+
   return (
     <>
       <div className="w-64 max-w-full h-full md:h-screen bg-offwhite border-r border-pump-gray/20 p-4 flex flex-col">
@@ -111,18 +130,32 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
             </div>
           ) : (
             <div className="flex flex-col gap-4">
-              <SidebarSessionGroup
-                sessions={sessions}
-                currentSessionId={currentSessionId}
-                editingId={editingId}
-                newTitle={newTitle}
-                onTitleChange={(e) => setNewTitle(e.target.value)}
-                onEdit={startEditing}
-                onDelete={setSessionToDelete}
-                onSaveEdit={handleRename}
-                onCancelEdit={() => setEditingId(null)}
-                onKeyPress={handleKeyPress}
-              />
+              {Object.entries(groupedSessions).map(([themeId, themeSessions]) => {
+                // Find theme object from the first session in the group
+                const themeObj = themeSessions[0]?.theme_id ? 
+                  { id: themeSessions[0]?.theme_id, name: themeSessions[0]?.card_theme, color: themeSessions[0]?.card_theme } : 
+                  { id: 'default', name: 'Sem tema', color: '#7E1CC6' };
+                
+                return (
+                  <SidebarSessionGroup
+                    key={themeId}
+                    groupId={themeId}
+                    themeObj={themeObj}
+                    sessions={themeSessions}
+                    currentSessionId={currentSessionId}
+                    onOpen={handleOpenSession}
+                    onEdit={startEditing}
+                    onDelete={setSessionToDelete}
+                    onThemeChange={handleThemeChange}
+                    editingId={editingId}
+                    newTitle={newTitle}
+                    onTitleChange={(e) => setNewTitle(e.target.value)}
+                    onSaveEdit={handleRename}
+                    onCancelEdit={() => setEditingId(null)}
+                    onKeyPress={handleKeyPress}
+                  />
+                );
+              })}
             </div>
           )}
         </div>

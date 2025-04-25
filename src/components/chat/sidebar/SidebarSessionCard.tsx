@@ -107,6 +107,7 @@ export function SidebarSessionCard({
                 <DropdownMenuItem 
                   onClick={(e) => {
                     e.preventDefault();
+                    e.stopPropagation();
                     onDelete();
                   }}
                   className="cursor-pointer text-red-600 hover:text-red-600 hover:bg-red-50"

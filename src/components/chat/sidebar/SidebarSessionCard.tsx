@@ -26,11 +26,11 @@ export function SidebarSessionCard({
       <button
         onClick={onOpen}
         className={`
-          relative flex items-center justify-between gap-3 px-3 py-2 w-full
+          relative flex flex-col gap-2 px-3 py-2 w-full
           bg-white border-2 border-pump-gray/10 rounded-2xl shadow-md
           transition-all duration-200
           hover:scale-105 hover:shadow-xl 
-          group/card min-h-[64px]
+          group/card min-h-[80px]
           ${isActive ? "ring-2 ring-pump-purple" : ""}
         `}
         style={{
@@ -38,7 +38,7 @@ export function SidebarSessionCard({
           boxShadow: "0 8px 18px 0 rgba(54,40,90,0.06)"
         }}
       >
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 w-full">
           <span 
             className="flex items-center justify-center w-8 h-8 rounded-full"
             style={{
@@ -56,10 +56,9 @@ export function SidebarSessionCard({
         </div>
         
         <div className="
-          absolute bottom-2 right-2
+          w-full flex justify-end items-center gap-2
           opacity-0 group-hover/card:opacity-100 
-          transition-opacity 
-          flex items-center gap-2
+          transition-opacity
         ">
           <ThemeSelect 
             sessionId={session.id} 

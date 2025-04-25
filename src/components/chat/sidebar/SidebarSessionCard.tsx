@@ -1,6 +1,5 @@
 
 import { MessageCircle, Menu, Pencil, Trash2 } from "lucide-react"
-import { ThemeSelect } from "@/components/chat/ThemeSelect"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,27 +31,22 @@ export function SidebarSessionCard({
       <button
         onClick={onOpen}
         className={`
-          relative flex flex-col px-3 py-2 w-full
-          border-2 border-transparent rounded-2xl
-          transition-all duration-200
-          hover:scale-105 hover:shadow-xl 
-          group/card min-h-[80px]
-          ${isActive ? "ring-2 ring-pump-purple" : ""}
+          relative flex items-center w-full px-2 py-1.5
+          rounded-lg transition-all duration-200
+          hover:bg-pump-gray-light/50
+          ${isActive ? "bg-pump-gray-light/30" : ""}
         `}
-        style={{
-          boxShadow: isActive ? "0 8px 18px 0 rgba(54,40,90,0.06)" : "none"
-        }}
       >
-        <div className="flex items-center justify-between w-full">
-          <div className="flex items-center gap-2 flex-grow overflow-hidden">
+        <div className="flex items-center justify-between w-full gap-2">
+          <div className="flex items-center gap-2 flex-grow min-w-0">
             <span 
-              className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full"
+              className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full"
               style={{
                 background: themeObj?.color ? `${themeObj.color}20` : "#f4ebfd"
               }}
             >
               <MessageCircle
-                className="w-5 h-5"
+                className="w-4 h-4"
                 style={{ color: themeObj?.color || "#7E1CC6" }}
               />
             </span>

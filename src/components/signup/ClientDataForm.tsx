@@ -114,7 +114,7 @@ export function ClientDataForm() {
             />
           </div>
 
-          <div>
+          <div className="mb-8">
             <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
               Confirme a Senha *
             </label>

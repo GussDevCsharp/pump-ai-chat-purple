@@ -35,11 +35,16 @@ export function DeleteSessionDialog({ isOpen, onClose, onConfirm }: DeleteSessio
   };
 
   return (
-    <AlertDialog open={isOpen} onOpenChange={(open) => {
-      if (!open && !isDeleting) { // Só fecha se não estiver excluindo
-        onClose();
-      }
-    }}>
+    <AlertDialog 
+      open={isOpen} 
+      onOpenChange={(open) => {
+        if (!open) {
+          // Quando o diálogo é fechado por qualquer meio, garantir que saímos do estado de exclusão
+          setIsDeleting(false);
+          onClose();
+        }
+      }}
+    >
       <AlertDialogContent className="bg-offwhite">
         <AlertDialogHeader>
           <AlertDialogTitle>Excluir conversa</AlertDialogTitle>
@@ -48,9 +53,20 @@ export function DeleteSessionDialog({ isOpen, onClose, onConfirm }: DeleteSessio
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isDeleting}>Cancelar</AlertDialogCancel>
+          <AlertDialogCancel 
+            disabled={isDeleting}
+            onClick={() => {
+              setIsDeleting(false);
+              onClose();
+            }}
+          >
+            Cancelar
+          </AlertDialogCancel>
           <AlertDialogAction 
-            onClick={handleConfirm} 
+            onClick={(e) => {
+              e.preventDefault(); // Impedir comportamento padrão
+              handleConfirm();
+            }} 
             className="bg-red-500 hover:bg-red-600"
             disabled={isDeleting}
           >

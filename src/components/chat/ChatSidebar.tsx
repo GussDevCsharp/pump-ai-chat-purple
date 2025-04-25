@@ -31,6 +31,7 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
   }
 
   const handleOpenSession = (sessionId: string) => {
+    if (editingId) return; // Não navega se estiver editando
     navigate(`/chat?session=${sessionId}`)
     if (onClose) onClose()
   }
@@ -88,6 +89,10 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
     } else if (e.key === 'Escape') {
       setEditingId(null)
     }
+  }
+
+  const handleCancelEdit = () => {
+    setEditingId(null)
   }
 
   // Group sessions by theme for display
@@ -151,7 +156,7 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
                     newTitle={newTitle}
                     onTitleChange={(e) => setNewTitle(e.target.value)}
                     onSaveEdit={handleRename}
-                    onCancelEdit={() => setEditingId(null)}
+                    onCancelEdit={handleCancelEdit}
                     onKeyPress={handleKeyPress}
                   />
                 );

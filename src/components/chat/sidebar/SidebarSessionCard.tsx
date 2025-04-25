@@ -14,8 +14,8 @@ interface SidebarSessionCardProps {
   session: any;
   themeObj: any;
   isActive: boolean;
-  isEditing?: boolean; // Made optional with default value
-  newTitle?: string; // Made optional
+  isEditing?: boolean;
+  newTitle?: string;
   onOpen: () => void;
   onEdit: () => void;
   onDelete: () => void;
@@ -30,8 +30,8 @@ export function SidebarSessionCard({
   session,
   themeObj,
   isActive,
-  isEditing = false, // Default value added
-  newTitle = "", // Default value added
+  isEditing = false,
+  newTitle = "",
   onOpen,
   onEdit,
   onDelete,
@@ -75,7 +75,12 @@ export function SidebarSessionCard({
 
   const handleThemeButtonClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setShowThemeSelector(true);
+    setShowThemeSelector(prev => !prev);
+  };
+
+  // Evita propagação do clique em elementos específicos
+  const handleActionClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
   };
 
   return (
@@ -109,14 +114,16 @@ export function SidebarSessionCard({
           
           <div className="flex items-center gap-1">
             {showThemeSelector ? (
-              <ThemeSelect 
-                sessionId={session.id} 
-                currentTheme={session.theme_id}
-                onThemeChange={() => {
-                  onThemeChange();
-                  setShowThemeSelector(false);
-                }}
-              />
+              <div onClick={handleActionClick}>
+                <ThemeSelect 
+                  sessionId={session.id} 
+                  currentTheme={session.theme_id}
+                  onThemeChange={() => {
+                    onThemeChange();
+                    setShowThemeSelector(false);
+                  }}
+                />
+              </div>
             ) : (
               <button
                 type="button"
@@ -129,10 +136,9 @@ export function SidebarSessionCard({
             )}
             
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+              <DropdownMenuTrigger asChild onClick={handleActionClick}>
                 <button
                   type="button"
-                  onClick={(e) => e.stopPropagation()}
                   className="p-1 rounded hover:bg-pump-gray-light"
                   aria-label="Menu de opções"
                 >
@@ -142,6 +148,7 @@ export function SidebarSessionCard({
               <DropdownMenuContent align="end" className="w-48 bg-white">
                 <DropdownMenuItem onClick={(e) => {
                   e.preventDefault();
+                  e.stopPropagation();
                   onEdit();
                 }} className="cursor-pointer">
                   <Pencil className="w-4 h-4 mr-2" />
@@ -150,6 +157,7 @@ export function SidebarSessionCard({
                 <DropdownMenuItem 
                   onClick={(e) => {
                     e.preventDefault();
+                    e.stopPropagation();
                     onDelete();
                   }}
                   className="cursor-pointer text-red-600 hover:text-red-600 hover:bg-red-50"

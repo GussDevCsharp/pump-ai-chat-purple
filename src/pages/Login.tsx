@@ -1,4 +1,3 @@
-
 import React, { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
@@ -6,6 +5,7 @@ import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
 import { supabase } from "@/integrations/supabase/client"
 import NeuralBackground from "@/components/effects/NeuralBackground"
+import AnimatedNeuralHeading from "@/components/effects/AnimatedNeuralHeading"
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -131,9 +131,7 @@ export default function Login() {
       <div className="w-1/2 bg-offwhite relative overflow-hidden">
         <NeuralBackground />
         <div className="relative z-[5] flex items-center justify-center h-full">
-          <h1 className="text-5xl font-bold text-pump-purple text-center leading-tight max-w-lg">
-            A Nova inteligência da sua empresa
-          </h1>
+          <AnimatedNeuralHeading text="A Nova inteligência da sua empresa" />
         </div>
       </div>
     </div>

@@ -1,4 +1,3 @@
-
 import React, { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
@@ -46,7 +45,7 @@ export default function Login() {
   return (
     <div className="min-h-screen flex">
       {/* Login Column */}
-      <div className="w-1/2 bg-offwhite flex items-center justify-center px-4 sm:px-6 lg:px-8">
+      <div className="w-1/2 bg-offwhite flex items-center justify-center px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-md w-full bg-white/85 shadow-lg rounded-xl p-8">
           <div className="text-center">
             <Link to="/">
@@ -130,7 +129,7 @@ export default function Login() {
       {/* Effect Column */}
       <div className="w-1/2 bg-offwhite relative overflow-hidden">
         <NeuralBackground />
-        <div className="relative z-10 flex items-center justify-center h-full">
+        <div className="relative z-[5] flex items-center justify-center h-full">
           <h1 className="text-5xl font-bold text-pump-purple text-center leading-tight max-w-lg">
             A nova inteligência para empresas
           </h1>

@@ -1,10 +1,12 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { SignupForm } from "./SignupForm";
+import { SignupPlansStep } from "./SignupPlansStep";
 import { SignupCompanyProfileStep } from "./SignupCompanyProfileStep";
 import { SignupProfileFields } from "./SignupProfileFields";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { SignupPlansStep } from "./SignupPlansStep";
 
 type Plan = {
   id: string;
@@ -185,85 +187,40 @@ export function SignupStepperFlow({ onStepChange }: SignupStepperFlowProps) {
 
       {step === 1 && (
         <div className="mt-10 max-w-xl mx-auto">
-          {/* Removing the SignupForm component with incorrect props and using native inputs instead */}
-          <form className="bg-white rounded shadow p-8">
-            <h3 className="font-semibold text-lg mb-6 text-center text-gray-900">
-              Cadastro Básico
-            </h3>
-            <div className="space-y-5">
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                  Email *
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  placeholder="seu@email.com"
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-                  disabled={isLoading}
-                  required
-                />
-              </div>
-              
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                  Senha *
-                </label>
-                <input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-                  disabled={isLoading}
-                  required
-                />
-              </div>
-              
-              <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
-                  Confirmar Senha *
-                </label>
-                <input
-                  id="confirmPassword"
-                  type="password"
-                  value={confirmPassword}
-                  onChange={e => setConfirmPassword(e.target.value)}
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-                  disabled={isLoading}
-                  required
-                />
-              </div>
-            </div>
-            
-            <div className="flex gap-2 mt-6">
-              <Button 
-                variant="outline" 
-                className="flex-1 text-pump-purple" 
-                onClick={() => setStep(prev => prev - 1)} 
-                disabled={isLoading}
-                type="button"
-              >
-                Voltar
-              </Button>
-              <Button
-                className="flex-1 bg-pump-purple text-white"
-                onClick={() => setStep(prev => prev + 1)}
-                type="button"
-                disabled={
-                  !email ||
-                  !password ||
-                  !confirmPassword ||
-                  password !== confirmPassword ||
-                  isLoading
-                }
-              >
-                Próxima etapa: Perfil da Empresa
-              </Button>
-            </div>
-          </form>
+          <SignupForm
+            email={email}
+            setEmail={setEmail}
+            password={password}
+            setPassword={setPassword}
+            confirmPassword={confirmPassword}
+            setConfirmPassword={setConfirmPassword}
+            isLoading={isLoading}
+            setIsLoading={setIsLoading}
+            hidePayment
+          />
+          <div className="flex gap-2 mt-6">
+            <Button 
+              variant="outline" 
+              className="flex-1 text-pump-purple" 
+              onClick={() => setStep(prev => prev - 1)} 
+              disabled={isLoading}
+            >
+              Voltar
+            </Button>
+            <Button
+              className="flex-1 bg-pump-purple text-white"
+              onClick={() => setStep(prev => prev + 1)}
+              disabled={
+                !email ||
+                !password ||
+                !confirmPassword ||
+                password !== confirmPassword ||
+                isLoading
+              }
+            >
+              Próxima etapa: Perfil da Empresa
+            </Button>
+          </div>
         </div>
       )}
 

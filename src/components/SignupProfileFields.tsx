@@ -1,82 +1,75 @@
 
-import React from 'react';
-import { Input } from './ui/input';
+import React from "react";
+import { Input } from "@/components/ui/input";
 
 interface SignupProfileFieldsProps {
   firstName: string;
-  setFirstName: (value: string) => void;
   lastName: string;
-  setLastName: (value: string) => void;
   cpf: string;
-  setCpf: (value: string) => void;
-  disabled?: boolean;
+  disabled: boolean;
+  setFirstName: (val: string) => void;
+  setLastName: (val: string) => void;
+  setCpf: (val: string) => void;
 }
 
 export function SignupProfileFields({
   firstName,
-  setFirstName,
   lastName,
-  setLastName,
   cpf,
+  disabled,
+  setFirstName,
+  setLastName,
   setCpf,
-  disabled = false
 }: SignupProfileFieldsProps) {
-  const handleCpfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value.replace(/\D/g, '');
-    if (value.length <= 11) {
-      value = value
-        .replace(/(\d{3})(\d)/, '$1.$2')
-        .replace(/(\d{3})(\d)/, '$1.$2')
-        .replace(/(\d{3})(\d{1,2})$/, '$1-$2')
-        .replace(/(-\d{2})\d+?$/, '$1');
-    }
-    setCpf(value);
-  };
-
   return (
-    <div className="space-y-4">
+    <>
       <div>
-        <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
           Nome *
         </label>
         <Input
           id="firstName"
-          value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
-          disabled={disabled}
-          placeholder="Digite seu nome"
+          name="firstName"
+          type="text"
           required
+          value={firstName}
+          onChange={e => setFirstName(e.target.value)}
+          className="mt-1"
+          disabled={disabled}
         />
       </div>
-      
       <div>
-        <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
           Sobrenome *
         </label>
         <Input
           id="lastName"
-          value={lastName}
-          onChange={(e) => setLastName(e.target.value)}
-          disabled={disabled}
-          placeholder="Digite seu sobrenome"
+          name="lastName"
+          type="text"
           required
+          value={lastName}
+          onChange={e => setLastName(e.target.value)}
+          className="mt-1"
+          disabled={disabled}
         />
       </div>
-      
       <div>
-        <label htmlFor="cpf" className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor="cpf" className="block text-sm font-medium text-gray-700">
           CPF *
         </label>
         <Input
           id="cpf"
-          value={cpf}
-          onChange={handleCpfChange}
-          disabled={disabled}
-          placeholder="000.000.000-00"
-          maxLength={14}
+          name="cpf"
+          type="text"
           required
+          value={cpf}
+          onChange={e => setCpf(e.target.value)}
+          className="mt-1"
+          disabled={disabled}
+          maxLength={14}
+          placeholder="000.000.000-00"
         />
       </div>
-    </div>
+    </>
   );
 }

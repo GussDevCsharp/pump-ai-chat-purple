@@ -7,46 +7,47 @@ const AnimatedNeuralHeading = ({ text }: { text: string }) => {
   const words = text.split(' ');
 
   useEffect(() => {
-    let timeoutId: NodeJS.Timeout;
+    let timeoutIds: NodeJS.Timeout[] = [];
     
     const animateText = async () => {
       setDisplayText('');
+      let currentText = '';
       
       // Animate each word with a neural-like effect
       for (let wordIndex = 0; wordIndex < words.length; wordIndex++) {
         const word = words[wordIndex];
         
-        // First show scrambled letters
-        for (let i = 0; i < 3; i++) {
-          await new Promise(resolve => {
-            timeoutId = setTimeout(() => {
-              setDisplayText(prev => {
-                const scrambled = words.map((w, idx) => 
-                  idx === wordIndex 
-                    ? Array(w.length).fill('').map(() => 
-                        String.fromCharCode(Math.floor(Math.random() * 26) + 65)
-                      ).join('')
-                    : idx < wordIndex ? w : ''
-                ).join(' ');
-                return scrambled;
-              });
-              resolve(null);
-            }, 50);
-          });
+        // First show scrambled letters for the current word
+        for (let i = 0; i < 5; i++) {
+          const id = setTimeout(() => {
+            const currentWords = currentText.split(' ').filter(Boolean);
+            
+            // Generate scrambled version of the current word
+            const scrambledWord = Array(word.length).fill('').map(() => 
+              String.fromCharCode(Math.floor(Math.random() * 26) + 97)
+            ).join('');
+            
+            // Combine previous words with the scrambled current word
+            const newText = [...currentWords, scrambledWord].join(' ');
+            setDisplayText(newText);
+          }, 80 * i + (wordIndex * 500));
+          
+          timeoutIds.push(id);
         }
         
         // Then show the actual word
-        await new Promise(resolve => {
-          timeoutId = setTimeout(() => {
-            setDisplayText(prev => {
-              return words.slice(0, wordIndex + 1).join(' ');
-            });
-            resolve(null);
-          }, 100);
-        });
+        const revealId = setTimeout(() => {
+          currentText = words.slice(0, wordIndex + 1).join(' ');
+          setDisplayText(currentText);
+          
+          // If this is the last word, mark animation as complete
+          if (wordIndex === words.length - 1) {
+            setIsAnimating(false);
+          }
+        }, 80 * 5 + (wordIndex * 500));
+        
+        timeoutIds.push(revealId);
       }
-      
-      setIsAnimating(false);
     };
 
     if (isAnimating) {
@@ -54,18 +55,16 @@ const AnimatedNeuralHeading = ({ text }: { text: string }) => {
     }
 
     return () => {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
+      timeoutIds.forEach(id => clearTimeout(id));
     };
-  }, [isAnimating, words]);
+  }, []);
 
   return (
     <h1 
       className={`text-5xl font-bold text-pump-purple text-center leading-tight max-w-lg transition-opacity duration-300
-        ${isAnimating ? 'opacity-80' : 'opacity-100'}`}
+        ${isAnimating ? 'opacity-90' : 'opacity-100'}`}
     >
-      {displayText || text}
+      {displayText || text.charAt(0)}
     </h1>
   );
 };

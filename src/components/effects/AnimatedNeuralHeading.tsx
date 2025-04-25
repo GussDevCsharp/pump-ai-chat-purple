@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 
 const AnimatedNeuralHeading = ({ text }: { text: string }) => {
@@ -61,16 +60,7 @@ const AnimatedNeuralHeading = ({ text }: { text: string }) => {
 
   return (
     <h1 
-      className={`
-        relative text-5xl font-bold text-pump-purple text-center leading-tight max-w-lg
-        transition-opacity duration-300 ${isAnimating ? 'opacity-90' : 'opacity-100'}
-        before:content-[attr(data-text)] before:absolute before:left-0 before:top-0 
-        before:w-full before:h-full before:text-pump-purple
-        after:content-[attr(data-text)] after:absolute after:left-0 after:top-0
-        after:w-full after:h-full after:text-pump-purple
-        animate-glitch
-      `}
-      data-text={displayText || text.charAt(0)}
+      className="text-5xl font-bold text-pump-purple text-center leading-tight max-w-lg transition-opacity duration-300"
     >
       {displayText || text.charAt(0)}
     </h1>

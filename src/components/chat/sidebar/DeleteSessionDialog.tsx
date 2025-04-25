@@ -9,7 +9,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { Button } from "@/components/ui/button";
 
 interface DeleteSessionDialogProps {
   isOpen: boolean;
@@ -19,9 +20,21 @@ interface DeleteSessionDialogProps {
 
 export function DeleteSessionDialog({ isOpen, onClose, onConfirm }: DeleteSessionDialogProps) {
   const [isDeleting, setIsDeleting] = useState(false);
+  const confirmButtonRef = useRef<HTMLButtonElement>(null);
+  
+  // Reset state when dialog opens/closes
+  useEffect(() => {
+    if (!isOpen) {
+      // Small timeout to ensure React finishes any pending updates
+      const timeout = setTimeout(() => {
+        setIsDeleting(false);
+      }, 100);
+      return () => clearTimeout(timeout);
+    }
+  }, [isOpen]);
 
   const handleConfirm = async () => {
-    if (isDeleting) return; // Prevenir múltiplos cliques
+    if (isDeleting) return; // Prevent multiple clicks
     
     try {
       setIsDeleting(true);
@@ -29,9 +42,17 @@ export function DeleteSessionDialog({ isOpen, onClose, onConfirm }: DeleteSessio
     } catch (error) {
       console.error("Erro ao excluir sessão:", error);
     } finally {
-      setIsDeleting(false);
-      onClose(); // Garantir que o diálogo seja fechado mesmo se houver erro
+      // Use a short timeout to ensure React has time to process state updates
+      setTimeout(() => {
+        setIsDeleting(false);
+        onClose(); // Close the dialog explicitly
+      }, 10);
     }
+  };
+
+  const handleCancel = () => {
+    setIsDeleting(false);
+    onClose();
   };
 
   return (
@@ -39,9 +60,11 @@ export function DeleteSessionDialog({ isOpen, onClose, onConfirm }: DeleteSessio
       open={isOpen} 
       onOpenChange={(open) => {
         if (!open) {
-          // Quando o diálogo é fechado por qualquer meio, garantir que saímos do estado de exclusão
-          setIsDeleting(false);
-          onClose();
+          // When dialog is closed, ensure we reset states properly
+          setTimeout(() => {
+            setIsDeleting(false);
+            onClose();
+          }, 10);
         }
       }}
     >
@@ -53,25 +76,24 @@ export function DeleteSessionDialog({ isOpen, onClose, onConfirm }: DeleteSessio
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel 
+          <Button
+            variant="outline"
+            onClick={handleCancel}
             disabled={isDeleting}
-            onClick={() => {
-              setIsDeleting(false);
-              onClose();
-            }}
+            type="button"
+            className="mt-2 sm:mt-0"
           >
             Cancelar
-          </AlertDialogCancel>
-          <AlertDialogAction 
-            onClick={(e) => {
-              e.preventDefault(); // Impedir comportamento padrão
-              handleConfirm();
-            }} 
+          </Button>
+          <Button 
+            ref={confirmButtonRef}
+            onClick={handleConfirm} 
             className="bg-red-500 hover:bg-red-600"
             disabled={isDeleting}
+            type="button"
           >
             {isDeleting ? "Excluindo..." : "Excluir"}
-          </AlertDialogAction>
+          </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

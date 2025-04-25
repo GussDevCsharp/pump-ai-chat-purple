@@ -76,13 +76,15 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
     setIsDeletingSession(true);
     
     try {
-      let isCurrentSession = sessionToDelete === currentSessionId;
+      const isCurrentSession = sessionToDelete === currentSessionId;
       const isDeleted = await deleteSession(sessionToDelete);
       
       if (isDeleted && isCurrentSession) {
-        // Se a sessão atual foi excluída, navegue para a página inicial do chat
+        // Use replace for smoother navigation without adding to history
         navigate('/chat', { replace: true });
       }
+      
+      await refreshSessions();
       
       toast({
         description: "Conversa excluída com sucesso",
@@ -94,15 +96,17 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
         description: "Erro ao excluir a conversa",
       });
     } finally {
-      // Garantir que os estados sejam redefinidos corretamente
-      setSessionToDelete(null);
-      setIsDeletingSession(false);
+      // Clear delete states
+      handleCloseDeleteDialog();
     }
   }
 
   const handleCloseDeleteDialog = () => {
-    setSessionToDelete(null);
-    setIsDeletingSession(false);
+    // Use a small timeout to ensure React has time to process state updates
+    setTimeout(() => {
+      setSessionToDelete(null);
+      setIsDeletingSession(false);
+    }, 10);
   }
 
   const handleKeyPress = (e: React.KeyboardEvent, id: string) => {

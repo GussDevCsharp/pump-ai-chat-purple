@@ -121,6 +121,13 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
     }
   }
 
+  // Resetar o modo de edição se o componente for desmontado ou quando o usuário clicar para fechar o sidebar
+  useEffect(() => {
+    return () => {
+      setEditingId(null);
+    };
+  }, []);
+
   return (
     <>
       <div className="w-64 max-w-full h-full md:h-screen bg-offwhite border-r border-pump-gray/20 p-4 flex flex-col">
@@ -128,7 +135,10 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
           <button
             type="button"
             className="md:hidden self-end mb-2 p-2 rounded hover:bg-pump-gray-light transition"
-            onClick={onClose}
+            onClick={() => {
+              setEditingId(null);
+              onClose?.();
+            }}
             aria-label="Fechar menu"
           >
             <span className="text-pump-purple text-2xl font-bold">&times;</span>

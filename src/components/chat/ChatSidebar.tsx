@@ -73,13 +73,18 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
   const handleDeleteConfirm = async () => {
     if (!sessionToDelete || isDeletingSession) return;
     
+    setIsDeletingSession(true);
+    
     try {
-      setIsDeletingSession(true);
       const isDeleted = await deleteSession(sessionToDelete);
       
       if (isDeleted && sessionToDelete === currentSessionId) {
         navigate('/chat');
       }
+      
+      toast({
+        description: "Conversa excluída com sucesso",
+      });
     } catch (error) {
       console.error('Error deleting session:', error);
       toast({
@@ -87,9 +92,9 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
         description: "Erro ao excluir a conversa",
       });
     } finally {
+      // Garantir que os estados sejam redefinidos corretamente
       setSessionToDelete(null);
       setIsDeletingSession(false);
-      if (onClose) onClose();
     }
   }
 

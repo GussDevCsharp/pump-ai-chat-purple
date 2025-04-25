@@ -9,6 +9,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useState } from "react";
 
 interface DeleteSessionDialogProps {
   isOpen: boolean;
@@ -17,17 +18,28 @@ interface DeleteSessionDialogProps {
 }
 
 export function DeleteSessionDialog({ isOpen, onClose, onConfirm }: DeleteSessionDialogProps) {
+  const [isDeleting, setIsDeleting] = useState(false);
+
   const handleConfirm = async () => {
+    if (isDeleting) return; // Prevenir múltiplos cliques
+    
     try {
+      setIsDeleting(true);
       await onConfirm();
+    } catch (error) {
+      console.error("Erro ao excluir sessão:", error);
     } finally {
-      // Garantir que o diálogo seja fechado mesmo se houver erro
-      onClose();
+      setIsDeleting(false);
+      onClose(); // Garantir que o diálogo seja fechado mesmo se houver erro
     }
   };
 
   return (
-    <AlertDialog open={isOpen} onOpenChange={onClose}>
+    <AlertDialog open={isOpen} onOpenChange={(open) => {
+      if (!open && !isDeleting) { // Só fecha se não estiver excluindo
+        onClose();
+      }
+    }}>
       <AlertDialogContent className="bg-offwhite">
         <AlertDialogHeader>
           <AlertDialogTitle>Excluir conversa</AlertDialogTitle>
@@ -36,9 +48,13 @@ export function DeleteSessionDialog({ isOpen, onClose, onConfirm }: DeleteSessio
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancelar</AlertDialogCancel>
-          <AlertDialogAction onClick={handleConfirm} className="bg-red-500 hover:bg-red-600">
-            Excluir
+          <AlertDialogCancel disabled={isDeleting}>Cancelar</AlertDialogCancel>
+          <AlertDialogAction 
+            onClick={handleConfirm} 
+            className="bg-red-500 hover:bg-red-600"
+            disabled={isDeleting}
+          >
+            {isDeleting ? "Excluindo..." : "Excluir"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

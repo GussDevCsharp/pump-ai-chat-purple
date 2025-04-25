@@ -29,7 +29,7 @@ const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
         flex flex-col h-[340px] bg-white rounded-2xl border-2 border-pump-gray/10 hover:shadow-2xl 
         transform transition-all duration-200 cursor-pointer
         hover:scale-105 shadow-md group
-        px-4 py-3 font-sans
+        px-4 py-3
       `}
       style={{
         borderColor: theme.color || "#e9e3fc"
@@ -54,7 +54,7 @@ const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
             <h3 className="font-normal text-xl text-gray-900 leading-tight">{theme.name}</h3>
           </div>
           {theme.description && (
-            <p className="text-center text-sm text-pump-gray mt-0 mb-2 px-1 min-h-[28px]">{theme.description}</p>
+            <p className="text-sm text-pump-gray mt-2 mb-2 px-1 max-h-[40px] overflow-hidden">{theme.description}</p>
           )}
         </div>
         <div className="flex flex-col gap-1 mt-1 flex-1 justify-start min-h-[74px]">
@@ -106,23 +106,23 @@ export default function Themes() {
   };
 
   return (
-    <div className="min-h-screen bg-offwhite font-sans">
+    <div className="min-h-screen bg-offwhite">
       <Header />
-      <main className="w-full px-2 sm:px-4 md:px-8 py-8 flex flex-col items-center font-sans">
-        <div className="w-full bg-white/90 rounded-2xl shadow-lg p-7 md:p-12 flex flex-col gap-10 font-sans">
+      <main className="w-full px-2 sm:px-4 md:px-8 py-8 flex flex-col items-center">
+        <div className="w-full bg-white/90 rounded-2xl shadow-lg p-7 md:p-12 flex flex-col gap-10">
           <div className="flex flex-col md:flex-row justify-between items-start gap-8 mb-8">
             <div className="w-full text-left">
-              <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-3 font-sans">
+              <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-3">
                 Central de Controle
               </h1>
-              <p className="text-lg text-pump-gray mb-6 font-sans">
+              <p className="text-lg text-pump-gray mb-6">
                 Gerencie seus temas, chats e configurações de forma centralizada.
               </p>
               <div className="flex gap-4">
                 <Button 
                   onClick={handleNewChat}
                   size="lg"
-                  className="bg-pump-purple hover:bg-pump-purple/90 text-white rounded-lg px-7 py-3 text-lg font-sans"
+                  className="bg-pump-purple hover:bg-pump-purple/90 text-white rounded-lg px-7 py-3 text-lg"
                 >
                   <MessageCircle className="w-5 h-5 mr-2" />
                   Novo Chat
@@ -131,11 +131,11 @@ export default function Themes() {
             </div>
           </div>
           {isLoading ? (
-            <div className="flex justify-center items-center h-40 font-sans">
+            <div className="flex justify-center items-center h-40">
               <p className="text-pump-gray">Carregando temas...</p>
             </div>
           ) : themes.length === 0 ? (
-            <div className="text-center p-8 font-sans">
+            <div className="text-center p-8">
               <p className="text-pump-gray">Nenhum tema encontrado. Você pode criar um novo tema ou iniciar uma conversa geral.</p>
             </div>
           ) : (

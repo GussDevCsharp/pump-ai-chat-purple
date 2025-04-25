@@ -26,14 +26,16 @@ const NeuralBackground = () => {
       y: number;
       vx: number;
       vy: number;
+      size: number; // Adicionando tamanho dinâmico
     };
 
-    // Criar pontos iniciais
+    // Criar pontos iniciais com tamanhos variados
     const points: Point[] = Array.from({ length: 50 }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
       vx: (Math.random() - 0.5) * 0.5,
       vy: (Math.random() - 0.5) * 0.5,
+      size: 1 + Math.random() * 2, // Tamanho entre 1 e 3
     }));
 
     // Função de animação
@@ -66,16 +68,16 @@ const NeuralBackground = () => {
             ctx.beginPath();
             ctx.moveTo(point.x, point.y);
             ctx.lineTo(otherPoint.x, otherPoint.y);
-            ctx.strokeStyle = `rgba(126, 28, 198, ${0.1 * (1 - distance / 150)})`;
-            ctx.lineWidth = 0.3;
+            ctx.strokeStyle = `rgba(89, 20, 141, ${0.15 * (1 - distance / 150)})`; // Cor mais escura para as linhas
+            ctx.lineWidth = 0.4;
             ctx.stroke();
           }
         });
 
-        // Desenhar pontos
+        // Desenhar pontos com tamanho variável
         ctx.beginPath();
-        ctx.arc(point.x, point.y, 2, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(126, 28, 198, 0.5)';
+        ctx.arc(point.x, point.y, point.size, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(89, 20, 141, 0.6)'; // Cor mais escura para os pontos
         ctx.fill();
       });
 

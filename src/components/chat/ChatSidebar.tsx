@@ -1,3 +1,4 @@
+
 import { MessageCircle, Plus, Pencil, Trash2, UserRound, Settings } from "lucide-react"
 import { useChatSessions } from "@/hooks/useChatSessions"
 import { Button } from "@/components/ui/button"
@@ -52,6 +53,11 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
 
   const handleRename = async (id: string) => {
     try {
+      if (!newTitle.trim()) {
+        setEditingId(null)
+        return
+      }
+      
       const { error } = await supabase
         .from('chat_sessions')
         .update({ title: newTitle })
@@ -71,6 +77,7 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
         variant: "destructive",
         description: "Erro ao renomear a conversa",
       })
+      setEditingId(null)
     }
   }
 
@@ -101,6 +108,18 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
     }
     groupedSessions[groupKey].sessions.push(session);
   });
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+  }
+
+  const handleKeyPress = (e: React.KeyboardEvent, id: string) => {
+    if (e.key === 'Enter') {
+      handleRename(id);
+    } else if (e.key === 'Escape') {
+      handleCancelEdit();
+    }
+  }
 
   return (
     <>
@@ -149,6 +168,12 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
                   onEdit={startEditing}
                   onDelete={setSessionToDelete}
                   onThemeChange={refreshSessions}
+                  editingId={editingId}
+                  newTitle={newTitle}
+                  onTitleChange={(e) => setNewTitle(e.target.value)}
+                  onSaveEdit={handleRename}
+                  onCancelEdit={handleCancelEdit}
+                  onKeyPress={handleKeyPress}
                 />
               ))}
             </div>

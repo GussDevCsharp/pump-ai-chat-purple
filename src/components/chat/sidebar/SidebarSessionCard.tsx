@@ -67,14 +67,24 @@ export function SidebarSessionCard({
             onThemeChange={onThemeChange}
           />
           <button
-            onClick={e => { e.stopPropagation(); onEdit(); }}
+            onClick={(e) => { 
+              e.stopPropagation(); 
+              e.preventDefault();
+              onEdit(); 
+            }}
             className="rounded hover:bg-pump-gray-light p-1"
+            aria-label="Editar conversa"
           >
             <Pencil className="w-4 h-4 text-pump-gray hover:text-pump-purple" />
           </button>
           <button
-            onClick={e => { e.stopPropagation(); onDelete(); }}
+            onClick={(e) => { 
+              e.stopPropagation(); 
+              e.preventDefault();
+              onDelete(); 
+            }}
             className="rounded hover:bg-red-50 p-1"
+            aria-label="Excluir conversa"
           >
             <Trash2 className="w-4 h-4 text-pump-gray hover:text-red-500" />
           </button>
@@ -83,4 +93,3 @@ export function SidebarSessionCard({
     </div>
   );
 }
-

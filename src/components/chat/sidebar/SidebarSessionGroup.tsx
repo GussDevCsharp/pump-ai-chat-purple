@@ -3,10 +3,23 @@ import { SidebarSessionCard } from "./SidebarSessionCard";
 import { Input } from "@/components/ui/input";
 import { useEffect, useRef } from "react";
 
+interface Session {
+  id: string
+  title: string
+  theme_id?: string | null
+  card_theme?: string | null
+}
+
+interface ThemeObject {
+  id: string
+  name: string
+  color: string | null
+}
+
 export interface SidebarSessionGroupProps {
   groupId: string;
-  themeObj: any;
-  sessions: any[];
+  themeObj: ThemeObject;
+  sessions: Session[];
   currentSessionId: string | null;
   onOpen: (sessionId: string) => void;
   onEdit: (sessionId: string, title: string) => void;
@@ -125,4 +138,3 @@ export function SidebarSessionGroup({
     </div>
   );
 }
-

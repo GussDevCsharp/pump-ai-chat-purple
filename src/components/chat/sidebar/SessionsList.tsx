@@ -2,9 +2,23 @@
 import React from 'react'
 import { SidebarSessionGroup } from './SidebarSessionGroup'
 
+interface Session {
+  id: string
+  title: string
+  theme_id?: string | null
+  card_theme?: string | null
+  created_at: string
+}
+
+interface ThemeObject {
+  id: string
+  name: string
+  color: string | null
+}
+
 interface SessionsListProps {
   isLoading: boolean
-  sessions: any[]
+  sessions: Session[]
   currentSessionId: string | null
   editingId: string | null
   newTitle: string
@@ -34,14 +48,14 @@ export function SessionsList({
   onKeyPress
 }: SessionsListProps) {
   // Group sessions by theme for display
-  const groupedSessions = sessions.reduce((acc: Record<string, any[]>, session) => {
+  const groupedSessions = sessions.reduce((acc: Record<string, Session[]>, session) => {
     const themeId = session.theme_id || 'default';
     if (!acc[themeId]) {
       acc[themeId] = [];
     }
     acc[themeId].push(session);
     return acc;
-  }, {} as Record<string, any[]>);  // Fix: properly type the initial value
+  }, {} as Record<string, Session[]>);
 
   if (isLoading) {
     return (
@@ -62,7 +76,7 @@ export function SessionsList({
   return (
     <div className="flex flex-col gap-4">
       {Object.entries(groupedSessions).map(([themeId, themeSessions]) => {
-        const themeObj = themeSessions[0]?.theme_id ? {
+        const themeObj: ThemeObject = themeSessions[0]?.theme_id ? {
           id: themeSessions[0]?.theme_id,
           name: themeSessions[0]?.card_theme || 'Sem tema',
           color: themeSessions[0]?.card_theme ? '#7E1CC6' : null

@@ -41,7 +41,7 @@ export function SessionsList({
     }
     acc[themeId].push(session);
     return acc;
-  }, {});
+  }, {} as Record<string, any[]>);  // Fix: properly type the initial value
 
   if (isLoading) {
     return (

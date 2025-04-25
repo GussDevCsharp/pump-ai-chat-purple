@@ -13,13 +13,22 @@ import {
 interface DeleteSessionDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirm: () => Promise<void>;
 }
 
 export function DeleteSessionDialog({ isOpen, onClose, onConfirm }: DeleteSessionDialogProps) {
+  const handleConfirm = async () => {
+    try {
+      await onConfirm();
+    } finally {
+      // Garantir que o diálogo seja fechado mesmo se houver erro
+      onClose();
+    }
+  };
+
   return (
     <AlertDialog open={isOpen} onOpenChange={onClose}>
-      <AlertDialogContent>
+      <AlertDialogContent className="bg-offwhite">
         <AlertDialogHeader>
           <AlertDialogTitle>Excluir conversa</AlertDialogTitle>
           <AlertDialogDescription>
@@ -28,7 +37,7 @@ export function DeleteSessionDialog({ isOpen, onClose, onConfirm }: DeleteSessio
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancelar</AlertDialogCancel>
-          <AlertDialogAction onClick={onConfirm} className="bg-red-500 hover:bg-red-600">
+          <AlertDialogAction onClick={handleConfirm} className="bg-red-500 hover:bg-red-600">
             Excluir
           </AlertDialogAction>
         </AlertDialogFooter>

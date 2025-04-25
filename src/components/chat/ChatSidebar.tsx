@@ -17,6 +17,7 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [newTitle, setNewTitle] = useState("")
   const [sessionToDelete, setSessionToDelete] = useState<string | null>(null)
+  const [isDeletingSession, setIsDeletingSession] = useState(false)
   const { toast } = useToast()
 
   useEffect(() => {
@@ -70,15 +71,25 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
   }
 
   const handleDeleteConfirm = async () => {
-    if (sessionToDelete) {
-      const isDeleted = await deleteSession(sessionToDelete)
+    if (!sessionToDelete || isDeletingSession) return;
+    
+    try {
+      setIsDeletingSession(true);
+      const isDeleted = await deleteSession(sessionToDelete);
       
       if (isDeleted && sessionToDelete === currentSessionId) {
-        navigate('/chat')
+        navigate('/chat');
       }
-      
-      setSessionToDelete(null)
-      if (onClose) onClose()
+    } catch (error) {
+      console.error('Error deleting session:', error);
+      toast({
+        variant: "destructive",
+        description: "Erro ao excluir a conversa",
+      });
+    } finally {
+      setSessionToDelete(null);
+      setIsDeletingSession(false);
+      if (onClose) onClose();
     }
   }
 

@@ -1,169 +1,42 @@
 
-import React, { useEffect, useState } from "react";
-import { Card } from "@/components/ui/card";
+import React from "react";
+import { useSignup } from "@/contexts/SignupContext";
 import { Check } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { Card } from "@/components/ui/card";
 
-interface Plan {
-  id: string;
-  name: string;
-  description?: string;
-  price: number;
-  is_paid: boolean;
-  benefits?: string[];
-}
+export function PlanSelectionForm() {
+  const { selectedPlanId, setSelectedPlanId, isLoading } = useSignup();
 
-interface PlanSelectionFormProps {
-  selectedPlanId: string | null;
-  setSelectedPlanId: (id: string | null) => void;
-  isLoading: boolean;
-}
-
-export function PlanSelectionForm({
-  selectedPlanId,
-  setSelectedPlanId,
-  isLoading
-}: PlanSelectionFormProps) {
-  const [plans, setPlans] = useState<Plan[]>([]);
-  const [loadingPlans, setLoadingPlans] = useState(true);
-
-  useEffect(() => {
-    const fetchPlans = async () => {
-      setLoadingPlans(true);
-
-      try {
-        // Buscar planos do Supabase
-        const { data: planData, error: planError } = await supabase
-          .from("pricing")
-          .select("id, name, description, price, is_paid");
-
-        if (planError) {
-          throw planError;
-        }
-
-        if (planData && planData.length > 0) {
-          const plansWithBenefits: Plan[] = [];
-
-          for (const plan of planData) {
-            // Buscar benefícios associados ao plano
-            const { data: benefitMappings, error: benefitError } = await supabase
-              .from("plan_benefit_mappings")
-              .select("benefit_id")
-              .eq("plan_id", plan.id);
-
-            if (benefitError) {
-              console.error(`Erro ao buscar benefícios para o plano ${plan.id}:`, benefitError);
-              continue;
-            }
-
-            let benefitDescriptions: string[] = [];
-            if (benefitMappings && benefitMappings.length > 0) {
-              const benefitIds = benefitMappings.map(mapping => mapping.benefit_id);
-
-              const { data: benefits, error: descriptionsError } = await supabase
-                .from("benefits")
-                .select("description")
-                .in("id", benefitIds);
-
-              if (descriptionsError) {
-                console.error("Erro ao buscar descrições dos benefícios:", descriptionsError);
-              } else if (benefits) {
-                benefitDescriptions = benefits.map(benefit => benefit.description);
-              }
-            }
-
-            plansWithBenefits.push({
-              ...plan,
-              benefits: benefitDescriptions
-            });
-          }
-
-          setPlans(plansWithBenefits);
-          
-          // Selecionar o primeiro plano por padrão se não houver um plano selecionado
-          if (!selectedPlanId && plansWithBenefits.length > 0) {
-            setSelectedPlanId(plansWithBenefits[0].id);
-          }
-        } else {
-          // Planos de demonstração caso não haja planos no banco de dados
-          const demoPlans = [
-            {
-              id: "free-plan",
-              name: "Plano Gratuito",
-              description: "Acesso básico às funcionalidades",
-              price: 0,
-              is_paid: false,
-              benefits: [
-                "Chat especializado para empresa",
-                "Limite de interações diárias: 10",
-                "Agrupamento das conversas por tema empresarial",
-                "Criação do perfil da sua empresa",
-                "Criação do perfil do empresário"
-              ]
-            },
-            {
-              id: "premium-plan",
-              name: "Plano Premium",
-              description: "Acesso completo a todas as funcionalidades",
-              price: 29.90,
-              is_paid: true,
-              benefits: [
-                "Todas as funções do plano gratuito",
-                "Interações ilimitadas",
-                "Suporte prioritário",
-                "Análise de dados avançada",
-                "Integração com outras plataformas"
-              ]
-            }
-          ];
-          
-          setPlans(demoPlans);
-          
-          // Selecionar o primeiro plano por padrão
-          if (!selectedPlanId) {
-            setSelectedPlanId(demoPlans[0].id);
-          }
-          
-          toast.warning("Usando planos de demonstração - Configure no Supabase", { 
-            duration: 5000 
-          });
-        }
-      } catch (error) {
-        console.error("Erro ao buscar planos:", error);
-        toast.error("Erro ao carregar os planos disponíveis");
-        
-        // Carregar planos de demonstração em caso de erro
-        const fallbackPlans = [
-          {
-            id: "free-plan",
-            name: "Plano Gratuito",
-            description: "Acesso básico às funcionalidades",
-            price: 0,
-            is_paid: false,
-            benefits: ["Chat básico", "Limite de interações: 10/dia"]
-          }
-        ];
-        
-        setPlans(fallbackPlans);
-        if (!selectedPlanId) {
-          setSelectedPlanId(fallbackPlans[0].id);
-        }
-      } finally {
-        setLoadingPlans(false);
-      }
-    };
-
-    fetchPlans();
-  }, [selectedPlanId, setSelectedPlanId]);
-
-  if (loadingPlans) {
-    return (
-      <div className="flex justify-center items-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pump-purple"></div>
-      </div>
-    );
-  }
+  const plans = [
+    {
+      id: "free-plan",
+      name: "Plano Gratuito",
+      description: "Acesso básico às funcionalidades",
+      price: 0,
+      is_paid: false,
+      benefits: [
+        "Chat especializado para empresa",
+        "Limite de interações diárias: 10",
+        "Agrupamento das conversas por tema empresarial",
+        "Criação do perfil da sua empresa",
+        "Criação do perfil do empresário"
+      ]
+    },
+    {
+      id: "premium-plan",
+      name: "Plano Premium",
+      description: "Acesso completo a todas as funcionalidades",
+      price: 29.90,
+      is_paid: true,
+      benefits: [
+        "Todas as funções do plano gratuito",
+        "Interações ilimitadas",
+        "Suporte prioritário",
+        "Análise de dados avançada",
+        "Integração com outras plataformas"
+      ]
+    }
+  ];
 
   return (
     <div className="space-y-6">

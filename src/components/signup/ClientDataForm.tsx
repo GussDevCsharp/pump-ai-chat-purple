@@ -1,39 +1,25 @@
 
 import React from "react";
 import { Input } from "@/components/ui/input";
+import { useSignup } from "@/contexts/SignupContext";
 
-interface ClientDataFormProps {
-  email: string;
-  setEmail: (value: string) => void;
-  password: string;
-  setPassword: (value: string) => void;
-  confirmPassword: string;
-  setConfirmPassword: (value: string) => void;
-  firstName: string;
-  setFirstName: (value: string) => void;
-  lastName: string;
-  setLastName: (value: string) => void;
-  cpf: string;
-  setCpf: (value: string) => void;
-  isLoading: boolean;
-}
+export function ClientDataForm() {
+  const {
+    email,
+    setEmail,
+    password,
+    setPassword,
+    confirmPassword,
+    setConfirmPassword,
+    firstName,
+    setFirstName,
+    lastName,
+    setLastName,
+    cpf,
+    setCpf,
+    isLoading
+  } = useSignup();
 
-export function ClientDataForm({
-  email,
-  setEmail,
-  password,
-  setPassword,
-  confirmPassword,
-  setConfirmPassword,
-  firstName,
-  setFirstName,
-  lastName,
-  setLastName,
-  cpf,
-  setCpf,
-  isLoading
-}: ClientDataFormProps) {
-  // Função para formatar CPF ao digitar
   const handleCpfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value.replace(/\D/g, '');
     if (value.length <= 11) {

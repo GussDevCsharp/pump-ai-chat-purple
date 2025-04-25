@@ -1,40 +1,34 @@
 
 import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { toast } from "sonner";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 import { Check, CreditCard, User } from "lucide-react";
+import { toast } from "sonner";
+import { SignupProvider, useSignup } from "@/contexts/SignupContext";
 import { ClientDataForm } from "./signup/ClientDataForm";
 import { PlanSelectionForm } from "./signup/PlanSelectionForm";
 import { PaymentMethodForm } from "./signup/PaymentMethodForm";
-import { supabase } from "@/integrations/supabase/client";
+import { FormNavigation } from "./signup/FormNavigation";
+import { useSignupSubmit } from "@/hooks/useSignupSubmit";
 
-export function SignupForm() {
-  const navigate = useNavigate();
+function SignupFormContent() {
   const [activeTab, setActiveTab] = useState("client-data");
-  const [isLoading, setIsLoading] = useState(false);
-
-  // Dados do cliente
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [cpf, setCpf] = useState("");
-
-  // Dados do plano
-  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
-
-  // Dados de pagamento
-  const [cardNumber, setCardNumber] = useState("");
-  const [cardExpiry, setCardExpiry] = useState("");
-  const [cardCvc, setCardCvc] = useState("");
+  const { handleSubmit } = useSignupSubmit();
+  const {
+    email,
+    password,
+    confirmPassword,
+    firstName,
+    lastName,
+    cpf,
+    selectedPlanId,
+    isLoading
+  } = useSignup();
 
   const handleNextTab = () => {
     if (activeTab === "client-data") {
-      // Validação de dados do cliente
       if (!email || !password || !confirmPassword || !firstName || !lastName || !cpf) {
         toast.error("Por favor, preencha todos os campos obrigatórios");
         return;
@@ -46,8 +40,7 @@ export function SignupForm() {
       }
       
       setActiveTab("plan-selection");
-    } else if (activeTab === "plan-selection") {
-      // Validação de seleção de plano
+    } else if (activeTab === "plan-selection" && selectedPlanId !== 'free-plan') {
       if (!selectedPlanId) {
         toast.error("Por favor, selecione um plano");
         return;
@@ -62,52 +55,6 @@ export function SignupForm() {
       setActiveTab("client-data");
     } else if (activeTab === "payment-method") {
       setActiveTab("plan-selection");
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!selectedPlanId || (!cardNumber && selectedPlanId !== 'free-plan')) {
-      toast.error("Por favor, complete todos os campos obrigatórios");
-      return;
-    }
-    
-    setIsLoading(true);
-    
-    try {
-      // Registro no Supabase
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            first_name: firstName,
-            last_name: lastName,
-            cpf
-          }
-        }
-      });
-      
-      if (error) {
-        throw error;
-      }
-      
-      // Se tivermos um plano pago e dados de cartão, simulamos processamento do pagamento
-      if (selectedPlanId !== 'free-plan' && cardNumber) {
-        // Simulação de processamento de pagamento (em produção seria integrado com Stripe, etc)
-      }
-      
-      toast.success("Cadastro realizado com sucesso! Verifique seu email para confirmar a conta.");
-      setTimeout(() => {
-        navigate("/login");
-      }, 2000);
-      
-    } catch (error: any) {
-      console.error("Erro no cadastro:", error);
-      toast.error(error.message || "Ocorreu um erro durante o cadastro");
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -163,85 +110,38 @@ export function SignupForm() {
 
         <div className="p-6 space-y-6">
           <TabsContent value="client-data" className="mt-0 space-y-6">
-            <ClientDataForm 
-              email={email}
-              setEmail={setEmail}
-              password={password}
-              setPassword={setPassword}
-              confirmPassword={confirmPassword}
-              setConfirmPassword={setConfirmPassword}
-              firstName={firstName}
-              setFirstName={setFirstName}
-              lastName={lastName}
-              setLastName={setLastName}
-              cpf={cpf}
-              setCpf={setCpf}
+            <ClientDataForm />
+            <FormNavigation
+              activeTab={activeTab}
+              onNext={handleNextTab}
               isLoading={isLoading}
+              selectedPlanId={selectedPlanId}
             />
-            <div className="flex justify-end">
-              <Button 
-                className="bg-pump-purple hover:bg-pump-purple/90 text-white transition-all duration-300"
-                onClick={handleNextTab}
-                disabled={isLoading}
-              >
-                Próximo: Escolha do Plano
-              </Button>
-            </div>
           </TabsContent>
 
           <TabsContent value="plan-selection" className="mt-0 space-y-6">
-            <PlanSelectionForm 
-              selectedPlanId={selectedPlanId}
-              setSelectedPlanId={setSelectedPlanId}
+            <PlanSelectionForm />
+            <FormNavigation
+              activeTab={activeTab}
+              onPrevious={handlePreviousTab}
+              onNext={handleNextTab}
+              onSubmit={handleSubmit}
+              isLastStep={selectedPlanId === 'free-plan'}
               isLoading={isLoading}
+              selectedPlanId={selectedPlanId}
             />
-            <div className="flex justify-between">
-              <Button 
-                variant="outline"
-                className="border-pump-purple text-pump-purple hover:bg-pump-purple/10 transition-all duration-300"
-                onClick={handlePreviousTab}
-                disabled={isLoading}
-              >
-                Voltar
-              </Button>
-              <Button 
-                className="bg-pump-purple hover:bg-pump-purple/90 text-white transition-all duration-300"
-                onClick={handleNextTab}
-                disabled={isLoading || !selectedPlanId}
-              >
-                {selectedPlanId === 'free-plan' ? 'Finalizar Cadastro' : 'Próximo: Pagamento'}
-              </Button>
-            </div>
           </TabsContent>
 
           <TabsContent value="payment-method" className="mt-0 space-y-6">
-            <PaymentMethodForm 
-              cardNumber={cardNumber}
-              setCardNumber={setCardNumber}
-              cardExpiry={cardExpiry}
-              setCardExpiry={setCardExpiry}
-              cardCvc={cardCvc}
-              setCardCvc={setCardCvc}
+            <PaymentMethodForm />
+            <FormNavigation
+              activeTab={activeTab}
+              onPrevious={handlePreviousTab}
+              onSubmit={handleSubmit}
+              isLastStep={true}
               isLoading={isLoading}
               selectedPlanId={selectedPlanId}
             />
-            <div className="flex justify-between">
-              <Button 
-                variant="outline"
-                className="border-pump-purple text-pump-purple hover:bg-pump-purple/10 transition-all duration-300"
-                onClick={handlePreviousTab}
-                disabled={isLoading}
-              >
-                Voltar
-              </Button>
-              <Button 
-                className="bg-pump-purple hover:bg-pump-purple/90 text-white transition-all duration-300"
-                onClick={handleSubmit}
-                disabled={isLoading || (!cardNumber && selectedPlanId !== 'free-plan')}
-              >
-                Finalizar Cadastro
-              </Button>
-            </div>
           </TabsContent>
         </div>
       </Tabs>
@@ -259,5 +159,13 @@ export function SignupForm() {
         </Link>
       </div>
     </Card>
+  );
+}
+
+export function SignupForm() {
+  return (
+    <SignupProvider>
+      <SignupFormContent />
+    </SignupProvider>
   );
 }

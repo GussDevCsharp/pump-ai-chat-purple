@@ -2,36 +2,26 @@
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
+import { useSignup } from "@/contexts/SignupContext";
 
-interface PaymentMethodFormProps {
-  cardNumber: string;
-  setCardNumber: (value: string) => void;
-  cardExpiry: string;
-  setCardExpiry: (value: string) => void;
-  cardCvc: string;
-  setCardCvc: (value: string) => void;
-  isLoading: boolean;
-  selectedPlanId: string | null;
-}
+export function PaymentMethodForm() {
+  const {
+    cardNumber,
+    setCardNumber,
+    cardExpiry,
+    setCardExpiry,
+    cardCvc,
+    setCardCvc,
+    isLoading,
+    selectedPlanId
+  } = useSignup();
 
-export function PaymentMethodForm({
-  cardNumber,
-  setCardNumber,
-  cardExpiry,
-  setCardExpiry,
-  cardCvc,
-  setCardCvc,
-  isLoading,
-  selectedPlanId
-}: PaymentMethodFormProps) {
-  // Função para formatar o número do cartão ao digitar
   const formatCardNumber = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, '');
     const formattedValue = value.replace(/(\d{4})(?=\d)/g, '$1 ').trim();
-    setCardNumber(formattedValue.slice(0, 19)); // Limitar a 16 dígitos + 3 espaços
+    setCardNumber(formattedValue.slice(0, 19));
   };
 
-  // Função para formatar a data de validade do cartão
   const formatCardExpiry = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value.replace(/\D/g, '');
     if (value.length > 2) {
@@ -40,13 +30,11 @@ export function PaymentMethodForm({
     setCardExpiry(value);
   };
 
-  // Função para formatar o CVC
   const formatCardCvc = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, '');
     setCardCvc(value.slice(0, 3));
   };
 
-  // Se o plano selecionado for gratuito, mostrar uma mensagem em vez do formulário de pagamento
   if (selectedPlanId === 'free-plan') {
     return (
       <Card className="p-6 bg-green-50 border-green-200">

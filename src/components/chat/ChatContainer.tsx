@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react"
 import { useSearchParams } from "react-router-dom"
 import { ChatMessages } from "@/components/chat/ChatMessages"
@@ -17,6 +16,7 @@ import { usePromptHandling } from "@/hooks/usePromptHandling"
 import { useSessionManagement } from "@/hooks/useSessionManagement"
 import { usePromptCardInteractions } from "@/hooks/usePromptCardInteractions"
 import { AnonymousUserBanner } from "./AnonymousUserBanner"
+import { supabase } from "@/integrations/supabase/client"
 
 export const ChatContainer = () => {
   const [searchParams, setSearchParams] = useSearchParams()

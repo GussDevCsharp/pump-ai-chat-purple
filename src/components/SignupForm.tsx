@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -156,7 +157,7 @@ export function SignupForm() {
             setConfirmPassword={setConfirmPassword}
             firstName={firstName}
             setFirstName={setFirstName}
-            lastName={setLastName}
+            lastName={lastName}
             setLastName={setLastName}
             cpf={cpf}
             setCpf={setCpf}

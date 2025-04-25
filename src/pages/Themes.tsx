@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
@@ -8,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { MessageCircle } from "lucide-react";
 import { Header } from "@/components/common/Header";
 import { useThemePrompts } from "@/hooks/useThemePrompts";
+import { TrendingTopics } from "@/components/themes/TrendingTopics";
 
 type ThemeCardProps = {
   theme: {
@@ -91,6 +91,18 @@ export default function Themes() {
   const { createSession } = useChatSessions();
   const navigate = useNavigate();
 
+  const mockLatestTopics = [
+    { id: '1', title: 'Campanha Digital para Lançamento', created_at: '2025-04-24' },
+    { id: '2', title: 'Estratégia de Vendas B2B', created_at: '2025-04-23' },
+    { id: '3', title: 'Análise de Métricas de Marketing', created_at: '2025-04-22' },
+  ];
+
+  const mockPopularTopics = [
+    { id: '1', title: 'Plano de Marketing Digital', usage_count: 156 },
+    { id: '2', title: 'Estratégia de Redes Sociais', usage_count: 124 },
+    { id: '3', title: 'Otimização de Conversão', usage_count: 98 },
+  ];
+
   const handleSelectTheme = async (themeId: string, themeName: string) => {
     const session = await createSession(`Chat sobre ${themeName}`, undefined, undefined, themeId);
     if (session) {
@@ -130,6 +142,12 @@ export default function Themes() {
               </div>
             </div>
           </div>
+
+          <TrendingTopics 
+            latestTopics={mockLatestTopics}
+            popularTopics={mockPopularTopics}
+          />
+
           {isLoading ? (
             <div className="flex justify-center items-center h-40">
               <p className="text-pump-gray">Carregando temas...</p>

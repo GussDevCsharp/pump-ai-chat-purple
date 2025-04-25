@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { TrendingUp, News } from "lucide-react";
+import { TrendingUp, Newspaper } from "lucide-react";
 
 interface Topic {
   id: string;
@@ -22,7 +22,7 @@ export const TrendingTopics = ({ latestTopics, popularTopics }: TrendingTopicsPr
       {/* Coluna Novidades */}
       <Card className="p-6 bg-white/90">
         <div className="flex items-center gap-2 mb-4">
-          <News className="w-5 h-5 text-pump-purple" />
+          <Newspaper className="w-5 h-5 text-pump-purple" />
           <h2 className="text-xl font-semibold text-gray-900">Novidades</h2>
         </div>
         <Table>

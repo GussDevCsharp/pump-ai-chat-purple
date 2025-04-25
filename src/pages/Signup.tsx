@@ -8,7 +8,7 @@ export default function Signup() {
     <div className="min-h-screen relative overflow-hidden">
       <NeuralBackground />
       <div className="relative z-10 flex items-center justify-center min-h-screen p-2 sm:p-4">
-        <div className="w-full">
+        <div className="w-full max-w-screen-sm mx-auto px-4 sm:px-6 md:px-8 lg:px-12">
           <div className="text-center mb-4 sm:mb-8 animate-fade-in">
             <img
               src="/lovable-uploads/5f403064-9209-4921-b73b-0f70c739981a.png"

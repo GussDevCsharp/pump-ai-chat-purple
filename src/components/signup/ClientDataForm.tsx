@@ -1,8 +1,7 @@
 
 import React from "react";
+import { Input } from "@/components/ui/input";
 import { useSignup } from "@/contexts/SignupContext";
-import { PersonalInfoFields } from "./form/PersonalInfoFields";
-import { AuthFields } from "./form/AuthFields";
 
 export function ClientDataForm() {
   const {
@@ -36,27 +35,88 @@ export function ClientDataForm() {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-medium mb-8">Dados Pessoais</h3>
-        <div className="space-y-6 max-w-[400px]">
-          <PersonalInfoFields
-            firstName={firstName}
-            setFirstName={setFirstName}
-            lastName={lastName}
-            setLastName={setLastName}
-            cpf={cpf}
-            handleCpfChange={handleCpfChange}
-            isLoading={isLoading}
-          />
-          
-          <div className="space-y-6 mb-8">
-            <AuthFields
-              email={email}
-              setEmail={setEmail}
-              password={password}
-              setPassword={setPassword}
-              confirmPassword={confirmPassword}
-              setConfirmPassword={setConfirmPassword}
-              isLoading={isLoading}
+        <h3 className="text-lg font-medium mb-4">Dados Pessoais</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
+              Nome *
+            </label>
+            <Input
+              id="firstName"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              disabled={isLoading}
+              placeholder="Digite seu nome"
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
+              Sobrenome *
+            </label>
+            <Input
+              id="lastName"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              disabled={isLoading}
+              placeholder="Digite seu sobrenome"
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              E-mail *
+            </label>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={isLoading}
+              placeholder="seu@email.com"
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="cpf" className="block text-sm font-medium text-gray-700 mb-1">
+              CPF *
+            </label>
+            <Input
+              id="cpf"
+              value={cpf}
+              onChange={handleCpfChange}
+              disabled={isLoading}
+              placeholder="000.000.000-00"
+              maxLength={14}
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              Senha *
+            </label>
+            <Input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={isLoading}
+              placeholder="Digite sua senha"
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+              Confirme a Senha *
+            </label>
+            <Input
+              id="confirmPassword"
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              disabled={isLoading}
+              placeholder="Confirme sua senha"
+              required
             />
           </div>
         </div>

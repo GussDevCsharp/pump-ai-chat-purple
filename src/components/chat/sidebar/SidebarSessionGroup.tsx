@@ -77,7 +77,7 @@ export function SidebarSessionGroup({
       {sessions.map(session => (
         <div key={session.id} className="relative">
           {editingId === session.id ? (
-            <div className="bg-white p-3 rounded-xl border-2 border-pump-purple shadow-md" onClick={e => e.stopPropagation()}>
+            <div className="bg-white p-3 rounded-xl border-2 border-pump-purple shadow-md">
               <Input
                 ref={inputRef}
                 value={newTitle}

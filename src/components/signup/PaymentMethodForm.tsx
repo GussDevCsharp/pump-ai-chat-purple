@@ -65,11 +65,11 @@ export function PaymentMethodForm() {
             disabled={isLoading}
             placeholder="0000 0000 0000 0000"
             maxLength={19}
-            className="font-mono max-w-[300px]"
+            className="font-mono"
           />
         </div>
         
-        <div className="grid grid-cols-2 gap-4 max-w-[300px]">
+        <div className="grid grid-cols-2 gap-4">
           <div>
             <label htmlFor="cardExpiry" className="block text-sm font-medium text-gray-700 mb-1">
               Data de Validade *
@@ -81,12 +81,12 @@ export function PaymentMethodForm() {
               disabled={isLoading}
               placeholder="MM/AA"
               maxLength={5}
-              className="font-mono w-full"
+              className="font-mono"
             />
           </div>
           <div>
             <label htmlFor="cardCvc" className="block text-sm font-medium text-gray-700 mb-1">
-              CVC *
+              Código de Segurança (CVC) *
             </label>
             <Input
               id="cardCvc"
@@ -95,14 +95,14 @@ export function PaymentMethodForm() {
               disabled={isLoading}
               placeholder="000"
               maxLength={3}
-              className="font-mono w-full"
+              className="font-mono"
             />
           </div>
         </div>
         
         <div className="py-4 mt-4">
           <div className="border-t pt-4">
-            <p className="text-sm text-gray-500 max-w-[500px]">
+            <p className="text-sm text-gray-500">
               Seus dados de pagamento estão seguros. Utilizamos criptografia de ponta a ponta para proteger suas informações.
             </p>
           </div>

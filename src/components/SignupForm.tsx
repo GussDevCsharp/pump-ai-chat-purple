@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -31,12 +30,6 @@ export function SignupForm() {
   const [cardNumber, setCardNumber] = useState("");
   const [cardExpiry, setCardExpiry] = useState("");
   const [cardCvc, setCardCvc] = useState("");
-  
-  // Dados da empresa
-  const [companyName, setCompanyName] = useState("");
-  const [mainProducts, setMainProducts] = useState("");
-  const [employeesCount, setEmployeesCount] = useState("");
-  const [address, setAddress] = useState("");
 
   const handleNextTab = () => {
     if (activeTab === "client-data") {
@@ -102,24 +95,6 @@ export function SignupForm() {
       // Se tivermos um plano pago e dados de cartão, simulamos processamento do pagamento
       if (selectedPlanId !== 'free-plan' && cardNumber) {
         // Simulação de processamento de pagamento (em produção seria integrado com Stripe, etc)
-        // Aqui seria feito o processamento real do pagamento
-      }
-      
-      // Criar perfil da empresa
-      if (data.user) {
-        const { error: profileError } = await supabase
-          .from('company_profiles')
-          .insert({
-            user_id: data.user.id,
-            company_name: companyName,
-            main_products: mainProducts,
-            employees_count: employeesCount ? parseInt(employeesCount) : null,
-            address
-          });
-          
-        if (profileError) {
-          console.error("Erro ao salvar perfil da empresa:", profileError);
-        }
       }
       
       toast.success("Cadastro realizado com sucesso! Verifique seu email para confirmar a conta.");
@@ -185,14 +160,6 @@ export function SignupForm() {
             setLastName={setLastName}
             cpf={cpf}
             setCpf={setCpf}
-            companyName={companyName}
-            setCompanyName={setCompanyName}
-            mainProducts={mainProducts}
-            setMainProducts={setMainProducts}
-            employeesCount={employeesCount}
-            setEmployeesCount={setEmployeesCount}
-            address={address}
-            setAddress={setAddress}
             isLoading={isLoading}
           />
           <div className="flex justify-end mt-6">

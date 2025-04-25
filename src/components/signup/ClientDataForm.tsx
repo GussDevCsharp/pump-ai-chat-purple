@@ -1,7 +1,6 @@
 
 import React from "react";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 
 interface ClientDataFormProps {
   email: string;
@@ -16,14 +15,6 @@ interface ClientDataFormProps {
   setLastName: (value: string) => void;
   cpf: string;
   setCpf: (value: string) => void;
-  companyName: string;
-  setCompanyName: (value: string) => void;
-  mainProducts: string;
-  setMainProducts: (value: string) => void;
-  employeesCount: string;
-  setEmployeesCount: (value: string) => void;
-  address: string;
-  setAddress: (value: string) => void;
   isLoading: boolean;
 }
 
@@ -40,14 +31,6 @@ export function ClientDataForm({
   setLastName,
   cpf,
   setCpf,
-  companyName,
-  setCompanyName,
-  mainProducts,
-  setMainProducts,
-  employeesCount,
-  setEmployeesCount,
-  address,
-  setAddress,
   isLoading
 }: ClientDataFormProps) {
   // Função para formatar CPF ao digitar
@@ -148,64 +131,6 @@ export function ClientDataForm({
               disabled={isLoading}
               placeholder="Confirme sua senha"
               required
-            />
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <h3 className="text-lg font-medium mb-4">Dados da Empresa</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label htmlFor="companyName" className="block text-sm font-medium text-gray-700 mb-1">
-              Nome da Empresa *
-            </label>
-            <Input
-              id="companyName"
-              value={companyName}
-              onChange={(e) => setCompanyName(e.target.value)}
-              disabled={isLoading}
-              placeholder="Nome da sua empresa"
-              required
-            />
-          </div>
-          <div>
-            <label htmlFor="employeesCount" className="block text-sm font-medium text-gray-700 mb-1">
-              Número de Funcionários
-            </label>
-            <Input
-              id="employeesCount"
-              type="number"
-              value={employeesCount}
-              onChange={(e) => setEmployeesCount(e.target.value)}
-              disabled={isLoading}
-              placeholder="Ex: 10"
-            />
-          </div>
-          <div className="md:col-span-2">
-            <label htmlFor="mainProducts" className="block text-sm font-medium text-gray-700 mb-1">
-              Principais Produtos/Serviços
-            </label>
-            <Textarea
-              id="mainProducts"
-              value={mainProducts}
-              onChange={(e) => setMainProducts(e.target.value)}
-              disabled={isLoading}
-              placeholder="Descreva os principais produtos ou serviços da sua empresa"
-              className="min-h-[80px]"
-            />
-          </div>
-          <div className="md:col-span-2">
-            <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
-              Endereço
-            </label>
-            <Textarea
-              id="address"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              disabled={isLoading}
-              placeholder="Endereço da empresa"
-              className="min-h-[80px]"
             />
           </div>
         </div>

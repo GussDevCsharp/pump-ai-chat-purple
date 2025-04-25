@@ -1,6 +1,6 @@
-import { supabase } from "@/integrations/supabase/client";
+
 import { useEffect, useState } from "react"
-import { useSearchParams, useNavigate } from "react-router-dom"
+import { useSearchParams } from "react-router-dom"
 import { ChatMessages } from "@/components/chat/ChatMessages"
 import { ChatInput } from "@/components/chat/ChatInput"
 import { ApiKeyDisplay } from "@/components/chat/ApiKeyDisplay"
@@ -14,16 +14,18 @@ import { Watermark } from "../common/Watermark"
 import { PromptSuggestionCards } from "./PromptSuggestionCards"
 import { useMessageHandling } from "@/hooks/useMessageHandling"
 import { usePromptHandling } from "@/hooks/usePromptHandling"
+import { useSessionManagement } from "@/hooks/useSessionManagement"
+import { usePromptCardInteractions } from "@/hooks/usePromptCardInteractions"
+import { AnonymousUserBanner } from "./AnonymousUserBanner"
 
 export const ChatContainer = () => {
   const [searchParams, setSearchParams] = useSearchParams()
-  const navigate = useNavigate()
   const sessionId = searchParams.get('session')
   const { toast } = useToast()
   const [isThinking, setIsThinking] = useState(false)
   const { createSession, refreshSessions } = useChatSessions()
   const { authStatus, recordInteraction, remainingInteractions } = useChatAuth()
-  const [currentThemeId, setCurrentThemeId] = useState<string | null>(null)
+  const { currentThemeId } = useSessionManagement(sessionId, authStatus)
 
   const {
     messages,
@@ -42,33 +44,7 @@ export const ChatContainer = () => {
 
   const { patternPrompt } = useThemePrompt(currentThemeId ?? undefined)
   const { prompts: themePrompts, isLoading: isThemePromptsLoading } = useThemePrompts(currentThemeId ?? undefined)
-
-  useEffect(() => {
-    async function fetchThemeId() {
-      if (!sessionId) {
-        setCurrentThemeId(null);
-        return;
-      }
-      if (authStatus === 'anonymous') {
-        try {
-          const localSessions = JSON.parse(localStorage.getItem('anonymous_chat_sessions') || '[]');
-          const session = localSessions.find((s: any) => s.id === sessionId);
-          setCurrentThemeId(session?.theme_id || null);
-        } catch (e) {
-          setCurrentThemeId(null);
-        }
-        return;
-      }
-      const { data, error } = await supabase
-        .from('chat_sessions')
-        .select('theme_id')
-        .eq('id', sessionId)
-        .maybeSingle();
-      if (!error && data && data.theme_id) setCurrentThemeId(data.theme_id);
-      else setCurrentThemeId(null);
-    }
-    fetchThemeId();
-  }, [sessionId, authStatus]);
+  const { handlePromptCardSelect } = usePromptCardInteractions();
 
   useEffect(() => {
     if (sessionId) {
@@ -80,19 +56,6 @@ export const ChatContainer = () => {
       }]);
     }
   }, [sessionId, authStatus]);
-
-  const handlePromptCardSelect = (prompt: any) => {
-    setFurtivePrompt({
-      text: prompt.prompt_furtive ?? prompt.title,
-      title: prompt.title
-    });
-    const textArea = document.querySelector('textarea');
-    if (textArea) {
-      textArea.value = prompt.title;
-      textArea.dispatchEvent(new Event('input', { bubbles: true }));
-      textArea.focus();
-    }
-  };
 
   const handleSendMessage = async (content: string) => {
     if (authStatus === 'anonymous' && !recordInteraction()) {
@@ -166,43 +129,14 @@ export const ChatContainer = () => {
         saveLocalMessages(currentSessionId, [userMessage, assistantMessage]);
         setMessages(prev => [...prev, assistantMessage]);
         await refreshSessions();
-      } else if (isFirstMessage) {
-        try {
-          await supabase
-            .from('chat_messages')
-            .insert([
-              {
-                session_id: currentSessionId,
-                role: 'user',
-                content: userMessage.content
-              },
-              {
-                session_id: currentSessionId,
-                role: 'assistant',
-                content: assistantMessage.content
-              }
-            ]);
-        } catch (error: any) {
-          console.error("Erro ao salvar a primeira conversa:", error);
-        }
-        setMessages(prev => [...prev, assistantMessage]);
-        await refreshSessions();
       } else {
         try {
-          await supabase
-            .from('chat_messages')
-            .insert([
-              {
-                session_id: currentSessionId,
-                role: 'user',
-                content: userMessage.content
-              },
-              {
-                session_id: currentSessionId,
-                role: 'assistant',
-                content: assistantMessage.content
-              }
-            ]);
+          const messagesToSave = [
+            { session_id: currentSessionId, role: 'user', content: userMessage.content },
+            { session_id: currentSessionId, role: 'assistant', content: assistantMessage.content }
+          ];
+          
+          await supabase.from('chat_messages').insert(messagesToSave);
           setMessages(prev => [...prev, assistantMessage]);
           await refreshSessions();
         } catch (error: any) {
@@ -231,13 +165,7 @@ export const ChatContainer = () => {
     <div className="flex-1 flex flex-col h-full overflow-hidden relative">
       <Watermark />
       {authStatus === 'anonymous' && (
-        <div className="bg-blue-50 p-3 flex items-center justify-between border-b">
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-blue-700">
-              Modo visitante: {remainingInteractions} interações restantes hoje
-            </span>
-          </div>
-        </div>
+        <AnonymousUserBanner remainingInteractions={remainingInteractions} />
       )}
       
       {showWelcomeScreen ? (

@@ -94,18 +94,6 @@ export default function Themes() {
   const navigate = useNavigate();
   const { latestTopics, popularTopics, isLoading: isTopicsLoading } = useThemeTopics();
 
-  const mockLatestTopics = [
-    { id: '1', title: 'Campanha Digital para Lançamento', created_at: '2025-04-24' },
-    { id: '2', title: 'Estratégia de Vendas B2B', created_at: '2025-04-23' },
-    { id: '3', title: 'Análise de Métricas de Marketing', created_at: '2025-04-22' },
-  ];
-
-  const mockPopularTopics = [
-    { id: '1', title: 'Plano de Marketing Digital', usage_count: 156 },
-    { id: '2', title: 'Estratégia de Redes Sociais', usage_count: 124 },
-    { id: '3', title: 'Otimização de Conversão', usage_count: 98 },
-  ];
-
   const handleSelectTheme = async (themeId: string, themeName: string) => {
     const session = await createSession(`Chat sobre ${themeName}`, undefined, undefined, themeId);
     if (session) {
@@ -121,7 +109,7 @@ export default function Themes() {
   };
 
   return (
-    <div className="min-h-screen bg-offwhite">
+    <div className="min-h-screen bg-white">
       <ProfileCompletionAlert />
       <Header />
       <main className="w-full px-2 sm:px-4 md:px-8 py-8 flex flex-col items-center">

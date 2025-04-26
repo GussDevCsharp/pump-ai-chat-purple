@@ -1,6 +1,7 @@
+
 import { useState, useEffect } from "react"
 import { useChatSessions, ChatSession } from "@/hooks/useChatSessions"
-import { useChatThemes, ChatTheme } from "@/hooks/useChatThemes"
+import { useChatThemes } from "@/hooks/useChatThemes"
 import { useNavigate, useSearchParams } from "react-router-dom"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/hooks/use-toast"
@@ -13,8 +14,8 @@ export function ChatSidebar({ onClose }: { onClose?: () => void }) {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const sessionId = searchParams.get('session')
-  const { data: sessions, isLoading, refetch: refetchSessions } = useChatSessions()
-  const { data: themes, isLoading: isThemesLoading, refetch: refetchThemes } = useChatThemes()
+  const { sessions, isLoading, refreshSessions, deleteSession } = useChatSessions()
+  const { themes, isLoading: isThemesLoading, refreshThemes } = useChatThemes()
   const { toast } = useToast()
   const [searchTerm, setSearchTerm] = useState('')
   const [filteredSessions, setFilteredSessions] = useState<ChatSession[] | null>(null)
@@ -50,7 +51,7 @@ export function ChatSidebar({ onClose }: { onClose?: () => void }) {
           title: "Success",
           description: "Session title updated successfully."
         })
-        await refetchSessions()
+        await refreshSessions()
       } catch (error: any) {
         toast({
           variant: "destructive",
@@ -64,20 +65,11 @@ export function ChatSidebar({ onClose }: { onClose?: () => void }) {
   const handleDeleteSession = async (session: ChatSession) => {
     if (window.confirm("Are you sure you want to delete this session?")) {
       try {
-        const { error } = await supabase
-          .from('chat_sessions')
-          .delete()
-          .eq('id', session.id)
-
-        if (error) {
-          throw new Error(error.message)
-        }
-
+        await deleteSession(session.id)
         toast({
           title: "Success",
           description: "Session deleted successfully."
         })
-        await refetchSessions()
         navigate('/chat')
       } catch (error: any) {
         toast({
@@ -90,8 +82,8 @@ export function ChatSidebar({ onClose }: { onClose?: () => void }) {
   }
 
   const handleThemeChange = async () => {
-    await refetchThemes()
-    await refetchSessions()
+    await refreshThemes()
+    await refreshSessions()
   }
 
   useEffect(() => {
@@ -173,23 +165,28 @@ export function ChatSidebar({ onClose }: { onClose?: () => void }) {
               if (b[0] === 'Yesterday') return 1
               return new Date(b[0]).getTime() - new Date(a[0]).getTime()
             }).map(([group, sessions]) => (
-              <SidebarSessionGroup key={group} title={group}>
-                {sessions.map((session) => {
-                  const themeObj = themes?.find(theme => theme.id === session.theme_id)
-                  return (
-                    <SidebarSessionCard
-                      key={session.id}
-                      session={session}
-                      themeObj={themeObj}
-                      isActive={session.id === sessionId}
-                      onOpen={() => handleSessionClick(session)}
-                      onEdit={() => handleEditSession(session)}
-                      onDelete={() => handleDeleteSession(session)}
-                      onThemeChange={handleThemeChange}
-                    />
-                  )
-                })}
-              </SidebarSessionGroup>
+              <div key={group} className="mb-4">
+                <div className="px-4 py-2 text-xs font-medium text-pump-gray">
+                  {group}
+                </div>
+                <div className="space-y-1 px-2">
+                  {sessions.map((session) => {
+                    const themeObj = themes?.find(theme => theme.id === session.theme_id)
+                    return (
+                      <SidebarSessionCard
+                        key={session.id}
+                        session={session}
+                        themeObj={themeObj}
+                        isActive={session.id === sessionId}
+                        onOpen={() => handleSessionClick(session)}
+                        onEdit={() => handleEditSession(session)}
+                        onDelete={() => handleDeleteSession(session)}
+                        onThemeChange={handleThemeChange}
+                      />
+                    )
+                  })}
+                </div>
+              </div>
             ))}
           </>
         )}

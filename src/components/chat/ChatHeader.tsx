@@ -7,15 +7,13 @@ import { useChatAuth } from "@/hooks/useChatAuth"
 
 export const ChatHeader = ({ mobileMenuButton }: { mobileMenuButton?: React.ReactNode }) => {
   const { authStatus } = useChatAuth();
-
-  // Redirect logged in users to /themes; guests go to /
   const homeLink = authStatus === 'authenticated' ? "/themes" : "/";
 
   return (
     <header className="border-b border-pump-gray/20 p-4 flex justify-between items-center sticky top-0 bg-white z-10">
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-4">
         {mobileMenuButton && (
-          <div className="md:hidden mr-2">
+          <div className="md:hidden">
             {mobileMenuButton}
           </div>
         )}
@@ -27,7 +25,7 @@ export const ChatHeader = ({ mobileMenuButton }: { mobileMenuButton?: React.Reac
           />
         </Link>
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2">
         <UserCardMenu />
         <Link to={homeLink}>
           <Button variant="ghost" size="icon" className="text-pump-purple hover:text-pump-purple/90">
@@ -39,4 +37,3 @@ export const ChatHeader = ({ mobileMenuButton }: { mobileMenuButton?: React.Reac
     </header>
   )
 }
-

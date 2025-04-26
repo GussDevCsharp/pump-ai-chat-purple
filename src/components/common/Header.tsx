@@ -6,7 +6,7 @@ import { Home, LogIn } from "lucide-react"
 import { useChatAuth } from "@/hooks/useChatAuth"
 
 export const Header = () => {
-  const { authStatus, user } = useChatAuth();
+  const { authStatus } = useChatAuth();
   const homeLink = authStatus === 'authenticated' ? "/themes" : "/";
 
   return (
@@ -41,4 +41,3 @@ export const Header = () => {
     </header>
   )
 }
-

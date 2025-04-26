@@ -11,6 +11,7 @@ import { FormTitle } from "@/components/business-generator/FormTitle";
 import { useBusinessForm } from "@/hooks/useBusinessForm";
 import { steps } from "@/config/business-generator-steps";
 import { Header } from "@/components/common/Header";
+import NeuralBackground from "@/components/effects/NeuralBackground";
 
 export default function BusinessGenerator() {
   const {
@@ -28,9 +29,10 @@ export default function BusinessGenerator() {
 
   if (businessPlan) {
     return (
-      <div className="min-h-screen bg-offwhite">
+      <div className="min-h-screen bg-offwhite relative">
+        <NeuralBackground />
         <Header />
-        <main className="container mx-auto px-4 py-8">
+        <main className="container mx-auto px-4 py-8 relative z-10">
           <BusinessPlanDisplay businessPlan={businessPlan} onStartNew={startNewPlan} />
         </main>
       </div>
@@ -39,6 +41,7 @@ export default function BusinessGenerator() {
 
   return (
     <div className="min-h-screen bg-offwhite relative">
+      <NeuralBackground />
       <Header />
       <Watermark />
       <main className="container mx-auto px-4 py-10 flex flex-col items-center relative z-10">
@@ -111,4 +114,4 @@ export default function BusinessGenerator() {
       </main>
     </div>
   );
-};
+}

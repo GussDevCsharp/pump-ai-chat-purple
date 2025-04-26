@@ -51,10 +51,10 @@ export function ProfileCompletionChart() {
   const COLORS = ['#7E1CC6', '#f4ebfd'];
 
   return (
-    <Card className="p-6 w-full max-w-[300px]">
+    <Card className="p-6 w-[300px]">
       <div className="text-center mb-4">
         <h3 className="text-lg font-semibold text-gray-900 mb-1">
-          Completude do Perfil
+          O quanto eu sei de você
         </h3>
         <p className="text-sm text-pump-gray">
           Complete seu perfil para aproveitar todos os recursos
@@ -102,3 +102,4 @@ export function ProfileCompletionChart() {
     </Card>
   );
 }
+

@@ -2,216 +2,200 @@ import { useState, useEffect } from "react"
 import { useChatSessions, ChatSession } from "@/hooks/useChatSessions"
 import { useChatThemes, ChatTheme } from "@/hooks/useChatThemes"
 import { useNavigate, useSearchParams } from "react-router-dom"
-import { ChevronLeft, Search, Plus } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { SidebarSessionGroup } from "@/components/chat/sidebar/SidebarSessionGroup"
-import { SidebarFooter } from "@/components/chat/sidebar/SidebarFooter"
-import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/integrations/supabase/client"
+import { useToast } from "@/hooks/use-toast"
+import { SidebarSessionCard } from "./sidebar/SidebarSessionCard"
+import { SidebarFooter } from "./sidebar/SidebarFooter"
+import { SidebarSessionGroup } from "./sidebar/SidebarSessionGroup"
+import { Menu, Plus, Search } from "lucide-react"
 
-export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
-  const { sessions, createSession, refreshSessions, deleteSession, isLoading } = useChatSessions()
+export function ChatSidebar({ onClose }: { onClose?: () => void }) {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const currentSessionId = searchParams.get('session')
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
-
-  const { themes } = useChatThemes()
-  const [searchTerm, setSearchTerm] = useState("")
-  const [editingId, setEditingId] = useState<string | null>(null)
-  const [newTitle, setNewTitle] = useState("")
-  const [sessionToDelete, setSessionToDelete] = useState<string | null>(null)
+  const sessionId = searchParams.get('session')
+  const { data: sessions, isLoading, refetch: refetchSessions } = useChatSessions()
+  const { data: themes, isLoading: isThemesLoading, refetch: refetchThemes } = useChatThemes()
   const { toast } = useToast()
+  const [searchTerm, setSearchTerm] = useState('')
+  const [filteredSessions, setFilteredSessions] = useState<ChatSession[] | null>(null)
 
-  useEffect(() => {
-    console.log("Sessions in ChatSidebar:", sessions)
-    console.log("Available themes:", themes)
-  }, [sessions, themes])
-
-  const handleNewChat = async () => {
-    const session = await createSession("Nova conversa")
-    if (session) {
-      navigate(`/chat?session=${session.id}`)
-      if (onClose) onClose()
+  const handleCreateNewSession = async () => {
+    navigate('/chat')
+    if (onClose) {
+      onClose()
     }
   }
 
-  const startEditing = (id: string, currentTitle: string) => {
-    setEditingId(id)
-    setNewTitle(currentTitle)
-  }
-
-  const handleRename = async (id: string) => {
-    try {
-      if (!newTitle.trim()) {
-        setEditingId(null)
-        return
-      }
-      
-      const { error } = await supabase
-        .from('chat_sessions')
-        .update({ title: newTitle })
-        .eq('id', id)
-
-      if (error) throw error
-
-      setEditingId(null)
-      refreshSessions()
-      
-      toast({
-        description: "Conversa renomeada com sucesso",
-      })
-    } catch (error) {
-      console.error('Error renaming session:', error)
-      toast({
-        variant: "destructive",
-        description: "Erro ao renomear a conversa",
-      })
-      setEditingId(null)
+  const handleSessionClick = (session: ChatSession) => {
+    navigate(`/chat?session=${session.id}`)
+    if (onClose) {
+      onClose()
     }
   }
 
-  const handleDeleteConfirm = async (sessionId: string) => {
-    try {
-      console.log("Deleting session:", sessionId);
-      const success = await deleteSession(sessionId);
-      
-      if (success) {
-        if (sessionId === currentSessionId) {
-          navigate('/chat');
+  const handleEditSession = async (session: ChatSession) => {
+    const newTitle = prompt("Enter new title:", session.title)
+    if (newTitle && newTitle !== session.title) {
+      try {
+        const { error } = await supabase
+          .from('chat_sessions')
+          .update({ title: newTitle })
+          .eq('id', session.id)
+
+        if (error) {
+          throw new Error(error.message)
         }
+
         toast({
-          description: "Conversa excluída com sucesso"
-        });
-        await refreshSessions();
-      } else {
+          title: "Success",
+          description: "Session title updated successfully."
+        })
+        await refetchSessions()
+      } catch (error: any) {
         toast({
           variant: "destructive",
-          description: "Erro ao excluir a conversa"
-        });
+          title: "Error",
+          description: error.message
+        })
       }
-    } catch (error) {
-      console.error('Error deleting session:', error);
-      toast({
-        variant: "destructive",
-        description: "Erro ao excluir a conversa"
-      });
     }
   }
 
-  const getThemeObject = (themeId: string | null) => {
-    if (!themeId) return null;
-    return themes.find(t => t.id === themeId) || null;
-  }
+  const handleDeleteSession = async (session: ChatSession) => {
+    if (window.confirm("Are you sure you want to delete this session?")) {
+      try {
+        const { error } = await supabase
+          .from('chat_sessions')
+          .delete()
+          .eq('id', session.id)
 
-  const groupedSessions: Record<string, { themeObj: ChatTheme | null, sessions: ChatSession[] }> = {};
-  sessions.forEach(session => {
-    const themeObj = getThemeObject(session.theme_id);
-    const groupKey = themeObj ? themeObj.id : 'no-theme';
-    if (!groupedSessions[groupKey]) {
-      groupedSessions[groupKey] = { themeObj, sessions: [] };
+        if (error) {
+          throw new Error(error.message)
+        }
+
+        toast({
+          title: "Success",
+          description: "Session deleted successfully."
+        })
+        await refetchSessions()
+        navigate('/chat')
+      } catch (error: any) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: error.message
+        })
+      }
     }
-    groupedSessions[groupKey].sessions.push(session);
-  });
-
-  const handleCancelEdit = () => {
-    setEditingId(null);
   }
 
-  const handleKeyPress = (e: React.KeyboardEvent, id: string) => {
-    if (e.key === 'Enter') {
-      handleRename(id);
-    } else if (e.key === 'Escape') {
-      handleCancelEdit();
+  const handleThemeChange = async () => {
+    await refetchThemes()
+    await refetchSessions()
+  }
+
+  useEffect(() => {
+    if (sessions) {
+      if (searchTerm) {
+        const lowerSearchTerm = searchTerm.toLowerCase()
+        const filtered = sessions.filter(session =>
+          session.title.toLowerCase().includes(lowerSearchTerm)
+        )
+        setFilteredSessions(filtered)
+      } else {
+        setFilteredSessions(sessions)
+      }
     }
-  }
+  }, [sessions, searchTerm])
+
+  const groupedSessions = filteredSessions
+    ? filteredSessions.reduce((acc: { [key: string]: ChatSession[] }, session: ChatSession) => {
+      const createdAt = new Date(session.created_at)
+      const today = new Date()
+      const yesterday = new Date(today)
+      yesterday.setDate(today.getDate() - 1)
+
+      let groupKey: string
+
+      if (createdAt.toDateString() === today.toDateString()) {
+        groupKey = 'Today'
+      } else if (createdAt.toDateString() === yesterday.toDateString()) {
+        groupKey = 'Yesterday'
+      } else {
+        groupKey = createdAt.toLocaleDateString('pt-BR', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric'
+        })
+      }
+
+      if (!acc[groupKey]) {
+        acc[groupKey] = []
+      }
+      acc[groupKey].push(session)
+      return acc
+    }, {})
+    : {}
 
   return (
-    <div className={`w-64 max-w-full h-full md:h-screen bg-offwhite border-r border-pump-gray/20 transition-all duration-300 ${isSidebarCollapsed ? 'w-16' : 'w-64'}`}>
-      {onClose && (
-        <button
-          type="button"
-          className="md:hidden self-end mb-2 p-2 rounded hover:bg-pump-gray-light transition"
-          onClick={onClose}
-          aria-label="Fechar menu"
-        >
-          <span className="text-pump-purple text-2xl font-bold">&times;</span>
-        </button>
-      )}
-
-      <div className="flex items-center gap-2 p-3">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-          className="text-pump-gray hover:text-pump-purple hover:bg-pump-gray-light"
-        >
-          <ChevronLeft className={`w-5 h-5 transition-transform ${isSidebarCollapsed ? 'rotate-180' : ''}`} />
-          <span className="sr-only">Colapsar menu</span>
-        </Button>
-        
-        <div className={`flex gap-2 ${isSidebarCollapsed ? 'hidden' : ''}`}>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-pump-gray hover:text-pump-purple hover:bg-pump-gray-light"
+    <div className="relative h-full flex flex-col overflow-hidden">
+      <div className="flex items-center justify-between p-4 border-b border-pump-gray/20">
+        <div className="flex items-center gap-2">
+          <button 
+            onClick={() => {/* Implement sidebar collapse logic */}} 
+            className="p-2 hover:bg-pump-gray-light rounded"
           >
-            <Search className="w-5 h-5" />
-            <span className="sr-only">Pesquisar conversas</span>
-          </Button>
-
-          <Button
-            onClick={handleNewChat}
-            variant="ghost"
-            size="icon"
-            className="text-pump-gray hover:text-pump-purple hover:bg-pump-gray-light"
+            <Menu className="w-5 h-5 text-pump-gray" />
+          </button>
+          <button 
+            className="p-2 hover:bg-pump-gray-light rounded"
           >
-            <Plus className="w-5 h-5" />
-            <span className="sr-only">Nova conversa</span>
-          </Button>
+            <Search className="w-5 h-5 text-pump-gray" />
+          </button>
         </div>
+        <button 
+          onClick={handleCreateNewSession}
+          className="p-2 hover:bg-pump-purple/10 rounded-full"
+        >
+          <Plus className="w-5 h-5 text-pump-purple" />
+        </button>
       </div>
       
-      <div className={`mt-4 flex-1 overflow-y-auto ${isSidebarCollapsed ? 'hidden' : ''}`}>
+      <div className="flex-1 overflow-y-auto">
         {isLoading ? (
-          <div className="flex justify-center items-center h-20">
-            <div className="text-sm text-pump-gray">Carregando conversas...</div>
-          </div>
-        ) : sessions.length === 0 ? (
-          <div className="flex justify-center items-center h-20">
-            <div className="text-sm text-pump-gray">Nenhuma conversa encontrada</div>
-          </div>
+          <div className="p-4 text-pump-gray">Loading sessions...</div>
         ) : (
-          <div className="flex flex-col gap-4">
-            {Object.entries(groupedSessions).map(([groupKey, { themeObj, sessions: themeSessions }]) => (
-              <SidebarSessionGroup
-                key={groupKey}
-                groupId={groupKey}
-                themeObj={themeObj}
-                sessions={themeSessions}
-                currentSessionId={currentSessionId}
-                onOpen={(sessionId) => {
-                  navigate(`/chat?session=${sessionId}`)
-                  if (onClose) onClose()
-                }}
-                onEdit={startEditing}
-                onDelete={handleDeleteConfirm}
-                onThemeChange={refreshSessions}
-                editingId={editingId}
-                newTitle={newTitle}
-                onTitleChange={(e) => setNewTitle(e.target.value)}
-                onSaveEdit={handleRename}
-                onCancelEdit={handleCancelEdit}
-                onKeyPress={handleKeyPress}
-              />
+          <>
+            {Object.entries(groupedSessions).sort((a, b) => {
+              if (a[0] === 'Today') return -1
+              if (b[0] === 'Today') return 1
+              if (a[0] === 'Yesterday') return -1
+              if (b[0] === 'Yesterday') return 1
+              return new Date(b[0]).getTime() - new Date(a[0]).getTime()
+            }).map(([group, sessions]) => (
+              <SidebarSessionGroup key={group} title={group}>
+                {sessions.map((session) => {
+                  const themeObj = themes?.find(theme => theme.id === session.theme_id)
+                  return (
+                    <SidebarSessionCard
+                      key={session.id}
+                      session={session}
+                      themeObj={themeObj}
+                      isActive={session.id === sessionId}
+                      onOpen={() => handleSessionClick(session)}
+                      onEdit={() => handleEditSession(session)}
+                      onDelete={() => handleDeleteSession(session)}
+                      onThemeChange={handleThemeChange}
+                    />
+                  )
+                })}
+              </SidebarSessionGroup>
             ))}
-          </div>
+          </>
         )}
       </div>
-
-      <div className={isSidebarCollapsed ? 'hidden' : ''}>
-        <SidebarFooter />
-      </div>
+      
+      <SidebarFooter />
     </div>
   )
 }

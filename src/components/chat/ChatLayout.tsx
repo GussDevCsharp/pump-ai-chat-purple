@@ -1,6 +1,5 @@
 
 import { ChatSidebar } from "./ChatSidebar"
-import { ChatHeader } from "./ChatHeader"
 import { ChatContainer } from "./ChatContainer"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { useState } from "react"
@@ -35,23 +34,15 @@ export const ChatLayout = () => {
       )}
 
       <main className="flex-1 flex flex-col overflow-hidden relative h-full">
-        <div className="sticky top-0 z-30">
-          <ChatHeader
-            mobileMenuButton={isMobile && authStatus === "authenticated" ? (
-              <button
-                className="md:hidden p-2 mr-2 rounded hover:bg-pump-gray-light transition"
-                onClick={() => setSidebarOpen(true)}
-              >
-                <Menu className="w-6 h-6 text-pump-purple" />
-              </button>
-            ) : null}
-          />
-        </div>
-        <div
-          className={`flex-1 flex flex-col overflow-hidden ${
-            isMobile && sidebarOpen ? "pointer-events-none opacity-25" : ""
-          }`}
-        >
+        {isMobile && authStatus === "authenticated" && (
+          <button
+            className="md:hidden absolute top-4 left-4 p-2 rounded hover:bg-pump-gray-light transition z-10"
+            onClick={() => setSidebarOpen(true)}
+          >
+            <Menu className="w-6 h-6 text-pump-purple" />
+          </button>
+        )}
+        <div className="flex-1 flex flex-col overflow-hidden h-full">
           <ChatContainer />
         </div>
       </main>

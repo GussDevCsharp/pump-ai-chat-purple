@@ -88,15 +88,15 @@ export function ProfileCompletionChart() {
       <div className="space-y-2 mt-4">
         <div className="flex items-center justify-between text-sm">
           <span className="text-pump-gray">Login básico</span>
-          <span className="font-medium">20%</span>
+          <span className="font-medium">✨ {companyCompleted ? 'Oi!' : 'Olá!'}</span>
         </div>
         <div className="flex items-center justify-between text-sm">
           <span className="text-pump-gray">Perfil da empresa</span>
-          <span className="font-medium">{companyCompleted ? '40%' : '0%'}</span>
+          <span className="font-medium">{companyCompleted ? '✅ Conhecida' : '🤔 Quem é?'}</span>
         </div>
         <div className="flex items-center justify-between text-sm">
           <span className="text-pump-gray">Perfil do empresário</span>
-          <span className="font-medium">{entrepreneurCompleted ? '40%' : '0%'}</span>
+          <span className="font-medium">{entrepreneurCompleted ? '🤝 Você por aqui!' : '👋 Vem cá!'}</span>
         </div>
       </div>
     </Card>

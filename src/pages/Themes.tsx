@@ -28,10 +28,10 @@ const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
     <Card
       onClick={() => onSelect(theme.id, theme.name)}
       className={`
-        flex flex-col h-[340px] rounded-2xl border-2 border-pump-gray/10 hover:shadow-2xl 
+        flex flex-col h-[340px] bg-white rounded-2xl border-2 border-pump-gray/10 hover:shadow-2xl 
         transform transition-all duration-200 cursor-pointer
         hover:scale-105 shadow-md group
-        px-4 py-3 bg-transparent
+        px-4 py-3
       `}
       style={{
         borderColor: theme.color || "#e9e3fc"
@@ -125,7 +125,7 @@ export default function Themes() {
       <ProfileCompletionAlert />
       <Header />
       <main className="w-full px-2 sm:px-4 md:px-8 py-8 flex flex-col items-center">
-        <div className="w-full rounded-2xl shadow-lg p-7 md:p-12 flex flex-col gap-10 bg-transparent">
+        <div className="w-full bg-white/90 rounded-2xl shadow-lg p-7 md:p-12 flex flex-col gap-10">
           <div className="flex flex-col md:flex-row justify-between items-start gap-8 mb-8">
             <div className="w-full text-left">
               <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-3">

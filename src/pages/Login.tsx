@@ -130,7 +130,7 @@ export default function Login() {
       {/* Effect Column */}
       <div className="w-1/2 bg-offwhite relative overflow-hidden">
         <NeuralBackground />
-        <div className="relative z-[5] flex items-center justify-center h-full">
+        <div className="relative z-[5] flex items-center justify-center h-full pointer-events-none">
           <h1 className="text-5xl font-bold text-pump-purple text-center leading-tight max-w-lg">
             A Nova inteligência da sua empresa
           </h1>

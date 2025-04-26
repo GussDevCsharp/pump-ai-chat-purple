@@ -65,6 +65,7 @@ const NeuralBackground = () => {
     };
 
     const handleClick = (event: MouseEvent) => {
+      event.preventDefault(); // Prevent default behavior
       const rect = canvas.getBoundingClientRect();
       const x = event.clientX - rect.left;
       const y = event.clientY - rect.top;
@@ -149,7 +150,7 @@ const NeuralBackground = () => {
     <canvas
       ref={canvasRef}
       className="fixed top-0 left-0 w-full h-full"
-      style={{ zIndex: 0 }}
+      style={{ zIndex: 0, pointerEvents: 'auto' }}
     />
   );
 };

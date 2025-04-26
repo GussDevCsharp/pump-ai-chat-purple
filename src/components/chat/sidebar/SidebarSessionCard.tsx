@@ -1,4 +1,5 @@
-import { MessageCircle, Menu, Pencil, Trash2, Tag } from "lucide-react"
+
+import { MessageCircle, Menu, Pencil, Trash2, Tag, Check, X } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,10 +29,29 @@ export function SidebarSessionCard({
   onThemeChange
 }: SidebarSessionCardProps) {
   const [showThemeSelector, setShowThemeSelector] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const handleThemeButtonClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setShowThemeSelector(true);
+  };
+
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShowDeleteConfirm(true);
+  };
+
+  const handleConfirmDelete = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onDelete();
+  };
+
+  const handleCancelDelete = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShowDeleteConfirm(false);
   };
 
   return (
@@ -104,11 +124,7 @@ export function SidebarSessionCard({
                   Editar conversa
                 </DropdownMenuItem>
                 <DropdownMenuItem 
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    onDelete();
-                  }}
+                  onClick={handleDeleteClick}
                   className="cursor-pointer text-red-600 hover:text-red-600 hover:bg-red-50"
                 >
                   <Trash2 className="w-4 h-4 mr-2" />
@@ -119,6 +135,30 @@ export function SidebarSessionCard({
           </div>
         </div>
       </button>
+      
+      {showDeleteConfirm && (
+        <div className="absolute left-0 right-0 mt-1 p-2 bg-white rounded-lg shadow-lg border border-pump-gray/20 z-10">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-pump-gray">Excluir?</span>
+            <div className="flex gap-2">
+              <button
+                onClick={handleConfirmDelete}
+                className="p-1 rounded-full hover:bg-green-100"
+                aria-label="Confirmar exclusão"
+              >
+                <Check className="w-4 h-4 text-green-600" />
+              </button>
+              <button
+                onClick={handleCancelDelete}
+                className="p-1 rounded-full hover:bg-red-100"
+                aria-label="Cancelar exclusão"
+              >
+                <X className="w-4 h-4 text-red-600" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

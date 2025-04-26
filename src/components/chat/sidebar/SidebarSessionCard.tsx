@@ -1,4 +1,3 @@
-
 import { MessageCircle, Menu, Pencil, Trash2, Tag, Check, X } from "lucide-react"
 import {
   DropdownMenu,
@@ -66,6 +65,7 @@ export function SidebarSessionCard({
           ${isActive ? "bg-pump-gray-light/30" : ""}
         `}
       >
+        
         <div className="flex items-center gap-2 w-full min-w-0">
           <div className="flex items-center gap-2 flex-grow min-w-0 overflow-hidden">
             <span 

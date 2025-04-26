@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react"
 import { useChatSessions, ChatSession } from "@/hooks/useChatSessions"
 import { useChatThemes, ChatTheme } from "@/hooks/useChatThemes"
@@ -72,16 +71,31 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
     }
   }
 
-  const handleDeleteConfirm = async () => {
-    if (sessionToDelete) {
-      const isDeleted = await deleteSession(sessionToDelete)
+  const handleDeleteConfirm = async (sessionId: string) => {
+    try {
+      console.log("Deleting session:", sessionId);
+      const success = await deleteSession(sessionId);
       
-      if (isDeleted && sessionToDelete === currentSessionId) {
-        navigate('/chat')
+      if (success) {
+        if (sessionId === currentSessionId) {
+          navigate('/chat');
+        }
+        toast({
+          description: "Conversa excluída com sucesso"
+        });
+        await refreshSessions();
+      } else {
+        toast({
+          variant: "destructive",
+          description: "Erro ao excluir a conversa"
+        });
       }
-      
-      setSessionToDelete(null)
-      if (onClose) onClose()
+    } catch (error) {
+      console.error('Error deleting session:', error);
+      toast({
+        variant: "destructive",
+        description: "Erro ao excluir a conversa"
+      });
     }
   }
 
@@ -181,7 +195,7 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
                   if (onClose) onClose()
                 }}
                 onEdit={startEditing}
-                onDelete={setSessionToDelete}
+                onDelete={handleDeleteConfirm}
                 onThemeChange={refreshSessions}
                 editingId={editingId}
                 newTitle={newTitle}

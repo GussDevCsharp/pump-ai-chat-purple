@@ -7,13 +7,23 @@ import { supabase } from "@/integrations/supabase/client"
 
 interface ImageGeneratorButtonProps {
   onImageGenerated: (imageUrl: string) => void;
+  message: string;
 }
 
-export const ImageGeneratorButton = ({ onImageGenerated }: ImageGeneratorButtonProps) => {
+export const ImageGeneratorButton = ({ onImageGenerated, message }: ImageGeneratorButtonProps) => {
   const [isGenerating, setIsGenerating] = useState(false)
   const { toast } = useToast()
 
-  const generateImage = async (prompt: string) => {
+  const generateImage = async () => {
+    if (!message.trim()) {
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: "Digite uma descrição para a imagem que deseja gerar"
+      })
+      return
+    }
+
     try {
       setIsGenerating(true)
       
@@ -27,7 +37,6 @@ export const ImageGeneratorButton = ({ onImageGenerated }: ImageGeneratorButtonP
         throw new Error('Could not fetch API key')
       }
 
-      // Get the session properly - await the promise first
       const { data: sessionData } = await supabase.auth.getSession()
       const accessToken = sessionData?.session?.access_token || ''
 
@@ -38,8 +47,8 @@ export const ImageGeneratorButton = ({ onImageGenerated }: ImageGeneratorButtonP
           'Authorization': `Bearer ${accessToken}`,
         },
         body: JSON.stringify({ 
-          prompt,
-          apikey: keyData.apikey  // Pass the API key from modelkeys
+          prompt: message,
+          apikey: keyData.apikey
         })
       })
 
@@ -68,12 +77,7 @@ export const ImageGeneratorButton = ({ onImageGenerated }: ImageGeneratorButtonP
       size="icon"
       variant="ghost"
       className="absolute right-20 p-1.5 text-pump-purple hover:text-pump-purple/80 transition-colors disabled:opacity-50"
-      onClick={() => {
-        const promptText = window.prompt("Descreva a imagem que você deseja gerar:")
-        if (promptText) {
-          generateImage(promptText)
-        }
-      }}
+      onClick={generateImage}
       disabled={isGenerating}
     >
       <ImageIcon className="w-5 h-5" />

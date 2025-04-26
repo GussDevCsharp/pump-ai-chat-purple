@@ -38,7 +38,10 @@ export const MessageInput = ({
         isLoading={isLoading}
         onTranscriptGenerated={(transcript) => onMessageChange(message ? message + " " + transcript : transcript)}
       />
-      <ImageGeneratorButton onImageGenerated={onImageGenerated} />
+      <ImageGeneratorButton 
+        onImageGenerated={onImageGenerated} 
+        message={message}
+      />
       <button
         type="button"
         className="absolute right-3 p-1 text-pump-purple hover:text-pump-purple/80 transition-colors disabled:opacity-50"

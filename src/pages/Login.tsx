@@ -26,9 +26,8 @@ export default function Login() {
       password,
     })
 
-    setIsLoading(false)
-
     if (error) {
+      setIsLoading(false)
       if (error.message && error.message.includes("Invalid login credentials")) {
         toast.error('Email ou senha inválidos')
       } else {
@@ -37,10 +36,30 @@ export default function Login() {
       return
     }
 
-    toast.success('Login realizado com sucesso!')
-    setTimeout(() => {
-      navigate('/themes')
-    }, 600)
+    // Check if the user has completed their profile
+    try {
+      const { data: companyProfile } = await supabase
+        .from('company_profiles')
+        .select('profile_completed')
+        .eq('user_id', data.user.id)
+        .maybeSingle()
+      
+      setIsLoading(false)
+      toast.success('Login realizado com sucesso!')
+      
+      // If the user hasn't completed their profile yet, the alert will handle it
+      // Just navigate to the themes page in any case
+      setTimeout(() => {
+        navigate('/themes')
+      }, 600)
+    } catch (profileError) {
+      setIsLoading(false)
+      console.error('Error checking profile completion:', profileError)
+      toast.success('Login realizado com sucesso!')
+      setTimeout(() => {
+        navigate('/themes')
+      }, 600)
+    }
   }
 
   return (

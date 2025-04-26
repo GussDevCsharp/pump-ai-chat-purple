@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -11,6 +12,8 @@ import BusinessGenerator from "./pages/BusinessGenerator";
 import Themes from "./pages/Themes";
 import Signup from "./pages/Signup";
 import AppointmentsPage from "./pages/Appointments";
+import ProfileComplete from "./pages/ProfileComplete";
+import { ProfileCompletionAlert } from "./components/common/ProfileCompletionAlert";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +24,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <ProfileCompletionAlert />
           <Routes>
             <Route path="/" element={<Login />} />
             <Route path="/chat" element={<Index />} />
@@ -29,6 +33,7 @@ const App = () => (
             <Route path="/themes" element={<Themes />} />
             <Route path="/appointments" element={<AppointmentsPage />} />
             <Route path="/business-generator" element={<BusinessGenerator />} />
+            <Route path="/profile/complete" element={<ProfileComplete />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

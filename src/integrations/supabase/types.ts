@@ -233,50 +233,74 @@ export type Database = {
         Row: {
           address: string | null
           average_revenue: number | null
+          biggest_challenge: string | null
           business_segment: string | null
+          channel_type: string | null
           company_name: string
           created_at: string | null
+          documented_processes: boolean | null
           employees_count: number | null
           id: string
           main_products: string | null
+          management_tools: string | null
           phone: string | null
+          profile_completed: boolean | null
+          sales_model: string | null
           social_facebook: string | null
           social_instagram: string | null
           social_linkedin: string | null
+          target_audience: string | null
           updated_at: string | null
           user_id: string
+          years_in_operation: string | null
         }
         Insert: {
           address?: string | null
           average_revenue?: number | null
+          biggest_challenge?: string | null
           business_segment?: string | null
+          channel_type?: string | null
           company_name: string
           created_at?: string | null
+          documented_processes?: boolean | null
           employees_count?: number | null
           id?: string
           main_products?: string | null
+          management_tools?: string | null
           phone?: string | null
+          profile_completed?: boolean | null
+          sales_model?: string | null
           social_facebook?: string | null
           social_instagram?: string | null
           social_linkedin?: string | null
+          target_audience?: string | null
           updated_at?: string | null
           user_id: string
+          years_in_operation?: string | null
         }
         Update: {
           address?: string | null
           average_revenue?: number | null
+          biggest_challenge?: string | null
           business_segment?: string | null
+          channel_type?: string | null
           company_name?: string
           created_at?: string | null
+          documented_processes?: boolean | null
           employees_count?: number | null
           id?: string
           main_products?: string | null
+          management_tools?: string | null
           phone?: string | null
+          profile_completed?: boolean | null
+          sales_model?: string | null
           social_facebook?: string | null
           social_instagram?: string | null
           social_linkedin?: string | null
+          target_audience?: string | null
           updated_at?: string | null
           user_id?: string
+          years_in_operation?: string | null
         }
         Relationships: []
       }
@@ -313,6 +337,57 @@ export type Database = {
           embedding?: string | null
           id?: number
           metadata?: Json | null
+        }
+        Relationships: []
+      }
+      entrepreneur_profiles: {
+        Row: {
+          created_at: string
+          difficulties: string | null
+          entrepreneurship_reason: string | null
+          goals_review_frequency: string | null
+          id: string
+          leadership_style: string | null
+          main_goal: string | null
+          management_style: string | null
+          motivation: string | null
+          planning_time_weekly: string | null
+          team_status: string | null
+          technology_investment: boolean | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          difficulties?: string | null
+          entrepreneurship_reason?: string | null
+          goals_review_frequency?: string | null
+          id: string
+          leadership_style?: string | null
+          main_goal?: string | null
+          management_style?: string | null
+          motivation?: string | null
+          planning_time_weekly?: string | null
+          team_status?: string | null
+          technology_investment?: boolean | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          difficulties?: string | null
+          entrepreneurship_reason?: string | null
+          goals_review_frequency?: string | null
+          id?: string
+          leadership_style?: string | null
+          main_goal?: string | null
+          management_style?: string | null
+          motivation?: string | null
+          planning_time_weekly?: string | null
+          team_status?: string | null
+          technology_investment?: boolean | null
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }

@@ -1,33 +1,20 @@
-
-import { MessageCircle, Plus, Pencil, Trash2, UserRound, Settings } from "lucide-react"
+import { useState } from "react"
 import { useChatSessions } from "@/hooks/useChatSessions"
-import { Button } from "@/components/ui/button"
 import { useNavigate, useSearchParams } from "react-router-dom"
-import { useState, useEffect } from "react"
-import { Input } from "@/components/ui/input"
-import { supabase } from "@/integrations/supabase/client"
-import { useToast } from "@/hooks/use-toast"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
-import { ThemeSelect } from "@/components/chat/ThemeSelect"
-import { useChatThemes, ChatTheme } from "@/hooks/useChatThemes"
-import { SidebarSessionGroup } from "@/components/chat/sidebar/SidebarSessionGroup";
-import { SidebarFooter } from "@/components/chat/sidebar/SidebarFooter";
+import { ChevronLeft, Search, Plus } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { SidebarSessionGroup } from "@/components/chat/sidebar/SidebarSessionGroup"
+import { SidebarFooter } from "@/components/chat/sidebar/SidebarFooter"
 
 export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
-  const { sessions, createSession, refreshSessions, deleteSession, isLoading } = useChatSessions()
-  const { themes } = useChatThemes()
+  const { sessions, createSession, refreshSessions, isLoading } = useChatSessions()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const currentSessionId = searchParams.get('session')
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
+
+  const { themes } = useChatThemes()
+  const [searchTerm, setSearchTerm] = useState("")
   const [editingId, setEditingId] = useState<string | null>(null)
   const [newTitle, setNewTitle] = useState("")
   const [sessionToDelete, setSessionToDelete] = useState<string | null>(null)
@@ -122,83 +109,91 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
   }
 
   return (
-    <>
-      <div className="w-64 max-w-full h-full md:h-screen bg-offwhite border-r border-pump-gray/20 p-4 flex flex-col">
-        {onClose && (
-          <button
-            type="button"
-            className="md:hidden self-end mb-2 p-2 rounded hover:bg-pump-gray-light transition"
-            onClick={onClose}
-            aria-label="Fechar menu"
-          >
-            <span className="text-pump-purple text-2xl font-bold">&times;</span>
-          </button>
-        )}
-
-        <button 
-          onClick={handleNewChat}
-          className="w-full flex items-center gap-2 p-3 bg-white hover:bg-pump-gray-light rounded-lg border border-pump-gray/20 transition-colors"
+    <div className={`w-64 max-w-full h-full md:h-screen bg-offwhite border-r border-pump-gray/20 transition-all duration-300 ${isSidebarCollapsed ? 'w-16' : 'w-64'}`}>
+      {onClose && (
+        <button
+          type="button"
+          className="md:hidden self-end mb-2 p-2 rounded hover:bg-pump-gray-light transition"
+          onClick={onClose}
+          aria-label="Fechar menu"
         >
-          <Plus className="w-4 h-4 text-pump-gray" />
-          <span className="text-sm text-pump-gray font-medium">Nova conversa</span>
+          <span className="text-pump-purple text-2xl font-bold">&times;</span>
         </button>
-        
-        <div className="mt-4 flex-1 overflow-y-auto">
-          {isLoading ? (
-            <div className="flex justify-center items-center h-20">
-              <div className="text-sm text-pump-gray">Carregando conversas...</div>
-            </div>
-          ) : sessions.length === 0 ? (
-            <div className="flex justify-center items-center h-20">
-              <div className="text-sm text-pump-gray">Nenhuma conversa encontrada</div>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-4">
-              {Object.entries(groupedSessions).map(([groupKey, { themeObj, sessions: themeSessions }]) => (
-                <SidebarSessionGroup
-                  key={groupKey}
-                  groupId={groupKey}
-                  themeObj={themeObj}
-                  sessions={themeSessions}
-                  currentSessionId={currentSessionId}
-                  onOpen={(sessionId) => {
-                    navigate(`/chat?session=${sessionId}`)
-                    if (onClose) onClose()
-                  }}
-                  onEdit={startEditing}
-                  onDelete={setSessionToDelete}
-                  onThemeChange={refreshSessions}
-                  editingId={editingId}
-                  newTitle={newTitle}
-                  onTitleChange={(e) => setNewTitle(e.target.value)}
-                  onSaveEdit={handleRename}
-                  onCancelEdit={handleCancelEdit}
-                  onKeyPress={handleKeyPress}
-                />
-              ))}
-            </div>
-          )}
-        </div>
+      )}
 
-        <SidebarFooter />
+      <div className="flex items-center gap-2 p-3">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+          className="text-pump-gray hover:text-pump-purple hover:bg-pump-gray-light"
+        >
+          <ChevronLeft className={`w-5 h-5 transition-transform ${isSidebarCollapsed ? 'rotate-180' : ''}`} />
+          <span className="sr-only">Colapsar menu</span>
+        </Button>
+        
+        <div className={`flex gap-2 ${isSidebarCollapsed ? 'hidden' : ''}`}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-pump-gray hover:text-pump-purple hover:bg-pump-gray-light"
+          >
+            <Search className="w-5 h-5" />
+            <span className="sr-only">Pesquisar conversas</span>
+          </Button>
+
+          <Button
+            onClick={handleNewChat}
+            variant="ghost"
+            size="icon"
+            className="text-pump-gray hover:text-pump-purple hover:bg-pump-gray-light"
+          >
+            <Plus className="w-5 h-5" />
+            <span className="sr-only">Nova conversa</span>
+          </Button>
+        </div>
+      </div>
+      
+      <div className={`mt-4 flex-1 overflow-y-auto ${isSidebarCollapsed ? 'hidden' : ''}`}>
+        {isLoading ? (
+          <div className="flex justify-center items-center h-20">
+            <div className="text-sm text-pump-gray">Carregando conversas...</div>
+          </div>
+        ) : sessions.length === 0 ? (
+          <div className="flex justify-center items-center h-20">
+            <div className="text-sm text-pump-gray">Nenhuma conversa encontrada</div>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-4">
+            {Object.entries(groupedSessions).map(([groupKey, { themeObj, sessions: themeSessions }]) => (
+              <SidebarSessionGroup
+                key={groupKey}
+                groupId={groupKey}
+                themeObj={themeObj}
+                sessions={themeSessions}
+                currentSessionId={currentSessionId}
+                onOpen={(sessionId) => {
+                  navigate(`/chat?session=${sessionId}`)
+                  if (onClose) onClose()
+                }}
+                onEdit={startEditing}
+                onDelete={setSessionToDelete}
+                onThemeChange={refreshSessions}
+                editingId={editingId}
+                newTitle={newTitle}
+                onTitleChange={(e) => setNewTitle(e.target.value)}
+                onSaveEdit={handleRename}
+                onCancelEdit={handleCancelEdit}
+                onKeyPress={handleKeyPress}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
-      <AlertDialog open={!!sessionToDelete} onOpenChange={() => setSessionToDelete(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Excluir conversa</AlertDialogTitle>
-            <AlertDialogDescription>
-              Tem certeza que deseja excluir esta conversa? Esta ação não pode ser desfeita.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteConfirm} className="bg-red-500 hover:bg-red-600">
-              Excluir
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </>
+      <div className={isSidebarCollapsed ? 'hidden' : ''}>
+        <SidebarFooter />
+      </div>
+    </div>
   )
 }

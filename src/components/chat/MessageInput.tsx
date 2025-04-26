@@ -56,3 +56,4 @@ export const MessageInput = ({
       </button>
     </div>
   )
+}

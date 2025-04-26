@@ -54,7 +54,10 @@ const NeuralBackground = () => {
 
         // Simula efeito de profundidade com tamanho oscilante
         point.sizeOffset += point.sizeVelocity;
-        point.size = point.baseSize + Math.sin(point.sizeOffset) * 1.5;
+        
+        // Correção: Garantir que o tamanho nunca seja negativo
+        // Usar Math.max para garantir um mínimo de 0.1 para o raio
+        point.size = Math.max(0.1, point.baseSize + Math.sin(point.sizeOffset) * (point.baseSize * 0.5));
 
         // Rebate nas bordas
         if (point.x < 0 || point.x > canvas.width) point.vx *= -1;
@@ -69,7 +72,8 @@ const NeuralBackground = () => {
           const distance = Math.sqrt(dx * dx + dy * dy);
 
           if (distance < 150) {
-            const averageSize = (point.size + otherPoint.size) / 2;
+            // Usar Math.max para garantir que averageSize seja sempre positivo
+            const averageSize = Math.max(0.1, (point.size + otherPoint.size) / 2);
             const opacity = (1 - distance / 150) * 0.15 * (averageSize / 2);
             
             ctx.beginPath();
@@ -83,8 +87,10 @@ const NeuralBackground = () => {
 
         // Desenha pontos com tamanho variável
         ctx.beginPath();
-        ctx.arc(point.x, point.y, point.size, 0, Math.PI * 2);
-        const opacity = 0.3 + (point.size / 4) * 0.2;
+        // Garantir que o raio seja sempre positivo
+        const safeRadius = Math.max(0.1, point.size);
+        ctx.arc(point.x, point.y, safeRadius, 0, Math.PI * 2);
+        const opacity = 0.3 + (safeRadius / 4) * 0.2;
         ctx.fillStyle = `rgba(126, 28, 198, ${opacity})`;
         ctx.fill();
       });

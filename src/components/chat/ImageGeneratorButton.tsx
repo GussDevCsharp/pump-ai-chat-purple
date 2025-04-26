@@ -27,11 +27,15 @@ export const ImageGeneratorButton = ({ onImageGenerated }: ImageGeneratorButtonP
         throw new Error('Could not fetch API key')
       }
 
+      // Get the session properly - await the promise first
+      const { data: sessionData } = await supabase.auth.getSession()
+      const accessToken = sessionData?.session?.access_token || ''
+
       const response = await fetch("https://spyfzrgwbavmntiginap.supabase.co/functions/v1/generate-image", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${supabase.auth.getSession()?.access_token}`,
+          'Authorization': `Bearer ${accessToken}`,
         },
         body: JSON.stringify({ 
           prompt,

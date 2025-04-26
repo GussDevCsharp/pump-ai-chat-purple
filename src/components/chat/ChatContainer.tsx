@@ -1,11 +1,9 @@
-
 import { useState } from "react"
 import { ChatMessages } from "@/components/chat/ChatMessages"
 import { ChatInput } from "@/components/chat/ChatInput"
 import { WelcomeScreen } from "@/components/chat/WelcomeScreen"
 import { useSearchParams } from "react-router-dom"
 import { supabase } from "@/integrations/supabase/client"
-import { useToast } from "@/hooks/use-toast"
 import { useChatSessions } from "@/hooks/useChatSessions"
 import { useChatAuth } from "@/hooks/useChatAuth"
 import { useThemePrompt } from "@/hooks/useThemePrompt"
@@ -26,7 +24,6 @@ const businessData = {
 export const ChatContainer = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const sessionId = searchParams.get('session')
-  const { toast } = useToast()
   const { createSession, refreshSessions } = useChatSessions()
   const { authStatus, recordInteraction, remainingInteractions } = useChatAuth()
   const [currentThemeId, setCurrentThemeId] = useState<string | null>(null)
@@ -183,7 +180,7 @@ export const ChatContainer = () => {
           setMessages(prev => [...prev, assistantMessage])
           await refreshSessions()
         } catch (error: any) {
-          throw new Error(`Failed to save messages: ${error.message}`)
+          console.error("Erro ao salvar mensagens:", error)
         }
       }
 
@@ -191,11 +188,6 @@ export const ChatContainer = () => {
 
     } catch (error: any) {
       console.error("Chat error:", error)
-      toast({
-        variant: "destructive",
-        title: "Erro",
-        description: `Falha ao obter resposta: ${error.message}`
-      })
     } finally {
       setIsThinking(false)
     }

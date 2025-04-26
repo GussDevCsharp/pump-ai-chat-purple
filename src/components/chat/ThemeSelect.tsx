@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button"
 import { Check, Tag, X } from "lucide-react"
 import {
@@ -8,9 +7,7 @@ import {
 } from "@/components/ui/popover"
 import { useChatThemes } from "@/hooks/useChatThemes"
 import { supabase } from "@/integrations/supabase/client"
-import { useToast } from "@/hooks/use-toast"
 import { cn } from "@/lib/utils"
-import { Badge } from "@/components/ui/badge"
 import { useEffect, useState } from "react"
 
 interface ThemeSelectProps {
@@ -21,7 +18,6 @@ interface ThemeSelectProps {
 
 export const ThemeSelect = ({ sessionId, currentTheme, onThemeChange }: ThemeSelectProps) => {
   const { themes, isLoading } = useChatThemes()
-  const { toast } = useToast()
   const [selectedThemeName, setSelectedThemeName] = useState<string | null>(null)
   const [open, setOpen] = useState(true)
 
@@ -67,10 +63,6 @@ export const ThemeSelect = ({ sessionId, currentTheme, onThemeChange }: ThemeSel
         setSelectedThemeName(selectedTheme.name)
       }
 
-      toast({
-        description: "Tema atualizado com sucesso",
-      })
-
       if (onThemeChange) {
         onThemeChange()
       }
@@ -78,10 +70,6 @@ export const ThemeSelect = ({ sessionId, currentTheme, onThemeChange }: ThemeSel
       setOpen(false)
     } catch (error) {
       console.error('Erro ao atualizar tema:', error)
-      toast({
-        variant: "destructive",
-        description: "Erro ao atualizar tema",
-      })
     }
   }
 

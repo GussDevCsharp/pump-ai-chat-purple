@@ -1,4 +1,3 @@
-
 import { FormDataType } from "@/types/business-generator"
 import { useLocation } from "react-router-dom"
 import ReactMarkdown from 'react-markdown'
@@ -6,7 +5,6 @@ import LoadingDots from "./LoadingDots"
 import { useEffect, useRef } from "react"
 import { Copy } from "lucide-react"
 import { Button } from "../ui/button"
-import { useToast } from "@/hooks/use-toast"
 import { ScrollArea } from "../ui/scroll-area"
 
 interface Message {
@@ -23,7 +21,6 @@ export const ChatMessages = ({ messages, isThinking }: ChatMessagesProps) => {
   const location = useLocation()
   const businessData = location.state?.businessData as FormDataType
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  const { toast } = useToast()
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -36,14 +33,8 @@ export const ChatMessages = ({ messages, isThinking }: ChatMessagesProps) => {
   const handleCopy = async (content: string) => {
     try {
       await navigator.clipboard.writeText(content)
-      toast({
-        description: "Conteúdo copiado para a área de transferência",
-      })
     } catch (err) {
-      toast({
-        variant: "destructive",
-        description: "Erro ao copiar conteúdo",
-      })
+      console.error('Error copying to clipboard:', err)
     }
   }
 
@@ -157,4 +148,3 @@ export const ChatMessages = ({ messages, isThinking }: ChatMessagesProps) => {
     </ScrollArea>
   )
 }
-

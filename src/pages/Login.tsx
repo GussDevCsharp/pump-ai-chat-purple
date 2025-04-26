@@ -1,4 +1,3 @@
-
 import React, { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
@@ -45,14 +44,13 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex">
-      {/* Login Column */}
       <div className="w-1/2 bg-offwhite flex items-center justify-center px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-md w-full bg-white/85 shadow-lg rounded-xl p-8">
           <div className="text-center">
             <Link to="/">
               <img 
-                src="/lovable-uploads/5f403064-9209-4921-b73b-0f70c739981a.png" 
-                alt="Pump.ia"
+                src="/uploads/chatpump-logo-transparent.png" 
+                alt="ChatPump"
                 className="h-12 mx-auto"
               />
             </Link>
@@ -127,7 +125,6 @@ export default function Login() {
         </div>
       </div>
 
-      {/* Effect Column */}
       <div className="w-1/2 bg-offwhite relative overflow-hidden">
         <NeuralBackground />
         <div className="relative z-[5] flex items-center justify-center h-full pointer-events-none">

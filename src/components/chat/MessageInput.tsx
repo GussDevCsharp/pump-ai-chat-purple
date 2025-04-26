@@ -23,11 +23,7 @@ export const MessageInput = ({
   const [isImageMode, setIsImageMode] = useState(false)
 
   const handleSubmit = () => {
-    if (isImageMode) {
-      // Se estiver no modo imagem, adiciona o prefixo para gerar imagem
-      const imagePrompt = `Gere uma imagem de: ${message}`
-      onMessageChange(imagePrompt)
-    }
+    if (!message.trim()) return
     onSubmit()
   }
 
@@ -64,6 +60,12 @@ export const MessageInput = ({
           isLoading={isLoading}
           onTranscriptGenerated={(transcript) => onMessageChange(message ? message + " " + transcript : transcript)}
         />
+        {isImageMode && (
+          <ImageGeneratorButton 
+            message={message}
+            onImageGenerated={onImageGenerated}
+          />
+        )}
         <button
           type="button"
           className="absolute right-3 p-1 text-pump-purple hover:text-pump-purple/80 transition-colors disabled:opacity-50"

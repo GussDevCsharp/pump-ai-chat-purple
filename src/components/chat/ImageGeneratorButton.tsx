@@ -24,11 +24,6 @@ export const ImageGeneratorButton = ({ onImageGenerated, message }: ImageGenerat
       return
     }
 
-    const imagePromptPrefix = "Gere uma imagem de: "
-    const imageDescription = message.startsWith(imagePromptPrefix) 
-      ? message.slice(imagePromptPrefix.length) 
-      : message
-
     try {
       setIsGenerating(true)
       
@@ -52,7 +47,7 @@ export const ImageGeneratorButton = ({ onImageGenerated, message }: ImageGenerat
           'Authorization': `Bearer ${accessToken}`,
         },
         body: JSON.stringify({ 
-          prompt: imageDescription,
+          prompt: message,
           apikey: keyData.apikey
         })
       })
@@ -77,7 +72,7 @@ export const ImageGeneratorButton = ({ onImageGenerated, message }: ImageGenerat
   }
 
   useEffect(() => {
-    if (message.startsWith("Gere uma imagem de: ")) {
+    if (message.trim()) {
       generateImage()
     }
   }, [message])

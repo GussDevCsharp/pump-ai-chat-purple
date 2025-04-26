@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react"
 import { useChatSessions, ChatSession } from "@/hooks/useChatSessions"
 import { useChatThemes } from "@/hooks/useChatThemes"
@@ -110,31 +109,42 @@ export function ChatSidebar({ onClose }: { onClose?: () => void }) {
     }
   }, [sessions, searchTerm])
 
+  // Group sessions by theme first, then by date for themeless sessions
   const groupedSessions = filteredSessions
     ? filteredSessions.reduce((acc: { [key: string]: ChatSession[] }, session: ChatSession) => {
-      const createdAt = new Date(session.created_at)
-      const today = new Date()
-      const yesterday = new Date(today)
-      yesterday.setDate(today.getDate() - 1)
-
-      let groupKey: string
-
-      if (createdAt.toDateString() === today.toDateString()) {
-        groupKey = 'Today'
-      } else if (createdAt.toDateString() === yesterday.toDateString()) {
-        groupKey = 'Yesterday'
+      if (session.theme_id) {
+        // If session has a theme, group by theme
+        const theme = themes?.find(t => t.id === session.theme_id)
+        const themeKey = theme ? `theme-${theme.id}` : 'no-theme'
+        if (!acc[themeKey]) {
+          acc[themeKey] = []
+        }
+        acc[themeKey].push(session)
       } else {
-        groupKey = createdAt.toLocaleDateString('pt-BR', {
-          day: '2-digit',
-          month: '2-digit',
-          year: 'numeric'
-        })
-      }
+        // If no theme, group by date
+        const createdAt = new Date(session.created_at)
+        const today = new Date()
+        const yesterday = new Date(today)
+        yesterday.setDate(today.getDate() - 1)
 
-      if (!acc[groupKey]) {
-        acc[groupKey] = []
+        let dateKey: string
+        if (createdAt.toDateString() === today.toDateString()) {
+          dateKey = 'today'
+        } else if (createdAt.toDateString() === yesterday.toDateString()) {
+          dateKey = 'yesterday'
+        } else {
+          dateKey = createdAt.toLocaleDateString('pt-BR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+          })
+        }
+        
+        if (!acc[dateKey]) {
+          acc[dateKey] = []
+        }
+        acc[dateKey].push(session)
       }
-      acc[groupKey].push(session)
       return acc
     }, {})
     : {}
@@ -160,31 +170,44 @@ export function ChatSidebar({ onClose }: { onClose?: () => void }) {
       
       <SidebarContent>
         {isLoading ? (
-          <div className="p-4 text-pump-gray">Loading sessions...</div>
+          <div className="p-4 text-pump-gray">Carregando conversas...</div>
         ) : (
           <>
             {Object.entries(groupedSessions)
               .sort((a, b) => {
-                if (a[0] === 'Today') return -1
-                if (b[0] === 'Today') return 1
-                if (a[0] === 'Yesterday') return -1
-                if (b[0] === 'Yesterday') return 1
+                // Sort themes first
+                const isThemeA = a[0].startsWith('theme-')
+                const isThemeB = b[0].startsWith('theme-')
+                if (isThemeA && !isThemeB) return -1
+                if (!isThemeA && isThemeB) return 1
+
+                // Then sort dates
+                if (a[0] === 'today') return -1
+                if (b[0] === 'today') return 1
+                if (a[0] === 'yesterday') return -1
+                if (b[0] === 'yesterday') return 1
                 return new Date(b[0]).getTime() - new Date(a[0]).getTime()
               })
-              .map(([group, sessions]) => (
-                <SidebarSessionGroup
-                  key={group}
-                  groupId={group}
-                  themeObj={themes?.find(theme => theme.id === sessions[0]?.theme_id)}
-                  sessions={sessions}
-                  currentSessionId={sessionId}
-                  onOpen={(sessionId) => handleSessionClick(sessionId)}
-                  onEdit={(sessionId, title) => handleEditSession(sessionId, title)}
-                  onDelete={(sessionId) => handleDeleteSession(sessionId)}
-                  onThemeChange={handleThemeChange}
-                  title={group}
-                />
-              ))}
+              .map(([groupKey, sessions]) => {
+                const isThemeGroup = groupKey.startsWith('theme-')
+                const themeId = isThemeGroup ? groupKey.replace('theme-', '') : null
+                const theme = themes?.find(t => t.id === themeId)
+                
+                return (
+                  <SidebarSessionGroup
+                    key={groupKey}
+                    groupId={groupKey}
+                    themeObj={theme}
+                    sessions={sessions}
+                    currentSessionId={sessionId}
+                    onOpen={(sessionId) => handleSessionClick(sessionId)}
+                    onEdit={(sessionId, title) => handleEditSession(sessionId, title)}
+                    onDelete={(sessionId) => handleDeleteSession(sessionId)}
+                    onThemeChange={handleThemeChange}
+                    title={isThemeGroup ? (theme?.name || 'Sem tema') : groupKey === 'today' ? 'Hoje' : groupKey === 'yesterday' ? 'Ontem' : groupKey}
+                  />
+                )
+              })}
           </>
         )}
       </SidebarContent>

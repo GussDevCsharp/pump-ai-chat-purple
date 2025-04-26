@@ -11,7 +11,6 @@ const NeuralBackground = () => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Configurar canvas para tela cheia
     const resizeCanvas = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -20,41 +19,48 @@ const NeuralBackground = () => {
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    // Pontos que representam os neurônios
     type Point = {
       x: number;
       y: number;
       vx: number;
       vy: number;
+      size: number;
+      baseSize: number;
+      sizeOffset: number;
+      sizeVelocity: number;
     };
 
-    // Criar pontos iniciais
     const points: Point[] = Array.from({ length: 50 }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
       vx: (Math.random() - 0.5) * 0.5,
       vy: (Math.random() - 0.5) * 0.5,
+      size: Math.random() * 2 + 1,
+      baseSize: Math.random() * 2 + 1,
+      sizeOffset: Math.random() * Math.PI * 2,
+      sizeVelocity: 0.02 + Math.random() * 0.02,
     }));
 
-    // Função de animação
     const animate = () => {
       if (!ctx || !canvas) return;
       
-      // Limpar canvas completamente em cada frame (sem transparência)
       ctx.fillStyle = 'rgb(255, 253, 243)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Atualizar e desenhar pontos
       points.forEach((point, i) => {
-        // Mover pontos
+        // Atualiza posição
         point.x += point.vx;
         point.y += point.vy;
 
-        // Rebater nas bordas
+        // Simula efeito de profundidade com tamanho oscilante
+        point.sizeOffset += point.sizeVelocity;
+        point.size = point.baseSize + Math.sin(point.sizeOffset) * 1.5;
+
+        // Rebate nas bordas
         if (point.x < 0 || point.x > canvas.width) point.vx *= -1;
         if (point.y < 0 || point.y > canvas.height) point.vy *= -1;
 
-        // Desenhar conexões
+        // Desenha conexões com efeito de profundidade
         points.forEach((otherPoint, j) => {
           if (i === j) return;
 
@@ -63,19 +69,23 @@ const NeuralBackground = () => {
           const distance = Math.sqrt(dx * dx + dy * dy);
 
           if (distance < 150) {
+            const averageSize = (point.size + otherPoint.size) / 2;
+            const opacity = (1 - distance / 150) * 0.15 * (averageSize / 2);
+            
             ctx.beginPath();
             ctx.moveTo(point.x, point.y);
             ctx.lineTo(otherPoint.x, otherPoint.y);
-            ctx.strokeStyle = `rgba(126, 28, 198, ${0.1 * (1 - distance / 150)})`;
-            ctx.lineWidth = 0.3;
+            ctx.strokeStyle = `rgba(126, 28, 198, ${opacity})`;
+            ctx.lineWidth = averageSize * 0.2;
             ctx.stroke();
           }
         });
 
-        // Desenhar pontos
+        // Desenha pontos com tamanho variável
         ctx.beginPath();
-        ctx.arc(point.x, point.y, 2, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(126, 28, 198, 0.5)';
+        ctx.arc(point.x, point.y, point.size, 0, Math.PI * 2);
+        const opacity = 0.3 + (point.size / 4) * 0.2;
+        ctx.fillStyle = `rgba(126, 28, 198, ${opacity})`;
         ctx.fill();
       });
 

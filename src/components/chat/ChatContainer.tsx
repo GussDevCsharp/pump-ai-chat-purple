@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react"
 import { ChatMessages } from "@/components/chat/ChatMessages"
 import { ChatInput } from "@/components/chat/ChatInput"
@@ -8,7 +9,7 @@ import { useToast } from "@/hooks/use-toast"
 import { useChatSessions } from "@/hooks/useChatSessions"
 import { useChatAuth } from "@/hooks/useChatAuth"
 import { Button } from "@/components/ui/button"
-import { LogIn } from "lucide-react"
+import { ChevronLeft } from "lucide-react"
 import { useThemePrompt } from "@/hooks/useThemePrompt"
 import { useThemePrompts } from "@/hooks/useThemePrompts"
 import { Watermark } from "../common/Watermark"
@@ -368,6 +369,15 @@ export const ChatContainer = () => {
 
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden relative">
+      <Button
+        variant="ghost"
+        size="sm"
+        className="absolute top-4 left-4 z-20 text-pump-purple hover:text-pump-purple/90"
+        onClick={() => navigate('/themes')}
+      >
+        <ChevronLeft className="h-4 w-4 mr-1" />
+        Voltar para temas
+      </Button>
       <Watermark />
       {authStatus === 'anonymous' && (
         <div className="bg-blue-50 p-3 flex items-center justify-between border-b">
@@ -391,7 +401,7 @@ export const ChatContainer = () => {
       {showWelcomeScreen ? (
         <WelcomeScreen onSendMessage={handleSendMessage} />
       ) : (
-        <div className="flex-1 flex flex-col overflow-hidden h-full">
+        <div className="flex-1 flex flex-col overflow-hidden h-full pt-16">
           <ChatMessages messages={messages} isThinking={isThinking} />
           <PromptSuggestionCards
             prompts={themePrompts}

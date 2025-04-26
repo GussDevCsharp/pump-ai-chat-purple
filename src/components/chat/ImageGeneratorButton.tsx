@@ -16,13 +16,27 @@ export const ImageGeneratorButton = ({ onImageGenerated }: ImageGeneratorButtonP
   const generateImage = async (prompt: string) => {
     try {
       setIsGenerating(true)
+      
+      const { data: keyData, error: keyError } = await supabase
+        .from('modelkeys')
+        .select('apikey')
+        .eq('model', 'OpenAI')
+        .single()
+
+      if (keyError || !keyData) {
+        throw new Error('Could not fetch API key')
+      }
+
       const response = await fetch("https://spyfzrgwbavmntiginap.supabase.co/functions/v1/generate-image", {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${supabase.auth.getSession()?.access_token}`,
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${supabase.auth.getSession()?.access_token}`,
         },
-        body: JSON.stringify({ prompt })
+        body: JSON.stringify({ 
+          prompt,
+          apikey: keyData.apikey  // Pass the API key from modelkeys
+        })
       })
 
       if (!response.ok) {

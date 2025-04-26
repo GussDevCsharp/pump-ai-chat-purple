@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
@@ -12,6 +11,7 @@ import { TrendingTopics } from "@/components/themes/TrendingTopics";
 import { useThemeTopics } from "@/hooks/useThemeTopics";
 import { ProfileCompletionAlert } from "@/components/common/ProfileCompletionAlert";
 import { ProfileCompletionChart } from "@/components/profile/ProfileCompletionChart";
+import { Copyright } from 'lucide-react';
 
 type ThemeCardProps = {
   theme: {
@@ -111,7 +111,7 @@ export default function Themes() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white flex flex-col">
       <ProfileCompletionAlert />
       <Header />
       <main className="w-full px-2 sm:px-4 md:px-8 py-8">
@@ -183,6 +183,19 @@ export default function Themes() {
           </div>
         </div>
       </main>
+      <footer className="mt-auto bg-pump-offwhite border-t border-pump-gray/10 py-6">
+        <div className="container mx-auto px-4 md:px-8 flex items-center justify-between text-pump-gray">
+          <div className="flex items-center gap-2 text-sm">
+            <Copyright className="w-4 h-4" />
+            <span>{new Date().getFullYear()} ChatPump. Todos os direitos reservados.</span>
+          </div>
+          <div className="flex gap-4 text-sm">
+            <a href="#" className="hover:text-pump-purple transition-colors">Privacidade</a>
+            <a href="#" className="hover:text-pump-purple transition-colors">Termos</a>
+            <a href="#" className="hover:text-pump-purple transition-colors">Contato</a>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

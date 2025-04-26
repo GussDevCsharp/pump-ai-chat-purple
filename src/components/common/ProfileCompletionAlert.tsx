@@ -1,16 +1,8 @@
 
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
+import { Button } from "@/components/ui/button"
+import { Info } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
 
 export function ProfileCompletionAlert() {
@@ -23,7 +15,6 @@ export function ProfileCompletionAlert() {
         const { data: session } = await supabase.auth.getSession()
         if (!session.session) return
 
-        // Check if company profile exists and is complete
         const { data: companyProfile, error: companyError } = await supabase
           .from('company_profiles')
           .select('id, profile_completed')
@@ -35,7 +26,6 @@ export function ProfileCompletionAlert() {
           return
         }
         
-        // If profile doesn't exist or is not complete, show alert
         if (!companyProfile || !companyProfile.profile_completed) {
           setShowAlert(true)
         }
@@ -44,7 +34,6 @@ export function ProfileCompletionAlert() {
       }
     }
     
-    // Add a small delay to ensure this runs after the auth state is fully initialized
     const timer = setTimeout(checkProfileCompletion, 1000)
     return () => clearTimeout(timer)
   }, [])
@@ -58,26 +47,36 @@ export function ProfileCompletionAlert() {
     setShowAlert(false)
   }
   
+  if (!showAlert) return null
+
   return (
-    <AlertDialog open={showAlert} onOpenChange={setShowAlert}>
-      <AlertDialogContent className="bg-white">
-        <AlertDialogHeader>
-          <AlertDialogTitle className="text-pump-purple">Complete seu perfil</AlertDialogTitle>
-          <AlertDialogDescription>
-            Para uma melhor experiência, precisamos de mais informações sobre você e sua empresa.
-            Complete seu perfil para desbloquear todos os recursos da plataforma.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel onClick={handleLater}>Depois</AlertDialogCancel>
-          <AlertDialogAction 
-            onClick={handleComplete}
-            className="bg-pump-purple hover:bg-pump-purple/90"
-          >
-            Completar perfil
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+    <div className="fixed top-0 left-0 right-0 z-50 bg-white shadow-md">
+      <div className="container mx-auto px-4 py-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Info className="h-5 w-5 text-pump-purple" />
+            <span className="text-sm font-medium">
+              Deixa eu conhecer seu negócio ainda mais
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={handleLater}
+            >
+              Depois
+            </Button>
+            <Button 
+              size="sm"
+              onClick={handleComplete}
+              className="bg-pump-purple hover:bg-pump-purple/90"
+            >
+              Completar perfil
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }

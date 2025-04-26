@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react"
 import { useChatSessions, ChatSession } from "@/hooks/useChatSessions"
 import { useChatThemes } from "@/hooks/useChatThemes"
@@ -36,21 +37,21 @@ export function ChatSidebar({ onClose }: { onClose?: () => void }) {
     }
   }
 
-  const handleSessionClick = (session: ChatSession) => {
-    navigate(`/chat?session=${session.id}`)
+  const handleSessionClick = (sessionId: string) => {
+    navigate(`/chat?session=${sessionId}`)
     if (onClose) {
       onClose()
     }
   }
 
-  const handleEditSession = async (session: ChatSession) => {
-    const newTitle = prompt("Enter new title:", session.title)
-    if (newTitle && newTitle !== session.title) {
+  const handleEditSession = async (sessionId: string, title: string) => {
+    const newTitle = prompt("Enter new title:", title)
+    if (newTitle && newTitle !== title) {
       try {
         const { error } = await supabase
           .from('chat_sessions')
           .update({ title: newTitle })
-          .eq('id', session.id)
+          .eq('id', sessionId)
 
         if (error) {
           throw new Error(error.message)
@@ -71,10 +72,10 @@ export function ChatSidebar({ onClose }: { onClose?: () => void }) {
     }
   }
 
-  const handleDeleteSession = async (session: ChatSession) => {
+  const handleDeleteSession = async (sessionId: string) => {
     if (window.confirm("Are you sure you want to delete this session?")) {
       try {
-        await deleteSession(session.id)
+        await deleteSession(sessionId)
         toast({
           title: "Success",
           description: "Session deleted successfully."
@@ -177,9 +178,9 @@ export function ChatSidebar({ onClose }: { onClose?: () => void }) {
                   themeObj={themes?.find(theme => theme.id === sessions[0]?.theme_id)}
                   sessions={sessions}
                   currentSessionId={sessionId}
-                  onOpen={handleSessionClick}
-                  onEdit={handleEditSession}
-                  onDelete={handleDeleteSession}
+                  onOpen={(sessionId) => handleSessionClick(sessionId)}
+                  onEdit={(sessionId, title) => handleEditSession(sessionId, title)}
+                  onDelete={(sessionId) => handleDeleteSession(sessionId)}
                   onThemeChange={handleThemeChange}
                   title={group}
                 />

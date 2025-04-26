@@ -1,17 +1,25 @@
-import { MessageCircle, Menu, Pencil, Trash2, Tag, Check, X } from "lucide-react"
+
+import { ChatSession } from "@/hooks/useChatSessions"
+import {
+  MoreVertical,
+  MessageSquare,
+  Pencil,
+  Trash,
+  Palette,
+} from "lucide-react"
+import { cn } from "@/lib/utils"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { ThemeSelect } from "@/components/chat/ThemeSelect"
-import { useState } from "react"
 
-export interface SidebarSessionCardProps {
-  session: any
-  themeObj: any
-  isActive: boolean
+interface SidebarSessionCardProps {
+  session: ChatSession
+  themeObj?: any
+  isActive?: boolean
   onOpen: () => void
   onEdit: () => void
   onDelete: () => void
@@ -21,140 +29,73 @@ export interface SidebarSessionCardProps {
 export function SidebarSessionCard({
   session,
   themeObj,
-  isActive,
+  isActive = false,
   onOpen,
   onEdit,
   onDelete,
   onThemeChange
 }: SidebarSessionCardProps) {
-  const [showThemeSelector, setShowThemeSelector] = useState(false);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-
-  const handleThemeButtonClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setShowThemeSelector(true);
-  };
-
-  const handleDeleteClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setShowDeleteConfirm(true);
-  };
-
-  const handleConfirmDelete = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    onDelete();
-    setShowDeleteConfirm(false);
-  };
-
-  const handleCancelDelete = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setShowDeleteConfirm(false);
-  };
-
   return (
-    <div className="group relative">
-      <button
-        onClick={onOpen}
-        className={`
-          relative flex items-center w-full px-2 py-1.5
-          rounded-lg transition-all duration-200
-          hover:bg-pump-gray-light/50
-          ${isActive ? "bg-pump-gray-light/30" : ""}
-        `}
-      >
-        
-        <div className="flex items-center gap-2 w-full min-w-0">
-          <div className="flex items-center gap-2 flex-grow min-w-0 overflow-hidden">
-            <span 
-              className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full"
-              style={{
-                background: themeObj?.color ? `${themeObj.color}20` : "#f4ebfd"
-              }}
-            >
-              <MessageCircle
-                className="w-4 h-4"
-                style={{ color: themeObj?.color || "#7E1CC6" }}
-              />
-            </span>
-            <span className="text-sm text-pump-gray font-medium truncate block">
-              {session.title}
-            </span>
-          </div>
-          
-          <div className="flex items-center gap-1 flex-shrink-0">
-            {showThemeSelector ? (
-              <ThemeSelect 
-                sessionId={session.id} 
-                currentTheme={session.theme_id}
-                onThemeChange={() => {
-                  onThemeChange();
-                  setShowThemeSelector(false);
-                }}
-              />
-            ) : (
-              <button
-                type="button"
-                onClick={handleThemeButtonClick}
-                className="p-1 rounded hover:bg-pump-gray-light"
-                aria-label="Mudar tema"
-              >
-                <Tag className="w-4 h-4 text-pump-gray hover:text-pump-purple" />
-              </button>
-            )}
-            
-            {showDeleteConfirm ? (
-              <div className="flex items-center gap-1">
-                <button
-                  onClick={handleConfirmDelete}
-                  className="p-1 rounded-full hover:bg-green-100"
-                  aria-label="Confirmar exclusão"
-                >
-                  <Check className="w-4 h-4 text-green-600" />
-                </button>
-                <button
-                  onClick={handleCancelDelete}
-                  className="p-1 rounded-full hover:bg-red-100"
-                  aria-label="Cancelar exclusão"
-                >
-                  <X className="w-4 h-4 text-red-600" />
-                </button>
-              </div>
-            ) : (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button
-                    type="button"
-                    onClick={(e) => e.stopPropagation()}
-                    className="p-1 rounded hover:bg-pump-gray-light"
-                    aria-label="Menu de opções"
-                  >
-                    <Menu className="w-4 h-4 text-pump-gray hover:text-pump-purple" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48 bg-white">
-                  <DropdownMenuItem onClick={(e) => {
-                    e.preventDefault();
-                    onEdit();
-                  }} className="cursor-pointer">
-                    <Pencil className="w-4 h-4 mr-2" />
-                    Editar conversa
-                  </DropdownMenuItem>
-                  <DropdownMenuItem 
-                    onClick={handleDeleteClick}
-                    className="cursor-pointer text-red-600 hover:text-red-600 hover:bg-red-50"
-                  >
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    Excluir conversa
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
-          </div>
+    <div
+      onClick={onOpen}
+      className={cn(
+        "px-3 py-2.5 relative rounded-lg flex items-center cursor-pointer group transition-colors",
+        isActive 
+          ? "bg-white text-pump-gray-dark shadow-sm"
+          : "hover:bg-white/50 text-pump-gray"
+      )}
+    >
+      <div className="mr-3">
+        <div className={cn(
+          "flex items-center justify-center w-9 h-9 rounded-lg bg-white/80 text-pump-purple"
+        )}>
+          <MessageSquare className="w-5 h-5" />
         </div>
-      </button>
+      </div>
+      
+      <div className="flex flex-col min-w-0 flex-1">
+        <div className="flex items-center justify-between">
+          <p className={cn(
+            "text-sm font-medium truncate max-w-[160px]",
+            isActive ? "text-pump-gray-dark" : "text-pump-gray"
+          )}>{session.title}</p>
+        </div>
+        <span className="text-xs text-pump-gray-light">
+          {new Date(session.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+        </span>
+      </div>
+
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button 
+            onClick={(e) => e.stopPropagation()} 
+            className={cn(
+              "w-8 h-8 flex items-center justify-center rounded opacity-0 group-hover:opacity-100 transition-opacity",
+              isActive ? "hover:bg-pump-gray-light/30" : "hover:bg-white"
+            )}
+          >
+            <MoreVertical className="w-4 h-4" />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onEdit(); }}>
+            <Pencil className="mr-2 h-4 w-4" />
+            Edit
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onThemeChange(); }}>
+            <Palette className="mr-2 h-4 w-4" />
+            Change Theme
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem 
+            onClick={(e) => { e.stopPropagation(); onDelete(); }}
+            className="text-red-500 hover:text-red-500 focus:text-red-500"
+          >
+            <Trash className="mr-2 h-4 w-4" />
+            Delete
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
-  );
+  )
 }

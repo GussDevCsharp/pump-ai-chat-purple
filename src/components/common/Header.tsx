@@ -14,7 +14,7 @@ export const Header = () => {
       <div className="container mx-auto flex items-center justify-between h-20 px-4 md:px-8">
         <Link to="/" className="flex items-center gap-2">
           <img 
-            src="/uploads/chatpump-logo-transparent.png" 
+            src="/uploads/CHATPUMP PNG.png" 
             alt="ChatPump"
             className="h-10"
           />
@@ -41,3 +41,4 @@ export const Header = () => {
     </header>
   )
 }
+

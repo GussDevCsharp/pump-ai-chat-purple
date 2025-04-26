@@ -19,7 +19,13 @@ export const ChatHeader = ({ mobileMenuButton }: { mobileMenuButton?: React.Reac
             {mobileMenuButton}
           </div>
         )}
-        {/* Logo removed as per user request */}
+        <Link to="/">
+          <img 
+            src="/uploads/CHATPUMP PNG.png" 
+            alt="ChatPump"
+            className="h-8"
+          />
+        </Link>
       </div>
       <div className="flex items-center gap-4">
         <UserCardMenu />
@@ -33,3 +39,4 @@ export const ChatHeader = ({ mobileMenuButton }: { mobileMenuButton?: React.Reac
     </header>
   )
 }
+

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Info } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
+import { cn } from "@/lib/utils"
 
 export function ProfileCompletionAlert() {
   const [showAlert, setShowAlert] = useState(false)
@@ -50,11 +51,18 @@ export function ProfileCompletionAlert() {
   if (!showAlert) return null
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 bg-white shadow-md">
-      <div className="container mx-auto px-4 py-3">
+    <div 
+      className={cn(
+        "fixed top-0 left-0 right-0 z-50", 
+        "bg-pump-purple text-white", 
+        "shadow-[0_4px_14px_rgba(0,0,0,0.1)]", 
+        "animate-fade-in"
+      )}
+    >
+      <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Info className="h-5 w-5 text-pump-purple" />
+            <Info className="h-5 w-5 text-white/80" />
             <span className="text-sm font-medium">
               Deixa eu conhecer seu negócio ainda mais
             </span>
@@ -64,13 +72,14 @@ export function ProfileCompletionAlert() {
               variant="outline" 
               size="sm"
               onClick={handleLater}
+              className="text-white border-white/30 hover:bg-white/10"
             >
               Depois
             </Button>
             <Button 
               size="sm"
               onClick={handleComplete}
-              className="bg-pump-purple hover:bg-pump-purple/90"
+              className="bg-white text-pump-purple hover:bg-white/90"
             >
               Completar perfil
             </Button>

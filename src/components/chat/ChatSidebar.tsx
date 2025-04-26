@@ -1,14 +1,23 @@
-
 import { useState, useEffect } from "react"
 import { useChatSessions, ChatSession } from "@/hooks/useChatSessions"
 import { useChatThemes } from "@/hooks/useChatThemes"
 import { useNavigate, useSearchParams } from "react-router-dom"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/hooks/use-toast"
-import { SidebarSessionCard } from "./sidebar/SidebarSessionCard"
 import { SidebarFooter } from "./sidebar/SidebarFooter"
 import { SidebarSessionGroup } from "./sidebar/SidebarSessionGroup"
-import { Menu, Plus, Search } from "lucide-react"
+import { 
+  Menu, 
+  Plus, 
+  Search,
+  ListCollapse 
+} from "lucide-react"
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarHeader,
+  SidebarTrigger
+} from "@/components/ui/sidebar"
 
 export function ChatSidebar({ onClose }: { onClose?: () => void }) {
   const navigate = useNavigate()
@@ -18,7 +27,7 @@ export function ChatSidebar({ onClose }: { onClose?: () => void }) {
   const { themes, isLoading: isThemesLoading, refreshThemes } = useChatThemes()
   const { toast } = useToast()
   const [searchTerm, setSearchTerm] = useState('')
-  const [filteredSessions, setFilteredSessions] = useState<ChatSession[] | null>(null)
+  const [filteredSessions, setFilteredSessions] = useState(sessions)
 
   const handleCreateNewSession = async () => {
     navigate('/chat')
@@ -130,15 +139,10 @@ export function ChatSidebar({ onClose }: { onClose?: () => void }) {
     : {}
 
   return (
-    <div className="relative h-full flex flex-col overflow-hidden">
-      <div className="flex items-center justify-between p-4 border-b border-pump-gray/20">
+    <Sidebar>
+      <SidebarHeader className="flex items-center justify-between p-4 border-b border-pump-gray/20">
         <div className="flex items-center gap-2">
-          <button 
-            onClick={() => {/* Implement sidebar collapse logic */}} 
-            className="p-2 hover:bg-pump-gray-light rounded"
-          >
-            <Menu className="w-5 h-5 text-pump-gray" />
-          </button>
+          <SidebarTrigger />
           <button 
             className="p-2 hover:bg-pump-gray-light rounded"
           >
@@ -151,48 +155,40 @@ export function ChatSidebar({ onClose }: { onClose?: () => void }) {
         >
           <Plus className="w-5 h-5 text-pump-purple" />
         </button>
-      </div>
+      </SidebarHeader>
       
-      <div className="flex-1 overflow-y-auto">
+      <SidebarContent>
         {isLoading ? (
           <div className="p-4 text-pump-gray">Loading sessions...</div>
         ) : (
           <>
-            {Object.entries(groupedSessions).sort((a, b) => {
-              if (a[0] === 'Today') return -1
-              if (b[0] === 'Today') return 1
-              if (a[0] === 'Yesterday') return -1
-              if (b[0] === 'Yesterday') return 1
-              return new Date(b[0]).getTime() - new Date(a[0]).getTime()
-            }).map(([group, sessions]) => (
-              <div key={group} className="mb-4">
-                <div className="px-4 py-2 text-xs font-medium text-pump-gray">
-                  {group}
-                </div>
-                <div className="space-y-1 px-2">
-                  {sessions.map((session) => {
-                    const themeObj = themes?.find(theme => theme.id === session.theme_id)
-                    return (
-                      <SidebarSessionCard
-                        key={session.id}
-                        session={session}
-                        themeObj={themeObj}
-                        isActive={session.id === sessionId}
-                        onOpen={() => handleSessionClick(session)}
-                        onEdit={() => handleEditSession(session)}
-                        onDelete={() => handleDeleteSession(session)}
-                        onThemeChange={handleThemeChange}
-                      />
-                    )
-                  })}
-                </div>
-              </div>
-            ))}
+            {Object.entries(groupedSessions)
+              .sort((a, b) => {
+                if (a[0] === 'Today') return -1
+                if (b[0] === 'Today') return 1
+                if (a[0] === 'Yesterday') return -1
+                if (b[0] === 'Yesterday') return 1
+                return new Date(b[0]).getTime() - new Date(a[0]).getTime()
+              })
+              .map(([group, sessions]) => (
+                <SidebarSessionGroup
+                  key={group}
+                  groupId={group}
+                  themeObj={themes?.find(theme => theme.id === sessions[0]?.theme_id)}
+                  sessions={sessions}
+                  currentSessionId={sessionId}
+                  onOpen={handleSessionClick}
+                  onEdit={handleEditSession}
+                  onDelete={handleDeleteSession}
+                  onThemeChange={handleThemeChange}
+                  title={group}
+                />
+              ))}
           </>
         )}
-      </div>
+      </SidebarContent>
       
       <SidebarFooter />
-    </div>
+    </Sidebar>
   )
 }

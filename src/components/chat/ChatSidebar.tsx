@@ -109,11 +109,9 @@ export function ChatSidebar({ onClose }: { onClose?: () => void }) {
     }
   }, [sessions, searchTerm])
 
-  // Group sessions by theme first, then by date for themeless sessions
   const groupedSessions = filteredSessions
     ? filteredSessions.reduce((acc: { [key: string]: ChatSession[] }, session: ChatSession) => {
       if (session.theme_id) {
-        // If session has a theme, group by theme
         const theme = themes?.find(t => t.id === session.theme_id)
         const themeKey = theme ? `theme-${theme.id}` : 'no-theme'
         if (!acc[themeKey]) {
@@ -121,7 +119,6 @@ export function ChatSidebar({ onClose }: { onClose?: () => void }) {
         }
         acc[themeKey].push(session)
       } else {
-        // If no theme, group by date
         const createdAt = new Date(session.created_at)
         const today = new Date()
         const yesterday = new Date(today)
@@ -175,13 +172,11 @@ export function ChatSidebar({ onClose }: { onClose?: () => void }) {
           <>
             {Object.entries(groupedSessions)
               .sort((a, b) => {
-                // Sort themes first
                 const isThemeA = a[0].startsWith('theme-')
                 const isThemeB = b[0].startsWith('theme-')
                 if (isThemeA && !isThemeB) return -1
                 if (!isThemeA && isThemeB) return 1
 
-                // Then sort dates
                 if (a[0] === 'today') return -1
                 if (b[0] === 'today') return 1
                 if (a[0] === 'yesterday') return -1

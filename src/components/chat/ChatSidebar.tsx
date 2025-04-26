@@ -1,13 +1,17 @@
-import { useState } from "react"
-import { useChatSessions } from "@/hooks/useChatSessions"
+
+import { useState, useEffect } from "react"
+import { useChatSessions, ChatSession } from "@/hooks/useChatSessions"
+import { useChatThemes, ChatTheme } from "@/hooks/useChatThemes"
 import { useNavigate, useSearchParams } from "react-router-dom"
 import { ChevronLeft, Search, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { SidebarSessionGroup } from "@/components/chat/sidebar/SidebarSessionGroup"
 import { SidebarFooter } from "@/components/chat/sidebar/SidebarFooter"
+import { useToast } from "@/hooks/use-toast"
+import { supabase } from "@/integrations/supabase/client"
 
 export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
-  const { sessions, createSession, refreshSessions, isLoading } = useChatSessions()
+  const { sessions, createSession, refreshSessions, deleteSession, isLoading } = useChatSessions()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const currentSessionId = searchParams.get('session')
@@ -86,7 +90,7 @@ export const ChatSidebar = ({ onClose }: { onClose?: () => void }) => {
     return themes.find(t => t.id === themeId) || null;
   }
 
-  const groupedSessions: Record<string, { themeObj: ChatTheme | null, sessions: typeof sessions }> = {};
+  const groupedSessions: Record<string, { themeObj: ChatTheme | null, sessions: ChatSession[] }> = {};
   sessions.forEach(session => {
     const themeObj = getThemeObject(session.theme_id);
     const groupKey = themeObj ? themeObj.id : 'no-theme';

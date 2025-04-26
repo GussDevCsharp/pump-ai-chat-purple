@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
@@ -72,7 +71,7 @@ export function ProfileCompletionAlert() {
               variant="outline" 
               size="sm"
               onClick={handleLater}
-              className="text-white border-white/30 hover:bg-white/10"
+              className="text-pump-purple border-white/30 hover:bg-white/10"
             >
               Depois
             </Button>

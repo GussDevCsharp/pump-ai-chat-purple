@@ -39,7 +39,11 @@ export const MessageInput = ({
         onTranscriptGenerated={(transcript) => onMessageChange(message ? message + " " + transcript : transcript)}
       />
       <ImageGeneratorButton 
-        onImageGenerated={onImageGenerated} 
+        onImageGenerated={(imageUrl) => {
+          const markdown = `![Generated Image](${imageUrl})`
+          onMessageChange(message ? `${message}\n${markdown}` : markdown)
+          onSubmit()
+        }} 
         message={message}
       />
       <button
@@ -52,4 +56,3 @@ export const MessageInput = ({
       </button>
     </div>
   )
-}

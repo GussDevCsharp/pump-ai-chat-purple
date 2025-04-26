@@ -6,10 +6,9 @@ import { Header } from "@/components/common/Header";
 
 // Etapas do cadastro
 const STEPS = [
+  "Dados Pessoais",
   "Escolha do Plano",
-  "Cadastro Básico",
-  "Perfil da Empresa",
-  "Perfil do Usuário"
+  "Pagamento"
 ];
 
 export default function Signup() {
@@ -19,7 +18,7 @@ export default function Signup() {
     <div className="min-h-screen bg-offwhite">
       <Header />
       <div className="flex flex-col justify-center items-center px-4 w-full min-h-[calc(100vh-80px)]">
-        <div className="max-w-2xl w-full mx-auto">
+        <div className="max-w-3xl w-full mx-auto">
           <SignupLayout steps={STEPS} current={currentStep}>
             <SignupStepperFlow onStepChange={setCurrentStep} />
           </SignupLayout>

@@ -10,6 +10,7 @@ import { useThemePrompts } from "@/hooks/useThemePrompts";
 import { TrendingTopics } from "@/components/themes/TrendingTopics";
 import { useThemeTopics } from "@/hooks/useThemeTopics";
 import { ProfileCompletionAlert } from "@/components/common/ProfileCompletionAlert";
+import { ProfileCompletionChart } from "@/components/profile/ProfileCompletionChart";
 
 type ThemeCardProps = {
   theme: {
@@ -112,66 +113,72 @@ export default function Themes() {
     <div className="min-h-screen bg-white">
       <ProfileCompletionAlert />
       <Header />
-      <main className="w-full px-2 sm:px-4 md:px-8 py-8 flex flex-col items-center">
-        <div className="w-full flex flex-col gap-10">
-          <div className="w-full flex flex-col gap-10">
-            <div className="flex flex-col md:flex-row justify-between items-start gap-8 mb-8">
-              <div className="w-full text-left">
-                <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-3">
-                  Central de Controle
-                </h1>
-                <p className="text-lg text-pump-gray mb-6">
-                  Gerencie seus temas, chats e configurações de forma centralizada.
-                </p>
-                <div className="flex gap-4">
-                  <Button 
-                    onClick={handleNewChat}
-                    size="lg"
-                    className="bg-pump-purple hover:bg-pump-purple/90 text-white rounded-lg px-7 py-3 text-lg"
-                  >
-                    <MessageCircle className="w-5 h-5 mr-2" />
-                    Novo Chat
-                  </Button>
+      <main className="w-full px-2 sm:px-4 md:px-8 py-8">
+        <div className="flex flex-col lg:flex-row gap-8">
+          <div className="flex-1">
+            <div className="w-full flex flex-col gap-10">
+              <div className="flex flex-col md:flex-row justify-between items-start gap-8 mb-8">
+                <div className="w-full text-left">
+                  <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-3">
+                    Central de Controle
+                  </h1>
+                  <p className="text-lg text-pump-gray mb-6">
+                    Gerencie seus temas, chats e configurações de forma centralizada.
+                  </p>
+                  <div className="flex gap-4">
+                    <Button 
+                      onClick={handleNewChat}
+                      size="lg"
+                      className="bg-pump-purple hover:bg-pump-purple/90 text-white rounded-lg px-7 py-3 text-lg"
+                    >
+                      <MessageCircle className="w-5 h-5 mr-2" />
+                      Novo Chat
+                    </Button>
+                  </div>
                 </div>
               </div>
+
+              {isTopicsLoading ? (
+                <div className="flex justify-center items-center h-40">
+                  <p className="text-pump-gray">Carregando tópicos...</p>
+                </div>
+              ) : (
+                <TrendingTopics 
+                  latestTopics={latestTopics}
+                  popularTopics={popularTopics}
+                />
+              )}
+
+              {isLoading ? (
+                <div className="flex justify-center items-center h-40">
+                  <p className="text-pump-gray">Carregando temas...</p>
+                </div>
+              ) : themes.length === 0 ? (
+                <div className="text-center p-8">
+                  <p className="text-pump-gray">Nenhum tema encontrado. Você pode criar um novo tema ou iniciar uma conversa geral.</p>
+                </div>
+              ) : (
+                <div className="grid gap-8 
+                  grid-cols-1
+                  sm:grid-cols-2 
+                  md:grid-cols-3 
+                  lg:grid-cols-4
+                  w-full"
+                >
+                  {themes.map((theme) => (
+                    <ThemeCard
+                      key={theme.id}
+                      theme={theme}
+                      onSelect={handleSelectTheme}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
-
-            {isTopicsLoading ? (
-              <div className="flex justify-center items-center h-40">
-                <p className="text-pump-gray">Carregando tópicos...</p>
-              </div>
-            ) : (
-              <TrendingTopics 
-                latestTopics={latestTopics}
-                popularTopics={popularTopics}
-              />
-            )}
-
-            {isLoading ? (
-              <div className="flex justify-center items-center h-40">
-                <p className="text-pump-gray">Carregando temas...</p>
-              </div>
-            ) : themes.length === 0 ? (
-              <div className="text-center p-8">
-                <p className="text-pump-gray">Nenhum tema encontrado. Você pode criar um novo tema ou iniciar uma conversa geral.</p>
-              </div>
-            ) : (
-              <div className="grid gap-8 
-                grid-cols-1
-                sm:grid-cols-2 
-                md:grid-cols-3 
-                lg:grid-cols-4
-                w-full"
-              >
-                {themes.map((theme) => (
-                  <ThemeCard
-                    key={theme.id}
-                    theme={theme}
-                    onSelect={handleSelectTheme}
-                  />
-                ))}
-              </div>
-            )}
+          </div>
+          
+          <div className="lg:w-[300px] flex justify-center">
+            <ProfileCompletionChart />
           </div>
         </div>
       </main>

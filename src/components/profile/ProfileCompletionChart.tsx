@@ -1,9 +1,11 @@
+
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Label } from 'recharts';
 import { Card } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar"
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { ptBR } from 'date-fns/locale';
 
 export function ProfileCompletionChart() {
   const [companyCompleted, setCompanyCompleted] = useState(false);
@@ -116,6 +118,7 @@ export function ProfileCompletionChart() {
           mode="single"
           selected={date}
           onSelect={setDate}
+          locale={ptBR}
           className="rounded-md bg-pump-offwhite pointer-events-auto"
         />
       </Card>

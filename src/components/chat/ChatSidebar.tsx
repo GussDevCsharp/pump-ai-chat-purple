@@ -1,17 +1,14 @@
-import { useState, useEffect } from "react"
-import { useChatSessions, ChatSession } from "@/hooks/useChatSessions"
-import { useChatThemes } from "@/hooks/useChatThemes"
+
 import { useNavigate, useSearchParams } from "react-router-dom"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/hooks/use-toast"
+import { useChatSessions } from "@/hooks/useChatSessions"
+import { useChatThemes } from "@/hooks/useChatThemes"
+import { useFilteredSessions } from "@/hooks/useFilteredSessions"
 import { SidebarFooter } from "./sidebar/SidebarFooter"
 import { SidebarSessionGroup } from "./sidebar/SidebarSessionGroup"
-import { 
-  Menu, 
-  Plus, 
-  Search,
-  ListCollapse 
-} from "lucide-react"
+import { SidebarSearch } from "./sidebar/SidebarSearch"
+import { NewChatButton } from "./sidebar/NewChatButton"
 import {
   Sidebar,
   SidebarContent,
@@ -26,8 +23,7 @@ export function ChatSidebar({ onClose }: { onClose?: () => void }) {
   const { sessions, isLoading, refreshSessions, deleteSession } = useChatSessions()
   const { themes, isLoading: isThemesLoading, refreshThemes } = useChatThemes()
   const { toast } = useToast()
-  const [searchTerm, setSearchTerm] = useState('')
-  const [filteredSessions, setFilteredSessions] = useState(sessions)
+  const { searchTerm, setSearchTerm, groupedSessions } = useFilteredSessions(sessions, themes)
 
   const handleCreateNewSession = async () => {
     navigate('/chat')
@@ -95,74 +91,14 @@ export function ChatSidebar({ onClose }: { onClose?: () => void }) {
     await refreshSessions()
   }
 
-  useEffect(() => {
-    if (sessions) {
-      if (searchTerm) {
-        const lowerSearchTerm = searchTerm.toLowerCase()
-        const filtered = sessions.filter(session =>
-          session.title.toLowerCase().includes(lowerSearchTerm)
-        )
-        setFilteredSessions(filtered)
-      } else {
-        setFilteredSessions(sessions)
-      }
-    }
-  }, [sessions, searchTerm])
-
-  const groupedSessions = filteredSessions
-    ? filteredSessions.reduce((acc: { [key: string]: ChatSession[] }, session: ChatSession) => {
-      if (session.theme_id) {
-        const theme = themes?.find(t => t.id === session.theme_id)
-        const themeKey = theme ? `theme-${theme.id}` : 'no-theme'
-        if (!acc[themeKey]) {
-          acc[themeKey] = []
-        }
-        acc[themeKey].push(session)
-      } else {
-        const createdAt = new Date(session.created_at)
-        const today = new Date()
-        const yesterday = new Date(today)
-        yesterday.setDate(today.getDate() - 1)
-
-        let dateKey: string
-        if (createdAt.toDateString() === today.toDateString()) {
-          dateKey = 'today'
-        } else if (createdAt.toDateString() === yesterday.toDateString()) {
-          dateKey = 'yesterday'
-        } else {
-          dateKey = createdAt.toLocaleDateString('pt-BR', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric'
-          })
-        }
-        
-        if (!acc[dateKey]) {
-          acc[dateKey] = []
-        }
-        acc[dateKey].push(session)
-      }
-      return acc
-    }, {})
-    : {}
-
   return (
     <Sidebar>
       <SidebarHeader className="flex items-center justify-between p-4 border-b border-pump-gray/20">
         <div className="flex items-center gap-2">
           <SidebarTrigger />
-          <button 
-            className="p-2 hover:bg-pump-gray-light rounded"
-          >
-            <Search className="w-5 h-5 text-pump-gray" />
-          </button>
+          <SidebarSearch onSearch={() => {}} />
         </div>
-        <button 
-          onClick={handleCreateNewSession}
-          className="p-2 hover:bg-pump-purple/10 rounded-full"
-        >
-          <Plus className="w-5 h-5 text-pump-purple" />
-        </button>
+        <NewChatButton onClick={handleCreateNewSession} />
       </SidebarHeader>
       
       <SidebarContent>

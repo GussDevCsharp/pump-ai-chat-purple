@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button"
 import { ImageIcon } from "lucide-react"
 import { useState } from "react"
@@ -24,6 +23,11 @@ export const ImageGeneratorButton = ({ onImageGenerated, message }: ImageGenerat
       return
     }
 
+    const imagePromptPrefix = "Gere uma imagem de: "
+    const imageDescription = message.startsWith(imagePromptPrefix) 
+      ? message.slice(imagePromptPrefix.length) 
+      : message
+
     try {
       setIsGenerating(true)
       
@@ -47,7 +51,7 @@ export const ImageGeneratorButton = ({ onImageGenerated, message }: ImageGenerat
           'Authorization': `Bearer ${accessToken}`,
         },
         body: JSON.stringify({ 
-          prompt: message,
+          prompt: imageDescription,
           apikey: keyData.apikey
         })
       })
@@ -71,16 +75,11 @@ export const ImageGeneratorButton = ({ onImageGenerated, message }: ImageGenerat
     }
   }
 
-  return (
-    <Button
-      type="button"
-      size="icon"
-      variant="ghost"
-      className="absolute right-20 p-1.5 text-pump-purple hover:text-pump-purple/80 transition-colors disabled:opacity-50"
-      onClick={generateImage}
-      disabled={isGenerating}
-    >
-      <ImageIcon className="w-5 h-5" />
-    </Button>
-  )
+  useEffect(() => {
+    if (message.startsWith("Gere uma imagem de: ")) {
+      generateImage()
+    }
+  }, [message])
+
+  return null
 }

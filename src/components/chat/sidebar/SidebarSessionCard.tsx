@@ -1,3 +1,4 @@
+
 import { MessageCircle, Menu, Pencil, Trash2, Tag, Check, X } from "lucide-react"
 import {
   DropdownMenu,
@@ -65,8 +66,8 @@ export function SidebarSessionCard({
           ${isActive ? "bg-pump-gray-light/30" : ""}
         `}
       >
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-2 flex-grow min-w-0">
+        <div className="flex items-center gap-2 w-full min-w-0">
+          <div className="flex items-center gap-2 flex-grow min-w-0 overflow-hidden">
             <span 
               className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full"
               style={{
@@ -78,12 +79,12 @@ export function SidebarSessionCard({
                 style={{ color: themeObj?.color || "#7E1CC6" }}
               />
             </span>
-            <span className="text-sm text-pump-gray font-medium truncate">
+            <span className="text-sm text-pump-gray font-medium truncate block">
               {session.title}
             </span>
           </div>
           
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 flex-shrink-0">
             {showThemeSelector ? (
               <ThemeSelect 
                 sessionId={session.id} 

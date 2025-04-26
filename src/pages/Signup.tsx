@@ -2,7 +2,7 @@
 import React from "react";
 import { SignupLayout } from "@/components/SignupLayout";
 import { SignupStepperFlow } from "@/components/SignupStepperFlow";
-import { Header } from "@/components/common/Header";
+import NeuralBackground from "@/components/effects/NeuralBackground";
 
 const STEPS = [
   "Dados Pessoais",
@@ -14,9 +14,9 @@ export default function Signup() {
   const [currentStep, setCurrentStep] = React.useState(0);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-offwhite to-pump-gray-light">
-      <Header />
-      <div className="flex flex-col justify-center items-center px-4 py-8 w-full min-h-[calc(100vh-80px)]">
+    <div className="relative min-h-screen bg-offwhite">
+      <NeuralBackground />
+      <div className="relative z-10 flex flex-col justify-center items-center px-4 py-8 w-full min-h-screen">
         <div className="max-w-3xl w-full mx-auto">
           <div className="mb-8 text-center">
             <h1 className="text-4xl font-bold text-pump-purple mb-3 animate-fade-in">

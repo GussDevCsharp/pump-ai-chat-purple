@@ -9,6 +9,7 @@ import { Header } from "@/components/common/Header";
 import { useThemePrompts } from "@/hooks/useThemePrompts";
 import { TrendingTopics } from "@/components/themes/TrendingTopics";
 import { useThemeTopics } from "@/hooks/useThemeTopics";
+import { ProfileCompletionAlert } from "@/components/common/ProfileCompletionAlert";
 
 type ThemeCardProps = {
   theme: {
@@ -121,6 +122,7 @@ export default function Themes() {
 
   return (
     <div className="min-h-screen bg-offwhite">
+      <ProfileCompletionAlert />
       <Header />
       <main className="w-full px-2 sm:px-4 md:px-8 py-8 flex flex-col items-center">
         <div className="w-full bg-white/90 rounded-2xl shadow-lg p-7 md:p-12 flex flex-col gap-10">

@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react"
 import { ChatMessages } from "@/components/chat/ChatMessages"
 import { ChatInput } from "@/components/chat/ChatInput"
-import { ApiKeyDisplay } from "@/components/chat/ApiKeyDisplay"
 import { WelcomeScreen } from "@/components/chat/WelcomeScreen"
 import { useSearchParams, useNavigate } from "react-router-dom"
 import { supabase } from "@/integrations/supabase/client"
@@ -404,7 +403,6 @@ export const ChatContainer = () => {
             furtivePromptTitle={furtivePrompt ? furtivePrompt.title : undefined}
             setFurtivePromptCleared={() => setFurtivePrompt(null)}
           />
-          <ApiKeyDisplay />
         </div>
       )}
     </div>

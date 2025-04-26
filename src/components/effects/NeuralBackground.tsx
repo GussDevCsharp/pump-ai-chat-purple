@@ -28,9 +28,11 @@ const NeuralBackground = () => {
       baseSize: number;
       sizeOffset: number;
       sizeVelocity: number;
+      isNew?: boolean;
+      creationTime?: number;
     };
 
-    const points: Point[] = Array.from({ length: 50 }, () => ({
+    let points: Point[] = Array.from({ length: 50 }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
       vx: (Math.random() - 0.5) * 0.5,
@@ -41,29 +43,68 @@ const NeuralBackground = () => {
       sizeVelocity: 0.02 + Math.random() * 0.02,
     }));
 
+    const createNeuron = (x: number, y: number) => {
+      const newPoint: Point = {
+        x,
+        y,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: (Math.random() - 0.5) * 0.5,
+        size: 0, // Start with size 0 to animate growth
+        baseSize: Math.random() * 2 + 1,
+        sizeOffset: Math.random() * Math.PI * 2,
+        sizeVelocity: 0.02 + Math.random() * 0.02,
+        isNew: true,
+        creationTime: Date.now(),
+      };
+      points.push(newPoint);
+
+      // Remove oldest point if we have too many
+      if (points.length > 70) {
+        points.shift();
+      }
+    };
+
+    const handleClick = (event: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      createNeuron(x, y);
+    };
+
+    canvas.addEventListener('click', handleClick);
+
     const animate = () => {
       if (!ctx || !canvas) return;
       
       ctx.fillStyle = 'rgb(255, 253, 243)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+      const currentTime = Date.now();
       points.forEach((point, i) => {
-        // Atualiza posição
+        // Handle new point animation
+        if (point.isNew) {
+          const age = currentTime - (point.creationTime || 0);
+          if (age < 1000) { // Animation duration: 1 second
+            point.size = (age / 1000) * point.baseSize;
+          } else {
+            point.size = point.baseSize;
+            point.isNew = false;
+          }
+        } else {
+          // Regular size animation for established points
+          point.sizeOffset += point.sizeVelocity;
+          point.size = Math.max(0.1, point.baseSize + Math.sin(point.sizeOffset) * (point.baseSize * 0.5));
+        }
+
+        // Update position
         point.x += point.vx;
         point.y += point.vy;
 
-        // Simula efeito de profundidade com tamanho oscilante
-        point.sizeOffset += point.sizeVelocity;
-        
-        // Correção: Garantir que o tamanho nunca seja negativo
-        // Usar Math.max para garantir um mínimo de 0.1 para o raio
-        point.size = Math.max(0.1, point.baseSize + Math.sin(point.sizeOffset) * (point.baseSize * 0.5));
-
-        // Rebate nas bordas
+        // Bounce off edges
         if (point.x < 0 || point.x > canvas.width) point.vx *= -1;
         if (point.y < 0 || point.y > canvas.height) point.vy *= -1;
 
-        // Desenha conexões com efeito de profundidade
+        // Draw connections
         points.forEach((otherPoint, j) => {
           if (i === j) return;
 
@@ -72,7 +113,6 @@ const NeuralBackground = () => {
           const distance = Math.sqrt(dx * dx + dy * dy);
 
           if (distance < 150) {
-            // Usar Math.max para garantir que averageSize seja sempre positivo
             const averageSize = Math.max(0.1, (point.size + otherPoint.size) / 2);
             const opacity = (1 - distance / 150) * 0.15 * (averageSize / 2);
             
@@ -85,9 +125,8 @@ const NeuralBackground = () => {
           }
         });
 
-        // Desenha pontos com tamanho variável
+        // Draw points
         ctx.beginPath();
-        // Garantir que o raio seja sempre positivo
         const safeRadius = Math.max(0.1, point.size);
         ctx.arc(point.x, point.y, safeRadius, 0, Math.PI * 2);
         const opacity = 0.3 + (safeRadius / 4) * 0.2;
@@ -102,13 +141,14 @@ const NeuralBackground = () => {
 
     return () => {
       window.removeEventListener('resize', resizeCanvas);
+      canvas.removeEventListener('click', handleClick);
     };
   }, []);
 
   return (
     <canvas
       ref={canvasRef}
-      className="fixed top-0 left-0 w-full h-full pointer-events-none"
+      className="fixed top-0 left-0 w-full h-full"
       style={{ zIndex: 0 }}
     />
   );

@@ -1,9 +1,7 @@
-
 import { useState, useEffect } from 'react'
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/hooks/use-toast"
 import { v4 as uuidv4 } from 'uuid'
-import { toast as sonnerToast } from 'sonner'
 
 export interface ChatSession {
   id: string
@@ -22,7 +20,6 @@ export const useChatSessions = () => {
   const [localSessions, setLocalSessions] = useState<ChatSession[]>([])
   const LOCAL_SESSIONS_KEY = 'anonymous_chat_sessions'
 
-  // Get and set the authenticated user's ID
   useEffect(() => {
     let ignore = false
     async function getUser() {
@@ -43,7 +40,6 @@ export const useChatSessions = () => {
     }
   }, [])
 
-  // Load local sessions for anonymous users
   useEffect(() => {
     if (!userId) {
       try {
@@ -57,7 +53,6 @@ export const useChatSessions = () => {
     }
   }, [userId])
 
-  // Save local sessions to localStorage
   const saveLocalSessions = (sessions: ChatSession[]) => {
     try {
       localStorage.setItem(LOCAL_SESSIONS_KEY, JSON.stringify(sessions))
@@ -97,7 +92,6 @@ export const useChatSessions = () => {
   const createSession = async (title: string, theme?: string, cardTitle?: string, themeId?: string) => {
     try {
       if (!userId) {
-        // Criar sessão local para usuários anônimos
         const newSession = {
           id: uuidv4(),
           title,
@@ -111,14 +105,12 @@ export const useChatSessions = () => {
         setLocalSessions(updatedSessions)
         saveLocalSessions(updatedSessions)
         
-        // Use toast from useToast instead of toast.success
         toast({
           description: "Nova conversa criada"
         })
         return newSession
       }
       
-      // Criar sessão no banco para usuários logados
       const { data, error } = await supabase
         .from('chat_sessions')
         .insert([{
@@ -152,18 +144,13 @@ export const useChatSessions = () => {
   const deleteSession = async (sessionId: string) => {
     try {
       if (!userId) {
-        // Deletar sessão local para usuários anônimos
         const updatedSessions = localSessions.filter(session => session.id !== sessionId)
         setLocalSessions(updatedSessions)
         saveLocalSessions(updatedSessions)
         
-        toast({
-          description: "Chat excluído com sucesso"
-        })
         return true
       }
       
-      // Excluir todas as mensagens antes de remover a sessão
       const { error: messagesError } = await supabase
         .from('chat_messages')
         .delete()
@@ -171,7 +158,6 @@ export const useChatSessions = () => {
 
       if (messagesError) throw messagesError
 
-      // Remover a sessão
       const { error } = await supabase
         .from('chat_sessions')
         .delete()
@@ -180,18 +166,9 @@ export const useChatSessions = () => {
       if (error) throw error
 
       setSessions(prev => prev.filter(session => session.id !== sessionId))
-      toast({
-        description: "Chat excluído com sucesso"
-      })
-
       return true
     } catch (error) {
       console.error('Erro ao excluir chat session:', error)
-      toast({
-        variant: "destructive",
-        title: "Erro",
-        description: "Falha ao excluir o chat"
-      })
       return false
     }
   }
@@ -200,11 +177,8 @@ export const useChatSessions = () => {
     if (userId !== undefined) {
       fetchSessions()
     }
-    // sozinha depende de userId
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId])
 
-  // Combinar sessões locais e do banco
   const allSessions = userId ? sessions : localSessions
 
   return { 

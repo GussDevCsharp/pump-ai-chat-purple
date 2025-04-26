@@ -2,6 +2,7 @@ import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { VariantProps, cva } from "class-variance-authority"
 import { PanelLeft } from "lucide-react"
+import { ChevronRight } from "lucide-react"
 
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
@@ -246,9 +247,26 @@ const Sidebar = React.forwardRef<
         >
           <div
             data-sidebar="sidebar"
-            className="flex h-full w-full flex-col bg-sidebar group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow"
+            className={cn(
+              "flex h-full w-full flex-col bg-sidebar group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow",
+              // When collapsed, hide content and show expand button
+              "group-data-[state=collapsed]:overflow-hidden group-data-[state=collapsed]:w-[--sidebar-width-icon]"
+            )}
           >
             {children}
+
+            {/* Expand button for collapsed state */}
+            {state === "collapsed" && (
+              <button
+                onClick={() => {
+                  const { setOpen } = useSidebar()
+                  setOpen(true)
+                }}
+                className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-sidebar-accent p-2 rounded-full shadow-md hover:bg-sidebar-accent/90 transition-colors"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            )}
           </div>
         </div>
       </div>

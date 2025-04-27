@@ -14,7 +14,7 @@ export const Header = () => {
       <div className="container mx-auto flex items-center justify-between h-16 md:h-20 px-4">
         <Link to="/" className="flex items-center gap-2">
           <img 
-            src="/uploads/CHATPUMP PNG.png" 
+            src="/uploads/chatpump-logo.png" 
             alt="ChatPump"
             className="h-8 md:h-10"
           />
@@ -43,4 +43,4 @@ export const Header = () => {
       </div>
     </header>
   )
-} // Added this closing curly brace
+}

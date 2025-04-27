@@ -9,47 +9,6 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      action_plans: {
-        Row: {
-          created_at: string
-          description: string | null
-          id: string
-          prompt_id: string | null
-          status: string | null
-          title: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          prompt_id?: string | null
-          status?: string | null
-          title: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          prompt_id?: string | null
-          status?: string | null
-          title?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "action_plans_prompt_id_fkey"
-            columns: ["prompt_id"]
-            isOneToOne: false
-            referencedRelation: "theme_prompts"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       agents: {
         Row: {
           created_at: string
@@ -73,83 +32,6 @@ export type Database = {
           whatsapp_number?: string | null
         }
         Relationships: []
-      }
-      appointment_categories: {
-        Row: {
-          color: string | null
-          created_at: string
-          id: string
-          name: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          color?: string | null
-          created_at?: string
-          id?: string
-          name: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          color?: string | null
-          created_at?: string
-          id?: string
-          name?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      appointments: {
-        Row: {
-          category_id: string | null
-          created_at: string
-          description: string | null
-          end_time: string
-          id: string
-          location: string | null
-          start_time: string
-          status: string | null
-          title: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          category_id?: string | null
-          created_at?: string
-          description?: string | null
-          end_time: string
-          id?: string
-          location?: string | null
-          start_time: string
-          status?: string | null
-          title: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          category_id?: string | null
-          created_at?: string
-          description?: string | null
-          end_time?: string
-          id?: string
-          location?: string | null
-          start_time?: string
-          status?: string | null
-          title?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "appointments_category_id_fkey"
-            columns: ["category_id"]
-            isOneToOne: false
-            referencedRelation: "appointment_categories"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       benefits: {
         Row: {

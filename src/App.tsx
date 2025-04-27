@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -12,7 +13,6 @@ import BusinessGenerator from "./pages/BusinessGenerator";
 import Themes from "./pages/Themes";
 import Signup from "./pages/Signup";
 import ProfileComplete from "./pages/ProfileComplete";
-import ActionPlans from "./pages/ActionPlans";
 
 const queryClient = new QueryClient();
 
@@ -31,7 +31,6 @@ const App = () => (
             <Route path="/themes" element={<Themes />} />
             <Route path="/business-generator" element={<BusinessGenerator />} />
             <Route path="/profile/complete" element={<ProfileComplete />} />
-            <Route path="/action-plans" element={<ActionPlans />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
           <FloatingChatButton />

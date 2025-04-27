@@ -7,7 +7,6 @@ export interface ThemePrompt {
   theme_id: string;
   title: string;
   prompt_furtive?: string | null;
-  action_plan?: boolean;
 }
 
 export function useThemePrompts(themeId?: string) {

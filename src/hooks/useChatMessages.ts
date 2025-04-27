@@ -1,9 +1,6 @@
 
 import { useState } from "react"
-import { supabase } from "@/integrations/supabase/client"
-import { toast } from "@/hooks/use-toast"
 import { ThemePrompt } from "./useThemePrompts"
-import { Message } from "./useChatSession"
 
 interface BusinessData {
   company_name: string
@@ -40,34 +37,6 @@ export function useChatMessages(
   }
 
   const handlePromptCardSelect = async (prompt: ThemePrompt) => {
-    if (prompt.action_plan) {
-      try {
-        const { data: actionPlan, error } = await supabase
-          .from('action_plans')
-          .insert({
-            title: prompt.title,
-            prompt_id: prompt.id,
-            user_id: (await supabase.auth.getSession()).data.session?.user.id
-          })
-          .select()
-          .single()
-
-        if (error) throw error
-
-        toast({
-          title: "Plano de ação criado",
-          description: "Você pode acompanhar seu progresso na seção de planos de ação."
-        })
-      } catch (error) {
-        console.error("Erro ao criar plano de ação:", error)
-        toast({
-          variant: "destructive",
-          title: "Erro",
-          description: "Não foi possível criar o plano de ação."
-        })
-      }
-    }
-
     setFurtivePrompt({
       text: prompt.prompt_furtive ?? prompt.title,
       title: prompt.title

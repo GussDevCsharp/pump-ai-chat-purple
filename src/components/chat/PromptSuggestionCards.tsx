@@ -1,7 +1,6 @@
 
 import React from "react";
 import { ThemePrompt } from "@/hooks/useThemePrompts";
-import { ClipboardList } from "lucide-react";
 
 interface PromptSuggestionCardsProps {
   prompts: ThemePrompt[];
@@ -14,11 +13,6 @@ export const PromptSuggestionCards: React.FC<PromptSuggestionCardsProps> = ({
   onSelect,
   loading
 }) => {
-  // Add debugging log to check if prompts are actually received
-  React.useEffect(() => {
-    console.log("Rendering PromptSuggestionCards with prompts:", prompts);
-  }, [prompts]);
-
   if (loading) {
     return (
       <div className="mb-4 flex flex-wrap gap-3">
@@ -30,7 +24,6 @@ export const PromptSuggestionCards: React.FC<PromptSuggestionCardsProps> = ({
   }
   
   if (!prompts || prompts.length === 0) {
-    console.log("No prompts available to display");
     return null;
   }
   
@@ -45,9 +38,6 @@ export const PromptSuggestionCards: React.FC<PromptSuggestionCardsProps> = ({
           style={{ minWidth: 120 }}
         >
           <span>{prompt.title}</span>
-          {prompt.action_plan && (
-            <ClipboardList className="w-4 h-4 text-pump-purple/70" />
-          )}
         </button>
       ))}
     </div>

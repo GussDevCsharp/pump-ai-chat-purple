@@ -1,19 +1,35 @@
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { Mail } from "lucide-react"; // Using Mail icon as replacement since Google icon isn't available directly
+import { toast } from "sonner";
 
 export function GoogleButton() {
-  const handleGoogleLogin = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/themes`
-      }
-    });
+  const [isLoading, setIsLoading] = useState(false);
 
-    if (error) {
-      console.error('Erro ao fazer login com Google:', error);
+  const handleGoogleLogin = async () => {
+    try {
+      setIsLoading(true);
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/themes`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          }
+        }
+      });
+
+      if (error) {
+        console.error('Erro ao fazer login com Google:', error);
+        toast.error(error.message || 'Erro ao conectar com Google');
+      }
+    } catch (error) {
+      console.error('Erro ao processar login com Google:', error);
+      toast.error('Falha na conexão com o Google. Verifique sua conexão e tente novamente.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -22,6 +38,7 @@ export function GoogleButton() {
       type="button"
       variant="outline"
       onClick={handleGoogleLogin}
+      disabled={isLoading}
       className="w-full border-gray-300 hover:bg-gray-50"
     >
       <div className="flex items-center justify-center mr-2 h-4 w-4">
@@ -32,7 +49,7 @@ export function GoogleButton() {
           <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
         </svg>
       </div>
-      Continuar com Google
+      {isLoading ? "Conectando..." : "Continuar com Google"}
     </Button>
   );
 }

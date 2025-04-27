@@ -12,6 +12,7 @@ import { useThemeTopics } from "@/hooks/useThemeTopics";
 import { ProfileCompletionAlert } from "@/components/common/ProfileCompletionAlert";
 import { ProfileCompletionChart } from "@/components/profile/ProfileCompletionChart";
 import { Copyright } from 'lucide-react';
+import { useChatAuth } from "@/hooks/useChatAuth";
 
 type ThemeCardProps = {
   theme: {
@@ -95,6 +96,7 @@ export default function Themes() {
   const { createSession } = useChatSessions();
   const navigate = useNavigate();
   const { latestTopics, popularTopics, isLoading: isTopicsLoading } = useThemeTopics();
+  const { user } = useChatAuth();
 
   const handleSelectTheme = async (themeId: string, themeName: string) => {
     const session = await createSession(`Chat sobre ${themeName}`, undefined, undefined, themeId);
@@ -121,7 +123,7 @@ export default function Themes() {
               <div className="flex flex-col md:flex-row justify-between items-start gap-8 mb-8">
                 <div className="w-full text-left">
                   <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-3 font-sans">
-                    Eu sou a inteligência da sua empresa
+                    Olá, {user?.user_metadata?.full_name || 'Empresário'}
                   </h1>
                   <p className="text-lg text-pump-gray mb-6">
                     Suporte 24 horas personalizado para seu negócio

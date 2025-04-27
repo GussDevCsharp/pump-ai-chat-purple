@@ -12,10 +12,11 @@ export function GoogleButton() {
       setIsLoading(true);
       toast.info("Redirecionando para o Google...");
       
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: `${window.location.origin}/themes`,
+          scopes: 'email profile',
         }
       });
 
@@ -23,6 +24,11 @@ export function GoogleButton() {
         console.error('Erro ao fazer login com Google:', error);
         toast.error(error.message || 'Erro ao conectar com Google');
         setIsLoading(false);
+      }
+      
+      // Log de sucesso se data for retornado
+      if (data) {
+        console.log('Redirecionamento iniciado com sucesso:', data);
       }
     } catch (error) {
       console.error('Erro ao processar login com Google:', error);

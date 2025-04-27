@@ -3,6 +3,7 @@ import React from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useThemePrompts } from "@/hooks/useThemePrompts";
+import { Circle } from "lucide-react";
 
 type ThemeCardProps = {
   theme: {
@@ -49,19 +50,29 @@ export const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
             <h3 className="font-normal text-base text-gray-900 leading-tight">{theme.name}</h3>
           </div>
           {theme.description && (
-            <p className="text-xs text-pump-gray mt-1 mb-1 px-1 max-h-[30px] overflow-hidden">
+            <p className="text-xs text-pump-gray mt-1 mb-2 px-1 max-h-[30px] overflow-hidden">
               {theme.description}
             </p>
           )}
         </div>
-        <div className="flex flex-col gap-1 mt-1 flex-1 justify-start min-h-[60px]">
+
+        <div className="flex flex-col gap-2 mt-1 flex-1 justify-start min-h-[60px]">
           {isLoading ? (
             <span className="text-pump-gray text-xs">Carregando tópicos...</span>
           ) : (
             prompts && prompts.length > 0 ? (
-              <ul className="list-disc pl-4 text-xs text-gray-700">
+              <ul className="space-y-2">
                 {prompts.map((prompt) => (
-                  <li key={prompt.id} className="truncate">{prompt.title}</li>
+                  <li key={prompt.id} className="flex items-start gap-2">
+                    <Circle 
+                      className="w-2 h-2 mt-1.5 flex-shrink-0" 
+                      fill={theme.color || "#7E1CC6"} 
+                      size={8}
+                    />
+                    <span className="text-xs text-gray-700 leading-tight">
+                      {prompt.title}
+                    </span>
+                  </li>
                 ))}
               </ul>
             ) : (
@@ -69,7 +80,8 @@ export const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
             )
           )}
         </div>
-        <div className="flex justify-center mt-1">
+
+        <div className="flex justify-center mt-3">
           <Button
             size="sm"
             variant="outline"

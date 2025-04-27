@@ -54,7 +54,7 @@ serve(async (req) => {
     const apikey = keyData.apikey
     const { message, themeId } = await req.json()
 
-    // Fetch rules prompt
+    // 1. First, get rules prompt
     const { data: rulesPrompt, error: rulesError } = await supabase
       .from('furtive_prompts')
       .select('content')
@@ -65,7 +65,7 @@ serve(async (req) => {
       console.error("Error fetching rules prompt:", rulesError)
     }
 
-    // Fetch tags prompt
+    // 2. Second, get tags prompt
     const { data: tagsPrompt, error: tagsError } = await supabase
       .from('furtive_prompts')
       .select('content')
@@ -76,7 +76,7 @@ serve(async (req) => {
       console.error("Error fetching tags prompt:", tagsError)
     }
 
-    // Fetch theme prompt if themeId exists
+    // 3. Third, get theme prompt if themeId exists
     let themePromptContent = null
     if (themeId) {
       const { data: themePrompt, error: themeError } = await supabase
@@ -92,20 +92,20 @@ serve(async (req) => {
       }
     }
 
-    // Combine all prompts
-    let systemPrompt = ''
-    if (rulesPrompt?.content) {
-      systemPrompt += rulesPrompt.content + '\n\n'
-    }
-    if (tagsPrompt?.content) {
-      systemPrompt += tagsPrompt.content + '\n\n'
-    }
-    if (themePromptContent) {
-      systemPrompt += themePromptContent
-    }
+    // Build the system prompt in the correct order
+    const systemPrompts = [
+      rulesPrompt?.content,
+      tagsPrompt?.content,
+      themePromptContent
+    ].filter(Boolean)
 
-    console.log("System prompt:", systemPrompt)
-    console.log("User message:", message)
+    const systemPrompt = systemPrompts.join('\n\n')
+
+    console.log("System prompts in order:")
+    console.log("1. Rules:", rulesPrompt?.content || 'None')
+    console.log("2. Tags:", tagsPrompt?.content || 'None')
+    console.log("3. Theme:", themePromptContent || 'None')
+    console.log("4. User message:", message)
     
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -160,4 +160,3 @@ serve(async (req) => {
     )
   }
 })
-

@@ -4,7 +4,7 @@ import { Copyright } from 'lucide-react';
 
 export const PageFooter = () => {
   return (
-    <footer className="mt-auto bg-pump-offwhite border-t border-pump-gray/10 py-6">
+    <footer className="mt-auto bg-white border-t border-pump-gray/10 py-6">
       <div className="container mx-auto px-4 md:px-8 flex items-center justify-between text-pump-gray">
         <div className="flex items-center gap-2 text-sm">
           <Copyright className="w-4 h-4" />

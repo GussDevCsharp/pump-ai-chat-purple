@@ -33,7 +33,7 @@ export default function Themes() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <Header />
-      <main className="w-full px-4 md:px-8 py-6">
+      <main className="w-full px-4 md:px-8 py-6 bg-white">
         <div className="max-w-7xl mx-auto w-full">
           <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-8">
             <div className="flex flex-col gap-1">

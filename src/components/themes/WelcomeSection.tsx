@@ -14,7 +14,7 @@ export const WelcomeSection: React.FC<WelcomeSectionProps> = ({ onNewChat }) => 
   return (
     <div className="w-full text-left">
       <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-3 font-sans">
-        Olá, {user?.user_metadata?.full_name || 'Empresário'}
+        Olá {user?.user_metadata?.full_name || 'Empresário'}, sou a inteligencia da sua empresa
       </h1>
       <p className="text-lg text-pump-gray mb-6">
         Suporte 24 horas personalizado para seu negócio

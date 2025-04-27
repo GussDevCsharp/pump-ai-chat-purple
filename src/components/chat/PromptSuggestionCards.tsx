@@ -14,6 +14,11 @@ export const PromptSuggestionCards: React.FC<PromptSuggestionCardsProps> = ({
   onSelect,
   loading
 }) => {
+  // Add debugging log to check if prompts are actually received
+  React.useEffect(() => {
+    console.log("Rendering PromptSuggestionCards with prompts:", prompts);
+  }, [prompts]);
+
   if (loading) {
     return (
       <div className="mb-4 flex flex-wrap gap-3">
@@ -23,7 +28,12 @@ export const PromptSuggestionCards: React.FC<PromptSuggestionCardsProps> = ({
       </div>
     );
   }
-  if (!prompts || prompts.length === 0) return null;
+  
+  if (!prompts || prompts.length === 0) {
+    console.log("No prompts available to display");
+    return null;
+  }
+  
   return (
     <div className="mb-4 flex flex-wrap gap-3">
       {prompts.map(prompt => (

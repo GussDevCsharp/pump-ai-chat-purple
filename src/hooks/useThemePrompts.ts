@@ -23,6 +23,8 @@ export function useThemePrompts(themeId?: string) {
     const fetchPrompts = async () => {
       setIsLoading(true);
       try {
+        console.log("Fetching theme prompts for theme ID:", themeId);
+        
         const { data, error } = await supabase
           .from("theme_prompts")
           .select("*")
@@ -33,6 +35,7 @@ export function useThemePrompts(themeId?: string) {
           console.error("Error fetching theme prompts:", error);
           setPrompts([]);
         } else {
+          console.log("Fetched theme prompts:", data);
           setPrompts(data || []);
         }
       } catch (err) {

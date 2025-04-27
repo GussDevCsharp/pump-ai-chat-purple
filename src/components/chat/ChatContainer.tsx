@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react"
 import { ChatMessages } from "@/components/chat/ChatMessages"
 import { ChatInput } from "@/components/chat/ChatInput"
@@ -36,11 +35,18 @@ export const ChatContainer = () => {
   useEffect(() => {
     if (themeFromUrl) {
       setCurrentThemeId(themeFromUrl)
+      console.log("Theme set from URL:", themeFromUrl)
     }
   }, [themeFromUrl])
 
   const { patternPrompt } = useThemePrompt(currentThemeId ?? undefined)
   const { prompts: themePrompts, isLoading: isThemePromptsLoading } = useThemePrompts(currentThemeId ?? undefined)
+
+  useEffect(() => {
+    console.log("Current theme ID:", currentThemeId)
+    console.log("Theme prompts:", themePrompts)
+    console.log("Theme prompts loading:", isThemePromptsLoading)
+  }, [currentThemeId, themePrompts, isThemePromptsLoading])
 
   const interpolatePatternPrompt = (
     pattern: string,
@@ -120,12 +126,15 @@ export const ChatContainer = () => {
 
       if (!currentSessionId) {
         const defaultTitle = content.split(' ').slice(0, 5).join(' ') + '...'
-        const session = await createSession(defaultTitle)
+        const session = await createSession(defaultTitle, undefined, undefined, currentThemeId || undefined)
         if (!session) throw new Error("Failed to create chat session")
 
         currentSessionId = session.id
         setSearchParams(prev => {
           prev.set('session', currentSessionId!)
+          if (currentThemeId) {
+            prev.set('theme', currentThemeId)
+          }
           return prev
         })
       }
@@ -247,11 +256,13 @@ export const ChatContainer = () => {
       ) : (
         <div className="flex-1 flex flex-col overflow-hidden h-full pt-16">
           <ChatMessages messages={messages} isThinking={isThinking} />
-          <PromptSuggestionCards
-            prompts={themePrompts}
-            onSelect={handlePromptCardSelect}
-            loading={isThemePromptsLoading}
-          />
+          <div className="px-4">
+            <PromptSuggestionCards
+              prompts={themePrompts || []}
+              onSelect={handlePromptCardSelect}
+              loading={isThemePromptsLoading}
+            />
+          </div>
           <ChatInput 
             onSendMessage={handleSendMessage} 
             furtivePromptTitle={furtivePrompt ? furtivePrompt.title : undefined}

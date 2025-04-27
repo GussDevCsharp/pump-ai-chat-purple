@@ -20,7 +20,8 @@ export function GoogleButton() {
             access_type: 'offline',
             prompt: 'consent',
           },
-          skipBrowserRedirect: false
+          skipBrowserRedirect: false,
+          scopes: 'https://accounts.google.com/gsi/client'
         }
       });
 

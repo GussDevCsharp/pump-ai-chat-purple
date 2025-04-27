@@ -24,13 +24,13 @@ export const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
         flex flex-col h-[320px] rounded-xl border border-pump-gray/10 hover:shadow-xl 
         transform transition-all duration-200 cursor-pointer
         hover:scale-[1.02] shadow-md group
-        px-3 py-2
+        px-3 py-2 bg-white
       `}
       style={{
         borderColor: theme.color || "#e9e3fc"
       }}
     >
-      <div className="flex flex-col flex-1 justify-between h-full bg-white p-2">
+      <div className="flex flex-col flex-1 justify-between h-full p-2">
         <div>
           <div className="flex items-center gap-2 mb-2 mt-1">
             <div 

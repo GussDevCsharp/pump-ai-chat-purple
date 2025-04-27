@@ -33,7 +33,7 @@ export default function Themes() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-offwhite flex flex-col">
       <ProfileCompletionAlert />
       <Header />
       <main className="w-full px-2 sm:px-4 md:px-8 py-6">

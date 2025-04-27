@@ -10,7 +10,7 @@ export const ChatHeader = ({ mobileMenuButton }: { mobileMenuButton?: React.Reac
   const homeLink = authStatus === 'authenticated' ? "/themes" : "/";
 
   return (
-    <header className="border-b border-pump-gray/20 p-4 flex justify-between items-center sticky top-0 bg-white z-10">
+    <header className="border-b border-pump-gray/20 p-4 flex justify-between items-center sticky top-0 bg-offwhite z-10">
       <div className="flex items-center gap-4">
         {mobileMenuButton && (
           <div className="md:hidden">

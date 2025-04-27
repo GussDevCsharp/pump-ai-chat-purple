@@ -16,7 +16,7 @@ export const ThemeSearch = ({ themes, onSelectTheme, isLoading }: ThemeSearchPro
   
   // Filter themes based on search term
   useEffect(() => {
-    // Certifique-se de que themes é um array antes de filtrar
+    // Make sure themes is a valid array before filtering
     if (!Array.isArray(themes)) {
       setFilteredThemes([]);
       return;
@@ -40,10 +40,9 @@ export const ThemeSearch = ({ themes, onSelectTheme, isLoading }: ThemeSearchPro
     );
   }
 
-  // Renderize o componente Command apenas se tivermos temas filtrados
   return (
     <div className="w-full max-w-3xl mx-auto">
-      <Command className="rounded-lg border shadow-md">
+      <Command className="rounded-lg border shadow-md bg-white">
         <div className="flex items-center border-b px-3">
           <Search className="h-4 w-4 shrink-0 opacity-50" />
           <CommandInput 
@@ -63,6 +62,7 @@ export const ThemeSearch = ({ themes, onSelectTheme, isLoading }: ThemeSearchPro
                 <CommandItem
                   className="flex items-start gap-2 p-2 cursor-pointer hover:bg-pump-purple/10"
                   onSelect={() => onSelectTheme(theme.id, theme.name)}
+                  key={`item-${theme.id}`}
                 >
                   <div className="flex flex-col">
                     <span className="font-medium">{theme.name}</span>

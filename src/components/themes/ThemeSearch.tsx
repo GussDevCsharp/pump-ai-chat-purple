@@ -1,8 +1,9 @@
 
 import React, { useState } from 'react';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command"
 import { Search } from 'lucide-react';
 import { ChatTheme } from '@/hooks/useChatThemes';
+import { ThemePrompt } from '@/hooks/useThemePrompts';
 
 interface ThemeSearchProps {
   themes: ChatTheme[];
@@ -21,11 +22,6 @@ export const ThemeSearch = ({ themes, onSelectTheme, isLoading }: ThemeSearchPro
     );
   }
 
-  const filteredThemes = themes && themes.length > 0 ? themes.filter(theme => 
-    theme.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    (theme.description && theme.description.toLowerCase().includes(searchTerm.toLowerCase()))
-  ) : [];
-
   return (
     <div className="w-full max-w-3xl mx-auto">
       <Command className="rounded-lg border shadow-md">
@@ -38,27 +34,23 @@ export const ThemeSearch = ({ themes, onSelectTheme, isLoading }: ThemeSearchPro
             onValueChange={setSearchTerm}
           />
         </div>
-        <CommandList>
-          {filteredThemes.length === 0 && (
-            <CommandEmpty>Nenhum resultado encontrado.</CommandEmpty>
-          )}
-          
-          {filteredThemes.map((theme) => (
-            <CommandGroup key={theme.id} heading={theme.name} className="px-2">
-              <CommandItem
-                className="flex items-start gap-2 p-2 cursor-pointer hover:bg-pump-purple/10"
-                onSelect={() => onSelectTheme(theme.id, theme.name)}
-              >
-                <div className="flex flex-col">
-                  <span className="font-medium">{theme.name}</span>
-                  {theme.description && (
-                    <span className="text-sm text-gray-500">{theme.description}</span>
-                  )}
-                </div>
-              </CommandItem>
-            </CommandGroup>
-          ))}
-        </CommandList>
+        <CommandEmpty>Nenhum resultado encontrado.</CommandEmpty>
+        
+        {themes.map((theme) => (
+          <CommandGroup key={theme.id} heading={theme.name} className="px-2">
+            <CommandItem
+              className="flex items-start gap-2 p-2 cursor-pointer hover:bg-pump-purple/10"
+              onSelect={() => onSelectTheme(theme.id, theme.name)}
+            >
+              <div className="flex flex-col">
+                <span className="font-medium">{theme.name}</span>
+                {theme.description && (
+                  <span className="text-sm text-gray-500">{theme.description}</span>
+                )}
+              </div>
+            </CommandItem>
+          </CommandGroup>
+        ))}
       </Command>
     </div>
   );

@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { ChatMessages } from "@/components/chat/ChatMessages"
 import { ChatInput } from "@/components/chat/ChatInput"
@@ -32,7 +31,6 @@ export const ChatContainer = () => {
   const { currentThemeId, patternPrompt, themePrompts, isThemePromptsLoading } = useChatTheme(themeFromUrl)
   const { messages, setMessages, isThinking, setIsThinking, saveLocalMessages } = useChatSession(sessionId)
   
-  // Define handleSendMessage before using it in useChatMessages
   const handleSendMessage = async (content: string) => {
     if (authStatus === 'anonymous' && !recordInteraction()) {
       return
@@ -87,7 +85,10 @@ export const ChatContainer = () => {
           'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNweWZ6cmd3YmF2bW50aWdpbmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ4MzcwNjEsImV4cCI6MjA2MDQxMzA2MX0.nBc8x2mLTm4j9KpxSzsgCp0xHgaJnWvN2t7I3H37n70`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: aiMessageToSend }),
+        body: JSON.stringify({ 
+          message: aiMessageToSend,
+          themeId: currentThemeId 
+        }),
       })
 
       if (!response.ok) {
@@ -155,7 +156,7 @@ export const ChatContainer = () => {
 
       setFurtivePrompt(null)
 
-    } catch (error: any) {
+    } catch (error) {
       console.error("Chat error:", error)
     } finally {
       setIsThinking(false)

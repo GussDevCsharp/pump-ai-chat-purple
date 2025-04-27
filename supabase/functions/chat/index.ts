@@ -23,7 +23,6 @@ serve(async (req) => {
     if (url.pathname.endsWith('/getApiKey')) {
       console.log('Getting API key')
       
-      // Get the specific API key
       const { data, error } = await supabase
         .from('modelkeys')
         .select('apikey')
@@ -53,20 +52,60 @@ serve(async (req) => {
     }
 
     const apikey = keyData.apikey
-    const { message } = await req.json()
+    const { message, themeId } = await req.json()
 
-    // Buscar o prompt de restrição
-    const { data: restrictionPrompt, error: restrictionError } = await supabase
+    // Fetch rules prompt
+    const { data: rulesPrompt, error: rulesError } = await supabase
       .from('furtive_prompts')
       .select('content')
-      .eq('title', 'restrição assuntos')
-      .single()
+      .eq('category', 'regras')
+      .maybeSingle()
 
-    if (restrictionError) {
-      console.error("Error fetching restriction prompt:", restrictionError)
+    if (rulesError) {
+      console.error("Error fetching rules prompt:", rulesError)
     }
 
-    console.log("Sending message to OpenAI:", message.slice(0, 50) + "...")
+    // Fetch tags prompt
+    const { data: tagsPrompt, error: tagsError } = await supabase
+      .from('furtive_prompts')
+      .select('content')
+      .eq('category', 'tags')
+      .maybeSingle()
+
+    if (tagsError) {
+      console.error("Error fetching tags prompt:", tagsError)
+    }
+
+    // Fetch theme prompt if themeId exists
+    let themePromptContent = null
+    if (themeId) {
+      const { data: themePrompt, error: themeError } = await supabase
+        .from('theme_prompts')
+        .select('prompt_furtive')
+        .eq('theme_id', themeId)
+        .maybeSingle()
+
+      if (themeError) {
+        console.error("Error fetching theme prompt:", themeError)
+      } else if (themePrompt) {
+        themePromptContent = themePrompt.prompt_furtive
+      }
+    }
+
+    // Combine all prompts
+    let systemPrompt = ''
+    if (rulesPrompt?.content) {
+      systemPrompt += rulesPrompt.content + '\n\n'
+    }
+    if (tagsPrompt?.content) {
+      systemPrompt += tagsPrompt.content + '\n\n'
+    }
+    if (themePromptContent) {
+      systemPrompt += themePromptContent
+    }
+
+    console.log("System prompt:", systemPrompt)
+    console.log("User message:", message)
     
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -79,11 +118,7 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: `
-              Você é um assistente AI focado em fornecer orientação e expertise. 
-              Você DEVE sempre responder no mesmo idioma que o usuário escreve suas mensagens.
-              ${restrictionPrompt?.content ? `\n${restrictionPrompt.content}` : ''}
-            `
+            content: systemPrompt
           },
           { 
             role: 'user', 
@@ -125,3 +160,4 @@ serve(async (req) => {
     )
   }
 })
+

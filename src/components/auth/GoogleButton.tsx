@@ -10,6 +10,8 @@ export function GoogleButton() {
   const handleGoogleLogin = async () => {
     try {
       setIsLoading(true);
+      toast.info("Redirecionando para o Google...");
+      
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -17,18 +19,19 @@ export function GoogleButton() {
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
-          }
+          },
+          skipBrowserRedirect: false
         }
       });
 
       if (error) {
         console.error('Erro ao fazer login com Google:', error);
         toast.error(error.message || 'Erro ao conectar com Google');
+        setIsLoading(false);
       }
     } catch (error) {
       console.error('Erro ao processar login com Google:', error);
       toast.error('Falha na conexão com o Google. Verifique sua conexão e tente novamente.');
-    } finally {
       setIsLoading(false);
     }
   };

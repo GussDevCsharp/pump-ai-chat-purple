@@ -30,7 +30,7 @@ export default function Themes() {
             Escolha um tema para começar
           </h1>
           <ThemeSearch 
-            themes={themes}
+            themes={themes || []}
             onSelectTheme={handleSelectTheme}
             isLoading={isLoading}
           />

@@ -43,3 +43,4 @@ export const Header = () => {
       </div>
     </header>
   )
+} // Added this closing curly brace

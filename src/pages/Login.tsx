@@ -1,4 +1,3 @@
-
 import React, { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
@@ -159,14 +158,6 @@ export default function Login() {
                 Gerar Plano de Negócios
               </Button>
             </Link>
-            <div className="mt-4">
-              <p className="text-sm text-gray-600 mb-2">Ainda não tem uma conta?</p>
-              <Link to="/signup">
-                <Button variant="link" className="text-pump-purple">
-                  Cadastrar-se
-                </Button>
-              </Link>
-            </div>
           </div>
         </div>
       </div>

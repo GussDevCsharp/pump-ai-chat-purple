@@ -1,7 +1,11 @@
 
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { Google } from "lucide-react";
+import { LucideIcon } from "lucide-react";
+import dynamicIconImports from "lucide-react/dynamicIconImports";
+import { lazy, Suspense } from "react";
+
+const GoogleIcon = lazy(dynamicIconImports['google']);
 
 export function GoogleButton() {
   const handleGoogleLogin = async () => {
@@ -24,7 +28,9 @@ export function GoogleButton() {
       onClick={handleGoogleLogin}
       className="w-full border-gray-300 hover:bg-gray-50"
     >
-      <Google className="mr-2 h-4 w-4" />
+      <Suspense fallback={<div>Loading...</div>}>
+        <GoogleIcon className="mr-2 h-4 w-4" />
+      </Suspense>
       Continuar com Google
     </Button>
   );

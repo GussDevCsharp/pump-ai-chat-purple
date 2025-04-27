@@ -1,5 +1,4 @@
-
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { ChatMessages } from "@/components/chat/ChatMessages"
 import { ChatInput } from "@/components/chat/ChatInput"
 import { WelcomeScreen } from "@/components/chat/WelcomeScreen"
@@ -24,13 +23,20 @@ const businessData = {
 }
 
 export const ChatContainer = () => {
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams] = useSearchParams()
   const sessionId = searchParams.get('session')
+  const themeFromUrl = searchParams.get('theme')
   const { createSession, refreshSessions } = useChatSessions()
   const { authStatus, recordInteraction, remainingInteractions } = useChatAuth()
   const [currentThemeId, setCurrentThemeId] = useState<string | null>(null)
   const [furtivePrompt, setFurtivePrompt] = useState<{ text: string; title: string } | null>(null)
   const { messages, setMessages, isThinking, setIsThinking, saveLocalMessages } = useChatSession(sessionId)
+
+  useEffect(() => {
+    if (themeFromUrl) {
+      setCurrentThemeId(themeFromUrl)
+    }
+  }, [themeFromUrl])
 
   const { patternPrompt } = useThemePrompt(currentThemeId ?? undefined)
   const { prompts: themePrompts, isLoading: isThemePromptsLoading } = useThemePrompts(currentThemeId ?? undefined)

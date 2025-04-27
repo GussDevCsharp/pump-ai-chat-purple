@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from "react-router-dom";
 import { useChatThemes } from "@/hooks/useChatThemes";
@@ -21,7 +20,7 @@ export default function Themes() {
   const handleSelectTheme = async (themeId: string, themeName: string) => {
     const session = await createSession(`Chat sobre ${themeName}`, undefined, undefined, themeId);
     if (session) {
-      navigate(`/chat?session=${session.id}`);
+      navigate(`/chat?session=${session.id}&theme=${themeId}`);
     }
   };
 

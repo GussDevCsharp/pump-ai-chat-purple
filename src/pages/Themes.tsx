@@ -44,18 +44,18 @@ export default function Themes() {
                 <WelcomeSection onNewChat={handleNewChat} />
               </div>
 
+              <ThemeGrid 
+                themes={themes}
+                onSelectTheme={handleSelectTheme}
+                isLoading={isLoading}
+              />
+
               {!isTopicsLoading && (
                 <TrendingTopics 
                   latestTopics={latestTopics}
                   popularTopics={popularTopics}
                 />
               )}
-
-              <ThemeGrid 
-                themes={themes}
-                onSelectTheme={handleSelectTheme}
-                isLoading={isLoading}
-              />
             </div>
           </div>
           

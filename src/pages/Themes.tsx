@@ -36,12 +36,15 @@ export default function Themes() {
       <main className="w-full px-4 md:px-8 py-6 bg-white">
         <div className="max-w-7xl mx-auto w-full">
           <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-8">
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-2">
+              <h2 className="text-xl sm:text-2xl font-medium text-pump-gray">
+                Gustavo
+              </h2>
               <h1 className="text-3xl sm:text-4xl font-bold text-gray-700 font-sans">
-                Olá, {user?.user_metadata?.full_name || 'Empresário'}
+                Sou a inteligência da sua empresa
               </h1>
               <p className="text-pump-gray text-lg">
-                Seu suporte 24 horas personalizado para sua empresa
+                Seu suporte 24 horas personalizado para o seu negócio
               </p>
             </div>
             <Button 
@@ -64,3 +67,4 @@ export default function Themes() {
     </div>
   );
 }
+

@@ -1,3 +1,4 @@
+
 import React, { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
@@ -6,6 +7,7 @@ import { toast } from "sonner"
 import { supabase } from "@/integrations/supabase/client"
 import NeuralBackground from "@/components/effects/NeuralBackground"
 import { GoogleButton } from "@/components/auth/GoogleButton"
+import { Mail } from "lucide-react"
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -80,7 +82,18 @@ export default function Login() {
           </div>
 
           <div className="mt-8">
-            <GoogleButton />
+            <div className="flex space-x-4 mb-6">
+              <GoogleButton />
+              <Link to="/signup" className="w-full">
+                <Button 
+                  variant="outline" 
+                  className="w-full bg-transparent p-2 border-none hover:bg-transparent flex items-center justify-center gap-2"
+                >
+                  <Mail className="h-5 w-5 text-pump-purple" />
+                  <span className="text-gray-700 font-medium">Entrar com email</span>
+                </Button>
+              </Link>
+            </div>
             
             <div className="relative my-6">
               <div className="absolute inset-0 flex items-center">

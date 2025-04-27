@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
@@ -125,7 +124,7 @@ export default function Themes() {
                     Eu sou a inteligência da sua empresa
                   </h1>
                   <p className="text-lg text-pump-gray mb-6">
-                    Gerencie seus temas, chats e configurações de forma centralizada.
+                    Suporte 24 horas personalizado para seu negócio
                   </p>
                   <div className="flex gap-4">
                     <Button 
@@ -200,4 +199,3 @@ export default function Themes() {
     </div>
   );
 }
-

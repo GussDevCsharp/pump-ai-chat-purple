@@ -15,13 +15,13 @@ export function GoogleButton() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/themes`,
+          redirectTo: window.location.origin,
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
           },
           skipBrowserRedirect: false,
-          scopes: 'https://accounts.google.com/gsi/client'
+          scopes: 'email profile'
         }
       });
 

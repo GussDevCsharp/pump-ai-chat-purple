@@ -13,6 +13,7 @@ import { BackButton } from "./BackButton"
 import { useChatSession } from "@/hooks/useChatSession"
 import { useChatTheme } from "@/hooks/useChatTheme"
 import { useChatMessages } from "@/hooks/useChatMessages"
+import { supabase } from "@/integrations/supabase/client"
 
 const businessData = {
   company_name: "Minha Empresa",
@@ -30,14 +31,8 @@ export const ChatContainer = () => {
   const { authStatus, recordInteraction, remainingInteractions } = useChatAuth()
   const { currentThemeId, patternPrompt, themePrompts, isThemePromptsLoading } = useChatTheme(themeFromUrl)
   const { messages, setMessages, isThinking, setIsThinking, saveLocalMessages } = useChatSession(sessionId)
-  const {
-    furtivePrompt,
-    setFurtivePrompt,
-    handlePromptCardSelect,
-    interpolatePatternPrompt,
-    substitutePromptTags
-  } = useChatMessages(businessData, handleSendMessage)
-
+  
+  // Define handleSendMessage before using it in useChatMessages
   const handleSendMessage = async (content: string) => {
     if (authStatus === 'anonymous' && !recordInteraction()) {
       return
@@ -166,6 +161,14 @@ export const ChatContainer = () => {
       setIsThinking(false)
     }
   }
+  
+  const {
+    furtivePrompt,
+    setFurtivePrompt,
+    handlePromptCardSelect,
+    interpolatePatternPrompt,
+    substitutePromptTags
+  } = useChatMessages(businessData, handleSendMessage)
 
   const showWelcomeScreen = !sessionId || (messages.length === 1 && messages[0].role === 'assistant' && 
     messages[0].content === 'Olá! Como posso ajudar você hoje?')

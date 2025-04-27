@@ -17,18 +17,18 @@ export default function Signup() {
   return (
     <div className="relative min-h-screen bg-offwhite">
       <NeuralBackground />
-      <div className="relative z-10 flex flex-col justify-center items-center px-4 py-8 w-full min-h-screen">
+      <div className="relative z-10 flex flex-col justify-center items-center px-4 py-6 md:py-8 w-full min-h-screen">
         <div className="max-w-3xl w-full mx-auto">
-          <div className="mb-8 text-center">
-            <h1 className="text-4xl font-bold text-pump-purple mb-3 animate-fade-in">
+          <div className="mb-6 md:mb-8 text-center">
+            <h1 className="text-3xl md:text-4xl font-bold text-pump-purple mb-3 animate-fade-in">
               Crie sua conta
             </h1>
-            <p className="text-pump-gray text-lg animate-fade-in delay-100">
+            <p className="text-pump-gray text-base md:text-lg animate-fade-in delay-100">
               Comece sua jornada conosco
             </p>
           </div>
 
-          <div className="max-w-md mx-auto mb-8 animate-fade-in delay-150">
+          <div className="max-w-md mx-auto mb-6 md:mb-8 animate-fade-in delay-150">
             <GoogleButton />
             <div className="relative my-6">
               <div className="absolute inset-0 flex items-center">
@@ -42,7 +42,7 @@ export default function Signup() {
             </div>
           </div>
 
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 animate-fade-in delay-200">
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl md:rounded-2xl shadow-lg p-4 md:p-6 animate-fade-in delay-200">
             <SignupLayout steps={STEPS} current={currentStep}>
               <SignupStepperFlow onStepChange={setCurrentStep} />
             </SignupLayout>
@@ -50,5 +50,5 @@ export default function Signup() {
         </div>
       </div>
     </div>
-  );
+  )
 }

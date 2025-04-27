@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Building, ChartBar, Users, TrendingUp, MessageSquare } from "lucide-react"
@@ -78,31 +79,31 @@ export default function Landing() {
   return (
     <div className="min-h-screen bg-offwhite">
       <Header />
-      <main className="container mx-auto px-4 py-12 bg-offwhite">
-        <div className="max-w-4xl mx-auto text-center mb-16">
-          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
+      <main className="container mx-auto px-4 py-8 md:py-12 bg-offwhite">
+        <div className="max-w-4xl mx-auto text-center mb-12 md:mb-16">
+          <h1 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4 md:mb-6">
             Inteligência Artificial para Empresas
           </h1>
-          <p className="text-lg text-pump-gray mb-8 max-w-2xl mx-auto">
+          <p className="text-base md:text-lg text-pump-gray mb-6 md:mb-8 max-w-2xl mx-auto px-4">
             Transforme sua gestão empresarial com IA especializada em negócios. 
             Obtenha insights valiosos e soluções práticas para sua empresa.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/chat" state={{ topic: "Consultoria Empresarial", prompts: businessPrompts[0].prompts }}>
-              <Button size="lg" className="bg-pump-purple hover:bg-pump-purple/90 gap-2 w-full sm:w-auto">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center px-4">
+            <Link to="/chat" state={{ topic: "Consultoria Empresarial", prompts: businessPrompts[0].prompts }} className="w-full sm:w-auto">
+              <Button size="lg" className="bg-pump-purple hover:bg-pump-purple/90 gap-2 w-full">
                 <MessageSquare size={18} />
                 Consultar IA
               </Button>
             </Link>
-            <Link to="/business-generator">
-              <Button size="lg" variant="outline" className="bg-white border-pump-purple text-pump-purple hover:bg-pump-purple/10 w-full sm:w-auto">
+            <Link to="/business-generator" className="w-full sm:w-auto">
+              <Button size="lg" variant="outline" className="bg-white border-pump-purple text-pump-purple hover:bg-pump-purple/10 w-full">
                 Gerar um Negócio
               </Button>
             </Link>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 px-4">
           {businessPrompts.map((category, index) => (
             <Link 
               key={index}
@@ -128,17 +129,17 @@ export default function Landing() {
           ))}
         </div>
 
-        <section className="mt-24 container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+        <section className="mt-16 md:mt-24 px-4">
+          <div className="text-center mb-8 md:mb-12">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
               Empresas que confiam na nossa IA
             </h2>
-            <p className="text-lg text-pump-gray max-w-2xl mx-auto">
+            <p className="text-base md:text-lg text-pump-gray max-w-2xl mx-auto">
               Descubra como empresas estão transformando seus negócios com nossa inteligência artificial
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-center opacity-70 grayscale">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 items-center justify-center opacity-70 grayscale">
             {companies.map((company, index) => (
               <div 
                 key={index} 
@@ -147,7 +148,7 @@ export default function Landing() {
                 <img
                   src={company.logo}
                   alt={company.name}
-                  className="max-h-16 max-w-full object-contain"
+                  className="max-h-12 md:max-h-16 max-w-full object-contain"
                 />
               </div>
             ))}

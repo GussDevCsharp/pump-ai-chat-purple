@@ -11,7 +11,7 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-pump-offwhite">
       <Header />
       <main>
         {/* Dashboard removido */}

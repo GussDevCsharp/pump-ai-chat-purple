@@ -10,11 +10,11 @@ export const Header = () => {
   const homeLink = authStatus === 'authenticated' ? "/themes" : "/";
 
   return (
-    <header className="border-b border-pump-gray/10 bg-white/80 backdrop-blur-xl shadow-sm sticky top-0 z-30">
+    <header className="border-b border-pump-gray/10 bg-pump-offwhite backdrop-blur-xl shadow-sm sticky top-0 z-30">
       <div className="container mx-auto flex items-center justify-between h-16 md:h-20 px-4">
         <Link to="/" className="flex items-center gap-2">
           <img 
-            src="/uploads/3deeda76-6dea-4dd0-8ef5-586b5ebcee30.png" 
+            src="/uploads/chatpump-logo-transparent.png" 
             alt="ChatPump"
             className="h-8 md:h-10"
           />

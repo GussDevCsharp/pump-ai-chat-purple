@@ -19,21 +19,21 @@ interface TrendingTopicsProps {
 export const TrendingTopics = ({ latestTopics }: TrendingTopicsProps) => {
   return (
     <div className="w-full">
-      <Card className="p-6 bg-white/90">
-        <div className="flex items-center gap-2 mb-4">
-          <Activity className="w-5 h-5 text-pump-purple" />
-          <h2 className="text-xl font-semibold text-gray-900">Últimas Atualizações</h2>
+      <Card className="p-4 bg-white/90">
+        <div className="flex items-center gap-2 mb-3">
+          <Activity className="w-4 h-4 text-pump-purple" />
+          <h2 className="text-base font-semibold text-gray-900">Últimas Atualizações</h2>
         </div>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Título</TableHead>
-              <TableHead>Adicionado</TableHead>
+              <TableHead className="text-xs">Título</TableHead>
+              <TableHead className="text-xs">Adicionado</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {latestTopics.map((topic) => (
-              <TableRow key={topic.id}>
+              <TableRow key={topic.id} className="text-sm">
                 <TableCell>{topic.title}</TableCell>
                 <TableCell>{new Date(topic.created_at!).toLocaleDateString('pt-BR')}</TableCell>
               </TableRow>
@@ -44,4 +44,3 @@ export const TrendingTopics = ({ latestTopics }: TrendingTopicsProps) => {
     </div>
   );
 };
-

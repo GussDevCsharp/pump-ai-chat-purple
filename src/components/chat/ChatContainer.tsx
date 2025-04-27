@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react"
 import { ChatMessages } from "@/components/chat/ChatMessages"
 import { ChatInput } from "@/components/chat/ChatInput"
@@ -23,7 +24,7 @@ const businessData = {
 }
 
 export const ChatContainer = () => {
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const sessionId = searchParams.get('session')
   const themeFromUrl = searchParams.get('theme')
   const { createSession, refreshSessions } = useChatSessions()

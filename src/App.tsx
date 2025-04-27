@@ -1,43 +1,27 @@
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Home from './pages/Home';
+import Themes from './pages/Themes';
+import Chat from './pages/Chat';
+import SignUp from './pages/SignUp';
+import Login from './pages/Login';
+import Pricing from './pages/Pricing';
+import BusinessGenerator from './pages/BusinessGenerator';
+import DatabaseMap from './pages/DatabaseMap';
 
-import React from "react";
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { FloatingChatButton } from "./components/support/FloatingChatButton";
-import Index from "./pages/Index";
-import Login from "./pages/Login";
-import NotFound from "./pages/NotFound";
-import BusinessGenerator from "./pages/BusinessGenerator";
-import Themes from "./pages/Themes";
-import Signup from "./pages/Signup";
-import ProfileComplete from "./pages/ProfileComplete";
-
-const queryClient = new QueryClient();
-
-const App = () => (
-  <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Login />} />
-            <Route path="/chat" element={<Index />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/themes" element={<Themes />} />
-            <Route path="/business-generator" element={<BusinessGenerator />} />
-            <Route path="/profile/complete" element={<ProfileComplete />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          <FloatingChatButton />
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
-  </React.StrictMode>
-);
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/themes" element={<Themes />} />
+      <Route path="/chat" element={<Chat />} />
+      <Route path="/signup" element={<SignUp />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/pricing" element={<Pricing />} />
+      <Route path="/business-generator" element={<BusinessGenerator />} />
+      <Route path="/database-map" element={<DatabaseMap />} />
+    </Routes>
+  );
+}
 
 export default App;

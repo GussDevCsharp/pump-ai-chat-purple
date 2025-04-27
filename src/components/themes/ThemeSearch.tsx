@@ -1,0 +1,57 @@
+
+import React, { useState } from 'react';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command"
+import { Search } from 'lucide-react';
+import { ChatTheme } from '@/hooks/useChatThemes';
+import { ThemePrompt } from '@/hooks/useThemePrompts';
+
+interface ThemeSearchProps {
+  themes: ChatTheme[];
+  onSelectTheme: (themeId: string, themeName: string) => void;
+  isLoading: boolean;
+}
+
+export const ThemeSearch = ({ themes, onSelectTheme, isLoading }: ThemeSearchProps) => {
+  const [searchTerm, setSearchTerm] = useState("");
+  
+  if (isLoading) {
+    return (
+      <div className="w-full max-w-3xl mx-auto">
+        <div className="h-12 bg-gray-100 animate-pulse rounded-lg" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full max-w-3xl mx-auto">
+      <Command className="rounded-lg border shadow-md">
+        <div className="flex items-center border-b px-3">
+          <Search className="h-4 w-4 shrink-0 opacity-50" />
+          <CommandInput 
+            placeholder="Pesquisar temas e prompts..."
+            className="h-11"
+            value={searchTerm}
+            onValueChange={setSearchTerm}
+          />
+        </div>
+        <CommandEmpty>Nenhum resultado encontrado.</CommandEmpty>
+        
+        {themes.map((theme) => (
+          <CommandGroup key={theme.id} heading={theme.name} className="px-2">
+            <CommandItem
+              className="flex items-start gap-2 p-2 cursor-pointer hover:bg-pump-purple/10"
+              onSelect={() => onSelectTheme(theme.id, theme.name)}
+            >
+              <div className="flex flex-col">
+                <span className="font-medium">{theme.name}</span>
+                {theme.description && (
+                  <span className="text-sm text-gray-500">{theme.description}</span>
+                )}
+              </div>
+            </CommandItem>
+          </CommandGroup>
+        ))}
+      </Command>
+    </div>
+  );
+};

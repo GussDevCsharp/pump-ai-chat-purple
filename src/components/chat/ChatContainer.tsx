@@ -1,3 +1,4 @@
+
 import { useState } from "react"
 import { ChatMessages } from "@/components/chat/ChatMessages"
 import { ChatInput } from "@/components/chat/ChatInput"
@@ -13,7 +14,7 @@ import { PromptSuggestionCards } from "./PromptSuggestionCards"
 import { AuthBanner } from "./AuthBanner"
 import { BackButton } from "./BackButton"
 import { useChatSession } from "@/hooks/useChatSession"
-import { toast } from "react-toastify"
+import { toast } from "@/hooks/use-toast"
 
 const businessData = {
   company_name: "Minha Empresa",

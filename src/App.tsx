@@ -13,7 +13,6 @@ import BusinessGenerator from "./pages/BusinessGenerator";
 import Themes from "./pages/Themes";
 import Signup from "./pages/Signup";
 import ProfileComplete from "./pages/ProfileComplete";
-import DatabaseMap from "./pages/DatabaseMap";
 
 const queryClient = new QueryClient();
 
@@ -30,7 +29,6 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/themes" element={<Themes />} />
-            <Route path="/database-map" element={<DatabaseMap />} />
             <Route path="/business-generator" element={<BusinessGenerator />} />
             <Route path="/profile/complete" element={<ProfileComplete />} />
             <Route path="*" element={<NotFound />} />
@@ -43,3 +41,4 @@ const App = () => (
 );
 
 export default App;
+

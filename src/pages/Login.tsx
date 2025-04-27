@@ -1,4 +1,3 @@
-
 import React, { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
@@ -6,6 +5,7 @@ import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
 import { supabase } from "@/integrations/supabase/client"
 import NeuralBackground from "@/components/effects/NeuralBackground"
+import { GoogleButton } from "@/components/auth/GoogleButton"
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -36,7 +36,6 @@ export default function Login() {
       return
     }
 
-    // Check if the user has completed their profile
     try {
       const { data: companyProfile } = await supabase
         .from('company_profiles')
@@ -47,8 +46,6 @@ export default function Login() {
       setIsLoading(false)
       toast.success('Login realizado com sucesso!')
       
-      // If the user hasn't completed their profile yet, the alert will handle it
-      // Just navigate to the themes page in any case
       setTimeout(() => {
         navigate('/themes')
       }, 600)
@@ -81,50 +78,66 @@ export default function Login() {
               Entre para acessar sua conta
             </p>
           </div>
-          <form onSubmit={handleLogin} className="mt-8 space-y-6">
-            <div className="space-y-4">
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                  Email
-                </label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="mt-1"
-                  disabled={isLoading}
-                />
+
+          <div className="mt-8">
+            <GoogleButton />
+            
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300"></div>
               </div>
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                  Senha
-                </label>
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="current-password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="mt-1"
-                  disabled={isLoading}
-                />
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white/85 text-gray-500">
+                  ou continue com email
+                </span>
               </div>
             </div>
 
-            <Button 
-              type="submit" 
-              className="w-full bg-pump-purple hover:bg-pump-purple/90 text-lg rounded-lg py-3"
-              disabled={isLoading}
-            >
-              {isLoading ? "Entrando..." : "Entrar"}
-            </Button>
-          </form>
+            <form onSubmit={handleLogin} className="space-y-6">
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                    Email
+                  </label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="mt-1"
+                    disabled={isLoading}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                    Senha
+                  </label>
+                  <Input
+                    id="password"
+                    name="password"
+                    type="password"
+                    autoComplete="current-password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="mt-1"
+                    disabled={isLoading}
+                  />
+                </div>
+              </div>
+
+              <Button 
+                type="submit" 
+                className="w-full bg-pump-purple hover:bg-pump-purple/90 text-lg rounded-lg py-3"
+                disabled={isLoading}
+              >
+                {isLoading ? "Entrando..." : "Entrar"}
+              </Button>
+            </form>
+          </div>
           
           <div className="text-center pt-4 border-t mt-6">
             <p className="text-sm text-gray-600 mb-2">Empreendedor? Experimente nossa ferramenta:</p>

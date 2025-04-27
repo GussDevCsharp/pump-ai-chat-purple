@@ -1,9 +1,9 @@
 
 import React from 'react';
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom"; // Add Link import
 import { useChatThemes } from "@/hooks/useChatThemes";
 import { useChatSessions } from "@/hooks/useChatSessions";
-import { Header } from "@/components/common/Header";
 import { useThemeTopics } from "@/hooks/useThemeTopics";
 import { ProfileCompletionAlert } from "@/components/common/ProfileCompletionAlert";
 import { ProfileCompletionChart } from "@/components/profile/ProfileCompletionChart";
@@ -35,7 +35,20 @@ export default function Themes() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <ProfileCompletionAlert />
-      <Header />
+      
+      {/* Add header with logo */}
+      <header className="border-b border-pump-gray/10 bg-white/80 backdrop-blur-xl shadow-sm sticky top-0 z-30">
+        <div className="container mx-auto flex items-center justify-between h-16 md:h-20 px-4">
+          <Link to="/" className="flex items-center gap-2">
+            <img 
+              src="/uploads/3deeda76-6dea-4dd0-8ef5-586b5ebcee30.png" 
+              alt="ChatPump"
+              className="h-8 md:h-10"
+            />
+          </Link>
+        </div>
+      </header>
+
       <main className="w-full px-2 sm:px-4 md:px-8 py-6">
         <div className="flex gap-6">
           <div className="flex-1">

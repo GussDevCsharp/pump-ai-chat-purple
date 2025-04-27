@@ -11,7 +11,6 @@ import NotFound from "./pages/NotFound";
 import BusinessGenerator from "./pages/BusinessGenerator";
 import Themes from "./pages/Themes";
 import Signup from "./pages/Signup";
-import AppointmentsPage from "./pages/Appointments";
 import ProfileComplete from "./pages/ProfileComplete";
 
 const queryClient = new QueryClient();
@@ -29,7 +28,6 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/themes" element={<Themes />} />
-            <Route path="/appointments" element={<AppointmentsPage />} />
             <Route path="/business-generator" element={<BusinessGenerator />} />
             <Route path="/profile/complete" element={<ProfileComplete />} />
             <Route path="*" element={<NotFound />} />

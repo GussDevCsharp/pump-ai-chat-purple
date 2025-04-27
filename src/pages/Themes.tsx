@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
@@ -120,7 +121,7 @@ export default function Themes() {
             <div className="w-full flex flex-col gap-10">
               <div className="flex flex-col md:flex-row justify-between items-start gap-8 mb-8">
                 <div className="w-full text-left">
-                  <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-3">
+                  <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-3 font-sans">
                     Eu sou a inteligência da sua empresa
                   </h1>
                   <p className="text-lg text-pump-gray mb-6">
@@ -199,3 +200,4 @@ export default function Themes() {
     </div>
   );
 }
+

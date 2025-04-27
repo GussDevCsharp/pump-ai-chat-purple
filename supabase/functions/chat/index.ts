@@ -23,23 +23,12 @@ serve(async (req) => {
     if (url.pathname.endsWith('/getApiKey')) {
       console.log('Getting API key')
       
-      // First, check all records in the table for debugging
-      const { data: allKeys, error: listError } = await supabase
-        .from('modelkeys')
-        .select('*')
-
-      console.log('All modelkeys records:', allKeys)
-      console.log('List error:', listError)
-
       // Get the specific API key
       const { data, error } = await supabase
         .from('modelkeys')
         .select('apikey')
         .eq('model', 'OpenAI')
         .single()
-
-      console.log('API key data:', data)
-      console.log('API key error:', error)
 
       if (error) {
         throw new Error(`Could not fetch API key: ${error.message}`)
@@ -66,6 +55,17 @@ serve(async (req) => {
     const apikey = keyData.apikey
     const { message } = await req.json()
 
+    // Buscar o prompt de restrição
+    const { data: restrictionPrompt, error: restrictionError } = await supabase
+      .from('furtive_prompts')
+      .select('content')
+      .eq('title', 'restrição assuntos')
+      .single()
+
+    if (restrictionError) {
+      console.error("Error fetching restriction prompt:", restrictionError)
+    }
+
     console.log("Sending message to OpenAI:", message.slice(0, 50) + "...")
     
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -79,7 +79,11 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'You are a helpful AI assistant focused on providing guidance and expertise. You MUST always respond in the same language that the user writes their message in.'
+            content: `
+              Você é um assistente AI focado em fornecer orientação e expertise. 
+              Você DEVE sempre responder no mesmo idioma que o usuário escreve suas mensagens.
+              ${restrictionPrompt?.content ? `\n${restrictionPrompt.content}` : ''}
+            `
           },
           { 
             role: 'user', 

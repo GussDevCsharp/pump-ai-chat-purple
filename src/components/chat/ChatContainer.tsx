@@ -1,19 +1,18 @@
-import { useState, useEffect } from "react"
+
+import { useState } from "react"
 import { ChatMessages } from "@/components/chat/ChatMessages"
 import { ChatInput } from "@/components/chat/ChatInput"
 import { WelcomeScreen } from "@/components/chat/WelcomeScreen"
 import { useSearchParams } from "react-router-dom"
-import { supabase } from "@/integrations/supabase/client"
 import { useChatSessions } from "@/hooks/useChatSessions"
 import { useChatAuth } from "@/hooks/useChatAuth"
-import { useThemePrompt } from "@/hooks/useThemePrompt"
-import { useThemePrompts } from "@/hooks/useThemePrompts"
 import { Watermark } from "../common/Watermark"
-import { PromptSuggestionCards } from "./PromptSuggestionCards"
+import { ChatPrompts } from "./ChatPrompts"
 import { AuthBanner } from "./AuthBanner"
 import { BackButton } from "./BackButton"
 import { useChatSession } from "@/hooks/useChatSession"
-import { toast } from "@/hooks/use-toast"
+import { useChatTheme } from "@/hooks/useChatTheme"
+import { useChatMessages } from "@/hooks/useChatMessages"
 
 const businessData = {
   company_name: "Minha Empresa",
@@ -26,90 +25,18 @@ export const ChatContainer = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const sessionId = searchParams.get('session')
   const themeFromUrl = searchParams.get('theme')
+  
   const { createSession, refreshSessions } = useChatSessions()
   const { authStatus, recordInteraction, remainingInteractions } = useChatAuth()
-  const [currentThemeId, setCurrentThemeId] = useState<string | null>(null)
-  const [furtivePrompt, setFurtivePrompt] = useState<{ text: string; title: string } | null>(null)
+  const { currentThemeId, patternPrompt, themePrompts, isThemePromptsLoading } = useChatTheme(themeFromUrl)
   const { messages, setMessages, isThinking, setIsThinking, saveLocalMessages } = useChatSession(sessionId)
-
-  useEffect(() => {
-    if (themeFromUrl) {
-      setCurrentThemeId(themeFromUrl)
-      console.log("Theme set from URL:", themeFromUrl)
-    }
-  }, [themeFromUrl])
-
-  const { patternPrompt } = useThemePrompt(currentThemeId ?? undefined)
-  const { prompts: themePrompts, isLoading: isThemePromptsLoading } = useThemePrompts(currentThemeId ?? undefined)
-
-  useEffect(() => {
-    console.log("Current theme ID:", currentThemeId)
-    console.log("Theme prompts:", themePrompts)
-    console.log("Theme prompts loading:", isThemePromptsLoading)
-  }, [currentThemeId, themePrompts, isThemePromptsLoading])
-
-  const interpolatePatternPrompt = (
-    pattern: string,
-    userQuery: string,
-    business: Record<string, string>
-  ) => {
-    let filled = pattern
-    for (const key in business) {
-      filled = filled.replace(new RegExp(`{{\\s*${key}\\s*}}`, "g"), business[key])
-    }
-    filled = filled.replace(/{{\s*user_query\s*}}/g, userQuery)
-    return filled
-  }
-
-  const substitutePromptTags = (prompt: string, business: Record<string, string>) => {
-    let result = prompt
-    for (const key in business) {
-      result = result.replace(new RegExp(`{{\\s*${key}\\s*}}`, "g"), business[key])
-    }
-    return result
-  }
-
-  const handlePromptCardSelect = async (prompt: any) => {
-    if (prompt.action_plan) {
-      try {
-        const { data: actionPlan, error } = await supabase
-          .from('action_plans')
-          .insert({
-            title: prompt.title,
-            prompt_id: prompt.id,
-            user_id: (await supabase.auth.getSession()).data.session?.user.id
-          })
-          .select()
-          .single();
-
-        if (error) throw error;
-
-        toast({
-          title: "Plano de ação criado",
-          description: "Você pode acompanhar seu progresso na seção de planos de ação."
-        });
-      } catch (error) {
-        console.error("Erro ao criar plano de ação:", error);
-        toast({
-          variant: "destructive",
-          title: "Erro",
-          description: "Não foi possível criar o plano de ação."
-        });
-      }
-    }
-
-    setFurtivePrompt({
-      text: prompt.prompt_furtive ?? prompt.title,
-      title: prompt.title
-    });
-    
-    const textArea = document.querySelector('textarea');
-    if (textArea) {
-      textArea.value = prompt.title;
-      textArea.dispatchEvent(new Event('input', { bubbles: true }));
-      textArea.focus();
-    }
-  };
+  const {
+    furtivePrompt,
+    setFurtivePrompt,
+    handlePromptCardSelect,
+    interpolatePatternPrompt,
+    substitutePromptTags
+  } = useChatMessages(businessData, handleSendMessage)
 
   const handleSendMessage = async (content: string) => {
     if (authStatus === 'anonymous' && !recordInteraction()) {
@@ -256,13 +183,11 @@ export const ChatContainer = () => {
       ) : (
         <div className="flex-1 flex flex-col overflow-hidden h-full pt-16">
           <ChatMessages messages={messages} isThinking={isThinking} />
-          <div className="px-4">
-            <PromptSuggestionCards
-              prompts={themePrompts || []}
-              onSelect={handlePromptCardSelect}
-              loading={isThemePromptsLoading}
-            />
-          </div>
+          <ChatPrompts
+            prompts={themePrompts}
+            isLoading={isThemePromptsLoading}
+            onSelect={handlePromptCardSelect}
+          />
           <ChatInput 
             onSendMessage={handleSendMessage} 
             furtivePromptTitle={furtivePrompt ? furtivePrompt.title : undefined}

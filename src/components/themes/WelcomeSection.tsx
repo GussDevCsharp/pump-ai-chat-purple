@@ -14,11 +14,8 @@ export const WelcomeSection: React.FC<WelcomeSectionProps> = ({ onNewChat }) => 
   return (
     <div className="w-full text-left">
       <h1 className="text-3xl sm:text-4xl font-bold text-gray-700 mb-2 font-sans">
-        Olá {user?.user_metadata?.full_name || 'Empresário'}, sou a inteligencia da sua empresa
+        Olá, {user?.user_metadata?.full_name || 'Empresário'}
       </h1>
-      <p className="text-base text-pump-gray mb-4">
-        Suporte 24 horas personalizado para seu negócio
-      </p>
       <div className="flex gap-4">
         <Button 
           onClick={onNewChat}
@@ -32,3 +29,4 @@ export const WelcomeSection: React.FC<WelcomeSectionProps> = ({ onNewChat }) => 
     </div>
   );
 };
+

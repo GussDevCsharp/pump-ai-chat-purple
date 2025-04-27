@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Label } from 'recharts';
 import { Card } from "@/components/ui/card";
@@ -5,14 +6,25 @@ import { Calendar } from "@/components/ui/calendar"
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ptBR } from 'date-fns/locale';
-import { useAppointments } from "@/hooks/useAppointments";
-import { CalendarClock } from "lucide-react";
+import { ClipboardList } from "lucide-react";
+
+interface ActionPlan {
+  id: string;
+  title: string;
+  status: string;
+  created_at: string;
+  description?: string;
+  prompt_id?: string;
+  updated_at: string;
+  user_id: string;
+}
 
 export function ProfileCompletionChart() {
   const [companyCompleted, setCompanyCompleted] = useState(false);
   const [entrepreneurCompleted, setEntrepreneurCompleted] = useState(false);
   const [date, setDate] = useState<Date>();
-  const { appointments, isLoading } = useAppointments();
+  const [ongoingPlans, setOngoingPlans] = useState<ActionPlan[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const checkProfileCompletion = async () => {
@@ -35,7 +47,29 @@ export function ProfileCompletionChart() {
       setEntrepreneurCompleted(!!entrepreneurProfile?.id);
     };
 
+    const fetchOngoingPlans = async () => {
+      try {
+        const { data: session } = await supabase.auth.getSession();
+        if (!session.session) return;
+
+        const { data } = await supabase
+          .from('action_plans')
+          .select('*')
+          .eq('user_id', session.session.user.id)
+          .eq('status', 'pending')
+          .order('created_at', { ascending: false })
+          .limit(3);
+
+        setOngoingPlans(data || []);
+      } catch (error) {
+        console.error('Error fetching ongoing plans:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     checkProfileCompletion();
+    fetchOngoingPlans();
   }, []);
 
   const calculateCompletion = () => {
@@ -128,44 +162,40 @@ export function ProfileCompletionChart() {
       <Card className="p-6 w-[300px] bg-white">
         <div className="text-center mb-4">
           <div className="flex items-center justify-center gap-2">
-            <CalendarClock className="w-5 h-5 text-pump-purple" />
+            <ClipboardList className="w-5 h-5 text-pump-purple" />
             <h3 className="text-lg font-semibold text-gray-900">
-              Próximas Atividades
+              Planos de Ação em Andamento
             </h3>
           </div>
           <p className="text-sm text-pump-gray mt-1">
-            Seus compromissos agendados
+            Seus planos de ação pendentes
           </p>
         </div>
         
         <div className="space-y-3 mt-4">
           {isLoading ? (
             <p className="text-center text-sm text-pump-gray">Carregando...</p>
-          ) : appointments && appointments.length > 0 ? (
-            appointments.slice(0, 3).map((appointment) => (
+          ) : ongoingPlans && ongoingPlans.length > 0 ? (
+            ongoingPlans.map((plan) => (
               <div 
-                key={appointment.id} 
+                key={plan.id} 
                 className="p-3 bg-pump-offwhite rounded-lg"
               >
                 <div className="flex justify-between items-start">
                   <div>
-                    <h4 className="font-medium text-gray-900">{appointment.title}</h4>
-                    <p className="text-sm text-pump-gray mt-1">
-                      {new Date(appointment.start_time).toLocaleDateString('pt-BR', {
-                        weekday: 'long',
-                        day: '2-digit',
-                        month: 'long',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
-                    </p>
+                    <h4 className="font-medium text-gray-900">{plan.title}</h4>
+                    {plan.description && (
+                      <p className="text-sm text-pump-gray mt-1 line-clamp-2">
+                        {plan.description}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
             ))
           ) : (
             <p className="text-center text-sm text-pump-gray">
-              Nenhuma atividade agendada
+              Nenhum plano de ação em andamento
             </p>
           )}
         </div>

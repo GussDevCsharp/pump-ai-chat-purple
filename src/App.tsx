@@ -13,7 +13,6 @@ import Themes from "./pages/Themes";
 import Signup from "./pages/Signup";
 import AppointmentsPage from "./pages/Appointments";
 import ProfileComplete from "./pages/ProfileComplete";
-import { ProfileCompletionAlert } from "./components/common/ProfileCompletionAlert";
 
 const queryClient = new QueryClient();
 
@@ -24,7 +23,6 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <ProfileCompletionAlert />
           <Routes>
             <Route path="/" element={<Login />} />
             <Route path="/chat" element={<Index />} />

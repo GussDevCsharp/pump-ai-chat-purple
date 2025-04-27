@@ -1,15 +1,23 @@
+
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Info } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
 import { cn } from "@/lib/utils"
+import { useChatAuth } from "@/hooks/useChatAuth"
 
 export function ProfileCompletionAlert() {
   const [showAlert, setShowAlert] = useState(false)
   const navigate = useNavigate()
+  const { authStatus } = useChatAuth()
   
   useEffect(() => {
+    // Only check profile completion if the user is authenticated
+    if (authStatus !== 'authenticated') {
+      return
+    }
+    
     const checkProfileCompletion = async () => {
       try {
         const { data: session } = await supabase.auth.getSession()
@@ -36,7 +44,7 @@ export function ProfileCompletionAlert() {
     
     const timer = setTimeout(checkProfileCompletion, 1000)
     return () => clearTimeout(timer)
-  }, [])
+  }, [authStatus])
   
   const handleComplete = () => {
     navigate('/profile/complete')

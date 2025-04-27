@@ -16,7 +16,8 @@ export const ThemeSearch = ({ themes, onSelectTheme, isLoading }: ThemeSearchPro
   
   // Filter themes based on search term
   useEffect(() => {
-    if (!themes) {
+    // Certifique-se de que themes é um array antes de filtrar
+    if (!Array.isArray(themes)) {
       setFilteredThemes([]);
       return;
     }
@@ -39,6 +40,7 @@ export const ThemeSearch = ({ themes, onSelectTheme, isLoading }: ThemeSearchPro
     );
   }
 
+  // Renderize o componente Command apenas se tivermos temas filtrados
   return (
     <div className="w-full max-w-3xl mx-auto">
       <Command className="rounded-lg border shadow-md">
@@ -55,7 +57,7 @@ export const ThemeSearch = ({ themes, onSelectTheme, isLoading }: ThemeSearchPro
         <CommandList>
           <CommandEmpty>Nenhum resultado encontrado.</CommandEmpty>
           
-          {filteredThemes && filteredThemes.length > 0 ? (
+          {Array.isArray(filteredThemes) && filteredThemes.length > 0 ? (
             filteredThemes.map((theme) => (
               <CommandGroup key={theme.id} heading={theme.name} className="px-2">
                 <CommandItem

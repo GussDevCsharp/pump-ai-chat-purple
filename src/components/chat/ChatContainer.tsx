@@ -13,6 +13,7 @@ import { PromptSuggestionCards } from "./PromptSuggestionCards"
 import { AuthBanner } from "./AuthBanner"
 import { BackButton } from "./BackButton"
 import { useChatSession } from "@/hooks/useChatSession"
+import { toast } from "react-toastify"
 
 const businessData = {
   company_name: "Minha Empresa",
@@ -54,18 +55,47 @@ export const ChatContainer = () => {
     return result
   }
 
-  const handlePromptCardSelect = (prompt: any) => {
+  const handlePromptCardSelect = async (prompt: any) => {
+    if (prompt.action_plan) {
+      try {
+        const { data: actionPlan, error } = await supabase
+          .from('action_plans')
+          .insert({
+            title: prompt.title,
+            prompt_id: prompt.id,
+            user_id: (await supabase.auth.getSession()).data.session?.user.id
+          })
+          .select()
+          .single();
+
+        if (error) throw error;
+
+        toast({
+          title: "Plano de ação criado",
+          description: "Você pode acompanhar seu progresso na seção de planos de ação."
+        });
+      } catch (error) {
+        console.error("Erro ao criar plano de ação:", error);
+        toast({
+          variant: "destructive",
+          title: "Erro",
+          description: "Não foi possível criar o plano de ação."
+        });
+      }
+    }
+
     setFurtivePrompt({
       text: prompt.prompt_furtive ?? prompt.title,
       title: prompt.title
-    })
-    const textArea = document.querySelector('textarea')
+    });
+    
+    const textArea = document.querySelector('textarea');
     if (textArea) {
-      textArea.value = prompt.title
-      textArea.dispatchEvent(new Event('input', { bubbles: true }))
-      textArea.focus()
+      textArea.value = prompt.title;
+      textArea.dispatchEvent(new Event('input', { bubbles: true }));
+      textArea.focus();
     }
-  }
+  };
 
   const handleSendMessage = async (content: string) => {
     if (authStatus === 'anonymous' && !recordInteraction()) {

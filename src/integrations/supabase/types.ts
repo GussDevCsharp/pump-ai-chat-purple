@@ -9,6 +9,47 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      action_plans: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          prompt_id: string | null
+          status: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          prompt_id?: string | null
+          status?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          prompt_id?: string | null
+          status?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "action_plans_prompt_id_fkey"
+            columns: ["prompt_id"]
+            isOneToOne: false
+            referencedRelation: "theme_prompts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       agents: {
         Row: {
           created_at: string
@@ -575,6 +616,7 @@ export type Database = {
       }
       theme_prompts: {
         Row: {
+          action_plan: boolean | null
           created_at: string
           id: string
           prompt_furtive: string | null
@@ -583,6 +625,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          action_plan?: boolean | null
           created_at?: string
           id?: string
           prompt_furtive?: string | null
@@ -591,6 +634,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          action_plan?: boolean | null
           created_at?: string
           id?: string
           prompt_furtive?: string | null

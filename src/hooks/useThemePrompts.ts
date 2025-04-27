@@ -7,6 +7,7 @@ export interface ThemePrompt {
   theme_id: string;
   title: string;
   prompt_furtive?: string | null;
+  action_plan?: boolean;
 }
 
 export function useThemePrompts(themeId?: string) {
@@ -26,7 +27,7 @@ export function useThemePrompts(themeId?: string) {
           .from("theme_prompts")
           .select("*")
           .eq("theme_id", themeId)
-          .limit(6); // Limit to 6 prompts per theme
+          .limit(6);
           
         if (error) {
           console.error("Error fetching theme prompts:", error);

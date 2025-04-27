@@ -1,6 +1,7 @@
 
 import React from "react";
 import { ThemePrompt } from "@/hooks/useThemePrompts";
+import { ClipboardList } from "lucide-react";
 
 interface PromptSuggestionCardsProps {
   prompts: ThemePrompt[];
@@ -29,11 +30,14 @@ export const PromptSuggestionCards: React.FC<PromptSuggestionCardsProps> = ({
         <button
           type="button"
           key={prompt.id}
-          className="bg-white border border-pump-purple/20 rounded-lg px-4 py-2 shadow hover:bg-pump-purple/10 text-pump-purple font-medium text-sm transition-colors cursor-pointer"
+          className="bg-white border border-pump-purple/20 rounded-lg px-4 py-2 shadow hover:bg-pump-purple/10 text-pump-purple font-medium text-sm transition-colors cursor-pointer flex items-center gap-2"
           onClick={() => onSelect(prompt)}
           style={{ minWidth: 120 }}
         >
-          {prompt.title}
+          <span>{prompt.title}</span>
+          {prompt.action_plan && (
+            <ClipboardList className="w-4 h-4 text-pump-purple/70" />
+          )}
         </button>
       ))}
     </div>

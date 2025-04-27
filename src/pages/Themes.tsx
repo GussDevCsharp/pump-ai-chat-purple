@@ -4,10 +4,9 @@ import { useNavigate } from "react-router-dom";
 import { useChatThemes } from "@/hooks/useChatThemes";
 import { useChatSessions } from "@/hooks/useChatSessions";
 import { Header } from "@/components/common/Header";
-import { useThemeTopics } from "@/hooks/useThemeTopics";
-import { ProfileCompletionAlert } from "@/components/common/ProfileCompletionAlert";
-import { TrendingTopics } from "@/components/themes/TrendingTopics";
-import { WelcomeSection } from "@/components/themes/WelcomeSection";
+import { useChatAuth } from "@/hooks/useChatAuth";
+import { Button } from "@/components/ui/button";
+import { MessageSquare } from "lucide-react";
 import { ThemeGrid } from "@/components/themes/ThemeGrid";
 import { PageFooter } from "@/components/common/PageFooter";
 
@@ -15,7 +14,7 @@ export default function Themes() {
   const { themes, isLoading } = useChatThemes();
   const { createSession } = useChatSessions();
   const navigate = useNavigate();
-  const { latestTopics, popularTopics, isLoading: isTopicsLoading } = useThemeTopics();
+  const { user } = useChatAuth();
 
   const handleSelectTheme = async (themeId: string, themeName: string) => {
     const session = await createSession(`Chat sobre ${themeName}`, undefined, undefined, themeId);
@@ -32,13 +31,26 @@ export default function Themes() {
   };
 
   return (
-    <div className="min-h-screen bg-offwhite flex flex-col">
-      <ProfileCompletionAlert />
+    <div className="min-h-screen bg-white flex flex-col">
       <Header />
-      <main className="w-full px-2 sm:px-4 md:px-8 py-6">
-        <div className="w-full flex flex-col gap-6">
-          <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-4">
-            <WelcomeSection onNewChat={handleNewChat} />
+      <main className="w-full px-4 md:px-8 py-6">
+        <div className="max-w-7xl mx-auto w-full">
+          <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-8">
+            <div className="flex flex-col gap-1">
+              <h1 className="text-3xl sm:text-4xl font-bold text-gray-700 font-sans">
+                Olá, {user?.user_metadata?.full_name || 'Empresário'}
+              </h1>
+              <p className="text-pump-gray text-lg">
+                Seu suporte 24 horas personalizado para sua empresa
+              </p>
+            </div>
+            <Button 
+              onClick={handleNewChat}
+              className="bg-pump-purple hover:bg-pump-purple/90 text-white rounded-lg px-5 py-2"
+            >
+              <MessageSquare className="w-4 h-4 mr-2" />
+              Novo Chat
+            </Button>
           </div>
 
           <ThemeGrid 
@@ -46,13 +58,6 @@ export default function Themes() {
             onSelectTheme={handleSelectTheme}
             isLoading={isLoading}
           />
-
-          {!isTopicsLoading && (
-            <TrendingTopics 
-              latestTopics={latestTopics}
-              popularTopics={popularTopics}
-            />
-          )}
         </div>
       </main>
       <PageFooter />

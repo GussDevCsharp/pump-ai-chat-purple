@@ -7,9 +7,12 @@ import { ClipboardCheck, ClipboardList } from "lucide-react";
 interface ActionPlan {
   id: string;
   title: string;
-  status: 'pending' | 'completed';
+  status: string; // Changed from 'pending' | 'completed' to string to match database
   created_at: string;
   description?: string;
+  prompt_id?: string;
+  updated_at: string;
+  user_id: string;
 }
 
 export default function ActionPlans() {

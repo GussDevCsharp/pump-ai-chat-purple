@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { ThemeCard } from './ThemeCard';
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ThemeGridProps {
   themes: Array<{
@@ -14,6 +15,8 @@ interface ThemeGridProps {
 }
 
 export const ThemeGrid: React.FC<ThemeGridProps> = ({ themes, onSelectTheme, isLoading }) => {
+  const isMobile = useIsMobile();
+  
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-40">
@@ -33,12 +36,10 @@ export const ThemeGrid: React.FC<ThemeGridProps> = ({ themes, onSelectTheme, isL
   }
 
   return (
-    <div className="grid gap-4 
+    <div className={`grid gap-4 
       grid-cols-1
-      sm:grid-cols-2 
-      md:grid-cols-3 
-      lg:grid-cols-4
-      w-full"
+      ${isMobile ? 'grid-cols-1' : 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'}
+      w-full`}
     >
       {themes.map((theme) => (
         <ThemeCard

@@ -13,12 +13,12 @@ export const ChatLayout = () => {
   const { authStatus } = useChatAuth()
 
   return (
-    <SidebarProvider defaultOpen>
+    <SidebarProvider defaultOpen={!isMobile}>
       <div className="flex h-screen bg-offwhite dark:bg-[#1A1F2C] relative overflow-hidden w-full">
         {/* Menu mobile só aparece se estiver autenticado */}
         {(isMobile && sidebarOpen && authStatus === "authenticated") && (
           <div className="fixed inset-0 z-40 flex">
-            <div className="w-64 max-w-xs bg-white dark:bg-[#1A1F2C] shadow-2xl border-r border-pump-gray/20 dark:text-white h-full animate-slide-in-left">
+            <div className="w-[85%] max-w-xs bg-offwhite dark:bg-[#1A1F2C] shadow-2xl border-r border-pump-gray/20 dark:border-white/10 dark:text-white h-full animate-slide-in-left">
               <ChatSidebar onClose={() => setSidebarOpen(false)} />
             </div>
             <div

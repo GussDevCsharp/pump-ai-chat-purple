@@ -9,6 +9,7 @@ import NeuralBackground from "@/components/effects/NeuralBackground"
 import { GoogleButton } from "@/components/auth/GoogleButton"
 import { Mail } from "lucide-react"
 import { useTheme } from "@/hooks/useTheme"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -16,6 +17,7 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
   const { isDark } = useTheme()
+  const isMobile = useIsMobile()
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault()
@@ -64,9 +66,10 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex">
-      <div className="w-1/2 bg-offwhite dark:bg-black/40 flex items-center justify-center px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className={`max-w-md w-full ${isDark ? 'bg-black/70 backdrop-blur-lg' : 'bg-white/85'} shadow-lg rounded-xl p-8`}>
+    <div className="min-h-screen flex flex-col md:flex-row">
+      {/* Coluna de formulário (sempre visível) */}
+      <div className="w-full md:w-1/2 bg-offwhite dark:bg-black/40 flex items-center justify-center px-4 py-8 sm:px-6 lg:px-8 relative z-10">
+        <div className={`max-w-md w-full ${isDark ? 'bg-black/70 backdrop-blur-lg' : 'bg-white/85'} shadow-lg rounded-xl p-6 sm:p-8`}>
           <div className="text-center">
             <Link to="/">
               <img 
@@ -75,7 +78,7 @@ export default function Login() {
                 className="h-12 mx-auto"
               />
             </Link>
-            <h2 className="mt-7 text-3xl font-bold text-gray-900 dark:text-white">
+            <h2 className="mt-6 text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
               Bem-vindo de volta
             </h2>
             <p className="mt-2 text-base text-pump-gray dark:text-white/70">
@@ -83,8 +86,8 @@ export default function Login() {
             </p>
           </div>
 
-          <div className="mt-8">
-            <div className="flex space-x-4 mb-6">
+          <div className="mt-6 sm:mt-8">
+            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 mb-6">
               <GoogleButton />
               <Link to="/signup" className="w-full">
                 <Button 
@@ -165,10 +168,11 @@ export default function Login() {
         </div>
       </div>
 
-      <div className="w-1/2 bg-offwhite dark:bg-black relative overflow-hidden">
+      {/* Coluna de imagem (visível apenas em desktop) */}
+      <div className="hidden md:block md:w-1/2 bg-offwhite dark:bg-black relative overflow-hidden">
         <NeuralBackground />
         <div className="relative z-[5] flex items-center justify-center h-full pointer-events-none">
-          <h1 className="text-5xl font-bold text-pump-purple dark:text-white text-center leading-tight max-w-lg">
+          <h1 className="text-4xl lg:text-5xl font-bold text-pump-purple dark:text-white text-center leading-tight max-w-lg">
             A Nova inteligência da sua empresa
           </h1>
         </div>

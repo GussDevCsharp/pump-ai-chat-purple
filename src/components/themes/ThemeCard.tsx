@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useThemePrompts } from "@/hooks/useThemePrompts";
 import { Circle } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type ThemeCardProps = {
   theme: {
@@ -17,12 +18,13 @@ type ThemeCardProps = {
 
 export const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
   const { prompts, isLoading } = useThemePrompts(theme.id);
+  const isMobile = useIsMobile();
 
   return (
     <Card
       onClick={() => onSelect(theme.id, theme.name)}
       className={`
-        flex flex-col h-[320px] rounded-xl border border-[#E5E5E5] hover:shadow-xl 
+        flex flex-col h-auto ${isMobile ? 'h-[280px]' : 'h-[320px]'} rounded-xl border border-[#E5E5E5] hover:shadow-xl 
         transform transition-all duration-200 cursor-pointer
         hover:scale-[1.02] shadow-md group
         px-3 py-2 bg-offwhite dark:bg-black/40 dark:backdrop-blur-lg
@@ -62,7 +64,7 @@ export const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
           ) : (
             prompts && prompts.length > 0 ? (
               <ul className="space-y-2">
-                {prompts.map((prompt) => (
+                {prompts.slice(0, isMobile ? 2 : 3).map((prompt) => (
                   <li key={prompt.id} className="flex items-start gap-2">
                     <Circle 
                       className="w-2 h-2 mt-2 flex-shrink-0" 

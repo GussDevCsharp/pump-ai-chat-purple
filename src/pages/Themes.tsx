@@ -31,19 +31,19 @@ export default function Themes() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-white dark:bg-[#1A1F2C] flex flex-col">
       <Header />
-      <main className="w-full px-4 md:px-8 py-6 bg-white">
+      <main className="w-full px-4 md:px-8 py-6 bg-white dark:bg-[#1A1F2C]">
         <div className="max-w-7xl mx-auto w-full">
           <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-8">
             <div className="flex flex-col gap-2">
-              <h2 className="text-xl sm:text-2xl font-medium text-pump-gray">
+              <h2 className="text-xl sm:text-2xl font-medium text-pump-gray dark:text-white">
                 Olá, {user?.user_metadata?.full_name || 'Empresário'}
               </h2>
-              <h1 className="text-3xl sm:text-4xl font-bold text-gray-700 font-sans">
+              <h1 className="text-3xl sm:text-4xl font-bold text-gray-700 dark:text-white font-sans">
                 Sou a inteligência da sua empresa
               </h1>
-              <p className="text-pump-gray text-lg">
+              <p className="text-pump-gray dark:text-white/70 text-lg">
                 Seu suporte 24 horas personalizado para o seu negócio
               </p>
             </div>

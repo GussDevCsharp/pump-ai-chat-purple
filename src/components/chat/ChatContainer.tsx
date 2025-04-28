@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { ChatMessages } from "@/components/chat/ChatMessages"
 import { ChatInput } from "@/components/chat/ChatInput"
@@ -31,7 +30,8 @@ export const ChatContainer = () => {
   const { authStatus, recordInteraction, remainingInteractions, user } = useChatAuth()
   const { currentThemeId, patternPrompt, themePrompts, isThemePromptsLoading } = useChatTheme(themeFromUrl)
   const { messages, setMessages, isThinking, setIsThinking, saveLocalMessages } = useChatSession(sessionId)
-  
+  const [isFirstMessageSent, setIsFirstMessageSent] = useState(false)
+
   const handleSendMessage = async (content: string) => {
     if (authStatus === 'anonymous' && !recordInteraction()) {
       return
@@ -43,7 +43,7 @@ export const ChatContainer = () => {
       setIsThinking(true)
 
       let currentSessionId = sessionId
-      let isFirstMessage = !currentSessionId
+      let isFirstMessage = !currentSessionId || !isFirstMessageSent
 
       if (!currentSessionId) {
         const defaultTitle = content.split(' ').slice(0, 5).join(' ') + '...'
@@ -89,7 +89,8 @@ export const ChatContainer = () => {
         body: JSON.stringify({ 
           message: aiMessageToSend,
           themeId: currentThemeId,
-          userEmail: user?.email
+          userEmail: user?.email,
+          isFirstMessage
         }),
       })
 

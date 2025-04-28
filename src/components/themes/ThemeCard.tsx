@@ -41,16 +41,16 @@ export const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
               }}
             >
               <span 
-                className="font-bold text-base"
+                className="font-bold text-base dark:text-white"
                 style={{
                   color: theme.color || "#7E1CC6"
                 }}
               >{theme.name.charAt(0)}</span>
             </div>
-            <h3 className="font-normal text-base text-foreground leading-tight">{theme.name}</h3>
+            <h3 className="font-normal text-base text-foreground dark:text-white leading-tight">{theme.name}</h3>
           </div>
           {theme.description && (
-            <p className="text-xs text-muted-foreground mt-1 mb-2 px-1 max-h-[30px] overflow-hidden">
+            <p className="text-xs text-muted-foreground dark:text-white/70 mt-1 mb-2 px-1 max-h-[30px] overflow-hidden">
               {theme.description}
             </p>
           )}
@@ -58,7 +58,7 @@ export const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
 
         <div className="flex flex-col gap-2 mt-1 flex-1 justify-start min-h-[60px]">
           {isLoading ? (
-            <span className="text-muted-foreground text-xs">Carregando tópicos...</span>
+            <span className="text-muted-foreground dark:text-white/70 text-xs">Carregando tópicos...</span>
           ) : (
             prompts && prompts.length > 0 ? (
               <ul className="space-y-2">
@@ -69,14 +69,14 @@ export const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
                       fill="#8E9196" 
                       size={8}
                     />
-                    <span className="text-xs text-muted-foreground leading-tight">
+                    <span className="text-xs text-muted-foreground dark:text-white/70 leading-tight">
                       {prompt.title}
                     </span>
                   </li>
                 ))}
               </ul>
             ) : (
-              <span className="text-muted-foreground text-xs">Nenhum tópico encontrado</span>
+              <span className="text-muted-foreground dark:text-white/70 text-xs">Nenhum tópico encontrado</span>
             )
           )}
         </div>
@@ -85,7 +85,7 @@ export const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
           <Button
             size="sm"
             variant="outline"
-            className="w-full py-1 px-3 rounded-lg font-normal text-xs border-primary text-primary hover:bg-primary/10 hover:text-primary dark:bg-black/40 transition-all"
+            className="w-full py-1 px-3 rounded-lg font-normal text-xs border-primary text-primary hover:bg-primary/10 hover:text-primary dark:bg-black/40 dark:text-white dark:border-white/20 dark:hover:bg-white/10 transition-all"
           >
             Entrar no chat deste tema
           </Button>

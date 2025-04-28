@@ -42,13 +42,16 @@ export function SidebarSessionCard({
       className={cn(
         "px-3 py-2.5 relative rounded-lg flex items-center cursor-pointer group transition-colors",
         isActive 
-          ? "bg-white text-pump-gray-dark shadow-sm"
-          : "hover:bg-white/50 text-pump-gray"
+          ? "bg-white text-pump-gray-dark dark:bg-[#222222] dark:text-white"
+          : "hover:bg-white/50 text-pump-gray dark:hover:bg-white/5 dark:text-gray-300"
       )}
     >
       <div className="mr-3">
         <div className={cn(
-          "flex items-center justify-center w-9 h-9 rounded-lg bg-white/80 text-pump-purple"
+          "flex items-center justify-center w-9 h-9 rounded-lg",
+          isActive 
+            ? "bg-white/80 text-pump-purple dark:bg-[#333333] dark:text-white"
+            : "bg-white/80 text-pump-purple dark:bg-[#333333] dark:text-gray-300"
         )}>
           <MessageSquare className="w-5 h-5" />
         </div>
@@ -58,10 +61,12 @@ export function SidebarSessionCard({
         <div className="flex items-center justify-between">
           <p className={cn(
             "text-sm font-medium truncate max-w-[160px]",
-            isActive ? "text-pump-gray-dark" : "text-pump-gray"
+            isActive 
+              ? "text-pump-gray-dark dark:text-white" 
+              : "text-pump-gray dark:text-gray-300"
           )}>{session.title}</p>
         </div>
-        <span className="text-xs text-pump-gray-light">
+        <span className="text-xs text-pump-gray-light dark:text-gray-400">
           {new Date(session.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
         </span>
       </div>
@@ -79,7 +84,9 @@ export function SidebarSessionCard({
               onClick={(e) => e.stopPropagation()} 
               className={cn(
                 "w-8 h-8 flex items-center justify-center rounded opacity-0 group-hover:opacity-100 transition-opacity",
-                isActive ? "hover:bg-pump-gray-light/30" : "hover:bg-white"
+                isActive 
+                  ? "hover:bg-pump-gray-light/30 dark:hover:bg-white/5" 
+                  : "hover:bg-white dark:hover:bg-white/5"
               )}
             >
               <MoreVertical className="w-4 h-4" />

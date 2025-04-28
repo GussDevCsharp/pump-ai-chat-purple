@@ -1,6 +1,9 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { getSystemPrompts } from "./prompt-service.ts"
+import { savePromptLog } from "./log-service.ts"
+import { createChatPayload, callOpenAI } from "./api-service.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -18,8 +21,9 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_ANON_KEY') ?? ''
     )
 
-    // If it's a request for the API key
     const url = new URL(req.url)
+    
+    // If it's a request for the API key
     if (url.pathname.endsWith('/getApiKey')) {
       console.log('Getting API key')
       
@@ -80,126 +84,37 @@ serve(async (req) => {
       throw new Error('Could not fetch API key')
     }
 
-    const apikey = keyData.apikey
     const { message, themeId, userEmail, furtivePrompt } = await req.json()
 
-    // 1. First, get rules prompt
-    const { data: rulesPrompt, error: rulesError } = await supabase
-      .from('furtive_prompts')
-      .select('content')
-      .eq('category', 'regras')
-      .maybeSingle()
+    // Get all system prompts
+    const { systemPrompt, components } = await getSystemPrompts(supabase, themeId)
 
-    if (rulesError) {
-      console.error("Error fetching rules prompt:", rulesError)
-    }
-
-    // 2. Second, get tags prompt
-    const { data: tagsPrompt, error: tagsError } = await supabase
-      .from('furtive_prompts')
-      .select('content')
-      .eq('category', 'tags')
-      .maybeSingle()
-
-    if (tagsError) {
-      console.error("Error fetching tags prompt:", tagsError)
-    }
-
-    // 3. Third, get theme prompt if themeId exists
-    let themePromptContent = null
-    if (themeId) {
-      const { data: themePrompt, error: themeError } = await supabase
-        .from('theme_prompts')
-        .select('prompt_furtive')
-        .eq('theme_id', themeId)
-        .maybeSingle()
-
-      if (themeError) {
-        console.error("Error fetching theme prompt:", themeError)
-      } else if (themePrompt) {
-        themePromptContent = themePrompt.prompt_furtive
-      }
-    }
-
-    // Build the system prompt in the correct order
-    const systemPrompts = [
-      rulesPrompt?.content,
-      tagsPrompt?.content,
-      themePromptContent
-    ].filter(Boolean)
-
-    const systemPrompt = systemPrompts.join('\n\n')
-
+    // Log the prompts for debugging
     console.log("System prompts in order:")
-    console.log("1. Rules:", rulesPrompt?.content || 'None')
-    console.log("2. Tags:", tagsPrompt?.content || 'None') 
-    console.log("3. Theme:", themePromptContent || 'None')
+    console.log("1. Rules:", components.rules)
+    console.log("2. Tags:", components.tags)
+    console.log("3. Theme:", components.theme)
     console.log("4. User message:", message)
     console.log("5. Furtive prompt:", furtivePrompt?.text || 'None')
     
-    // Prepare OpenAI request payload with the furtive prompt if it exists
+    // Prepare final message
     const finalUserMessage = furtivePrompt?.text ? `${furtivePrompt.text} ${message}` : message
     
-    const openAIPayload = {
-      model: 'gpt-4o-mini',
-      messages: [
-        {
-          role: 'system',
-          content: systemPrompt
-        },
-        { 
-          role: 'user', 
-          content: finalUserMessage
-        }
-      ],
-      temperature: 0.7,
-      max_tokens: 500,
-      top_p: 1,
-      frequency_penalty: 0,
-      presence_penalty: 0
-    };
+    // Create OpenAI payload
+    const openAIPayload = createChatPayload(systemPrompt, finalUserMessage)
     
-    // Save the prompt log before sending to OpenAI
-    if (userEmail) {
-      try {
-        const fullLog = {
-          user_email: userEmail,
-          system_prompt: systemPrompt,
-          user_message: message,
-          full_payload: {
-            ...openAIPayload,
-            furtive_prompt: furtivePrompt?.text || null,
-            original_message: message,
-            final_message: finalUserMessage
-          }
-        };
-        
-        await supabase
-          .from('prompt_logs')
-          .insert([fullLog]);
-        
-        console.log("Prompt log saved for user:", userEmail);
-      } catch (logError) {
-        console.error("Error saving prompt log:", logError);
-      }
-    }
-    
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apikey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(openAIPayload)
+    // Save prompt log
+    await savePromptLog(supabase, {
+      userEmail,
+      systemPrompt,
+      message,
+      openAIPayload,
+      furtivePrompt,
+      finalUserMessage
     })
-
-    if (!response.ok) {
-      const errorData = await response.text()
-      console.error("OpenAI API error:", response.status, errorData)
-      throw new Error(`OpenAI API error: ${response.status}`)
-    }
-
-    const data_response = await response.json()
+    
+    // Call OpenAI API
+    const data_response = await callOpenAI(keyData.apikey, openAIPayload)
     console.log("Response received from OpenAI")
     
     return new Response(
@@ -220,4 +135,3 @@ serve(async (req) => {
     )
   }
 })
-

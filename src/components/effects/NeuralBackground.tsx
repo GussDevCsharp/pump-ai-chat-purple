@@ -1,8 +1,9 @@
-
 import React, { useEffect, useRef } from 'react';
+import { useTheme } from '@/hooks/useTheme';
 
 const NeuralBackground = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const { isDark } = useTheme();
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -77,7 +78,8 @@ const NeuralBackground = () => {
     const animate = () => {
       if (!ctx || !canvas) return;
       
-      ctx.fillStyle = 'rgb(255, 253, 243)';
+      // Set background color based on theme
+      ctx.fillStyle = isDark ? '#000000' : 'rgb(255, 253, 243)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       const currentTime = Date.now();
@@ -105,7 +107,7 @@ const NeuralBackground = () => {
         if (point.x < 0 || point.x > canvas.width) point.vx *= -1;
         if (point.y < 0 || point.y > canvas.height) point.vy *= -1;
 
-        // Draw connections
+        // Draw connections with theme-aware colors
         points.forEach((otherPoint, j) => {
           if (i === j) return;
 
@@ -120,18 +122,22 @@ const NeuralBackground = () => {
             ctx.beginPath();
             ctx.moveTo(point.x, point.y);
             ctx.lineTo(otherPoint.x, otherPoint.y);
-            ctx.strokeStyle = `rgba(126, 28, 198, ${opacity})`;
+            ctx.strokeStyle = isDark 
+              ? `rgba(255, 255, 255, ${opacity})`
+              : `rgba(126, 28, 198, ${opacity})`;
             ctx.lineWidth = averageSize * 0.2;
             ctx.stroke();
           }
         });
 
-        // Draw points
+        // Draw points with theme-aware colors
         ctx.beginPath();
         const safeRadius = Math.max(0.1, point.size);
         ctx.arc(point.x, point.y, safeRadius, 0, Math.PI * 2);
         const opacity = 0.3 + (safeRadius / 4) * 0.2;
-        ctx.fillStyle = `rgba(126, 28, 198, ${opacity})`;
+        ctx.fillStyle = isDark 
+          ? `rgba(255, 255, 255, ${opacity})`
+          : `rgba(126, 28, 198, ${opacity})`;
         ctx.fill();
       });
 
@@ -144,7 +150,7 @@ const NeuralBackground = () => {
       window.removeEventListener('resize', resizeCanvas);
       canvas.removeEventListener('click', handleClick);
     };
-  }, []);
+  }, [isDark]); // Added isDark to dependency array
 
   return (
     <canvas

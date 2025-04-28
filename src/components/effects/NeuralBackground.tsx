@@ -50,7 +50,7 @@ const NeuralBackground = () => {
         y,
         vx: (Math.random() - 0.5) * 0.5,
         vy: (Math.random() - 0.5) * 0.5,
-        size: 0, // Start with size 0 to animate growth
+        size: 0,
         baseSize: Math.random() * 2 + 1,
         sizeOffset: Math.random() * Math.PI * 2,
         sizeVelocity: 0.02 + Math.random() * 0.02,
@@ -59,14 +59,13 @@ const NeuralBackground = () => {
       };
       points.push(newPoint);
 
-      // Remove oldest point if we have too many
       if (points.length > 70) {
         points.shift();
       }
     };
 
     const handleClick = (event: MouseEvent) => {
-      event.preventDefault(); // Prevent default behavior
+      event.preventDefault();
       const rect = canvas.getBoundingClientRect();
       const x = event.clientX - rect.left;
       const y = event.clientY - rect.top;
@@ -78,36 +77,30 @@ const NeuralBackground = () => {
     const animate = () => {
       if (!ctx || !canvas) return;
       
-      // Set background color based on theme
-      ctx.fillStyle = isDark ? '#000000' : 'rgb(255, 253, 243)';
+      ctx.fillStyle = isDark ? '#000000' : '#FFFDF3';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       const currentTime = Date.now();
       points.forEach((point, i) => {
-        // Handle new point animation
         if (point.isNew) {
           const age = currentTime - (point.creationTime || 0);
-          if (age < 1000) { // Animation duration: 1 second
+          if (age < 1000) {
             point.size = (age / 1000) * point.baseSize;
           } else {
             point.size = point.baseSize;
             point.isNew = false;
           }
         } else {
-          // Regular size animation for established points
           point.sizeOffset += point.sizeVelocity;
           point.size = Math.max(0.1, point.baseSize + Math.sin(point.sizeOffset) * (point.baseSize * 0.5));
         }
 
-        // Update position
         point.x += point.vx;
         point.y += point.vy;
 
-        // Bounce off edges
         if (point.x < 0 || point.x > canvas.width) point.vx *= -1;
         if (point.y < 0 || point.y > canvas.height) point.vy *= -1;
 
-        // Draw connections with theme-aware colors
         points.forEach((otherPoint, j) => {
           if (i === j) return;
 
@@ -130,7 +123,6 @@ const NeuralBackground = () => {
           }
         });
 
-        // Draw points with theme-aware colors
         ctx.beginPath();
         const safeRadius = Math.max(0.1, point.size);
         ctx.arc(point.x, point.y, safeRadius, 0, Math.PI * 2);
@@ -150,7 +142,7 @@ const NeuralBackground = () => {
       window.removeEventListener('resize', resizeCanvas);
       canvas.removeEventListener('click', handleClick);
     };
-  }, [isDark]); // Added isDark to dependency array
+  }, [isDark]);
 
   return (
     <canvas

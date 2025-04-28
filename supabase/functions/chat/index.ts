@@ -39,6 +39,35 @@ serve(async (req) => {
       )
     }
 
+    // If it's a request for prompt logs
+    if (url.pathname.endsWith('/getLogs')) {
+      const { email } = await req.json()
+      
+      if (!email) {
+        return new Response(JSON.stringify({ error: 'Email is required' }), { 
+          status: 400, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        })
+      }
+      
+      const { data, error } = await supabase
+        .from('prompt_logs')
+        .select('*')
+        .eq('user_email', email)
+        .order('created_at', { ascending: false })
+        .limit(10)
+      
+      if (error) {
+        console.error("Error fetching logs:", error)
+        throw new Error(`Could not fetch logs: ${error.message}`)
+      }
+      
+      return new Response(
+        JSON.stringify({ logs: data }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
     // Normal chat message processing
     const { data: keyData, error: keyError } = await supabase
       .from('modelkeys')
@@ -52,7 +81,7 @@ serve(async (req) => {
     }
 
     const apikey = keyData.apikey
-    const { message, themeId } = await req.json()
+    const { message, themeId, userEmail } = await req.json()
 
     // 1. First, get rules prompt
     const { data: rulesPrompt, error: rulesError } = await supabase
@@ -107,30 +136,53 @@ serve(async (req) => {
     console.log("3. Theme:", themePromptContent || 'None')
     console.log("4. User message:", message)
     
+    // Prepare OpenAI request payload
+    const openAIPayload = {
+      model: 'gpt-4o-mini',
+      messages: [
+        {
+          role: 'system',
+          content: systemPrompt
+        },
+        { 
+          role: 'user', 
+          content: message 
+        }
+      ],
+      temperature: 0.7,
+      max_tokens: 500,
+      top_p: 1,
+      frequency_penalty: 0,
+      presence_penalty: 0
+    };
+    
+    // Save the prompt log before sending to OpenAI
+    if (userEmail) {
+      try {
+        const fullLog = {
+          user_email: userEmail,
+          system_prompt: systemPrompt,
+          user_message: message,
+          full_payload: openAIPayload
+        };
+        
+        await supabase
+          .from('prompt_logs')
+          .insert([fullLog]);
+        
+        console.log("Prompt log saved for user:", userEmail);
+      } catch (logError) {
+        console.error("Error saving prompt log:", logError);
+      }
+    }
+    
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apikey}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [
-          {
-            role: 'system',
-            content: systemPrompt
-          },
-          { 
-            role: 'user', 
-            content: message 
-          }
-        ],
-        temperature: 0.7,
-        max_tokens: 500,
-        top_p: 1,
-        frequency_penalty: 0,
-        presence_penalty: 0
-      })
+      body: JSON.stringify(openAIPayload)
     })
 
     if (!response.ok) {

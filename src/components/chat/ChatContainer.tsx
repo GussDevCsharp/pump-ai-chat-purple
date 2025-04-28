@@ -1,3 +1,4 @@
+
 import { useState } from "react"
 import { ChatMessages } from "@/components/chat/ChatMessages"
 import { ChatInput } from "@/components/chat/ChatInput"
@@ -27,7 +28,7 @@ export const ChatContainer = () => {
   const themeFromUrl = searchParams.get('theme')
   
   const { createSession, refreshSessions } = useChatSessions()
-  const { authStatus, recordInteraction, remainingInteractions } = useChatAuth()
+  const { authStatus, recordInteraction, remainingInteractions, user } = useChatAuth()
   const { currentThemeId, patternPrompt, themePrompts, isThemePromptsLoading } = useChatTheme(themeFromUrl)
   const { messages, setMessages, isThinking, setIsThinking, saveLocalMessages } = useChatSession(sessionId)
   
@@ -87,7 +88,8 @@ export const ChatContainer = () => {
         },
         body: JSON.stringify({ 
           message: aiMessageToSend,
-          themeId: currentThemeId 
+          themeId: currentThemeId,
+          userEmail: user?.email
         }),
       })
 

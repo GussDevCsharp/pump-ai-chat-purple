@@ -138,7 +138,7 @@ serve(async (req) => {
     
     // Prepare OpenAI request payload
     const openAIPayload = {
-      model: 'gpt-4-mini',
+      model: 'gpt-4o-mini',
       messages: [
         {
           role: 'system',

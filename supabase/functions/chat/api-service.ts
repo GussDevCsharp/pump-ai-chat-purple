@@ -1,3 +1,4 @@
+
 export function createChatPayload(systemPrompt: string, userMessage: string) {
   return {
     model: 'gpt-4o',

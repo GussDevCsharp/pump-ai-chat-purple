@@ -4,6 +4,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { getSystemPrompts } from "./prompt-service.ts"
 import { savePromptLog } from "./log-service.ts"
 import { createChatPayload, callOpenAI } from "./api-service.ts"
+import { getUserProfiles, createFurtivePromptFragments } from "./profile-service.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -23,7 +24,7 @@ serve(async (req) => {
 
     const url = new URL(req.url)
     
-    // If it's a request for the API key
+    // Se for requisição para obter chave de API
     if (url.pathname.endsWith('/getApiKey')) {
       console.log('Getting API key')
       
@@ -43,7 +44,7 @@ serve(async (req) => {
       )
     }
 
-    // If it's a request for prompt logs
+    // Se for requisição para logs de prompts
     if (url.pathname.endsWith('/getLogs')) {
       const { email } = await req.json()
       
@@ -72,7 +73,7 @@ serve(async (req) => {
       )
     }
 
-    // Normal chat message processing
+    // Processamento normal de mensagem de chat
     const { data: keyData, error: keyError } = await supabase
       .from('modelkeys')
       .select('apikey')
@@ -86,10 +87,22 @@ serve(async (req) => {
 
     const { message, themeId, userEmail, furtivePrompt } = await req.json()
 
-    // Get all system prompts
+    // Obter todos os prompts do sistema
     const { systemPrompt, components } = await getSystemPrompts(supabase, themeId)
-
-    // Log the prompts for debugging
+    
+    // Obter perfis do usuário se houver email
+    let userProfiles = null;
+    let furtiveFragments = null;
+    
+    if (userEmail) {
+      userProfiles = await getUserProfiles(supabase, userEmail);
+      furtiveFragments = createFurtivePromptFragments(
+        userProfiles.entrepreneur, 
+        userProfiles.company
+      );
+    }
+    
+    // Log dos prompts para depuração
     console.log("System prompts in order:")
     console.log("1. Rules:", components.rules)
     console.log("2. Tags:", components.tags)
@@ -97,25 +110,42 @@ serve(async (req) => {
     console.log("4. User message:", message)
     console.log("5. Furtive prompt:", furtivePrompt?.text || 'None')
     
-    // Prepare final message
-    const finalUserMessage = furtivePrompt?.text ? `${furtivePrompt.text} ${message}` : message
+    if (furtiveFragments) {
+      console.log("6. Furtive fragment 1:", furtiveFragments.fragment1)
+      console.log("7. Furtive fragment 2:", furtiveFragments.fragment2)
+    }
     
-    // Create OpenAI payload
-    const openAIPayload = createChatPayload(systemPrompt, finalUserMessage)
+    // Construir o prompt final integrando os três fragmentos furtivos
+    let finalSystemPrompt = systemPrompt;
+    let finalUserMessage = message;
     
-    // Save prompt log
+    // Se temos os fragmentos furtivos, adicionamos ao prompt final
+    if (furtiveFragments) {
+      finalSystemPrompt = `${furtiveFragments.fragment1}\n\n${furtiveFragments.fragment2}\n\n${systemPrompt}`;
+    }
+    
+    // Se há um prompt furtivo específico do tema, ajustamos a mensagem do usuário
+    if (furtivePrompt?.text) {
+      finalUserMessage = `${furtivePrompt.text} ${message}`;
+    }
+    
+    // Criar payload OpenAI
+    const openAIPayload = createChatPayload(finalSystemPrompt, finalUserMessage);
+    
+    // Salvar log de prompt
     await savePromptLog(supabase, {
       userEmail,
       systemPrompt,
       message,
       openAIPayload,
       furtivePrompt,
-      finalUserMessage
-    })
+      finalUserMessage,
+      furtiveFragments
+    });
     
-    // Call OpenAI API
-    const data_response = await callOpenAI(keyData.apikey, openAIPayload)
-    console.log("Response received from OpenAI")
+    // Chamar API OpenAI
+    const data_response = await callOpenAI(keyData.apikey, openAIPayload);
+    console.log("Response received from OpenAI");
     
     return new Response(
       JSON.stringify(data_response),

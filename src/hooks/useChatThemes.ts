@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/hooks/use-toast"
 
@@ -17,7 +17,7 @@ export const useChatThemes = () => {
   const [isLoading, setIsLoading] = useState(true)
   const { toast } = useToast()
 
-  const fetchThemes = async () => {
+  const fetchThemes = useCallback(async () => {
     try {
       setIsLoading(true)
       console.log("Fetching chat themes...")
@@ -80,7 +80,7 @@ export const useChatThemes = () => {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [searchTerm, toast])
 
   const handleSearch = (term: string) => {
     setSearchTerm(term)
@@ -88,7 +88,7 @@ export const useChatThemes = () => {
 
   useEffect(() => {
     fetchThemes()
-  }, [searchTerm]) // Re-fetch when search term changes
+  }, [fetchThemes]) // Re-fetch when search term changes via useCallback dependency
 
   return { 
     themes: filteredThemes, 

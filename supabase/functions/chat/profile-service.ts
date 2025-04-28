@@ -1,109 +1,81 @@
 
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-interface EnterpriseProfile {
-  management_style?: string;
-  motivation?: string;
-  difficulties?: string;
-  goals_review_frequency?: string;
-}
+export async function getUserProfiles(supabase: any, userEmail: string | null) {
+  if (!userEmail) {
+    console.log("No user email provided, skipping profile fetch");
+    return { entrepreneur: null, company: null };
+  }
 
-interface CompanyProfile {
-  company_name?: string;
-  business_segment?: string;
-  main_products?: string;
-  target_audience?: string;
-  sales_model?: string;
-  years_in_operation?: string;
-  channel_type?: string;
-  management_tools?: string;
-}
-
-export async function getUserProfiles(supabase: any, userEmail: string): Promise<{
-  entrepreneur: EnterpriseProfile | null;
-  company: CompanyProfile | null;
-}> {
   try {
-    // Primeiro, precisamos obter o ID do usuário a partir do email
-    const { data: userData, error: userError } = await supabase
-      .from('auth.users')
-      .select('id')
+    // Get entrepreneur profile
+    const { data: entrepreneurData, error: entrepreneurError } = await supabase
+      .from('entrepreneur_profiles')
+      .select('*')
       .eq('email', userEmail)
       .maybeSingle();
 
-    if (userError || !userData) {
-      console.log("Erro ao buscar usuário por email:", userError);
-      return { entrepreneur: null, company: null };
-    }
-
-    const userId = userData.id;
-
-    // Buscar perfil do empreendedor
-    const { data: entrepreneurProfile, error: entrepreneurError } = await supabase
-      .from('entrepreneur_profiles')
-      .select('management_style, motivation, difficulties, goals_review_frequency')
-      .eq('user_id', userId)
-      .maybeSingle();
-
     if (entrepreneurError) {
-      console.log("Erro ao buscar perfil do empreendedor:", entrepreneurError);
+      console.error("Error fetching entrepreneur profile:", entrepreneurError);
     }
 
-    // Buscar perfil da empresa
-    const { data: companyProfile, error: companyError } = await supabase
+    // Get company profile
+    const { data: companyData, error: companyError } = await supabase
       .from('company_profiles')
-      .select('company_name, business_segment, main_products, target_audience, sales_model, years_in_operation, channel_type, management_tools')
-      .eq('user_id', userId)
+      .select('*')
+      .eq('entrepreneur_email', userEmail)
       .maybeSingle();
 
     if (companyError) {
-      console.log("Erro ao buscar perfil da empresa:", companyError);
+      console.error("Error fetching company profile:", companyError);
     }
 
     return {
-      entrepreneur: entrepreneurProfile || null,
-      company: companyProfile || null
+      entrepreneur: entrepreneurData || null,
+      company: companyData || null
     };
   } catch (error) {
-    console.error("Erro ao buscar perfis:", error);
+    console.error("Error in getUserProfiles:", error);
     return { entrepreneur: null, company: null };
   }
 }
 
-export function createFurtivePromptFragments(entrepreneurProfile: EnterpriseProfile | null, companyProfile: CompanyProfile | null): {
-  fragment1: string;
-  fragment2: string;
-} {
-  // Fragmento 1 - Restrição de Tema Empresarial (fixo para todos os usuários)
+export function createFurtiveFragments(entrepreneurProfile: any, companyProfile: any) {
+  // If no profiles available, return null
+  if (!entrepreneurProfile && !companyProfile) {
+    console.log("No profiles available for furtive fragments");
+    return null;
+  }
+
+  // Create default values for missing profile data
+  const entrepreneur = entrepreneurProfile || {};
+  const company = companyProfile || {};
+  
+  // Fragment 1: Business restriction (fixed for all users)
   const fragment1 = "Você é uma inteligência artificial especializada exclusivamente em temas empresariais. Suas respostas devem ser focadas em negócios, gestão, empreendedorismo, marketing, vendas, financeiro, jurídico, operações e temas corporativos. Ignore ou recuse responder qualquer solicitação que não esteja relacionada ao ambiente empresarial.";
+  
+  // Fragment 2: Dynamic profile information
+  const fragment2 = `Considere o seguinte perfil para personalizar suas respostas: 
+Perfil do Empresário: atua no segmento de ${entrepreneur.business_segment || 'não informado'}, 
+com estilo de gestão ${entrepreneur.management_style || 'não informado'}, 
+motivado por ${entrepreneur.motivation || 'não informado'}. 
+Suas principais dificuldades são ${entrepreneur.difficulties || 'não informadas'} e 
+ele revisa seus objetivos com frequência ${entrepreneur.goals_review_frequency || 'não informada'}. 
 
-  // Fragmento 2 - Perfil do Empresário e da Empresa (dinâmico, preenchido com dados reais)
-  let fragment2 = "Considere o seguinte perfil para personalizar suas respostas: ";
-  
-  // Adicionar informações do empresário se disponíveis
-  if (entrepreneurProfile) {
-    fragment2 += "Perfil do Empresário: ";
-    if (companyProfile?.business_segment) fragment2 += `atua no segmento de ${companyProfile.business_segment}, `;
-    if (entrepreneurProfile.management_style) fragment2 += `com estilo de gestão ${entrepreneurProfile.management_style}, `;
-    if (entrepreneurProfile.motivation) fragment2 += `motivado por ${entrepreneurProfile.motivation}. `;
-    if (entrepreneurProfile.difficulties) fragment2 += `Suas principais dificuldades são ${entrepreneurProfile.difficulties} `;
-    if (entrepreneurProfile.goals_review_frequency) fragment2 += `e ele revisa seus objetivos com frequência ${entrepreneurProfile.goals_review_frequency}. `;
-  }
-  
-  // Adicionar informações da empresa se disponíveis
-  if (companyProfile) {
-    fragment2 += "Perfil da Empresa: ";
-    if (companyProfile.company_name) fragment2 += `Nome ${companyProfile.company_name}, `;
-    if (companyProfile.business_segment) fragment2 += `segmento ${companyProfile.business_segment}, `;
-    if (companyProfile.main_products) fragment2 += `produtos ou serviços principais ${companyProfile.main_products}, `;
-    if (companyProfile.target_audience) fragment2 += `público-alvo ${companyProfile.target_audience}, `;
-    if (companyProfile.sales_model) fragment2 += `modelo de vendas ${companyProfile.sales_model}, `;
-    if (companyProfile.years_in_operation) fragment2 += `tempo de operação ${companyProfile.years_in_operation}, `;
-    if (companyProfile.channel_type) fragment2 += `canais de venda ${companyProfile.channel_type}, `;
-    if (companyProfile.management_tools) fragment2 += `ferramentas de gestão ${companyProfile.management_tools}. `;
-  }
-  
-  fragment2 += "Utilize essas informações para criar respostas extremamente alinhadas ao contexto do cliente, garantindo máxima relevância, aplicabilidade prática e coerência empresarial nas suas respostas.";
+Perfil da Empresa: 
+Nome ${company.company_name || 'não informado'}, 
+segmento ${company.business_segment || 'não informado'}, 
+produtos ou serviços principais ${company.main_products || 'não informados'}, 
+público-alvo ${company.target_audience || 'não informado'}, 
+modelo de vendas ${company.sales_model || 'não informado'}, 
+tempo de operação ${company.years_in_operation || 'não informado'}, 
+canais de venda ${company.channel_type || 'não informados'}, 
+ferramentas de gestão ${company.management_tools || 'não informadas'}. 
 
-  return { fragment1, fragment2 };
+Utilize essas informações para criar respostas extremamente alinhadas ao contexto do cliente, garantindo máxima relevância, aplicabilidade prática e coerência empresarial nas suas respostas.`;
+  
+  return {
+    fragment1,
+    fragment2
+  };
 }

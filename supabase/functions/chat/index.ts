@@ -42,6 +42,8 @@ serve(async (req) => {
       // Construct complete system prompt with fragments
       if (furtiveFragments) {
         finalSystemPrompt = `${furtiveFragments.fragment1}\n\n${furtiveFragments.fragment2}\n\n${systemPrompt}`;
+      } else {
+        finalSystemPrompt = systemPrompt;
       }
     } else {
       // For subsequent messages, use only the theme system prompt
@@ -56,10 +58,22 @@ serve(async (req) => {
     // Create OpenAI payload
     const openAIPayload = createChatPayload(finalSystemPrompt, finalUserMessage);
     
+    // Get OpenAI API key
+    const { data: keyData, error: keyError } = await supabase
+      .from('api_keys')
+      .select('apikey')
+      .eq('provider', 'openai')
+      .maybeSingle();
+      
+    if (keyError || !keyData?.apikey) {
+      console.error("Error fetching OpenAI API key:", keyError);
+      throw new Error("Could not find OpenAI API key");
+    }
+    
     // Save prompt log
     await savePromptLog(supabase, {
       userEmail,
-      systemPrompt,
+      systemPrompt: finalSystemPrompt,
       message,
       openAIPayload,
       furtivePrompt,

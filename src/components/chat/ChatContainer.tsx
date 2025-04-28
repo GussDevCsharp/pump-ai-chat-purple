@@ -1,3 +1,4 @@
+
 import { useState } from "react"
 import { ChatMessages } from "@/components/chat/ChatMessages"
 import { ChatInput } from "@/components/chat/ChatInput"
@@ -13,6 +14,7 @@ import { useChatSession } from "@/hooks/useChatSession"
 import { useChatTheme } from "@/hooks/useChatTheme"
 import { useChatMessages } from "@/hooks/useChatMessages"
 import { supabase } from "@/integrations/supabase/client"
+import { useToast } from "@/hooks/use-toast"
 
 const businessData = {
   company_name: "Minha Empresa",
@@ -25,6 +27,7 @@ export const ChatContainer = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const sessionId = searchParams.get('session')
   const themeFromUrl = searchParams.get('theme')
+  const { toast } = useToast()
   
   const { createSession, refreshSessions } = useChatSessions()
   const { authStatus, recordInteraction, remainingInteractions, user } = useChatAuth()
@@ -43,7 +46,8 @@ export const ChatContainer = () => {
       setIsThinking(true)
 
       let currentSessionId = sessionId
-      let isFirstMessage = !currentSessionId || !isFirstMessageSent
+      // Check if this is the first message of a new chat
+      const isFirstMessage = !currentSessionId || !isFirstMessageSent
 
       if (!currentSessionId) {
         const defaultTitle = content.split(' ').slice(0, 5).join(' ') + '...'
@@ -80,81 +84,98 @@ export const ChatContainer = () => {
         )
       }
 
-      const response = await fetch("https://spyfzrgwbavmntiginap.supabase.co/functions/v1/chat", {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNweWZ6cmd3YmF2bW50aWdpbmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ4MzcwNjEsImV4cCI6MjA2MDQxMzA2MX0.nBc8x2mLTm4j9KpxSzsgCp0xHgaJnWvN2t7I3H37n70`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          message: aiMessageToSend,
-          themeId: currentThemeId,
-          userEmail: user?.email,
-          isFirstMessage
-        }),
-      })
+      try {
+        const response = await fetch("https://spyfzrgwbavmntiginap.supabase.co/functions/v1/chat", {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNweWZ6cmd3YmF2bW50aWdpbmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ4MzcwNjEsImV4cCI6MjA2MDQxMzA2MX0.nBc8x2mLTm4j9KpxSzsgCp0xHgaJnWvN2t7I3H37n70`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ 
+            message: aiMessageToSend,
+            themeId: currentThemeId,
+            userEmail: user?.email,
+            furtivePrompt: furtivePromptSnapshot,
+            isFirstMessage
+          }),
+        })
 
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to connect to service')
-      }
-
-      const data = await response.json()
-      if (!data.choices || data.choices.length === 0) {
-        throw new Error('Invalid response format from AI service')
-      }
-
-      const assistantMessage = {
-        role: 'assistant' as const,
-        content: data.choices[0].message.content
-      }
-
-      if (authStatus === 'anonymous') {
-        saveLocalMessages(currentSessionId, [userMessage, assistantMessage])
-        setMessages(prev => [...prev, assistantMessage])
-        await refreshSessions()
-      } else if (isFirstMessage) {
-        try {
-          await supabase
-            .from('chat_messages')
-            .insert([
-              {
-                session_id: currentSessionId,
-                role: 'user',
-                content: userMessage.content
-              },
-              {
-                session_id: currentSessionId,
-                role: 'assistant',
-                content: assistantMessage.content
-              }
-            ])
-        } catch (error: any) {
-          console.error("Erro ao salvar a primeira conversa:", error)
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.error || 'Failed to connect to service')
         }
-        setMessages(prev => [...prev, assistantMessage])
-        await refreshSessions()
-      } else {
-        try {
-          await supabase
-            .from('chat_messages')
-            .insert([
-              {
-                session_id: currentSessionId,
-                role: 'user',
-                content: userMessage.content
-              },
-              {
-                session_id: currentSessionId,
-                role: 'assistant',
-                content: assistantMessage.content
-              }
-            ])
+
+        const data = await response.json()
+        if (!data.choices || data.choices.length === 0) {
+          throw new Error('Invalid response format from AI service')
+        }
+
+        const assistantMessage = {
+          role: 'assistant' as const,
+          content: data.choices[0].message.content
+        }
+
+        // Update first message flag after successful API call
+        if (isFirstMessage) {
+          setIsFirstMessageSent(true)
+        }
+
+        if (authStatus === 'anonymous') {
+          saveLocalMessages(currentSessionId, [userMessage, assistantMessage])
           setMessages(prev => [...prev, assistantMessage])
           await refreshSessions()
-        } catch (error: any) {
-          console.error("Erro ao salvar mensagens:", error)
+        } else if (isFirstMessage) {
+          try {
+            await supabase
+              .from('chat_messages')
+              .insert([
+                {
+                  session_id: currentSessionId,
+                  role: 'user',
+                  content: userMessage.content
+                },
+                {
+                  session_id: currentSessionId,
+                  role: 'assistant',
+                  content: assistantMessage.content
+                }
+              ])
+          } catch (error: any) {
+            console.error("Erro ao salvar a primeira conversa:", error)
+          }
+          setMessages(prev => [...prev, assistantMessage])
+          await refreshSessions()
+        } else {
+          try {
+            await supabase
+              .from('chat_messages')
+              .insert([
+                {
+                  session_id: currentSessionId,
+                  role: 'user',
+                  content: userMessage.content
+                },
+                {
+                  session_id: currentSessionId,
+                  role: 'assistant',
+                  content: assistantMessage.content
+                }
+              ])
+            setMessages(prev => [...prev, assistantMessage])
+            await refreshSessions()
+          } catch (error: any) {
+            console.error("Erro ao salvar mensagens:", error)
+          }
         }
+      } catch (error: any) {
+        console.error("Error calling chat function:", error)
+        toast({
+          variant: "destructive",
+          title: "Erro",
+          description: "Não foi possível obter resposta do assistente"
+        })
+        // Add a fallback message 
+        setMessages(prev => [...prev.filter(m => m !== userMessage), userMessage])
       }
 
       setFurtivePrompt(null)
@@ -178,7 +199,7 @@ export const ChatContainer = () => {
     messages[0].content === 'Olá! Como posso ajudar você hoje?')
 
   return (
-    <div className="flex-1 flex flex-col h-full overflow-hidden relative">
+    <div className="flex-1 flex flex-col h-full overflow-hidden relative bg-offwhite">
       <BackButton />
       <Watermark />
       {authStatus === 'anonymous' && (

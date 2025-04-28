@@ -16,7 +16,7 @@ export const useSignupPlans = () => {
 
       const { data: planData, error: planError } = await supabase
         .from("pricing")
-        .select("id, name, description, price, is_paid, chatpump");
+        .select("id, name, description, chatpump");
 
       if (planError) {
         console.error("Erro ao buscar planos:", planError);
@@ -65,33 +65,20 @@ export const useSignupPlans = () => {
 
         setPlans(finalPlans);
         setSelectedPlan(finalPlans[0]);
-
-        if (filteredPlans.length === 0 && plansWithBenefits.length > 0) {
-          toast.warning("Usando todos os planos disponíveis", { duration: 5000 });
-        }
       } else {
         const demoPlans = [
           {
             id: "free-plan",
-            name: "Plano Gratuito",
-            description: "Acesso básico às funcionalidades",
-            price: 0,
-            is_paid: false,
+            name: "Plano Beta",
+            description: "Acesso completo à plataforma",
             benefits: [
               "Chat especializado para empresa",
-              "Limite de interações diárias: 10",
               "Agrupamento das conversas por tema empresarial",
               "Criação do perfil da sua empresa",
-              "Criação do perfil do empresário"
+              "Criação do perfil do empresário",
+              "Acesso a todos os temas empresariais",
+              "Histórico completo de conversas"
             ]
-          },
-          {
-            id: "premium-plan",
-            name: "Plano Premium",
-            description: "Acesso completo a todas as funcionalidades",
-            price: 29.90,
-            is_paid: true,
-            benefits: ["Todas as funções", "Suporte prioritário"]
           }
         ];
         setPlans(demoPlans);

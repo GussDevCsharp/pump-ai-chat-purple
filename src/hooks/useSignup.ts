@@ -14,9 +14,6 @@ export const useSignup = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [cpf, setCpf] = useState("");
-  const [cardNumber, setCardNumber] = useState("");
-  const [cardExpiry, setCardExpiry] = useState("");
-  const [cardCvc, setCardCvc] = useState("");
 
   const handleSignup = async (selectedPlan: Plan | null) => {
     if (!email || !password || !confirmPassword || !firstName || !lastName || !cpf) {
@@ -26,11 +23,6 @@ export const useSignup = () => {
 
     if (password !== confirmPassword) {
       toast.error("As senhas não coincidem");
-      return;
-    }
-
-    if (selectedPlan?.is_paid && (!cardNumber || !cardExpiry || !cardCvc)) {
-      toast.error("Dados de pagamento são obrigatórios para planos pagos");
       return;
     }
 
@@ -85,12 +77,6 @@ export const useSignup = () => {
     setLastName,
     cpf,
     setCpf,
-    cardNumber,
-    setCardNumber,
-    cardExpiry,
-    setCardExpiry,
-    cardCvc,
-    setCardCvc,
     handleSignup,
   };
 };

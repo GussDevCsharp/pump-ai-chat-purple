@@ -1,7 +1,7 @@
+
 import React from "react";
 import { ArrowRight, User, Database, Smartphone, Upload, Clock, FileText, Shield, Users, Folder, Key, Activity, AlertTriangle, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 
 // Mapeamento simples de ícones (você pode adaptar conforme os nomes dos benefícios)
 const iconMap: { [key: string]: React.ReactNode } = {
@@ -24,8 +24,6 @@ interface Plan {
   id: string;
   name: string;
   description?: string;
-  price: number;
-  is_paid: boolean;
   chatpump?: boolean;
   benefits?: string[];
 }
@@ -57,10 +55,10 @@ export function SignupPlansStep({ plans, selectedPlanId, onSelect, disabled }: S
 
   return (
     <div>
-      <h3 className="font-semibold text-xl mb-6 text-gray-900 text-center">Escolha o seu plano</h3>
+      <h3 className="font-semibold text-xl mb-6 text-gray-900 text-center">Acesso à Plataforma</h3>
       <div className="flex flex-col gap-8 justify-center items-start w-full max-w-[1200px] mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
-          {plans.map((plan, idx) => {
+          {plans.map((plan) => {
             const selected = selectedPlanId === plan.id;
             return (
               <div
@@ -73,20 +71,14 @@ export function SignupPlansStep({ plans, selectedPlanId, onSelect, disabled }: S
                   `}
               >
                 <div className="p-6 flex flex-col flex-1">
-                  {/* Título & Preço */}
-                  <div className="mb-1 text-xs text-gray-500">{plan.is_paid ? "Para profissionais" : "Para uso pessoal"}</div>
+                  {/* Título */}
+                  <div className="mb-1 text-xs text-gray-500">Versão Beta</div>
                   <div className="flex items-center gap-2">
                     <span className="text-2xl font-bold text-gray-900">{plan.name}</span>
-                    {/* Destaque opcional */}
-                    {idx === 1 && (
-                      <span className="ml-2 text-xs px-2 py-0.5 rounded bg-[#fef7cd] text-[#807020] font-semibold">Melhor valor</span>
-                    )}
+                    <span className="ml-2 text-xs px-2 py-0.5 rounded bg-blue-100 text-blue-700 font-semibold">Gratuito</span>
                   </div>
                   <div className="my-2 mb-4 text-lg font-semibold text-gray-900">
-                    {plan.is_paid
-                      ? <>R$ {plan.price.toFixed(2)}/mês</>
-                      : <>Grátis</>
-                    }
+                    Acesso total
                   </div>
                   {/* Botão de ação */}
                   <Button
@@ -97,7 +89,7 @@ export function SignupPlansStep({ plans, selectedPlanId, onSelect, disabled }: S
                     onClick={() => !disabled && onSelect(plan)}
                     disabled={disabled}
                   >
-                    {plan.is_paid ? "Comprar agora" : "Avaliação grátis"}
+                    Selecionar plano
                     <ArrowRight className="ml-2 w-4 h-4" />
                   </Button>
                   {/* Descrição */}

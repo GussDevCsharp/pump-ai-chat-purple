@@ -7,8 +7,7 @@ import { GoogleButton } from "@/components/auth/GoogleButton";
 
 const STEPS = [
   "Dados Pessoais",
-  "Escolha do Plano",
-  "Pagamento"
+  "Finalizar"
 ];
 
 export default function Signup() {
@@ -21,10 +20,10 @@ export default function Signup() {
         <div className="max-w-3xl w-full mx-auto">
           <div className="mb-6 md:mb-8 text-center">
             <h1 className="text-3xl md:text-4xl font-bold text-pump-purple mb-3 animate-fade-in">
-              Crie sua conta
+              Crie sua conta gratuitamente
             </h1>
             <p className="text-pump-gray text-base md:text-lg animate-fade-in delay-100">
-              Comece sua jornada conosco
+              Acesso completo à plataforma em versão Beta
             </p>
           </div>
 

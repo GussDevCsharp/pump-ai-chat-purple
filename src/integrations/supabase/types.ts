@@ -502,27 +502,21 @@ export type Database = {
           created_at: string | null
           description: string | null
           id: string
-          is_paid: boolean
           name: string
-          price: number
         }
         Insert: {
           chatpump?: boolean
           created_at?: string | null
           description?: string | null
           id?: string
-          is_paid?: boolean
           name: string
-          price: number
         }
         Update: {
           chatpump?: boolean
           created_at?: string | null
           description?: string | null
           id?: string
-          is_paid?: boolean
           name?: string
-          price?: number
         }
         Relationships: []
       }

@@ -19,28 +19,26 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <React.StrictMode>
-    <div className="dark">
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Login />} />
-              <Route path="/chat" element={<Index />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/themes" element={<Themes />} />
-              <Route path="/business-generator" element={<BusinessGenerator />} />
-              <Route path="/profile/complete" element={<ProfileComplete />} />
-              <Route path="/prompt-logs" element={<PromptLogs />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-            <FloatingChatButton />
-          </BrowserRouter>
-        </TooltipProvider>
-      </QueryClientProvider>
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/chat" element={<Index />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/themes" element={<Themes />} />
+            <Route path="/business-generator" element={<BusinessGenerator />} />
+            <Route path="/profile/complete" element={<ProfileComplete />} />
+            <Route path="/prompt-logs" element={<PromptLogs />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+          <FloatingChatButton />
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
   </React.StrictMode>
 );
 

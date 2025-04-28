@@ -17,7 +17,7 @@ export default defineConfig(({ mode }) => ({
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
-          ui: ['@/components/ui']
+          // Fix: Don't reference a directory directly, specify individual files or use dynamic imports
         }
       }
     }

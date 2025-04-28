@@ -35,8 +35,8 @@ serve(async (req) => {
     if (isFirstMessage && userEmail) {
       userProfiles = await getUserProfiles(supabase, userEmail);
       furtiveFragments = createFurtiveFragments(
-        userProfiles.entrepreneur, 
-        userProfiles.company
+        userProfiles?.entrepreneur, 
+        userProfiles?.company
       );
       
       // Construct complete system prompt with fragments
@@ -58,16 +58,11 @@ serve(async (req) => {
     // Create OpenAI payload
     const openAIPayload = createChatPayload(finalSystemPrompt, finalUserMessage);
     
-    // Get OpenAI API key
-    const { data: keyData, error: keyError } = await supabase
-      .from('api_keys')
-      .select('apikey')
-      .eq('provider', 'openai')
-      .maybeSingle();
-      
-    if (keyError || !keyData?.apikey) {
-      console.error("Error fetching OpenAI API key:", keyError);
-      throw new Error("Could not find OpenAI API key");
+    // Get OpenAI API key from environment variable
+    const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
+    
+    if (!openaiApiKey) {
+      throw new Error("OpenAI API key not found in environment variables");
     }
     
     // Save prompt log
@@ -82,7 +77,7 @@ serve(async (req) => {
     });
     
     // Call OpenAI API
-    const data_response = await callOpenAI(keyData.apikey, openAIPayload);
+    const data_response = await callOpenAI(openaiApiKey, openAIPayload);
     console.log("Response received from OpenAI");
     
     return new Response(

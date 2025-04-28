@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { ChatMessages } from "@/components/chat/ChatMessages"
 import { ChatInput } from "@/components/chat/ChatInput"
@@ -15,6 +14,8 @@ import { useChatTheme } from "@/hooks/useChatTheme"
 import { useChatMessages } from "@/hooks/useChatMessages"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/hooks/use-toast"
+import { AlertCircle } from "lucide-react"
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
 
 const businessData = {
   company_name: "Minha Empresa",
@@ -34,11 +35,15 @@ export const ChatContainer = () => {
   const { currentThemeId, patternPrompt, themePrompts, isThemePromptsLoading } = useChatTheme(themeFromUrl)
   const { messages, setMessages, isThinking, setIsThinking, saveLocalMessages } = useChatSession(sessionId)
   const [isFirstMessageSent, setIsFirstMessageSent] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const handleSendMessage = async (content: string) => {
     if (authStatus === 'anonymous' && !recordInteraction()) {
       return
     }
+
+    // Reset any previous error message
+    setErrorMessage(null)
 
     try {
       const userMessage = { role: 'user' as const, content }
@@ -102,12 +107,12 @@ export const ChatContainer = () => {
 
         if (!response.ok) {
           const errorData = await response.json()
-          throw new Error(errorData.error || 'Failed to connect to service')
+          throw new Error(errorData.error || 'Falha na conexão com o serviço')
         }
 
         const data = await response.json()
         if (!data.choices || data.choices.length === 0) {
-          throw new Error('Invalid response format from AI service')
+          throw new Error('Formato de resposta inválido do serviço de IA')
         }
 
         const assistantMessage = {
@@ -169,13 +174,9 @@ export const ChatContainer = () => {
         }
       } catch (error: any) {
         console.error("Error calling chat function:", error)
-        toast({
-          variant: "destructive",
-          title: "Erro",
-          description: "Não foi possível obter resposta do assistente"
-        })
-        // Add a fallback message 
-        setMessages(prev => [...prev.filter(m => m !== userMessage), userMessage])
+        setErrorMessage("Não foi possível obter resposta do assistente. Por favor, tente novamente em instantes.")
+        // Keep the user message in the chat
+        setMessages(prev => [...prev])
       }
 
       setFurtivePrompt(null)
@@ -210,6 +211,13 @@ export const ChatContainer = () => {
         <WelcomeScreen onSendMessage={handleSendMessage} />
       ) : (
         <div className="flex-1 flex flex-col overflow-hidden h-full pt-16">
+          {errorMessage && (
+            <Alert variant="destructive" className="mx-4 my-2">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Erro</AlertTitle>
+              <AlertDescription>{errorMessage}</AlertDescription>
+            </Alert>
+          )}
           <ChatMessages messages={messages} isThinking={isThinking} />
           <ChatPrompts
             prompts={themePrompts}

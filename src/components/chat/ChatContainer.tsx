@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { ChatMessages } from "@/components/chat/ChatMessages"
 import { ChatInput } from "@/components/chat/ChatInput"
@@ -27,9 +26,13 @@ export const ChatContainer = () => {
   const sessionId = searchParams.get('session')
   const themeFromUrl = searchParams.get('theme')
   
-  const { createSession, refreshSessions } = useChatSessions()
+  const { sessions, createSession, refreshSessions } = useChatSessions()
   const { authStatus, recordInteraction, remainingInteractions, user } = useChatAuth()
-  const { currentThemeId, patternPrompt, themePrompts, isThemePromptsLoading } = useChatTheme(themeFromUrl)
+  const currentSession = sessions.find(s => s.id === sessionId)
+  
+  const sessionThemeId = currentSession?.theme_id ?? themeFromUrl
+  
+  const { currentThemeId, patternPrompt, themePrompts, isThemePromptsLoading } = useChatTheme(sessionThemeId)
   const { messages, setMessages, isThinking, setIsThinking, saveLocalMessages } = useChatSession(sessionId)
   
   const handleSendMessage = async (content: string) => {
@@ -189,11 +192,13 @@ export const ChatContainer = () => {
       ) : (
         <div className="flex-1 flex flex-col overflow-hidden h-full pt-16">
           <ChatMessages messages={messages} isThinking={isThinking} />
-          <ChatPrompts
-            prompts={themePrompts}
-            isLoading={isThemePromptsLoading}
-            onSelect={handlePromptCardSelect}
-          />
+          {currentSession?.theme_id && (
+            <ChatPrompts
+              prompts={themePrompts}
+              isLoading={isThemePromptsLoading}
+              onSelect={handlePromptCardSelect}
+            />
+          )}
           <ChatInput 
             onSendMessage={handleSendMessage} 
             furtivePromptTitle={furtivePrompt ? furtivePrompt.title : undefined}

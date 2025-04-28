@@ -36,13 +36,13 @@ export const ChatContainer = () => {
   const { messages, setMessages, isThinking, setIsThinking, saveLocalMessages } = useChatSession(sessionId)
   const [isFirstMessageSent, setIsFirstMessageSent] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [apiErrorCount, setApiErrorCount] = useState(0)
 
   const handleSendMessage = async (content: string) => {
     if (authStatus === 'anonymous' && !recordInteraction()) {
       return
     }
 
-    // Reset any previous error message
     setErrorMessage(null)
 
     try {
@@ -51,7 +51,6 @@ export const ChatContainer = () => {
       setIsThinking(true)
 
       let currentSessionId = sessionId
-      // Check if this is the first message of a new chat
       const isFirstMessage = !currentSessionId || !isFirstMessageSent
 
       if (!currentSessionId) {
@@ -120,10 +119,11 @@ export const ChatContainer = () => {
           content: data.choices[0].message.content
         }
 
-        // Update first message flag after successful API call
         if (isFirstMessage) {
           setIsFirstMessageSent(true)
         }
+
+        setApiErrorCount(0)
 
         if (authStatus === 'anonymous') {
           saveLocalMessages(currentSessionId, [userMessage, assistantMessage])
@@ -174,8 +174,14 @@ export const ChatContainer = () => {
         }
       } catch (error: any) {
         console.error("Error calling chat function:", error)
-        setErrorMessage("Não foi possível obter resposta do assistente. Por favor, tente novamente em instantes.")
-        // Keep the user message in the chat
+        setApiErrorCount(prev => prev + 1)
+        
+        if (apiErrorCount > 2) {
+          setErrorMessage("Problema na comunicação com o serviço de IA. Entre em contato com o suporte.")
+        } else {
+          setErrorMessage("Não foi possível obter resposta do assistente. Por favor, tente novamente em instantes.")
+        }
+        
         setMessages(prev => [...prev])
       }
 

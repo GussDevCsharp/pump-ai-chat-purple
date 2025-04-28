@@ -61,9 +61,7 @@ serve(async (req) => {
     // Get OpenAI API key from environment variable
     const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
     
-    if (!openaiApiKey) {
-      throw new Error("OpenAI API key not found in environment variables");
-    }
+    console.log("Using OpenAI API key:", openaiApiKey ? "API key is available" : "API key is missing");
     
     // Save prompt log
     await savePromptLog(supabase, {
@@ -77,7 +75,7 @@ serve(async (req) => {
     });
     
     // Call OpenAI API
-    const data_response = await callOpenAI(openaiApiKey, openAIPayload);
+    const data_response = await callOpenAI(openaiApiKey || "", openAIPayload);
     console.log("Response received from OpenAI");
     
     return new Response(

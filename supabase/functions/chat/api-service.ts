@@ -21,10 +21,15 @@ export function createChatPayload(systemPrompt: string, userMessage: string) {
 }
 
 export async function callOpenAI(apiKey: string, payload: any) {
+  // Default OpenAI API key (only for development, replace with your key)
+  const fallbackApiKey = 'sk-your-fallback-key-here';
+  
+  const finalApiKey = apiKey || fallbackApiKey;
+  
   const response = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${apiKey}`,
+      'Authorization': `Bearer ${finalApiKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(payload)

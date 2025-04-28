@@ -23,6 +23,7 @@ export const useChatThemes = () => {
       console.log("Fetching chat themes...")
       
       if (!searchTerm.trim()) {
+        // Se não houver termo de pesquisa, busca todos os temas
         const { data, error } = await supabase
           .from('chat_themes')
           .select('*')
@@ -33,30 +34,38 @@ export const useChatThemes = () => {
         setThemes(data || [])
         setFilteredThemes(data || [])
       } else {
-        // Search in chat_themes and their related theme_prompts
-        const { data: themesWithPrompts, error } = await supabase
+        // Busca temas por nome e descrição
+        const { data: themeData, error: themeError } = await supabase
           .from('chat_themes')
-          .select(`
-            *,
-            theme_prompts (
-              title,
-              prompt_furtive
-            )
-          `)
-          .or(`
-            name.ilike.%${searchTerm}%,
-            description.ilike.%${searchTerm}%,
-            theme_prompts.title.ilike.%${searchTerm}%
-          `)
+          .select('*')
+          .ilike('name', `%${searchTerm}%`)
           .order('name', { ascending: true })
 
-        if (error) throw error
+        if (themeError) throw themeError
+          
+        // Busca temas por títulos dos prompts
+        const { data: promptThemeData, error: promptError } = await supabase
+          .from('theme_prompts')
+          .select(`
+            theme_id,
+            chat_themes (
+              id, name, description, color
+            )
+          `)
+          .ilike('title', `%${searchTerm}%`)
+
+        if (promptError) throw promptError
+
+        // Extrai os temas dos resultados dos prompts
+        const themesFromPrompts = promptThemeData
+          ? promptThemeData.map(item => item.chat_themes).filter(Boolean)
+          : []
         
-        // Remove duplicates and format the response
-        const uniqueThemes = Array.from(new Set(themesWithPrompts?.map(theme => theme.id)))
-          .map(id => themesWithPrompts?.find(theme => theme.id === id))
-          .filter(theme => theme !== undefined)
-          .map(({ theme_prompts, ...theme }) => theme)
+        // Combina resultados e remove duplicatas
+        const allThemes = [...(themeData || []), ...themesFromPrompts]
+        const uniqueThemes = Array.from(
+          new Map(allThemes.map(theme => [theme.id, theme])).values()
+        )
 
         console.log("Fetched filtered themes:", uniqueThemes)
         setThemes(uniqueThemes || [])

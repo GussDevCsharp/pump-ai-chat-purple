@@ -1,4 +1,3 @@
-
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { MessageSquare } from "lucide-react"
@@ -8,13 +7,13 @@ import { supabase } from "@/integrations/supabase/client"
 import { useThemePrompts } from "@/hooks/useThemePrompts"
 
 interface BusinessCardProps {
-  title: string;
-  description: string;
-  gradient: string;
-  themeName?: string;
-  themeColor?: string;
-  themeId?: string;
-  prompts?: any[];
+  title: string
+  description: string
+  gradient: string
+  themeName?: string
+  themeColor?: string
+  themeId?: string
+  prompts?: any[]
 }
 
 export const BusinessCard = ({ 
@@ -79,7 +78,7 @@ export const BusinessCard = ({
 
   return (
     <Card 
-      className="border border-gray-200 bg-transparent shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+      className="border bg-transparent shadow-sm hover:shadow-md transition-shadow cursor-pointer"
       onClick={handleCardClick}
     >
       <CardHeader>
@@ -124,5 +123,5 @@ export const BusinessCard = ({
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }

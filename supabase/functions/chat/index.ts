@@ -4,7 +4,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { getSystemPrompts } from "./prompt-service.ts"
 import { savePromptLog } from "./log-service.ts"
 import { createChatPayload, callOpenAI } from "./api-service.ts"
-import { getUserProfiles, createFurtiveFragments } from "./profile-service.ts"
+import { getUserProfiles, createFurtivePromptFragments } from "./profile-service.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -22,51 +22,120 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_ANON_KEY') ?? ''
     )
 
-    const { message, themeId, userEmail, furtivePrompt, isFirstMessage } = await req.json()
+    const url = new URL(req.url)
+    
+    // Se for requisição para obter chave de API
+    if (url.pathname.endsWith('/getApiKey')) {
+      console.log('Getting API key')
+      
+      const { data, error } = await supabase
+        .from('modelkeys')
+        .select('apikey')
+        .eq('model', 'OpenAI')
+        .single()
 
-    // Only get system prompts on first message
+      if (error) {
+        throw new Error(`Could not fetch API key: ${error.message}`)
+      }
+
+      return new Response(
+        JSON.stringify({ apiKey: data.apikey }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    // Se for requisição para logs de prompts
+    if (url.pathname.endsWith('/getLogs')) {
+      const { email } = await req.json()
+      
+      if (!email) {
+        return new Response(JSON.stringify({ error: 'Email is required' }), { 
+          status: 400, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        })
+      }
+      
+      const { data, error } = await supabase
+        .from('prompt_logs')
+        .select('*')
+        .eq('user_email', email)
+        .order('created_at', { ascending: false })
+        .limit(10)
+      
+      if (error) {
+        console.error("Error fetching logs:", error)
+        throw new Error(`Could not fetch logs: ${error.message}`)
+      }
+      
+      return new Response(
+        JSON.stringify({ logs: data }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    // Processamento normal de mensagem de chat
+    const { data: keyData, error: keyError } = await supabase
+      .from('modelkeys')
+      .select('apikey')
+      .eq('model', 'OpenAI')
+      .single()
+
+    if (keyError || !keyData) {
+      console.error("API key error:", keyError)
+      throw new Error('Could not fetch API key')
+    }
+
+    const { message, themeId, userEmail, furtivePrompt } = await req.json()
+
+    // Obter todos os prompts do sistema
     const { systemPrompt, components } = await getSystemPrompts(supabase, themeId)
     
+    // Obter perfis do usuário se houver email
     let userProfiles = null;
     let furtiveFragments = null;
-    let finalSystemPrompt = "";
     
-    // Only get and include user profiles and furtive fragments on first message
-    if (isFirstMessage && userEmail) {
+    if (userEmail) {
       userProfiles = await getUserProfiles(supabase, userEmail);
-      furtiveFragments = createFurtiveFragments(
-        userProfiles?.entrepreneur, 
-        userProfiles?.company
+      furtiveFragments = createFurtivePromptFragments(
+        userProfiles.entrepreneur, 
+        userProfiles.company
       );
-      
-      // Construct complete system prompt with fragments
-      if (furtiveFragments) {
-        finalSystemPrompt = `${furtiveFragments.fragment1}\n\n${furtiveFragments.fragment2}\n\n${systemPrompt}`;
-      } else {
-        finalSystemPrompt = systemPrompt;
-      }
-    } else {
-      // For subsequent messages, use only the theme system prompt
-      finalSystemPrompt = systemPrompt;
     }
     
+    // Log dos prompts para depuração
+    console.log("System prompts in order:")
+    console.log("1. Rules:", components.rules)
+    console.log("2. Tags:", components.tags)
+    console.log("3. Theme:", components.theme)
+    console.log("4. User message:", message)
+    console.log("5. Furtive prompt:", furtivePrompt?.text || 'None')
+    
+    if (furtiveFragments) {
+      console.log("6. Furtive fragment 1:", furtiveFragments.fragment1)
+      console.log("7. Furtive fragment 2:", furtiveFragments.fragment2)
+    }
+    
+    // Construir o prompt final integrando os três fragmentos furtivos
+    let finalSystemPrompt = systemPrompt;
     let finalUserMessage = message;
+    
+    // Se temos os fragmentos furtivos, adicionamos ao prompt final
+    if (furtiveFragments) {
+      finalSystemPrompt = `${furtiveFragments.fragment1}\n\n${furtiveFragments.fragment2}\n\n${systemPrompt}`;
+    }
+    
+    // Se há um prompt furtivo específico do tema, ajustamos a mensagem do usuário
     if (furtivePrompt?.text) {
       finalUserMessage = `${furtivePrompt.text} ${message}`;
     }
     
-    // Create OpenAI payload
+    // Criar payload OpenAI
     const openAIPayload = createChatPayload(finalSystemPrompt, finalUserMessage);
     
-    // Get OpenAI API key from environment variable
-    const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
-    
-    console.log("Using OpenAI API key:", openaiApiKey ? "API key is available" : "API key is missing");
-    
-    // Save prompt log
+    // Salvar log de prompt
     await savePromptLog(supabase, {
       userEmail,
-      systemPrompt: finalSystemPrompt,
+      systemPrompt,
       message,
       openAIPayload,
       furtivePrompt,
@@ -74,8 +143,8 @@ serve(async (req) => {
       furtiveFragments
     });
     
-    // Call OpenAI API
-    const data_response = await callOpenAI(openaiApiKey || "", openAIPayload);
+    // Chamar API OpenAI
+    const data_response = await callOpenAI(keyData.apikey, openAIPayload);
     console.log("Response received from OpenAI");
     
     return new Response(

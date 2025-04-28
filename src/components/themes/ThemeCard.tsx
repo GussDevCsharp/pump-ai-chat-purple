@@ -22,11 +22,14 @@ export const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
     <Card
       onClick={() => onSelect(theme.id, theme.name)}
       className={`
-        flex flex-col h-[320px] rounded-xl border-gray-200 hover:shadow-xl 
+        flex flex-col h-[320px] rounded-xl border border-pump-gray/10 hover:shadow-xl 
         transform transition-all duration-200 cursor-pointer
         hover:scale-[1.02] shadow-md group
         px-3 py-2 bg-white
       `}
+      style={{
+        borderColor: theme.color || "#e9e3fc"
+      }}
     >
       <div className="flex flex-col flex-1 justify-between h-full p-2">
         <div>
@@ -63,7 +66,7 @@ export const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
                   <li key={prompt.id} className="flex items-start gap-2">
                     <Circle 
                       className="w-2 h-2 mt-1.5 flex-shrink-0" 
-                      fill="#8E9196"
+                      fill={theme.color || "#7E1CC6"} 
                       size={8}
                     />
                     <span className="text-xs text-gray-700 leading-tight">

@@ -1,3 +1,4 @@
+
 import React, { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
@@ -7,12 +8,14 @@ import { supabase } from "@/integrations/supabase/client"
 import NeuralBackground from "@/components/effects/NeuralBackground"
 import { GoogleButton } from "@/components/auth/GoogleButton"
 import { Mail } from "lucide-react"
+import { useTheme } from "@/hooks/useTheme"
 
 export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
+  const { isDark } = useTheme()
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault()
@@ -62,8 +65,8 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex">
-      <div className="w-1/2 bg-offwhite flex items-center justify-center px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="max-w-md w-full bg-white/85 shadow-lg rounded-xl p-8">
+      <div className="w-1/2 bg-offwhite dark:bg-black/40 flex items-center justify-center px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className={`max-w-md w-full ${isDark ? 'bg-black/70 backdrop-blur-lg' : 'bg-white/85'} shadow-lg rounded-xl p-8`}>
           <div className="text-center">
             <Link to="/">
               <img 
@@ -72,10 +75,10 @@ export default function Login() {
                 className="h-12 mx-auto"
               />
             </Link>
-            <h2 className="mt-7 text-3xl font-bold text-gray-900">
+            <h2 className="mt-7 text-3xl font-bold text-gray-900 dark:text-white">
               Bem-vindo de volta
             </h2>
-            <p className="mt-2 text-base text-pump-gray">
+            <p className="mt-2 text-base text-pump-gray dark:text-white/70">
               Entre para acessar sua conta
             </p>
           </div>
@@ -89,17 +92,17 @@ export default function Login() {
                   className="w-full bg-transparent p-2 border-none hover:bg-transparent flex items-center justify-center gap-2"
                 >
                   <Mail className="h-5 w-5 text-pump-purple" />
-                  <span className="text-gray-700 font-medium">Entrar com email</span>
+                  <span className="text-gray-700 dark:text-gray-300 font-medium">Entrar com email</span>
                 </Button>
               </Link>
             </div>
             
             <div className="relative my-6">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300"></div>
+                <div className="w-full border-t border-gray-300 dark:border-gray-700"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white/85 text-gray-500">
+                <span className={`px-2 ${isDark ? 'bg-black/70' : 'bg-white/85'} text-gray-500 dark:text-gray-400`}>
                   ou continue com email
                 </span>
               </div>
@@ -108,7 +111,7 @@ export default function Login() {
             <form onSubmit={handleLogin} className="space-y-6">
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Email
                   </label>
                   <Input
@@ -124,7 +127,7 @@ export default function Login() {
                   />
                 </div>
                 <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Senha
                   </label>
                   <Input
@@ -151,10 +154,10 @@ export default function Login() {
             </form>
           </div>
           
-          <div className="text-center pt-4 border-t mt-6">
-            <p className="text-sm text-gray-600 mb-2">Empreendedor? Experimente nossa ferramenta:</p>
+          <div className="text-center pt-4 border-t mt-6 border-gray-300 dark:border-gray-700">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Empreendedor? Experimente nossa ferramenta:</p>
             <Link to="/business-generator">
-              <Button variant="outline" className="text-pump-purple hover:bg-pump-purple/10 rounded-lg">
+              <Button variant="outline" className="text-pump-purple hover:bg-pump-purple/10 rounded-lg dark:text-white dark:border-white/20 dark:hover:bg-white/10">
                 Gerar Plano de Negócios
               </Button>
             </Link>
@@ -162,10 +165,10 @@ export default function Login() {
         </div>
       </div>
 
-      <div className="w-1/2 bg-offwhite relative overflow-hidden">
+      <div className="w-1/2 bg-offwhite dark:bg-black relative overflow-hidden">
         <NeuralBackground />
         <div className="relative z-[5] flex items-center justify-center h-full pointer-events-none">
-          <h1 className="text-5xl font-bold text-pump-purple text-center leading-tight max-w-lg">
+          <h1 className="text-5xl font-bold text-pump-purple dark:text-white text-center leading-tight max-w-lg">
             A Nova inteligência da sua empresa
           </h1>
         </div>

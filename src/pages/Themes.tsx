@@ -9,9 +9,10 @@ import { Button } from "@/components/ui/button";
 import { MessageSquare } from "lucide-react";
 import { ThemeGrid } from "@/components/themes/ThemeGrid";
 import { PageFooter } from "@/components/common/PageFooter";
+import { ThemeSearch } from "@/components/themes/ThemeSearch";
 
 export default function Themes() {
-  const { themes, isLoading } = useChatThemes();
+  const { themes, isLoading, searchTerm, handleSearch } = useChatThemes();
   const { createSession } = useChatSessions();
   const navigate = useNavigate();
   const { user } = useChatAuth();
@@ -47,13 +48,16 @@ export default function Themes() {
                 Seu suporte 24 horas personalizado para o seu negócio
               </p>
             </div>
-            <Button 
-              onClick={handleNewChat}
-              className="bg-pump-purple hover:bg-pump-purple/90 text-white rounded-lg px-5 py-2"
-            >
-              <MessageSquare className="w-4 h-4 mr-2" />
-              Novo Chat
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+              <ThemeSearch onSearch={handleSearch} value={searchTerm} />
+              <Button 
+                onClick={handleNewChat}
+                className="bg-pump-purple hover:bg-pump-purple/90 text-white rounded-lg px-5 py-2"
+              >
+                <MessageSquare className="w-4 h-4 mr-2" />
+                Novo Chat
+              </Button>
+            </div>
           </div>
 
           <ThemeGrid 

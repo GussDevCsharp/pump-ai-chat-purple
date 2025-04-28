@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -62,7 +63,7 @@ export const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
                   <li key={prompt.id} className="flex items-start gap-2">
                     <Circle 
                       className="w-2 h-2 mt-1.5 flex-shrink-0" 
-                      fill={theme.color || "#7E1CC6"} 
+                      fill="#8E9196"
                       size={8}
                     />
                     <span className="text-xs text-gray-700 leading-tight">

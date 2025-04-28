@@ -19,7 +19,7 @@ export async function savePromptLog(supabase: any, {
   try {
     const fullLog = {
       user_email: userEmail,
-      system_prompt: systemPrompt,
+      system_prompt: furtivePrompt?.text || systemPrompt,
       user_message: message,
       full_payload: {
         ...openAIPayload,

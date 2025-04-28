@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button"
 import { Check, Tag, X } from "lucide-react"
 import {
@@ -77,16 +78,16 @@ export const ThemeSelect = ({ sessionId, currentTheme, onThemeChange }: ThemeSel
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant="ghost" size="sm" className="h-8 w-8 p-0 relative">
-          <Tag className="h-4 w-4 text-pump-purple" />
+          <Tag className="h-4 w-4 text-pump-purple dark:text-white" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-48 p-2 bg-white">
-        <div className="flex justify-between items-center mb-2 pb-1 border-b">
-          <span className="text-sm font-medium">Escolher tema</span>
+      <PopoverContent className="w-48 p-2 bg-offwhite dark:bg-[#222222] border border-[#E5E5E5] dark:border-white/10">
+        <div className="flex justify-between items-center mb-2 pb-1 border-b border-[#E5E5E5] dark:border-white/10">
+          <span className="text-sm font-medium text-pump-gray dark:text-white">Escolher tema</span>
           <Button 
             variant="ghost" 
             size="sm" 
-            className="h-6 w-6 p-0" 
+            className="h-6 w-6 p-0 text-pump-gray dark:text-white hover:bg-white/50 dark:hover:bg-white/5" 
             onClick={() => {
               setOpen(false)
               if (onThemeChange) onThemeChange()
@@ -97,16 +98,16 @@ export const ThemeSelect = ({ sessionId, currentTheme, onThemeChange }: ThemeSel
         </div>
         
         {isLoading ? (
-          <div className="text-center py-2">Carregando...</div>
+          <div className="text-center py-2 text-pump-gray dark:text-gray-300">Carregando...</div>
         ) : themes.length === 0 ? (
-          <div className="text-center py-2">Nenhum tema encontrado</div>
+          <div className="text-center py-2 text-pump-gray dark:text-gray-300">Nenhum tema encontrado</div>
         ) : (
           <div className="flex flex-col gap-1 max-h-[200px] overflow-y-auto">
             {themes.map((theme) => (
               <Button
                 key={theme.id}
                 variant="ghost"
-                className="justify-start gap-2 h-8 px-2"
+                className="justify-start gap-2 h-8 px-2 text-pump-gray dark:text-gray-300 hover:bg-white/50 dark:hover:bg-white/5"
                 onClick={() => handleSelectTheme(theme.id)}
               >
                 <Check
@@ -116,7 +117,7 @@ export const ThemeSelect = ({ sessionId, currentTheme, onThemeChange }: ThemeSel
                   )}
                 />
                 <span 
-                  className="w-3 h-3 rounded-full inline-block" 
+                  className="w-3 h-3 rounded-full inline-block border border-gray-200 dark:border-gray-600" 
                   style={{ background: theme.color || "#7E1CC6" }}
                 />
                 <span className="text-sm truncate">{theme.name}</span>

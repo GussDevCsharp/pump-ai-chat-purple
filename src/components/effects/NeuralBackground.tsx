@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef } from 'react';
 import { useTheme } from '@/hooks/useTheme';
 
@@ -77,6 +78,7 @@ const NeuralBackground = () => {
     const animate = () => {
       if (!ctx || !canvas) return;
       
+      // Update background color - off-white in light mode, black in dark mode
       ctx.fillStyle = isDark ? '#000000' : '#FFFDF3';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -117,7 +119,7 @@ const NeuralBackground = () => {
             ctx.lineTo(otherPoint.x, otherPoint.y);
             ctx.strokeStyle = isDark 
               ? `rgba(255, 255, 255, ${opacity})`
-              : `rgba(126, 28, 198, ${opacity})`;
+              : `rgba(126, 28, 198, ${opacity})`; // Purple color in light mode
             ctx.lineWidth = averageSize * 0.2;
             ctx.stroke();
           }
@@ -129,7 +131,7 @@ const NeuralBackground = () => {
         const opacity = 0.3 + (safeRadius / 4) * 0.2;
         ctx.fillStyle = isDark 
           ? `rgba(255, 255, 255, ${opacity})`
-          : `rgba(126, 28, 198, ${opacity})`;
+          : `rgba(126, 28, 198, ${opacity})`; // Purple color in light mode
         ctx.fill();
       });
 

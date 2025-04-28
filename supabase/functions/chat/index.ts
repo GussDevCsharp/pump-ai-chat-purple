@@ -81,7 +81,7 @@ serve(async (req) => {
     }
 
     const apikey = keyData.apikey
-    const { message, themeId, userEmail } = await req.json()
+    const { message, themeId, userEmail, furtivePrompt } = await req.json()
 
     // 1. First, get rules prompt
     const { data: rulesPrompt, error: rulesError } = await supabase
@@ -132,11 +132,14 @@ serve(async (req) => {
 
     console.log("System prompts in order:")
     console.log("1. Rules:", rulesPrompt?.content || 'None')
-    console.log("2. Tags:", tagsPrompt?.content || 'None')
+    console.log("2. Tags:", tagsPrompt?.content || 'None') 
     console.log("3. Theme:", themePromptContent || 'None')
     console.log("4. User message:", message)
+    console.log("5. Furtive prompt:", furtivePrompt?.text || 'None')
     
-    // Prepare OpenAI request payload
+    // Prepare OpenAI request payload with the furtive prompt if it exists
+    const finalUserMessage = furtivePrompt?.text ? `${furtivePrompt.text} ${message}` : message
+    
     const openAIPayload = {
       model: 'gpt-4o-mini',
       messages: [
@@ -146,7 +149,7 @@ serve(async (req) => {
         },
         { 
           role: 'user', 
-          content: message 
+          content: finalUserMessage
         }
       ],
       temperature: 0.7,
@@ -163,7 +166,12 @@ serve(async (req) => {
           user_email: userEmail,
           system_prompt: systemPrompt,
           user_message: message,
-          full_payload: openAIPayload
+          full_payload: {
+            ...openAIPayload,
+            furtive_prompt: furtivePrompt?.text || null,
+            original_message: message,
+            final_message: finalUserMessage
+          }
         };
         
         await supabase
@@ -212,3 +220,4 @@ serve(async (req) => {
     )
   }
 })
+

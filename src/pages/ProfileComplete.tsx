@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { Header } from "@/components/common/Header"
@@ -173,18 +172,18 @@ export default function ProfileComplete() {
   }
 
   return (
-    <div className="min-h-screen bg-offwhite">
+    <div className="min-h-screen bg-offwhite dark:bg-[#1A1F2C]">
       <NeuralBackground />
       <Header />
       
       <div className="container mx-auto px-4 py-8 relative z-10">
-        <div className="max-w-3xl mx-auto bg-white/90 backdrop-blur-sm rounded-xl shadow-md p-6">
-          <h1 className="text-2xl font-bold text-center text-pump-purple mb-6">Complete seu perfil</h1>
+        <div className="max-w-3xl mx-auto bg-white/90 dark:bg-[#222222]/90 backdrop-blur-sm rounded-xl shadow-md p-6">
+          <h1 className="text-2xl font-bold text-center text-pump-purple dark:text-white mb-6">Complete seu perfil</h1>
           
           <div className="flex justify-between mb-8">
             <Button 
               variant={activeStep === 0 ? "default" : "outline"}
-              className={activeStep === 0 ? "bg-pump-purple text-white" : ""}
+              className={activeStep === 0 ? "bg-pump-purple text-white dark:hover:bg-pump-purple/90" : "dark:text-white"}
               onClick={() => setActiveStep(0)}
             >
               Perfil do Empresário
@@ -192,7 +191,7 @@ export default function ProfileComplete() {
             
             <Button 
               variant={activeStep === 1 ? "default" : "outline"}
-              className={activeStep === 1 ? "bg-pump-purple text-white" : ""}
+              className={activeStep === 1 ? "bg-pump-purple text-white dark:hover:bg-pump-purple/90" : "dark:text-white"}
               onClick={() => setActiveStep(1)}
             >
               Perfil da Empresa
@@ -202,33 +201,33 @@ export default function ProfileComplete() {
           <form onSubmit={handleSubmit} className="space-y-6">
             {activeStep === 0 ? (
               <div className="space-y-4 animate-fade-in">
-                <h2 className="text-xl font-semibold text-pump-purple">🧠 Perfil do Empresário</h2>
-                <Separator className="mb-4" />
+                <h2 className="text-xl font-semibold text-pump-purple dark:text-white">🧠 Perfil do Empresário</h2>
+                <Separator className="mb-4 dark:bg-gray-700" />
                 
                 <div>
-                  <label className="block text-sm font-medium mb-1">
+                  <label className="block text-sm font-medium mb-1 dark:text-gray-200">
                     Qual é o seu maior objetivo como empreendedor nos próximos 12 meses?
                   </label>
                   <Textarea 
                     value={mainGoal} 
                     onChange={(e) => setMainGoal(e.target.value)} 
-                    className="w-full"
+                    className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium mb-1">
+                  <label className="block text-sm font-medium mb-1 dark:text-gray-200">
                     Em poucas palavras, por que você decidiu empreender?
                   </label>
                   <Textarea 
                     value={entrepreneurshipReason} 
                     onChange={(e) => setEntrepreneurshipReason(e.target.value)} 
-                    className="w-full"
+                    className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium mb-1">
+                  <label className="block text-sm font-medium mb-1 dark:text-gray-200">
                     Você se considera mais operacional, estratégico ou comercial no seu negócio?
                   </label>
                   <Select value={managementStyle} onValueChange={setManagementStyle}>
@@ -245,29 +244,29 @@ export default function ProfileComplete() {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium mb-1">
+                  <label className="block text-sm font-medium mb-1 dark:text-gray-200">
                     O que mais te motiva no dia a dia da empresa?
                   </label>
                   <Textarea 
                     value={motivation} 
                     onChange={(e) => setMotivation(e.target.value)} 
-                    className="w-full"
+                    className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium mb-1">
+                  <label className="block text-sm font-medium mb-1 dark:text-gray-200">
                     Quais são suas maiores dificuldades como gestor hoje?
                   </label>
                   <Textarea 
                     value={difficulties} 
                     onChange={(e) => setDifficulties(e.target.value)} 
-                    className="w-full"
+                    className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium mb-1">
+                  <label className="block text-sm font-medium mb-1 dark:text-gray-200">
                     Com que frequência você revisa ou ajusta suas metas?
                   </label>
                   <Select value={goalsReviewFrequency} onValueChange={setGoalsReviewFrequency}>
@@ -286,7 +285,7 @@ export default function ProfileComplete() {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium mb-1">
+                  <label className="block text-sm font-medium mb-1 dark:text-gray-200">
                     Você trabalha com uma equipe ou sozinho atualmente?
                   </label>
                   <Select value={teamStatus} onValueChange={setTeamStatus}>
@@ -303,7 +302,7 @@ export default function ProfileComplete() {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium mb-1">
+                  <label className="block text-sm font-medium mb-1 dark:text-gray-200">
                     Quanto tempo por semana você dedica ao planejamento do seu negócio?
                   </label>
                   <Select value={planningTimeWeekly} onValueChange={setPlanningTimeWeekly}>
@@ -331,36 +330,36 @@ export default function ProfileComplete() {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium mb-1">
+                  <label className="block text-sm font-medium mb-1 dark:text-gray-200">
                     Em uma palavra, como você definiria seu estilo de liderança?
                   </label>
                   <Input 
                     value={leadershipStyle} 
                     onChange={(e) => setLeadershipStyle(e.target.value)} 
-                    className="w-full"
+                    className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700"
                   />
                 </div>
               </div>
             ) : (
               <div className="space-y-4 animate-fade-in">
-                <h2 className="text-xl font-semibold text-pump-purple">🏢 Perfil da Empresa</h2>
-                <Separator className="mb-4" />
+                <h2 className="text-xl font-semibold text-pump-purple dark:text-white">🏢 Perfil da Empresa</h2>
+                <Separator className="mb-4 dark:bg-gray-700" />
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium mb-1">
+                    <label className="block text-sm font-medium mb-1 dark:text-gray-200">
                       Nome da empresa
                     </label>
                     <Input 
                       value={companyName} 
                       onChange={(e) => setCompanyName(e.target.value)} 
-                      className="w-full"
+                      className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700"
                       required
                     />
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium mb-1">
+                    <label className="block text-sm font-medium mb-1 dark:text-gray-200">
                       Há quanto tempo em operação?
                     </label>
                     <Select value={yearsInOperation} onValueChange={setYearsInOperation}>
@@ -379,29 +378,29 @@ export default function ProfileComplete() {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium mb-1">
+                  <label className="block text-sm font-medium mb-1 dark:text-gray-200">
                     Qual é o principal produto ou serviço que você oferece hoje?
                   </label>
                   <Textarea 
                     value={mainProducts} 
                     onChange={(e) => setMainProducts(e.target.value)} 
-                    className="w-full"
+                    className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium mb-1">
+                  <label className="block text-sm font-medium mb-1 dark:text-gray-200">
                     Qual é o seu público-alvo?
                   </label>
                   <Textarea 
                     value={targetAudience} 
                     onChange={(e) => setTargetAudience(e.target.value)} 
-                    className="w-full"
+                    className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium mb-1">
+                  <label className="block text-sm font-medium mb-1 dark:text-gray-200">
                     Sua empresa atua em qual canal?
                   </label>
                   <Select value={channelType} onValueChange={setChannelType}>
@@ -417,7 +416,7 @@ export default function ProfileComplete() {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium mb-1">
+                  <label className="block text-sm font-medium mb-1 dark:text-gray-200">
                     Hoje, o seu modelo de vendas é mais:
                   </label>
                   <Select value={salesModel} onValueChange={setSalesModel}>
@@ -433,7 +432,7 @@ export default function ProfileComplete() {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium mb-1">
+                  <label className="block text-sm font-medium mb-1 dark:text-gray-200">
                     Qual é o seu faturamento médio mensal?
                   </label>
                   <Select value={averageRevenue} onValueChange={setAverageRevenue}>
@@ -453,20 +452,20 @@ export default function ProfileComplete() {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium mb-1">
+                  <label className="block text-sm font-medium mb-1 dark:text-gray-200">
                     Quantos funcionários fixos você tem hoje?
                   </label>
                   <Input 
                     type="number"
                     value={employeesCount} 
                     onChange={(e) => setEmployeesCount(e.target.value)} 
-                    className="w-full"
+                    className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700"
                     min="0"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium mb-1">
+                  <label className="block text-sm font-medium mb-1 dark:text-gray-200">
                     Quais ferramentas você usa para gerenciar sua empresa?
                   </label>
                   <Select value={managementTools} onValueChange={setManagementTools}>
@@ -495,13 +494,13 @@ export default function ProfileComplete() {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium mb-1">
+                  <label className="block text-sm font-medium mb-1 dark:text-gray-200">
                     Qual é o maior desafio da sua empresa neste momento?
                   </label>
                   <Textarea 
                     value={biggestChallenge} 
                     onChange={(e) => setBiggestChallenge(e.target.value)} 
-                    className="w-full"
+                    className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700"
                   />
                 </div>
               </div>
@@ -514,7 +513,7 @@ export default function ProfileComplete() {
                   <Button 
                     type="button"
                     onClick={nextStep}
-                    className="bg-pump-purple hover:bg-pump-purple/90"
+                    className="bg-pump-purple hover:bg-pump-purple/90 dark:text-white"
                   >
                     Próximo
                   </Button>
@@ -525,13 +524,14 @@ export default function ProfileComplete() {
                     type="button"
                     variant="outline"
                     onClick={prevStep}
+                    className="dark:text-white dark:border-gray-700"
                   >
                     Voltar
                   </Button>
                   
                   <Button 
                     type="submit"
-                    className="bg-pump-purple hover:bg-pump-purple/90"
+                    className="bg-pump-purple hover:bg-pump-purple/90 dark:text-white"
                     disabled={isLoading}
                   >
                     {isLoading ? "Salvando..." : "Salvar perfil"}

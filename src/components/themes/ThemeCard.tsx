@@ -22,10 +22,10 @@ export const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
     <Card
       onClick={() => onSelect(theme.id, theme.name)}
       className={`
-        flex flex-col h-[320px] rounded-xl border border-pump-gray/10 hover:shadow-xl 
+        flex flex-col h-[320px] rounded-xl border border-border hover:shadow-xl 
         transform transition-all duration-200 cursor-pointer
         hover:scale-[1.02] shadow-md group
-        px-3 py-2 bg-white
+        px-3 py-2 dark:bg-black/40 dark:backdrop-blur-lg
       `}
       style={{
         borderColor: theme.color || "#e9e3fc"
@@ -47,10 +47,10 @@ export const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
                 }}
               >{theme.name.charAt(0)}</span>
             </div>
-            <h3 className="font-normal text-base text-gray-900 leading-tight">{theme.name}</h3>
+            <h3 className="font-normal text-base text-foreground leading-tight">{theme.name}</h3>
           </div>
           {theme.description && (
-            <p className="text-xs text-pump-gray mt-1 mb-2 px-1 max-h-[30px] overflow-hidden">
+            <p className="text-xs text-muted-foreground mt-1 mb-2 px-1 max-h-[30px] overflow-hidden">
               {theme.description}
             </p>
           )}
@@ -58,7 +58,7 @@ export const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
 
         <div className="flex flex-col gap-2 mt-1 flex-1 justify-start min-h-[60px]">
           {isLoading ? (
-            <span className="text-pump-gray text-xs">Carregando tópicos...</span>
+            <span className="text-muted-foreground text-xs">Carregando tópicos...</span>
           ) : (
             prompts && prompts.length > 0 ? (
               <ul className="space-y-2">
@@ -66,17 +66,17 @@ export const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
                   <li key={prompt.id} className="flex items-start gap-2">
                     <Circle 
                       className="w-2 h-2 mt-1.5 flex-shrink-0" 
-                      fill={theme.color || "#7E1CC6"} 
+                      fill="#8E9196" 
                       size={8}
                     />
-                    <span className="text-xs text-gray-700 leading-tight">
+                    <span className="text-xs text-muted-foreground leading-tight">
                       {prompt.title}
                     </span>
                   </li>
                 ))}
               </ul>
             ) : (
-              <span className="text-pump-gray text-xs">Nenhum tópico encontrado</span>
+              <span className="text-muted-foreground text-xs">Nenhum tópico encontrado</span>
             )
           )}
         </div>
@@ -85,7 +85,7 @@ export const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
           <Button
             size="sm"
             variant="outline"
-            className="w-full py-1 px-3 rounded-lg font-normal text-xs border-pump-purple text-pump-purple hover:bg-pump-purple/10 hover:text-pump-purple bg-white transition-all"
+            className="w-full py-1 px-3 rounded-lg font-normal text-xs border-primary text-primary hover:bg-primary/10 hover:text-primary dark:bg-black/40 transition-all"
           >
             Entrar no chat deste tema
           </Button>

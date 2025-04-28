@@ -526,6 +526,33 @@ export type Database = {
         }
         Relationships: []
       }
+      prompt_logs: {
+        Row: {
+          created_at: string | null
+          full_payload: Json | null
+          id: string
+          system_prompt: string | null
+          user_email: string
+          user_message: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          full_payload?: Json | null
+          id?: string
+          system_prompt?: string | null
+          user_email: string
+          user_message?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          full_payload?: Json | null
+          id?: string
+          system_prompt?: string | null
+          user_email?: string
+          user_message?: string | null
+        }
+        Relationships: []
+      }
       theme_prompts: {
         Row: {
           action_plan: boolean | null

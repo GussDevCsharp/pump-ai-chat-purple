@@ -21,15 +21,47 @@ export const useChatThemes = () => {
     try {
       setIsLoading(true)
       console.log("Fetching chat themes...")
-      const { data, error } = await supabase
-        .from('chat_themes')
-        .select('*')
-        .order('name', { ascending: true })
+      
+      if (!searchTerm.trim()) {
+        const { data, error } = await supabase
+          .from('chat_themes')
+          .select('*')
+          .order('name', { ascending: true })
 
-      if (error) throw error
-      console.log("Fetched themes:", data)
-      setThemes(data || [])
-      setFilteredThemes(data || [])
+        if (error) throw error
+        console.log("Fetched themes:", data)
+        setThemes(data || [])
+        setFilteredThemes(data || [])
+      } else {
+        // Search in chat_themes and their related theme_prompts
+        const { data: themesWithPrompts, error } = await supabase
+          .from('chat_themes')
+          .select(`
+            *,
+            theme_prompts (
+              title,
+              prompt_furtive
+            )
+          `)
+          .or(`
+            name.ilike.%${searchTerm}%,
+            description.ilike.%${searchTerm}%,
+            theme_prompts.title.ilike.%${searchTerm}%
+          `)
+          .order('name', { ascending: true })
+
+        if (error) throw error
+        
+        // Remove duplicates and format the response
+        const uniqueThemes = Array.from(new Set(themesWithPrompts?.map(theme => theme.id)))
+          .map(id => themesWithPrompts?.find(theme => theme.id === id))
+          .filter(theme => theme !== undefined)
+          .map(({ theme_prompts, ...theme }) => theme)
+
+        console.log("Fetched filtered themes:", uniqueThemes)
+        setThemes(uniqueThemes || [])
+        setFilteredThemes(uniqueThemes || [])
+      }
     } catch (error) {
       console.error('Error fetching themes:', error)
       toast({
@@ -43,22 +75,11 @@ export const useChatThemes = () => {
 
   const handleSearch = (term: string) => {
     setSearchTerm(term)
-    if (!term.trim()) {
-      setFilteredThemes(themes)
-      return
-    }
-
-    const searchTermLower = term.toLowerCase()
-    const filtered = themes.filter(theme => 
-      theme.name.toLowerCase().includes(searchTermLower) ||
-      (theme.description && theme.description.toLowerCase().includes(searchTermLower))
-    )
-    setFilteredThemes(filtered)
   }
 
   useEffect(() => {
     fetchThemes()
-  }, [])
+  }, [searchTerm]) // Re-fetch when search term changes
 
   return { 
     themes: filteredThemes, 

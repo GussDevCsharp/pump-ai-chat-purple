@@ -1,7 +1,6 @@
-
 export function createChatPayload(systemPrompt: string, userMessage: string) {
   return {
-    model: 'gpt-4o-mini',
+    model: 'gpt-4o',
     messages: [
       {
         role: 'system',

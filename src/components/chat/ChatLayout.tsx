@@ -14,11 +14,11 @@ export const ChatLayout = () => {
 
   return (
     <SidebarProvider defaultOpen>
-      <div className="flex h-screen bg-white relative overflow-hidden w-full">
+      <div className="flex h-screen bg-offwhite dark:bg-[#1A1F2C] relative overflow-hidden w-full">
         {/* Menu mobile só aparece se estiver autenticado */}
         {(isMobile && sidebarOpen && authStatus === "authenticated") && (
           <div className="fixed inset-0 z-40 flex">
-            <div className="w-64 max-w-xs bg-white shadow-2xl border-r border-pump-gray/20 h-full animate-slide-in-left">
+            <div className="w-64 max-w-xs bg-white dark:bg-[#1A1F2C] shadow-2xl border-r border-pump-gray/20 h-full animate-slide-in-left">
               <ChatSidebar onClose={() => setSidebarOpen(false)} />
             </div>
             <div
@@ -36,13 +36,13 @@ export const ChatLayout = () => {
         <main className="flex-1 flex flex-col overflow-hidden relative h-full">
           {isMobile && authStatus === "authenticated" && (
             <button
-              className="md:hidden absolute top-4 left-4 p-2 rounded hover:bg-pump-gray-light transition z-10"
+              className="md:hidden absolute top-4 left-4 p-2 rounded hover:bg-pump-gray-light dark:hover:bg-white/10 transition z-10"
               onClick={() => setSidebarOpen(true)}
             >
               <Menu className="w-6 h-6 text-pump-purple" />
             </button>
           )}
-          <div className="flex-1 flex flex-col overflow-hidden h-full">
+          <div className="flex-1 flex flex-col overflow-hidden h-full bg-offwhite dark:bg-[#1A1F2C]">
             <ChatContainer />
           </div>
         </main>

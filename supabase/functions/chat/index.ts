@@ -102,11 +102,13 @@ serve(async (req) => {
         console.error("Error fetching message history:", historyError);
       } else if (historyData && historyData.length > 0) {
         // Converter as mensagens do histórico para o formato esperado pela OpenAI
-        messageHistory = historyData.map(msg => ({
+        // Limitando apenas às 6 últimas mensagens (3 pares de perguntas e respostas)
+        const limitedHistory = historyData.slice(Math.max(0, historyData.length - 6));
+        messageHistory = limitedHistory.map(msg => ({
           role: msg.role,
           content: msg.content
         }));
-        console.log(`Fetched ${messageHistory.length} previous messages for context`);
+        console.log(`Using ${messageHistory.length} most recent messages for context (from total of ${historyData.length})`);
       }
     }
 
@@ -152,7 +154,7 @@ serve(async (req) => {
       finalUserMessage = `${furtivePrompt.text} ${message}`;
     }
     
-    // Criar payload OpenAI (agora com histórico)
+    // Criar payload OpenAI (agora com histórico limitado)
     const openAIPayload = createChatPayload(finalSystemPrompt, finalUserMessage, messageHistory);
     
     // Salvar log de prompt

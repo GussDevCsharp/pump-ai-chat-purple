@@ -75,10 +75,11 @@ const NeuralBackground = () => {
 
     canvas.addEventListener('click', handleClick);
 
+    // Função de animação que será executada a cada frame
     const animate = () => {
       if (!ctx || !canvas) return;
       
-      // Update background color - off-white in light mode, black in dark mode
+      // Background color - offwhite in light mode, black in dark mode
       ctx.fillStyle = isDark ? '#000000' : '#FFFDF3';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -138,13 +139,15 @@ const NeuralBackground = () => {
       requestAnimationFrame(animate);
     };
 
+    // Iniciar a animação
     animate();
 
+    // Limpeza ao desmontar o componente
     return () => {
       window.removeEventListener('resize', resizeCanvas);
       canvas.removeEventListener('click', handleClick);
     };
-  }, [isDark]);
+  }, [isDark]); // Adicionar isDark como dependência para reagir às mudanças de tema
 
   return (
     <canvas

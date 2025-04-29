@@ -17,29 +17,41 @@ import PromptLogs from "./pages/PromptLogs";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Login />} />
-            <Route path="/chat" element={<Index />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/themes" element={<Themes />} />
-            <Route path="/business-generator" element={<BusinessGenerator />} />
-            <Route path="/profile/complete" element={<ProfileComplete />} />
-            <Route path="/prompt-logs" element={<PromptLogs />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          <FloatingChatButton />
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
-  </React.StrictMode>
-);
+const App = () => {
+  // Verificar a preferência de tema ao iniciar o app
+  React.useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, []);
+  
+  return (
+    <React.StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Login />} />
+              <Route path="/chat" element={<Index />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/themes" element={<Themes />} />
+              <Route path="/business-generator" element={<BusinessGenerator />} />
+              <Route path="/profile/complete" element={<ProfileComplete />} />
+              <Route path="/prompt-logs" element={<PromptLogs />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+            <FloatingChatButton />
+          </BrowserRouter>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </React.StrictMode>
+  );
+};
 
 export default App;

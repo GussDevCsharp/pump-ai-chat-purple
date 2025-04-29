@@ -89,6 +89,7 @@ serve(async (req) => {
     
     // Buscar o histórico da conversa, se houver um ID de sessão
     let messageHistory: Array<{role: string, content: string}> = [];
+    let isFirstInteraction = true;
     
     if (sessionId) {
       console.log("Fetching message history for session:", sessionId);
@@ -101,6 +102,9 @@ serve(async (req) => {
       if (historyError) {
         console.error("Error fetching message history:", historyError);
       } else if (historyData && historyData.length > 0) {
+        // Se já existem mensagens, não é a primeira interação
+        isFirstInteraction = false;
+        
         // Converter as mensagens do histórico para o formato esperado pela OpenAI
         // Limitando apenas às 6 últimas mensagens (3 pares de perguntas e respostas)
         const limitedHistory = historyData.slice(Math.max(0, historyData.length - 6));
@@ -141,16 +145,22 @@ serve(async (req) => {
     }
     
     // Construir o prompt final integrando os três fragmentos furtivos
+    // apenas na primeira interação ou se um tema for explicitamente selecionado
     let finalSystemPrompt = systemPrompt;
     let finalUserMessage = message;
     
-    // Se temos os fragmentos furtivos, adicionamos ao prompt final
-    if (furtiveFragments) {
+    // Flag para determinar se deve usar prompts furtivos
+    const shouldUseFurtivePrompts = isFirstInteraction || furtivePrompt?.text;
+    
+    // Se temos os fragmentos furtivos e é a primeira interação, adicionamos ao prompt final
+    if (furtiveFragments && shouldUseFurtivePrompts) {
+      console.log("Including furtive fragments in system prompt (first interaction or theme selected)");
       finalSystemPrompt = `${furtiveFragments.fragment1}\n\n${furtiveFragments.fragment2}\n\n${systemPrompt}`;
     }
     
     // Se há um prompt furtivo específico do tema, ajustamos a mensagem do usuário
     if (furtivePrompt?.text) {
+      console.log("Including furtive prompt in user message (theme selected)");
       finalUserMessage = `${furtivePrompt.text} ${message}`;
     }
     

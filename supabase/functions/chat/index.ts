@@ -85,7 +85,30 @@ serve(async (req) => {
       throw new Error('Could not fetch API key')
     }
 
-    const { message, themeId, userEmail, furtivePrompt } = await req.json()
+    const { message, themeId, userEmail, furtivePrompt, sessionId } = await req.json()
+    
+    // Buscar o histórico da conversa, se houver um ID de sessão
+    let messageHistory: Array<{role: string, content: string}> = [];
+    
+    if (sessionId) {
+      console.log("Fetching message history for session:", sessionId);
+      const { data: historyData, error: historyError } = await supabase
+        .from('chat_messages')
+        .select('*')
+        .eq('session_id', sessionId)
+        .order('created_at', { ascending: true });
+      
+      if (historyError) {
+        console.error("Error fetching message history:", historyError);
+      } else if (historyData && historyData.length > 0) {
+        // Converter as mensagens do histórico para o formato esperado pela OpenAI
+        messageHistory = historyData.map(msg => ({
+          role: msg.role,
+          content: msg.content
+        }));
+        console.log(`Fetched ${messageHistory.length} previous messages for context`);
+      }
+    }
 
     // Obter todos os prompts do sistema
     const { systemPrompt, components } = await getSystemPrompts(supabase, themeId)
@@ -129,8 +152,8 @@ serve(async (req) => {
       finalUserMessage = `${furtivePrompt.text} ${message}`;
     }
     
-    // Criar payload OpenAI
-    const openAIPayload = createChatPayload(finalSystemPrompt, finalUserMessage);
+    // Criar payload OpenAI (agora com histórico)
+    const openAIPayload = createChatPayload(finalSystemPrompt, finalUserMessage, messageHistory);
     
     // Salvar log de prompt
     await savePromptLog(supabase, {

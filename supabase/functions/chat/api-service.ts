@@ -1,17 +1,21 @@
 
-export function createChatPayload(systemPrompt: string, userMessage: string) {
+export function createChatPayload(systemPrompt: string, userMessage: string, messageHistory: Array<{role: string, content: string}> = []) {
+  // Create an array with system prompt and history
+  const messages = [
+    {
+      role: 'system',
+      content: systemPrompt
+    },
+    ...messageHistory,
+    { 
+      role: 'user', 
+      content: userMessage
+    }
+  ];
+  
   return {
     model: 'gpt-4o',
-    messages: [
-      {
-        role: 'system',
-        content: systemPrompt
-      },
-      { 
-        role: 'user', 
-        content: userMessage
-      }
-    ],
+    messages: messages,
     temperature: 0.7,
     max_tokens: 500,
     top_p: 1,

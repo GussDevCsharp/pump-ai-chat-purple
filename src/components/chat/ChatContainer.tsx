@@ -1,3 +1,4 @@
+
 import { useState } from "react"
 import { ChatMessages } from "@/components/chat/ChatMessages"
 import { ChatInput } from "@/components/chat/ChatInput"
@@ -92,7 +93,8 @@ export const ChatContainer = () => {
         body: JSON.stringify({ 
           message: aiMessageToSend,
           themeId: currentThemeId,
-          userEmail: user?.email
+          userEmail: user?.email,
+          sessionId: currentSessionId // Agora enviamos o ID da sessão
         }),
       })
 

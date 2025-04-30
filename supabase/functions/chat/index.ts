@@ -131,18 +131,18 @@ serve(async (req) => {
       );
     }
     
-    // Log dos prompts para depuração
+    // Log completo dos componentes de prompt para depuração
     console.log("System prompts in order:")
-    console.log("1. Layout:", components.layout)
-    console.log("2. Rules:", components.rules)
-    console.log("3. Tags:", components.tags)
-    console.log("4. Theme:", components.theme)
-    console.log("5. User message:", message)
-    console.log("6. Furtive prompt:", furtivePrompt?.text || 'None')
+    console.log("1. Layout:", components.layout ? "Present" : "Missing");
+    console.log("2. Rules:", components.rules ? "Present" : "Missing");
+    console.log("3. Tags:", components.tags ? "Present" : "Missing");
+    console.log("4. Theme:", components.theme ? "Present" : "Missing");
+    console.log("5. User message:", message);
+    console.log("6. Furtive prompt:", furtivePrompt?.text || 'None');
     
     if (furtiveFragments) {
-      console.log("7. Furtive fragment 1:", furtiveFragments.fragment1)
-      console.log("8. Furtive fragment 2:", furtiveFragments.fragment2)
+      console.log("7. Furtive fragment 1:", furtiveFragments.fragment1 ? "Present" : "Missing");
+      console.log("8. Furtive fragment 2:", furtiveFragments.fragment2 ? "Present" : "Missing");
     }
     
     // Construir o prompt final integrando os três fragmentos furtivos
@@ -164,6 +164,9 @@ serve(async (req) => {
       console.log("Including furtive prompt in user message (theme selected)");
       finalUserMessage = `${furtivePrompt.text} ${message}`;
     }
+    
+    // Log do prompt final para debug
+    console.log(`Final system prompt length: ${finalSystemPrompt.length} characters`);
     
     // Criar payload OpenAI (agora com histórico limitado)
     const openAIPayload = createChatPayload(finalSystemPrompt, finalUserMessage, messageHistory);

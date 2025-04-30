@@ -116,7 +116,7 @@ serve(async (req) => {
       }
     }
 
-    // Obter todos os prompts do sistema
+    // Obter todos os prompts do sistema (agora incluindo layout)
     const { systemPrompt, components } = await getSystemPrompts(supabase, themeId)
     
     // Obter perfis do usuário se houver email
@@ -133,15 +133,16 @@ serve(async (req) => {
     
     // Log dos prompts para depuração
     console.log("System prompts in order:")
-    console.log("1. Rules:", components.rules)
-    console.log("2. Tags:", components.tags)
-    console.log("3. Theme:", components.theme)
-    console.log("4. User message:", message)
-    console.log("5. Furtive prompt:", furtivePrompt?.text || 'None')
+    console.log("1. Layout:", components.layout)
+    console.log("2. Rules:", components.rules)
+    console.log("3. Tags:", components.tags)
+    console.log("4. Theme:", components.theme)
+    console.log("5. User message:", message)
+    console.log("6. Furtive prompt:", furtivePrompt?.text || 'None')
     
     if (furtiveFragments) {
-      console.log("6. Furtive fragment 1:", furtiveFragments.fragment1)
-      console.log("7. Furtive fragment 2:", furtiveFragments.fragment2)
+      console.log("7. Furtive fragment 1:", furtiveFragments.fragment1)
+      console.log("8. Furtive fragment 2:", furtiveFragments.fragment2)
     }
     
     // Construir o prompt final integrando os três fragmentos furtivos

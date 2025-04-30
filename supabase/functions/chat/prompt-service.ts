@@ -10,7 +10,7 @@ export async function getSystemPrompts(supabase: any, themeId: string | null) {
   const { data: layoutPrompt, error: layoutError } = await supabase
     .from('furtive_prompts')
     .select('content')
-    .eq('category', 'layout')
+    .eq('category', 'LAYOUT')
     .maybeSingle();
 
   if (layoutError) {

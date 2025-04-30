@@ -18,6 +18,9 @@ export async function getSystemPrompts(supabase: any, themeId: string | null) {
     console.error("Error fetching layout prompt:", layoutError);
   } else {
     console.log("Layout prompt fetched successfully:", layoutPrompt?.content ? "Found" : "Not found");
+    if (layoutPrompt?.content) {
+      console.log("Layout prompt content (first 50 chars):", layoutPrompt.content.substring(0, 50) + "...");
+    }
   }
 
   // 2. Get rules prompt

@@ -170,7 +170,8 @@ async function processChatMessage(
   let finalSystemPrompt = systemPrompt;
   let finalUserMessage = message;
   
-  // Determine if we should use furtive prompts
+  // Determine if we should use furtive prompts or if it's first interaction
+  // Always include layout prompt on first interaction
   const shouldUseFurtivePrompts = isFirstInteraction || furtivePrompt?.text;
   
   // Add furtive fragments if available and should be used
@@ -188,12 +189,48 @@ async function processChatMessage(
   // Log final prompt length for debugging
   console.log(`Final system prompt length: ${finalSystemPrompt.length} characters`);
   
-  // Create OpenAI payload and save prompt log
+  // Create OpenAI payload
   const openAIPayload = createChatPayload(finalSystemPrompt, finalUserMessage, messageHistory);
   
+  // Create a complete system prompt for logging that includes all components
+  let completeSystemPromptForLog = "";
+  
+  // Ensure layout is included in the prompt logs
+  if (components.layout) {
+    completeSystemPromptForLog += components.layout + "\n\n";
+  }
+  
+  // Add other components
+  if (components.rules) {
+    completeSystemPromptForLog += components.rules + "\n\n";
+  }
+  
+  if (components.tags) {
+    completeSystemPromptForLog += components.tags + "\n\n";
+  }
+  
+  if (components.theme) {
+    completeSystemPromptForLog += components.theme + "\n\n";
+  }
+  
+  // Include furtive fragments in the log
+  if (furtiveFragments) {
+    if (furtiveFragments.fragment1) {
+      completeSystemPromptForLog += furtiveFragments.fragment1 + "\n\n";
+    }
+    
+    if (furtiveFragments.fragment2) {
+      completeSystemPromptForLog += furtiveFragments.fragment2 + "\n\n";
+    }
+  }
+  
+  // Remove trailing newlines
+  completeSystemPromptForLog = completeSystemPromptForLog.trim();
+  
+  // Save a complete prompt log with all components
   await savePromptLog(supabase, {
     userEmail,
-    systemPrompt,
+    systemPrompt: completeSystemPromptForLog, // Use the complete prompt for logging
     message,
     openAIPayload,
     furtivePrompt,

@@ -19,26 +19,11 @@ export async function savePromptLog(supabase: any, {
   if (!userEmail) return;
   
   try {
-    // Construa o system prompt completo para o log
-    let fullSystemPrompt = "";
-    
-    // Adicione os fragmentos furtivos se disponíveis
-    if (furtiveFragments) {
-      if (furtiveFragments.fragment1) {
-        fullSystemPrompt += furtiveFragments.fragment1 + "\n\n";
-      }
-      
-      if (furtiveFragments.fragment2) {
-        fullSystemPrompt += furtiveFragments.fragment2 + "\n\n";
-      }
-    }
-    
-    // Adicione o prompt furtivo específico do tema ou o system prompt padrão
-    fullSystemPrompt += furtivePrompt?.text || systemPrompt;
+    console.log("Saving prompt log with system prompt length:", systemPrompt.length);
     
     const fullLog = {
       user_email: userEmail,
-      system_prompt: fullSystemPrompt, // Guarda o prompt completo com todos os fragmentos
+      system_prompt: systemPrompt, // Já contém o prompt completo com todos os componentes
       user_message: message,
       full_payload: {
         ...openAIPayload,

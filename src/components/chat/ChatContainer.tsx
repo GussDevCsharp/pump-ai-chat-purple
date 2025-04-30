@@ -94,7 +94,7 @@ export const ChatContainer = () => {
           message: aiMessageToSend,
           themeId: currentThemeId,
           userEmail: user?.email,
-          sessionId: currentSessionId // Agora enviamos o ID da sessão
+          sessionId: currentSessionId
         }),
       })
 
@@ -182,7 +182,7 @@ export const ChatContainer = () => {
     messages[0].content === 'Olá! Como posso ajudar você hoje?')
 
   return (
-    <div className="flex-1 flex flex-col h-full overflow-hidden relative">
+    <div className="flex-1 flex flex-col h-full overflow-hidden relative bg-[#fffcf8]">
       <BackButton />
       <Watermark />
       {authStatus === 'anonymous' && (
@@ -192,7 +192,7 @@ export const ChatContainer = () => {
       {showWelcomeScreen ? (
         <WelcomeScreen onSendMessage={handleSendMessage} />
       ) : (
-        <div className="flex-1 flex flex-col overflow-hidden h-full pt-16">
+        <div className="flex-1 flex flex-col overflow-hidden h-full pt-16 bg-[#fffcf8]">
           <ChatMessages messages={messages} isThinking={isThinking} />
           {currentSession?.theme_id && (
             <ChatPrompts

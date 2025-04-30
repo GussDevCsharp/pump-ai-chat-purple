@@ -170,12 +170,12 @@ async function processChatMessage(
   let finalSystemPrompt = systemPrompt;
   let finalUserMessage = message;
   
-  // Determine if we should use furtive prompts
-  const shouldUseFurtivePrompts = isFirstInteraction || furtivePrompt?.text;
+  // Garante que o prompt de formatação sempre seja incluído na primeira interação
+  const shouldUseFurtivePrompts = isFirstInteraction;
   
   // Add furtive fragments if available and should be used
   if (furtiveFragments && shouldUseFurtivePrompts) {
-    console.log("Including furtive fragments in system prompt (first interaction or theme selected)");
+    console.log("Including furtive fragments in system prompt (first interaction)");
     finalSystemPrompt = `${furtiveFragments.fragment1}\n\n${furtiveFragments.fragment2}\n\n${systemPrompt}`;
   }
   

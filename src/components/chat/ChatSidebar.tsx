@@ -15,6 +15,7 @@ import {
   SidebarHeader,
   SidebarTrigger
 } from "@/components/ui/sidebar"
+import { useState } from "react"
 
 export function ChatSidebar({ onClose }: { onClose?: () => void }) {
   const navigate = useNavigate()
@@ -24,6 +25,10 @@ export function ChatSidebar({ onClose }: { onClose?: () => void }) {
   const { themes, isLoading: isThemesLoading, refreshThemes } = useChatThemes()
   const { toast } = useToast()
   const { searchTerm, setSearchTerm, groupedSessions } = useFilteredSessions(sessions, themes)
+  
+  // Estado para controlar a edição de títulos
+  const [editingSessionId, setEditingSessionId] = useState<string | null>(null)
+  const [newSessionTitle, setNewSessionTitle] = useState("")
 
   const handleCreateNewSession = async () => {
     navigate('/chat')
@@ -39,13 +44,21 @@ export function ChatSidebar({ onClose }: { onClose?: () => void }) {
     }
   }
 
-  const handleEditSession = async (sessionId: string, title: string) => {
-    const newTitle = prompt("Enter new title:", title)
-    if (newTitle && newTitle !== title) {
+  const handleEditSession = (sessionId: string, title: string) => {
+    setEditingSessionId(sessionId)
+    setNewSessionTitle(title)
+  }
+  
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewSessionTitle(e.target.value)
+  }
+  
+  const handleSaveEdit = async (sessionId: string) => {
+    if (newSessionTitle.trim() !== "") {
       try {
         const { error } = await supabase
           .from('chat_sessions')
-          .update({ title: newTitle })
+          .update({ title: newSessionTitle })
           .eq('id', sessionId)
 
         if (error) {
@@ -53,36 +66,49 @@ export function ChatSidebar({ onClose }: { onClose?: () => void }) {
         }
 
         toast({
-          title: "Success",
-          description: "Session title updated successfully."
+          title: "Sucesso",
+          description: "Título da conversa atualizado."
         })
+        setEditingSessionId(null)
         await refreshSessions()
       } catch (error: any) {
         toast({
           variant: "destructive",
-          title: "Error",
+          title: "Erro",
           description: error.message
         })
       }
     }
   }
+  
+  const handleCancelEdit = () => {
+    setEditingSessionId(null)
+  }
+  
+  const handleKeyPress = (e: React.KeyboardEvent, id: string) => {
+    if (e.key === 'Enter') {
+      handleSaveEdit(id)
+    } else if (e.key === 'Escape') {
+      handleCancelEdit()
+    }
+  }
 
   const handleDeleteSession = async (sessionId: string) => {
-    if (window.confirm("Are you sure you want to delete this session?")) {
-      try {
-        await deleteSession(sessionId)
-        toast({
-          title: "Success",
-          description: "Session deleted successfully."
-        })
+    try {
+      await deleteSession(sessionId)
+      toast({
+        title: "Sucesso",
+        description: "Conversa excluída com sucesso."
+      })
+      if (sessionId === searchParams.get('session')) {
         navigate('/chat')
-      } catch (error: any) {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: error.message
-        })
       }
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: error.message
+      })
     }
   }
 
@@ -135,6 +161,12 @@ export function ChatSidebar({ onClose }: { onClose?: () => void }) {
                     onEdit={(sessionId, title) => handleEditSession(sessionId, title)}
                     onDelete={(sessionId) => handleDeleteSession(sessionId)}
                     onThemeChange={handleThemeChange}
+                    editingId={editingSessionId}
+                    newTitle={newSessionTitle}
+                    onTitleChange={handleTitleChange}
+                    onSaveEdit={handleSaveEdit}
+                    onCancelEdit={handleCancelEdit}
+                    onKeyPress={handleKeyPress}
                     title={isThemeGroup ? (theme?.name || 'Sem tema') : groupKey === 'today' ? 'Hoje' : groupKey === 'yesterday' ? 'Ontem' : groupKey}
                   />
                 )

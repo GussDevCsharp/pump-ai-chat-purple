@@ -66,9 +66,9 @@ export function SidebarSessionGroup({
         <CollapsibleContent className="pl-2 mt-2 space-y-2">
           {children || (
             sessions.map(session => (
-              <div key={session.id} className="relative">
+              <div key={session.id} className="relative" data-session-id={session.id}>
                 {editingId === session.id ? (
-                  <div className="bg-white p-3 rounded-xl border-2 border-pump-purple shadow-md dark:bg-[#1A1F2C] dark:border-pump-purple/70">
+                  <div className="bg-offwhite p-3 rounded-xl border-2 border-pump-purple shadow-md dark:bg-[#1A1F2C] dark:border-pump-purple/70">
                     <Input
                       value={newTitle}
                       onChange={onTitleChange}

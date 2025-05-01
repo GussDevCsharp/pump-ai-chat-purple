@@ -106,19 +106,23 @@ export function SidebarSessionCard({
                     (themeSelectButton as HTMLButtonElement).click();
                   }
                 }}
+                className="dark:text-gray-200 dark:hover:bg-white/5"
               >
                 <MessageSquare className="mr-2 h-4 w-4" />
                 Definir tema
               </DropdownMenuItem>
             )}
-            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onEdit(); }}>
+            <DropdownMenuItem 
+              onClick={(e) => { e.stopPropagation(); onEdit(); }}
+              className="dark:text-gray-200 dark:hover:bg-white/5"
+            >
               <Pencil className="mr-2 h-4 w-4" />
               Edit
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
+            <DropdownMenuSeparator className="dark:border-gray-700" />
             <DropdownMenuItem 
               onClick={(e) => { e.stopPropagation(); onDelete(); }}
-              className="text-red-500 hover:text-red-500 focus:text-red-500"
+              className="text-red-500 hover:text-red-500 focus:text-red-500 dark:text-red-400 dark:hover:text-red-300"
             >
               <Trash className="mr-2 h-4 w-4" />
               Delete

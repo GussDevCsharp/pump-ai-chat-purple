@@ -48,7 +48,7 @@ export function SidebarSessionGroup({
   return (
     <div className="space-y-1 mb-4">
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-        <CollapsibleTrigger className="flex items-center w-full px-3 py-1 text-sm font-medium text-pump-gray hover:text-pump-gray-dark">
+        <CollapsibleTrigger className="flex items-center w-full px-3 py-1 text-sm font-medium text-pump-gray hover:text-pump-gray-dark dark:text-gray-300 dark:hover:text-white">
           {isOpen ? (
             <ChevronDown className="w-4 h-4 mr-1.5" />
           ) : (
@@ -56,7 +56,7 @@ export function SidebarSessionGroup({
           )}
           {themeObj && themeObj.color && (
             <span
-              className="inline-block w-3 h-3 rounded-full mr-2 border border-pump-gray/30"
+              className="inline-block w-3 h-3 rounded-full mr-2 border border-pump-gray/30 dark:border-white/30"
               style={{ backgroundColor: themeObj.color }}
             />
           )}
@@ -68,24 +68,24 @@ export function SidebarSessionGroup({
             sessions.map(session => (
               <div key={session.id} className="relative">
                 {editingId === session.id ? (
-                  <div className="bg-white p-3 rounded-xl border-2 border-pump-purple shadow-md">
+                  <div className="bg-white p-3 rounded-xl border-2 border-pump-purple shadow-md dark:bg-[#1A1F2C] dark:border-pump-purple/70">
                     <Input
                       value={newTitle}
                       onChange={onTitleChange}
                       onKeyDown={(e) => onKeyPress && onKeyPress(e, session.id)}
                       autoFocus
-                      className="mb-2"
+                      className="mb-2 dark:bg-[#222222] dark:border-gray-700 dark:text-white"
                     />
                     <div className="flex justify-end gap-2">
                       <button 
                         onClick={onCancelEdit} 
-                        className="text-xs text-gray-500 hover:text-gray-700"
+                        className="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                       >
                         Cancelar
                       </button>
                       <button 
                         onClick={() => onSaveEdit && onSaveEdit(session.id)} 
-                        className="text-xs text-pump-purple hover:text-pump-purple/80"
+                        className="text-xs text-pump-purple hover:text-pump-purple/80 dark:text-pump-purple/90 dark:hover:text-pump-purple/70"
                       >
                         Salvar
                       </button>

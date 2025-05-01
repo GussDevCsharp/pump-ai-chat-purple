@@ -1,3 +1,4 @@
+
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { MessageSquare } from "lucide-react"
@@ -67,18 +68,18 @@ export const BusinessCard = ({
   }
 
   const getBadgeColor = (gradient: string) => {
-    if (gradient.includes('purple')) return 'bg-purple-100 text-purple-800';
-    if (gradient.includes('green')) return 'bg-green-100 text-green-800';
-    if (gradient.includes('blue')) return 'bg-blue-100 text-blue-800';
-    if (gradient.includes('orange') || gradient.includes('red')) return 'bg-orange-100 text-orange-800';
-    if (gradient.includes('indigo')) return 'bg-indigo-100 text-indigo-800';
-    if (gradient.includes('gray')) return 'bg-gray-100 text-gray-800';
-    return 'bg-gray-100 text-gray-800';
+    if (gradient.includes('purple')) return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-200';
+    if (gradient.includes('green')) return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200';
+    if (gradient.includes('blue')) return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200';
+    if (gradient.includes('orange') || gradient.includes('red')) return 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-200';
+    if (gradient.includes('indigo')) return 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-200';
+    if (gradient.includes('gray')) return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-200';
+    return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-200';
   }
 
   return (
     <Card 
-      className="border bg-transparent shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+      className="border border-[#E5E5E5] bg-offwhite shadow-sm hover:shadow-md transition-shadow cursor-pointer dark:bg-[#1A1F2C] dark:border-white/10"
       onClick={handleCardClick}
     >
       <CardHeader>
@@ -88,8 +89,8 @@ export const BusinessCard = ({
             {title}
           </Badge>
         </div>
-        <CardTitle className="text-xl text-gray-900">{title}</CardTitle>
-        <CardDescription className="text-pump-gray">{description}</CardDescription>
+        <CardTitle className="text-xl text-gray-900 dark:text-white">{title}</CardTitle>
+        <CardDescription className="text-pump-gray dark:text-gray-300">{description}</CardDescription>
         {themeName && (
           <div className="mt-2">
             <span
@@ -106,19 +107,20 @@ export const BusinessCard = ({
       <CardContent>
         <div className="space-y-2">
           {isLoading ? (
-            <div className="text-sm text-pump-gray">Carregando tópicos...</div>
+            <div className="text-sm text-pump-gray dark:text-gray-300">Carregando tópicos...</div>
           ) : prompts && prompts.length > 0 ? (
             prompts.map((prompt) => (
               <Button 
                 key={prompt.id}
                 variant="outline" 
-                className="w-full justify-start text-gray-700 hover:bg-gray-50 border-gray-200"
+                className="w-full justify-start text-gray-700 hover:bg-gray-50 border-gray-200 
+                  dark:text-gray-300 dark:border-gray-700 dark:bg-gray-800/50 dark:hover:bg-gray-700/50"
               >
                 {prompt.title}
               </Button>
             ))
           ) : (
-            <div className="text-sm text-pump-gray">Nenhum tópico encontrado</div>
+            <div className="text-sm text-pump-gray dark:text-gray-300">Nenhum tópico encontrado</div>
           )}
         </div>
       </CardContent>

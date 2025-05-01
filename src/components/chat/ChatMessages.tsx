@@ -1,3 +1,4 @@
+
 import { FormDataType } from "@/types/business-generator"
 import { useLocation } from "react-router-dom"
 import ReactMarkdown from 'react-markdown'
@@ -94,7 +95,7 @@ export const ChatMessages = ({ messages, isThinking }: ChatMessagesProps) => {
                     size="icon"
                     className="
                       absolute -top-2 -right-2 h-6 w-6 opacity-0 group-hover:opacity-100
-                      transition-opacity dark:text-white
+                      transition-opacity dark:text-white dark:hover:bg-white/10
                       z-10
                     "
                     onClick={() => handleCopy(message.content)}
@@ -111,7 +112,7 @@ export const ChatMessages = ({ messages, isThinking }: ChatMessagesProps) => {
                       h3: ({children}) =>
                         <h3 className="font-sans text-lg font-semibold text-pump-purple dark:text-white mb-2">{children}</h3>,
                       ul: ({children}) =>
-                        <ul className="font-sans list-disc ml-5 mb-2 text-base text-pump-purple dark:text-white">{children}</ul>,
+                        <ul className="font-sans list-disc ml-5 mb-2 text-base dark:text-white">{children}</ul>,
                       li: ({children}) =>
                         <li className="font-sans text-base text-gray-800 dark:text-gray-200 mb-1 leading-relaxed">{children}</li>,
                       p: ({children}) =>

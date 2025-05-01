@@ -27,7 +27,7 @@ export const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
         flex flex-col h-auto ${isMobile ? 'h-[280px]' : 'h-[320px]'} rounded-xl border border-[#E5E5E5] hover:shadow-xl 
         transform transition-all duration-200 cursor-pointer
         hover:scale-[1.02] shadow-md group
-        px-3 py-2 bg-offwhite dark:bg-black/40 dark:backdrop-blur-lg
+        px-3 py-2 bg-offwhite dark:bg-black/40 dark:backdrop-blur-lg dark:border-white/10
       `}
       style={{
         borderColor: "#E5E5E5"

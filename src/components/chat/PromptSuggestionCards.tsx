@@ -33,7 +33,7 @@ export const PromptSuggestionCards: React.FC<PromptSuggestionCardsProps> = ({
         <button
           type="button"
           key={prompt.id}
-          className="bg-white border border-pump-purple/20 rounded-lg px-4 py-2 shadow hover:bg-pump-purple/10 text-pump-purple font-medium text-sm transition-colors cursor-pointer flex items-center gap-2 dark:bg-black dark:border-white/10 dark:text-white dark:hover:bg-white/5"
+          className="bg-white border border-pump-purple/20 rounded-lg px-4 py-2 shadow-sm hover:bg-pump-purple/10 text-pump-purple font-medium text-sm transition-colors cursor-pointer flex items-center gap-2 dark:bg-black/40 dark:border-white/10 dark:text-white dark:hover:bg-white/10"
           onClick={() => onSelect(prompt)}
           style={{ minWidth: 120 }}
         >
@@ -43,4 +43,3 @@ export const PromptSuggestionCards: React.FC<PromptSuggestionCardsProps> = ({
     </div>
   );
 };
-

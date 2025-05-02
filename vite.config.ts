@@ -1,3 +1,4 @@
+
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
@@ -5,10 +6,9 @@ import { componentTagger } from "lovable-tagger";
 
 export default defineConfig(({ mode }) => ({
   server: {
-    host: "localhost", // garante que escute localmente
-    port: 5173,         // porta padrão do Vite
-    strictPort: true,   // erro se a porta estiver ocupada (melhor pra debug)
-    open: true          // tenta abrir no navegador automaticamente
+    host: "0.0.0.0", // Permite conexões de qualquer origem (necessário para Railway)
+    port: 8080,      // Porta 8080 conforme solicitado
+    strictPort: true // Erro se a porta estiver ocupada
   },
   build: {
     sourcemap: true,

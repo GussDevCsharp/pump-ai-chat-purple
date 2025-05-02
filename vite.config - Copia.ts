@@ -1,3 +1,4 @@
+
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
@@ -5,10 +6,8 @@ import { componentTagger } from "lovable-tagger";
 
 export default defineConfig(({ mode }) => ({
   server: {
-    host: "localhost", // garante que escute localmente
-    port: 5173,         // porta padrão do Vite
-    strictPort: true,   // erro se a porta estiver ocupada (melhor pra debug)
-    open: true          // tenta abrir no navegador automaticamente
+    host: "::",
+    port: 8080,
   },
   build: {
     sourcemap: true,
@@ -18,13 +17,15 @@ export default defineConfig(({ mode }) => ({
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
+          // Fix: Don't reference a directory directly, specify individual files or use dynamic imports
         }
       }
     }
   },
   plugins: [
     react(),
-    mode === 'development' && componentTagger(),
+    mode === 'development' &&
+    componentTagger(),
   ].filter(Boolean),
   resolve: {
     alias: {

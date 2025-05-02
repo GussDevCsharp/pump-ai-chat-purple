@@ -73,7 +73,7 @@ export default function Login() {
           <div className="text-center">
             <Link to="/">
               <img 
-                src="/uploads/chatpump-logo-transparent.png" 
+                src="\img\CHATPUMP PNG.png" 
                 alt="ChatPump"
                 className="h-12 mx-auto"
               />

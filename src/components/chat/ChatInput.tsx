@@ -24,19 +24,19 @@ export const ChatInput = ({
   const [isLoading, setIsLoading] = useState(false)
   const [isPressHolding, setIsPressHolding] = useState(false)
   const pressTimer = useRef<number | null>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
   const { toast } = useToast()
 
-  // Adiciona um callback para enviar automaticamente a transcrição
+  // Adiciona um callback para colocar o texto transcrito no input sem envio automático
   const handleTranscriptionComplete = (text: string) => {
     if (text && text.trim() !== "") {
-      // Definir o texto no input primeiro
       setMessage(text);
-      
-      // Enviar a mensagem automaticamente após um breve delay
-      // para garantir que a UI foi atualizada
+      // Ajustar a altura do textarea após definir a mensagem
       setTimeout(() => {
-        handleSubmit(text);
-      }, 300);
+        if (textareaRef.current) {
+          autoResizeTextarea(textareaRef.current);
+        }
+      }, 10);
     }
   };
 
@@ -66,6 +66,11 @@ export const ChatInput = ({
       setIsLoading(true);
       onSendMessage(textToSend);
       setMessage("");
+      
+      // Resetar altura do textarea após enviar
+      if (textareaRef.current) {
+        textareaRef.current.style.height = 'auto';
+      }
     } catch (error) {
       toast({
         variant: "destructive",
@@ -78,8 +83,7 @@ export const ChatInput = ({
   };
 
   // Função para ajustar a altura do textarea conforme o conteúdo
-  const autoResizeTextarea = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const textarea = e.target;
+  const autoResizeTextarea = (textarea: HTMLTextAreaElement) => {
     textarea.style.height = 'auto';
     textarea.style.height = `${Math.min(textarea.scrollHeight, 150)}px`;
   };
@@ -132,6 +136,13 @@ export const ChatInput = ({
     };
   }, []);
 
+  // Atualiza a altura do textarea sempre que a mensagem mudar
+  useEffect(() => {
+    if (textareaRef.current) {
+      autoResizeTextarea(textareaRef.current);
+    }
+  }, [message]);
+
   // Ondas de áudio para visualização
   const AudioWaveform = () => {
     return (
@@ -181,12 +192,12 @@ export const ChatInput = ({
         </div>
       )}
 
-      <div className="relative flex items-center">
+      <div className="relative flex flex-col">
         <textarea
+          ref={textareaRef}
           value={message}
           onChange={(e) => {
             setMessage(e.target.value);
-            autoResizeTextarea(e);
           }}
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
@@ -198,23 +209,25 @@ export const ChatInput = ({
           rows={1}
           placeholder="Digite sua mensagem..."
           disabled={isLoading || isAudioLoading}
-          style={{ minHeight: '44px', maxHeight: '150px' }}
+          style={{ minHeight: '44px', maxHeight: '150px', overflowY: 'auto' }}
         />
-        {isRecording && (
-          <span className="absolute flex items-center gap-1 right-28 text-xs text-red-500">
-            <AudioWaveform />
-            <span className="ml-1">Gravando...</span>
-          </span>
-        )}
-        {isAudioLoading && (
-          <span className="absolute flex items-center gap-1 right-28 text-xs text-gray-500 dark:text-gray-400">
-            <LoadingDots />
-            <span className="ml-1">Transcrevendo...</span>
-          </span>
-        )}
+        
+        <div className="absolute right-12 top-1/2 -translate-y-1/2 flex items-center gap-2">
+          {isRecording && (
+            <span className="flex items-center gap-1 text-xs text-red-500">
+              <AudioWaveform />
+            </span>
+          )}
+          {isAudioLoading && (
+            <span className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+              <LoadingDots />
+            </span>
+          )}
+        </div>
+
         <button
           type="button"
-          className={`absolute right-12 p-1.5 rounded-full transition-colors ${
+          className={`absolute right-12 top-1/2 -translate-y-1/2 p-1.5 rounded-full transition-colors ${
             isRecording 
               ? 'bg-red-500/10 text-red-500 animate-pulse' 
               : 'text-pump-purple dark:text-white hover:bg-pump-purple/10'
@@ -235,12 +248,34 @@ export const ChatInput = ({
         </button>
         <button
           type="button"
-          className="absolute right-3 p-1 text-pump-purple dark:text-white hover:text-pump-purple/80 dark:hover:text-white/80 transition-colors disabled:opacity-50"
+          className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-pump-purple dark:text-white hover:text-pump-purple/80 dark:hover:text-white/80 transition-colors disabled:opacity-50"
           onClick={() => handleSubmit()}
           disabled={isLoading}
         >
           <SendHorizontal className="w-5 h-5" />
         </button>
+        
+        {/* Indicador de gravação abaixo do input */}
+        {isRecording && (
+          <div className="mt-2 flex items-center gap-2 text-red-500 text-xs animate-pulse">
+            <div className="flex items-center gap-1">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div 
+                  key={i}
+                  className="animate-audio-wave"
+                  style={{
+                    width: '2px', 
+                    background: 'currentColor',
+                    borderRadius: '2px',
+                    height: `${5 + Math.sin(i/2) * 10}px`,
+                    animationDelay: `${i * 0.1}s`
+                  }}
+                />
+              ))}
+            </div>
+            <span>Gravando áudio...</span>
+          </div>
+        )}
       </div>
     </div>
   )

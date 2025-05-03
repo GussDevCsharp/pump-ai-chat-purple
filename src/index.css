@@ -92,9 +92,9 @@
 }
 
 @keyframes audio-wave-pulse {
-  0% { transform: scaleY(0.3); }
+  0% { transform: scaleY(0.15); }
   50% { transform: scaleY(1); }
-  100% { transform: scaleY(0.3); }
+  100% { transform: scaleY(0.15); }
 }
 
 .animate-slide-in-left {
@@ -169,4 +169,9 @@
     min-height: 36px;
     min-width: 36px;
   }
+}
+
+/* Custom width classes for the audio visualization */
+.w-0\.75 {
+  width: 0.1875rem;
 }

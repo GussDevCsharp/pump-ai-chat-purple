@@ -1,22 +1,13 @@
 
-import { ChatSession } from "@/hooks/useChatSessions"
-import {
-  MoreVertical,
-  MessageSquare,
-  Pencil,
-  Trash,
-} from "lucide-react"
+import { useState } from "react"
+import { MessageSquare } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ThemeSelect } from "@/components/chat/ThemeSelect"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { useIsMobile } from "@/hooks/use-mobile"
-import { useState } from "react"
+import { ChatSession } from "@/hooks/useChatSessions"
+import { SessionCardMenu } from "./components/SessionCardMenu"
+import { EditableTitle } from "./components/EditableTitle"
+import { DeleteConfirmationDialog } from "./components/DeleteConfirmationDialog"
 
 interface SidebarSessionCardProps {
   session: ChatSession
@@ -81,6 +72,14 @@ export function SidebarSessionCard({
     setShowDeleteConfirmation(false);
   }
   
+  const handleThemeSelect = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const themeSelectButton = document.querySelector(`[data-session-id="${session.id}"] .theme-select-button`);
+    if (themeSelectButton) {
+      (themeSelectButton as HTMLButtonElement).click();
+    }
+  }
+  
   return (
     <div
       onClick={onOpen}
@@ -103,41 +102,15 @@ export function SidebarSessionCard({
       </div>
       
       <div className="flex flex-col min-w-0 flex-1">
-        {isEditing ? (
-          <div className="flex items-center w-full" onClick={(e) => e.stopPropagation()}>
-            <input 
-              type="text" 
-              value={editTitle} 
-              onChange={handleTitleChange}
-              onClick={(e) => e.stopPropagation()}
-              className="text-sm px-2 py-1 w-full rounded border border-pump-gray/20 mr-1 bg-offwhite dark:bg-[#222222] dark:text-white dark:border-gray-700"
-              autoFocus
-            />
-            <div className="flex space-x-1">
-              <button 
-                onClick={handleSaveEdit} 
-                className="text-xs text-pump-purple hover:text-pump-purple/80 p-1"
-              >
-                ✓
-              </button>
-              <button 
-                onClick={handleCancelEdit} 
-                className="text-xs text-gray-500 hover:text-gray-700 p-1"
-              >
-                ✕
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className="flex items-center justify-between">
-            <p className={cn(
-              "text-sm font-medium truncate max-w-[120px] sm:max-w-[160px]",
-              isActive 
-                ? "text-pump-gray-dark dark:text-white" 
-                : "text-pump-gray dark:text-gray-300"
-            )}>{session.title}</p>
-          </div>
-        )}
+        <EditableTitle 
+          isEditing={isEditing}
+          editTitle={editTitle}
+          handleTitleChange={handleTitleChange}
+          handleSaveEdit={handleSaveEdit}
+          handleCancelEdit={handleCancelEdit}
+          title={session.title}
+          isActive={isActive}
+        />
         
         <span className="text-xs text-pump-gray-light dark:text-gray-400">
           {new Date(session.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
@@ -145,29 +118,10 @@ export function SidebarSessionCard({
       </div>
 
       {showDeleteConfirmation && (
-        <div 
-          className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-offwhite dark:bg-[#222222] p-4 rounded-lg shadow-lg border border-gray-300 dark:border-gray-700"
-          onClick={(e) => e.stopPropagation()}
-          style={{ width: '240px' }}
-        >
-          <div className="flex flex-col items-center space-y-3">
-            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Confirmar exclusão?</p>
-            <div className="flex items-center space-x-3 w-full justify-center">
-              <button 
-                onClick={handleConfirmDelete}
-                className="px-4 py-2 bg-red-500 text-white rounded text-sm hover:bg-red-600 transition-colors dark:bg-red-600 dark:hover:bg-red-700"
-              >
-                Sim
-              </button>
-              <button 
-                onClick={handleCancelDelete}
-                className="px-4 py-2 bg-gray-200 text-gray-800 rounded text-sm hover:bg-gray-300 transition-colors dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
-              >
-                Não
-              </button>
-            </div>
-          </div>
-        </div>
+        <DeleteConfirmationDialog
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCancelDelete}
+        />
       )}
 
       <div className="flex items-center space-x-1 sm:space-x-2">
@@ -179,53 +133,14 @@ export function SidebarSessionCard({
           />
         )}
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button 
-              onClick={(e) => e.stopPropagation()} 
-              className={cn(
-                "w-8 h-8 flex items-center justify-center rounded opacity-0 group-hover:opacity-100 transition-opacity",
-                isActive 
-                  ? "hover:bg-pump-gray-light/30 dark:hover:bg-white/5" 
-                  : "hover:bg-offwhite dark:hover:bg-white/5"
-              )}
-            >
-              <MoreVertical className="w-4 h-4" />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="bg-offwhite dark:bg-[#222222] border-gray-200 dark:border-gray-700">
-            {isMobile && (
-              <DropdownMenuItem 
-                onClick={(e) => { 
-                  e.stopPropagation();
-                  const themeSelectButton = document.querySelector(`[data-session-id="${session.id}"] .theme-select-button`);
-                  if (themeSelectButton) {
-                    (themeSelectButton as HTMLButtonElement).click();
-                  }
-                }}
-                className="dark:text-gray-200 dark:hover:bg-white/5"
-              >
-                <MessageSquare className="mr-2 h-4 w-4" />
-                Definir tema
-              </DropdownMenuItem>
-            )}
-            <DropdownMenuItem 
-              onClick={(e) => { e.stopPropagation(); handleEditClick(e); }}
-              className="dark:text-gray-200 dark:hover:bg-white/5"
-            >
-              <Pencil className="mr-2 h-4 w-4" />
-              Editar
-            </DropdownMenuItem>
-            <DropdownMenuSeparator className="dark:border-gray-700" />
-            <DropdownMenuItem 
-              onClick={(e) => { e.stopPropagation(); handleDeleteClick(e); }}
-              className="text-red-500 hover:text-red-500 focus:text-red-500 dark:text-red-400 dark:hover:text-red-300"
-            >
-              <Trash className="mr-2 h-4 w-4" />
-              Excluir
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <SessionCardMenu
+          sessionId={session.id}
+          isMobile={isMobile}
+          isActive={isActive}
+          onEditClick={handleEditClick}
+          onDeleteClick={handleDeleteClick}
+          onThemeSelect={handleThemeSelect}
+        />
       </div>
     </div>
   )

@@ -6,6 +6,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { VoiceRecordButton } from "./VoiceRecordButton";
 import { RecordingIndicator } from "./RecordingIndicator";
 import { SuggestedPrompts } from "./SuggestedPrompts";
+import { useAudioVisualization } from "@/hooks/useAudioVisualization";
 
 interface ChatInputAreaProps {
   suggestedPrompts?: string[];
@@ -45,6 +46,9 @@ export const ChatInputArea = ({
     startRecording,
     stopRecording,
   } = useAudioTranscription(handleTranscriptionComplete);
+
+  // Get audio visualization levels
+  const audioLevel = useAudioVisualization(isRecording);
 
   // Limpar o título do prompt furtivo quando a mensagem for vazia
   useEffect(() => {
@@ -135,6 +139,7 @@ export const ChatInputArea = ({
                 isRecording={isRecording} 
                 isLoading={isAudioLoading}
                 isMobile={isMobile}
+                audioLevel={audioLevel}
               />
             )}
           </div>

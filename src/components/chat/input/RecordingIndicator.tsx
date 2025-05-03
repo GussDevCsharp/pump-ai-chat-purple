@@ -24,6 +24,16 @@ export const RecordingIndicator = ({
     <div className="flex items-center gap-2 text-xs">
       {isRecording && (
         <div className="flex items-center gap-2 text-pump-purple">
+          {onCancel && (
+            <button
+              className="flex items-center justify-center w-6 h-6 bg-white dark:bg-gray-800 rounded-full transition-colors hover:bg-gray-100 dark:hover:bg-gray-700 shadow-sm border border-gray-200 dark:border-gray-700"
+              onClick={onCancel}
+              title="Cancelar gravação"
+              aria-label="Cancelar gravação"
+            >
+              <X className="w-3.5 h-3.5 text-gray-500" />
+            </button>
+          )}
           <AudioWaveform className="w-4 h-4" />
           <div className="h-4 w-24 bg-pump-purple/10 rounded-full overflow-hidden flex items-center">
             {[1, 2, 3, 4, 5, 6, 7].map((i) => (
@@ -39,17 +49,6 @@ export const RecordingIndicator = ({
             ))}
           </div>
           <span>{isMobile ? "Gravando..." : "Gravando áudio..."}</span>
-          
-          {onCancel && (
-            <button
-              className="ml-1 p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
-              onClick={onCancel}
-              title="Cancelar gravação"
-              aria-label="Cancelar gravação"
-            >
-              <X className="w-4 h-4 text-gray-500" />
-            </button>
-          )}
         </div>
       )}
       

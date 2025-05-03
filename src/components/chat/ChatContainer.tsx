@@ -12,11 +12,13 @@ import { useChatTheme } from "@/hooks/useChatTheme"
 import { useChatMessages } from "@/hooks/useChatMessages"
 import { ChatContent } from "./ChatContent"
 import { useChatSendMessage } from "@/hooks/useChatSendMessage"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 export const ChatContainer = () => {
   const [searchParams] = useSearchParams()
   const sessionId = searchParams.get('session')
   const themeFromUrl = searchParams.get('theme')
+  const isMobile = useIsMobile()
   
   const { sessions } = useChatSessions()
   const { authStatus, remainingInteractions } = useChatAuth()
@@ -61,7 +63,7 @@ export const ChatContainer = () => {
 
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden relative">
-      <BackButton />
+      <BackButton isMobile={isMobile} />
       <Watermark />
       {authStatus === 'anonymous' && (
         <AuthBanner remainingInteractions={remainingInteractions} />

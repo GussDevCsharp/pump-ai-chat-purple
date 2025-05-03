@@ -1,21 +1,22 @@
 
 import React from "react";
 import LoadingDots from "../LoadingDots";
-import { History } from "lucide-react";
-import { AudioWaveform } from "lucide-react";
+import { History, AudioWaveform, X } from "lucide-react";
 
 interface RecordingIndicatorProps {
   isRecording: boolean;
   isLoading: boolean;
   isMobile: boolean;
   audioLevel?: number;
+  onCancel?: () => void;
 }
 
 export const RecordingIndicator = ({ 
   isRecording, 
   isLoading,
   isMobile,
-  audioLevel = 0
+  audioLevel = 0,
+  onCancel
 }: RecordingIndicatorProps) => {
   if (!isRecording && !isLoading) return null;
   
@@ -38,6 +39,17 @@ export const RecordingIndicator = ({
             ))}
           </div>
           <span>{isMobile ? "Gravando..." : "Gravando áudio..."}</span>
+          
+          {onCancel && (
+            <button
+              className="ml-1 p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+              onClick={onCancel}
+              title="Cancelar gravação"
+              aria-label="Cancelar gravação"
+            >
+              <X className="w-4 h-4 text-gray-500" />
+            </button>
+          )}
         </div>
       )}
       

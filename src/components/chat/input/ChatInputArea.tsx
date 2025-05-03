@@ -51,8 +51,9 @@ export const ChatInputArea = ({
   const handleCancelRecording = () => {
     // Stop recording without transcribing
     if (isRecording) {
-      stopRecording();
-      // No callback will be processed since we're just canceling
+      // Passing true to stopRecording to indicate this is a cancellation
+      // We need to modify the hook to support this cancellation mode
+      stopRecording(true); // true means cancel without processing audio
     }
   };
 

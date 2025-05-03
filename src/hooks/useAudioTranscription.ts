@@ -7,7 +7,7 @@ interface UseAudioTranscriptionResult {
   isLoading: boolean;
   error: string | null;
   startRecording: () => void;
-  stopRecording: (autoSend?: boolean) => void;
+  stopRecording: (cancelMode?: boolean) => void;
   transcript: string;
   resetTranscript: () => void;
 }
@@ -49,69 +49,76 @@ export function useAudioTranscription(
       };
 
       mediaRecorder.onstop = async () => {
-        setIsLoading(true);
-        try {
-          console.log("Gravação parada, processando áudio...");
-          const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
-          
-          // Converte o áudio gravado em base64 para enviar à função
-          const arrayBuffer = await audioBlob.arrayBuffer();
-          const uint8Array = new Uint8Array(arrayBuffer);
-          let binary = '';
-          
-          // Processar em chunks para evitar problemas de memória
-          const chunkSize = 1024;
-          for (let i = 0; i < uint8Array.length; i += chunkSize) {
-            const chunk = uint8Array.slice(i, Math.min(i + chunkSize, uint8Array.length));
-            binary += String.fromCharCode.apply(null, Array.from(chunk));
-          }
-          
-          const base64Audio = btoa(binary);
-          console.log(`Áudio convertido para base64, tamanho: ${base64Audio.length}`);
-
-          console.log("Enviando áudio para o serviço de transcrição...");
-          const response = await supabase.functions.invoke("voice-to-text", {
-            body: { audio: base64Audio }
-          });
-
-          if (response.error) {
-            throw new Error(response.error.message || "Falha na transcrição do áudio.");
-          }
-          
-          const data = response.data;
-          if (data && data.text) {
-            console.log("Transcrição recebida:", data.text);
-            setTranscript(data.text);
+        // Verificamos se a gravação foi cancelada pelo flag cancelMode no stopRecording
+        if (!mediaRecorderRef.current?.cancelMode) {
+          setIsLoading(true);
+          try {
+            console.log("Gravação parada, processando áudio...");
+            const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
             
-            // Chamar o callback apenas se existir texto transcrito e for válido
-            if (onTranscriptionComplete && data.text.trim() !== "") {
-              console.log("Chamando callback de transcrição completa com texto:", data.text);
-              onTranscriptionComplete(data.text);
-            } else {
-              console.log("Nenhum callback de transcrição chamado: ", 
-                onTranscriptionComplete ? "texto vazio" : "callback não definido");
+            // Converte o áudio gravado em base64 para enviar à função
+            const arrayBuffer = await audioBlob.arrayBuffer();
+            const uint8Array = new Uint8Array(arrayBuffer);
+            let binary = '';
+            
+            // Processar em chunks para evitar problemas de memória
+            const chunkSize = 1024;
+            for (let i = 0; i < uint8Array.length; i += chunkSize) {
+              const chunk = uint8Array.slice(i, Math.min(i + chunkSize, uint8Array.length));
+              binary += String.fromCharCode.apply(null, Array.from(chunk));
             }
-          } else if (data && data.error) {
-            throw new Error(data.error);
-          } else {
-            throw new Error("Resposta do serviço de transcrição inválida.");
+            
+            const base64Audio = btoa(binary);
+            console.log(`Áudio convertido para base64, tamanho: ${base64Audio.length}`);
+
+            console.log("Enviando áudio para o serviço de transcrição...");
+            const response = await supabase.functions.invoke("voice-to-text", {
+              body: { audio: base64Audio }
+            });
+
+            if (response.error) {
+              throw new Error(response.error.message || "Falha na transcrição do áudio.");
+            }
+            
+            const data = response.data;
+            if (data && data.text) {
+              console.log("Transcrição recebida:", data.text);
+              setTranscript(data.text);
+              
+              // Chamar o callback apenas se existir texto transcrito e for válido
+              if (onTranscriptionComplete && data.text.trim() !== "") {
+                console.log("Chamando callback de transcrição completa com texto:", data.text);
+                onTranscriptionComplete(data.text);
+              } else {
+                console.log("Nenhum callback de transcrição chamado: ", 
+                  onTranscriptionComplete ? "texto vazio" : "callback não definido");
+              }
+            } else if (data && data.error) {
+              throw new Error(data.error);
+            } else {
+              throw new Error("Resposta do serviço de transcrição inválida.");
+            }
+          } catch (err: any) {
+            console.error("Erro ao processar áudio:", err);
+            let errorMessage = err.message || "Erro ao processar o áudio.";
+            
+            // Verificar se é um erro relacionado à chave da API
+            if (
+              errorMessage.includes("OpenAI") && 
+              (errorMessage.includes("chave") || errorMessage.includes("API key") || 
+               errorMessage.includes("table") || errorMessage.includes("tabela"))
+            ) {
+              errorMessage = "Chave da API do OpenAI não encontrada ou inválida. Verifique a configuração.";
+            }
+            
+            setError(errorMessage);
+          } finally {
+            setIsLoading(false);
           }
-        } catch (err: any) {
-          console.error("Erro ao processar áudio:", err);
-          let errorMessage = err.message || "Erro ao processar o áudio.";
-          
-          // Verificar se é um erro relacionado à chave da API
-          if (
-            errorMessage.includes("OpenAI") && 
-            (errorMessage.includes("chave") || errorMessage.includes("API key") || 
-             errorMessage.includes("table") || errorMessage.includes("tabela"))
-          ) {
-            errorMessage = "Chave da API do OpenAI não encontrada ou inválida. Verifique a configuração.";
-          }
-          
-          setError(errorMessage);
-        } finally {
-          setIsLoading(false);
+        } else {
+          console.log("Gravação cancelada pelo usuário, áudio descartado.");
+          // Remover a flag de cancelamento
+          delete mediaRecorderRef.current?.cancelMode;
         }
       };
 
@@ -124,9 +131,16 @@ export function useAudioTranscription(
     }
   }, [onTranscriptionComplete]);
 
-  const stopRecording = useCallback(() => {
+  const stopRecording = useCallback((cancelMode = false) => {
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
-      console.log("Parando gravação...");
+      console.log(cancelMode ? "Cancelando gravação..." : "Parando gravação...");
+      
+      // Add a custom property to the mediaRecorder to signal cancellation
+      // TypeScript doesn't know about this property, so we need to use a type assertion
+      if (cancelMode) {
+        (mediaRecorderRef.current as any).cancelMode = true;
+      }
+      
       mediaRecorderRef.current.stop();
       mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
       setIsRecording(false);

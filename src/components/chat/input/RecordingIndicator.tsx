@@ -1,7 +1,7 @@
 
 import React from "react";
 import LoadingDots from "../LoadingDots";
-import { History, AudioWaveform, X } from "lucide-react";
+import { History, X } from "lucide-react";
 
 interface RecordingIndicatorProps {
   isRecording: boolean;
@@ -34,7 +34,6 @@ export const RecordingIndicator = ({
               <X className="w-3.5 h-3.5 text-gray-500" />
             </button>
           )}
-          <AudioWaveform className="w-4 h-4" />
           <div className="h-4 w-24 bg-pump-purple/10 rounded-full overflow-hidden flex items-center">
             {[1, 2, 3, 4, 5, 6, 7].map((i) => (
               <div 

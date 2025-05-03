@@ -128,7 +128,13 @@ export const ChatInputArea = ({
         />
         
         {/* Área de botões abaixo do input - responsiva para mobile */}
-        <div className="flex justify-end items-center gap-2 mt-2">
+        <div className="flex justify-end items-center gap-2 mt-2 relative">
+          <RecordingIndicator 
+            isRecording={isRecording} 
+            isLoading={isAudioLoading}
+            isMobile={isMobile}
+          />
+          
           <VoiceRecordButton
             isRecording={isRecording}
             isLoading={isLoading}
@@ -145,12 +151,6 @@ export const ChatInputArea = ({
             <SendHorizontal className="w-5 h-5" />
           </button>
         </div>
-        
-        <RecordingIndicator 
-          isRecording={isRecording} 
-          isLoading={isAudioLoading}
-          isMobile={isMobile}
-        />
       </div>
     </div>
   );

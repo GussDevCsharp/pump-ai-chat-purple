@@ -1,12 +1,10 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import { handleGetApiKey, handleGetLogs, handleChatMessage } from "./handler-service.ts"
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+import { handleGetApiKey } from "./handlers/api-key-handler.ts"
+import { handleGetLogs } from "./handlers/logs-handler.ts" 
+import { handleChatMessage } from "./handlers/chat-handler.ts"
+import { corsHeaders } from "./utils/cors.ts"
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {

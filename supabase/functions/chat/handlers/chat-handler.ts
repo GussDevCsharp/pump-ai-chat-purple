@@ -1,63 +1,15 @@
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import { getSystemPrompts } from "./prompt-service.ts"
-import { savePromptLog } from "./log-service.ts"
-import { createChatPayload, callOpenAI } from "./api-service.ts"
-import { getUserProfiles, createFurtivePromptFragments } from "./profile-service.ts"
+import { createChatPayload, callOpenAI } from "../api-service.ts"
+import { getSystemPrompts } from "../prompt-service.ts"
+import { savePromptLog } from "../log-service.ts"
+import { getUserProfiles, createFurtivePromptFragments } from "../profile-service.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// Handler for API key retrieval
-export async function handleGetApiKey(supabase: ReturnType<typeof createClient>) {
-  console.log('Getting API key')
-  
-  const { data, error } = await supabase
-    .from('modelkeys')
-    .select('apikey')
-    .eq('model', 'OpenAI')
-    .single()
-
-  if (error) {
-    throw new Error(`Could not fetch API key: ${error.message}`)
-  }
-
-  return new Response(
-    JSON.stringify({ apiKey: data.apikey }),
-    { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-  )
-}
-
-// Handler for prompt logs
-export async function handleGetLogs(supabase: ReturnType<typeof createClient>, email: string) {
-  if (!email) {
-    return new Response(JSON.stringify({ error: 'Email is required' }), { 
-      status: 400, 
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-    })
-  }
-  
-  const { data, error } = await supabase
-    .from('prompt_logs')
-    .select('*')
-    .eq('user_email', email)
-    .order('created_at', { ascending: false })
-    .limit(10)
-  
-  if (error) {
-    console.error("Error fetching logs:", error)
-    throw new Error(`Could not fetch logs: ${error.message}`)
-  }
-  
-  return new Response(
-    JSON.stringify({ logs: data }),
-    { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-  )
-}
-
-// Main handler for chat messages
 export async function handleChatMessage(supabase: ReturnType<typeof createClient>, requestData: {
   message: string;
   themeId?: string | null;

@@ -18,21 +18,38 @@ export function useChatMessages(
   const interpolatePatternPrompt = (
     pattern: string,
     userQuery: string,
-    business: Record<string, string>
+    business: Record<string, string>,
+    themeTitle?: string
   ) => {
     let filled = pattern
     for (const key in business) {
       filled = filled.replace(new RegExp(`{{\\s*${key}\\s*}}`, "g"), business[key])
     }
     filled = filled.replace(/{{\s*user_query\s*}}/g, userQuery)
+    
+    // Substituir [subtema] pelo título do tema se disponível
+    if (themeTitle) {
+      filled = filled.replace(/\[subtema\]/g, themeTitle)
+    }
+    
     return filled
   }
 
-  const substitutePromptTags = (prompt: string, business: Record<string, string>) => {
+  const substitutePromptTags = (
+    prompt: string, 
+    business: Record<string, string>,
+    themeTitle?: string
+  ) => {
     let result = prompt
     for (const key in business) {
       result = result.replace(new RegExp(`{{\\s*${key}\\s*}}`, "g"), business[key])
     }
+    
+    // Substituir [subtema] pelo título do tema se disponível
+    if (themeTitle) {
+      result = result.replace(/\[subtema\]/g, themeTitle)
+    }
+    
     return result
   }
 

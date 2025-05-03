@@ -33,7 +33,7 @@ export const ChatContainer = () => {
   
   const sessionThemeId = currentSession?.theme_id ?? themeFromUrl
   
-  const { currentThemeId, patternPrompt, themePrompts, isThemePromptsLoading } = useChatTheme(sessionThemeId)
+  const { currentThemeId, patternPrompt, themePrompts, isThemePromptsLoading, currentThemeName } = useChatTheme(sessionThemeId)
   const { messages, setMessages, isThinking, setIsThinking, saveLocalMessages } = useChatSession(sessionId)
   
   const handleSendMessage = async (content: string) => {
@@ -69,10 +69,10 @@ export const ChatContainer = () => {
 
       if (furtivePromptSnapshot) {
         if (!content.trim()) {
-          aiMessageToSend = substitutePromptTags(furtivePromptSnapshot.text, businessData)
+          aiMessageToSend = substitutePromptTags(furtivePromptSnapshot.text, businessData, currentThemeName)
         } else {
           aiMessageToSend =
-            substitutePromptTags(furtivePromptSnapshot.text, businessData) +
+            substitutePromptTags(furtivePromptSnapshot.text, businessData, currentThemeName) +
             " " +
             content
         }
@@ -80,7 +80,8 @@ export const ChatContainer = () => {
         aiMessageToSend = interpolatePatternPrompt(
           patternPrompt.pattern_prompt,
           content,
-          businessData
+          businessData,
+          currentThemeName
         )
       }
 
@@ -94,7 +95,7 @@ export const ChatContainer = () => {
           message: aiMessageToSend,
           themeId: currentThemeId,
           userEmail: user?.email,
-          sessionId: currentSessionId // Agora enviamos o ID da sessão
+          sessionId: currentSessionId
         }),
       })
 

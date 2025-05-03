@@ -120,16 +120,30 @@
 /* Ajustes gerais de responsividade */
 @media (max-width: 640px) {
   .container {
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
   }
   
   h1 {
-    font-size: 1.75rem !important;
+    font-size: 1.5rem !important;
   }
   
   h2 {
-    font-size: 1.5rem !important;
+    font-size: 1.25rem !important;
+  }
+  
+  /* Ajustes específicos para a interface de chat em mobile */
+  .chat-input-container {
+    padding: 0.75rem;
+  }
+  
+  .chat-button {
+    padding: 0.375rem;
+  }
+  
+  .chat-textarea {
+    padding: 0.75rem;
+    font-size: 0.875rem;
   }
 }
 
@@ -138,4 +152,11 @@
   input, textarea, select, button {
     font-size: 16px;
   }
+  
+  /* Melhorar área de toque para dispositivos móveis */
+  button {
+    min-height: 36px;
+    min-width: 36px;
+  }
 }
+

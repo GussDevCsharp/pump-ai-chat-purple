@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
 import { useAudioTranscription } from "@/hooks/useAudioTranscription"
 import LoadingDots from "./LoadingDots"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 interface ChatInputProps {
   suggestedPrompts?: string[]
@@ -26,6 +27,7 @@ export const ChatInput = ({
   const pressTimer = useRef<number | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const { toast } = useToast()
+  const isMobile = useIsMobile()
 
   // Adiciona um callback para colocar o texto transcrito no input sem envio automático
   const handleTranscriptionComplete = (text: string) => {
@@ -143,25 +145,6 @@ export const ChatInput = ({
     }
   }, [message]);
 
-  // Ondas de áudio para visualização
-  const AudioWaveform = () => {
-    return (
-      <div className="flex items-center gap-1">
-        {[1, 2, 3, 4].map((i) => (
-          <div
-            key={i}
-            className={`w-0.5 bg-red-500 rounded-full animate-pulse`}
-            style={{
-              height: `${8 + Math.random() * 12}px`,
-              animationDelay: `${i * 0.1}s`,
-              animationDuration: `${0.7 + Math.random() * 0.3}s`
-            }}
-          />
-        ))}
-      </div>
-    );
-  };
-
   return (
     <div className="w-full max-w-3xl mx-auto p-4 border-t border-pump-gray/20 bg-offwhite dark:bg-[#1A1F2C]">
       {furtivePromptTitle && (
@@ -212,7 +195,7 @@ export const ChatInput = ({
           style={{ minHeight: '44px', maxHeight: '150px', overflowY: 'auto' }}
         />
         
-        {/* Área de botões abaixo do input */}
+        {/* Área de botões abaixo do input - responsiva para mobile */}
         <div className="flex justify-end items-center gap-2 mt-2">
           <button
             type="button"
@@ -264,14 +247,14 @@ export const ChatInput = ({
                 />
               ))}
             </div>
-            <span>Gravando áudio...</span>
+            <span>{isMobile ? "Gravando..." : "Gravando áudio..."}</span>
           </div>
         )}
         
         {isAudioLoading && (
           <div className="mt-2 flex items-center gap-2 text-gray-500 dark:text-gray-400 text-xs">
             <LoadingDots />
-            <span>Processando áudio...</span>
+            <span>{isMobile ? "Processando..." : "Processando áudio..."}</span>
           </div>
         )}
       </div>

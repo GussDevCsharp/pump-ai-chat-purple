@@ -165,3 +165,4 @@ export const ChatInput = ({
       </div>
     </div>
   )
+}

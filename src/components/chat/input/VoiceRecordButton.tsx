@@ -62,7 +62,7 @@ export const VoiceRecordButton = ({
       type="button"
       className={`p-2 rounded-full transition-colors ${
         isRecording 
-          ? 'bg-red-500/10 text-red-500 animate-pulse' 
+          ? 'bg-pump-purple text-white' 
           : 'text-pump-purple dark:text-white hover:bg-pump-purple/10'
       } disabled:opacity-50`}
       onClick={handleVoiceButtonClick}

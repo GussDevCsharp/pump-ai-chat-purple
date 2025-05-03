@@ -1,6 +1,11 @@
 
 import { useEffect, useState, useRef } from 'react';
 
+// Define a type for the AudioContext to handle browser prefixes
+interface WindowWithAudioContext extends Window {
+  webkitAudioContext?: typeof AudioContext;
+}
+
 export function useAudioVisualization(isRecording: boolean): number {
   const [audioLevel, setAudioLevel] = useState(0);
   const analyserRef = useRef<AnalyserNode | null>(null);
@@ -25,8 +30,16 @@ export function useAudioVisualization(isRecording: boolean): number {
         autoGainControl: true
       } })
       .then(stream => {
-        // Create audio context and analyzer
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        // Create audio context and analyzer with proper type handling
+        const windowWithAudio = window as WindowWithAudioContext;
+        const AudioContextClass = window.AudioContext || windowWithAudio.webkitAudioContext;
+        
+        if (!AudioContextClass) {
+          console.error("AudioContext is not supported in this browser");
+          return;
+        }
+        
+        const audioContext = new AudioContextClass();
         const analyser = audioContext.createAnalyser();
         analyser.fftSize = 256;
         

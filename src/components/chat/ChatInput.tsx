@@ -3,7 +3,6 @@ import { useState, useEffect, useRef } from "react"
 import { SendHorizontal } from "lucide-react"
 import { Mic, Check, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { useToast } from "@/components/ui/use-toast"
 import { useAudioTranscription } from "@/hooks/useAudioTranscription"
 import LoadingDots from "./LoadingDots"
 import { useIsMobile } from "@/hooks/use-mobile"
@@ -26,7 +25,6 @@ export const ChatInput = ({
   const [isPressHolding, setIsPressHolding] = useState(false)
   const pressTimer = useRef<number | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
-  const { toast } = useToast()
   const isMobile = useIsMobile()
 
   // Adiciona um callback para colocar o texto transcrito no input sem envio automático
@@ -74,11 +72,7 @@ export const ChatInput = ({
         textareaRef.current.style.height = 'auto';
       }
     } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to send message. Please try again."
-      });
+      console.error("Failed to send message:", error);
     } finally {
       setIsLoading(false);
     }

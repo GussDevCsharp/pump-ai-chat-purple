@@ -13,19 +13,8 @@ import { useChatMessages } from "@/hooks/useChatMessages"
 import { ChatContent } from "./ChatContent"
 import { useChatSendMessage } from "@/hooks/useChatSendMessage"
 import { useIsMobile } from "@/hooks/use-mobile"
-import { SidebarToggleButton } from "./SidebarToggleButton"
 
-interface ChatContainerProps {
-  onSidebarToggle?: (isVisible: boolean) => void;
-  sidebarVisible?: boolean;
-  setSidebarVisible?: (isVisible: boolean) => void;
-}
-
-export const ChatContainer = ({ 
-  onSidebarToggle, 
-  sidebarVisible = true,
-  setSidebarVisible
-}: ChatContainerProps) => {
+export const ChatContainer = () => {
   const [searchParams] = useSearchParams()
   const sessionId = searchParams.get('session')
   const themeFromUrl = searchParams.get('theme')
@@ -72,24 +61,9 @@ export const ChatContainer = ({
   // Modificado: Agora verificamos se temos tema mas não uma sessão específica
   const showWelcomeScreen = !sessionId
 
-  const toggleSidebar = () => {
-    if (setSidebarVisible) {
-      setSidebarVisible(!sidebarVisible);
-    }
-    if (onSidebarToggle) {
-      onSidebarToggle(!sidebarVisible);
-    }
-  }
-
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden relative">
       <BackButton isMobile={isMobile} />
-      {!isMobile && (
-        <SidebarToggleButton 
-          isVisible={!!sidebarVisible} 
-          onToggle={toggleSidebar} 
-        />
-      )}
       <Watermark />
       {authStatus === 'anonymous' && (
         <AuthBanner remainingInteractions={remainingInteractions} />

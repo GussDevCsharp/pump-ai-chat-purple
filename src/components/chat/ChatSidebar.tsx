@@ -1,3 +1,4 @@
+
 import { useNavigate, useSearchParams } from "react-router-dom"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/hooks/use-toast"
@@ -14,10 +15,9 @@ import {
   SidebarHeader,
   SidebarTrigger
 } from "@/components/ui/sidebar"
-import { useState, useEffect } from "react"
-import { useIsMobile } from "@/hooks/use-mobile"
+import { useState } from "react"
 
-export function ChatSidebar({ onClose, sidebarVisible }: { onClose?: () => void, sidebarVisible?: boolean }) {
+export function ChatSidebar({ onClose }: { onClose?: () => void }) {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const sessionId = searchParams.get('session')
@@ -25,18 +25,10 @@ export function ChatSidebar({ onClose, sidebarVisible }: { onClose?: () => void,
   const { themes, isLoading: isThemesLoading, refreshThemes } = useChatThemes()
   const { toast } = useToast()
   const { searchTerm, setSearchTerm, groupedSessions } = useFilteredSessions(sessions, themes)
-  const isMobile = useIsMobile()
   
   // Estado para controlar a edição de títulos
   const [editingSessionId, setEditingSessionId] = useState<string | null>(null)
   const [newSessionTitle, setNewSessionTitle] = useState("")
-
-  // Se não for mobile e sidebarVisible é falso, não renderize o sidebar
-  const shouldRenderSidebar = isMobile || sidebarVisible !== false
-
-  if (!shouldRenderSidebar) {
-    return null
-  }
 
   const handleCreateNewSession = async () => {
     navigate('/chat')

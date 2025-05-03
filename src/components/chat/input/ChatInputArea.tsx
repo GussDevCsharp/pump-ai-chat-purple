@@ -87,10 +87,20 @@ export const ChatInputArea = ({
     }
   };
 
-  // Função para ajustar a altura do textarea conforme o conteúdo
+  // Função para ajustar a altura do textarea com limite máximo fixo
   const autoResizeTextarea = (textarea: HTMLTextAreaElement) => {
+    // Definimos o limite máximo de altura
+    const maxHeight = 150;
+    
+    // Resetamos temporariamente a altura para calcular o scrollHeight
     textarea.style.height = 'auto';
-    textarea.style.height = `${Math.min(textarea.scrollHeight, 150)}px`;
+    
+    // Limitamos a altura ao scrollHeight (conteúdo) ou à maxHeight, o que for menor
+    const newHeight = Math.min(textarea.scrollHeight, maxHeight);
+    textarea.style.height = `${newHeight}px`;
+    
+    // Habilitamos a barra de rolagem apenas se o conteúdo exceder o tamanho máximo
+    textarea.style.overflowY = textarea.scrollHeight > maxHeight ? 'auto' : 'hidden';
   };
 
   // Atualiza a altura do textarea sempre que a mensagem mudar
@@ -137,7 +147,7 @@ export const ChatInputArea = ({
           rows={1}
           placeholder="Digite sua mensagem..."
           disabled={isLoading || isAudioLoading}
-          style={{ minHeight: '44px', maxHeight: '150px', overflowY: 'auto' }}
+          style={{ minHeight: '44px', maxHeight: '150px' }}
         />
         
         {/* Área de botões abaixo do input - responsiva para mobile */}

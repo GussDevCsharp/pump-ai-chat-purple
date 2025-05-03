@@ -147,21 +147,23 @@ export function SidebarSessionCard({
 
       {showDeleteConfirmation ? (
         <div 
-          className="flex items-center space-x-2 ml-2"
+          className="absolute right-2 top-0 bottom-0 flex items-center justify-center z-10 bg-offwhite dark:bg-[#222222] px-2 py-1 rounded shadow-md"
           onClick={(e) => e.stopPropagation()}
         >
-          <button 
-            onClick={handleConfirmDelete}
-            className="px-2 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600 transition-colors dark:bg-red-600 dark:hover:bg-red-700"
-          >
-            Sim
-          </button>
-          <button 
-            onClick={handleCancelDelete}
-            className="px-2 py-1 bg-gray-200 text-gray-800 rounded text-xs hover:bg-gray-300 transition-colors dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
-          >
-            Não
-          </button>
+          <div className="flex items-center space-x-2">
+            <button 
+              onClick={handleConfirmDelete}
+              className="px-2 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600 transition-colors dark:bg-red-600 dark:hover:bg-red-700"
+            >
+              Sim
+            </button>
+            <button 
+              onClick={handleCancelDelete}
+              className="px-2 py-1 bg-gray-200 text-gray-800 rounded text-xs hover:bg-gray-300 transition-colors dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
+            >
+              Não
+            </button>
+          </div>
         </div>
       ) : (
         <div className="flex items-center space-x-1 sm:space-x-2">
@@ -208,7 +210,7 @@ export function SidebarSessionCard({
                 className="dark:text-gray-200 dark:hover:bg-white/5"
               >
                 <Pencil className="mr-2 h-4 w-4" />
-                Edit
+                Editar
               </DropdownMenuItem>
               <DropdownMenuSeparator className="dark:border-gray-700" />
               <DropdownMenuItem 
@@ -216,7 +218,7 @@ export function SidebarSessionCard({
                 className="text-red-500 hover:text-red-500 focus:text-red-500 dark:text-red-400 dark:hover:text-red-300"
               >
                 <Trash className="mr-2 h-4 w-4" />
-                Delete
+                Excluir
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

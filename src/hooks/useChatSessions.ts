@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react'
 import { supabase } from "@/integrations/supabase/client"
-import { useToast } from "@/hooks/use-toast"
+import { useLocation } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid'
 
 export interface ChatSession {
@@ -16,10 +16,11 @@ export interface ChatSession {
 export const useChatSessions = () => {
   const [sessions, setSessions] = useState<ChatSession[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const { toast } = useToast()
   const [userId, setUserId] = useState<string | null>(null)
   const [localSessions, setLocalSessions] = useState<ChatSession[]>([])
   const LOCAL_SESSIONS_KEY = 'anonymous_chat_sessions'
+  const location = useLocation();
+  const isChatRoute = location.pathname === "/chat";
 
   useEffect(() => {
     let ignore = false
@@ -80,11 +81,10 @@ export const useChatSessions = () => {
       setSessions(data || [])
     } catch (error) {
       console.error('Error fetching chat sessions:', error)
-      toast({
-        variant: "destructive",
-        title: "Erro",
-        description: "Falha ao carregar histórico de conversas"
-      })
+      // No toast on chat screen
+      if (!isChatRoute) {
+        console.error("Falha ao carregar histórico de conversas")
+      }
     } finally {
       setIsLoading(false)
     }
@@ -106,9 +106,10 @@ export const useChatSessions = () => {
         setLocalSessions(updatedSessions)
         saveLocalSessions(updatedSessions)
         
-        toast({
-          description: "Nova conversa criada"
-        })
+        // No toast on chat screen
+        if (!isChatRoute) {
+          console.log("Nova conversa criada")
+        }
         return newSession
       }
       
@@ -133,11 +134,10 @@ export const useChatSessions = () => {
       return data
     } catch (error) {
       console.error('Error creating chat session:', error)
-      toast({
-        variant: "destructive",
-        title: "Erro",
-        description: "Falha ao criar conversa"
-      })
+      // No toast on chat screen
+      if (!isChatRoute) {
+        console.error("Falha ao criar conversa")
+      }
       return null
     }
   }

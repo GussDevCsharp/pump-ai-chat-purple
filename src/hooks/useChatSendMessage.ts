@@ -4,7 +4,7 @@ import { useChatAuth } from "./useChatAuth"
 import { useChatSessions } from "./useChatSessions"
 import { Message } from "./useChatSession"
 import { supabase } from "@/integrations/supabase/client"
-import { useSearchParams } from "react-router-dom"
+import { useSearchParams, useLocation } from "react-router-dom"
 
 interface UseChatSendMessageProps {
   sessionId: string | null
@@ -38,6 +38,8 @@ export const useChatSendMessage = ({
   const [searchParams, setSearchParams] = useSearchParams()
   const { sessions, createSession, refreshSessions } = useChatSessions()
   const { authStatus, recordInteraction, user } = useChatAuth()
+  const location = useLocation();
+  const isChatRoute = location.pathname === "/chat";
   
   const businessData = {
     company_name: "Minha Empresa",

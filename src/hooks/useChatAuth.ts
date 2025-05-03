@@ -1,7 +1,6 @@
-
 import { useState, useEffect } from 'react'
 import { supabase } from "@/integrations/supabase/client"
-import { useToast } from "@/hooks/use-toast"
+import { useLocation } from 'react-router-dom'
 
 const MAX_ANON_INTERACTIONS = 10;
 const INTERACTIONS_STORAGE_KEY = 'chat_interactions_today';
@@ -14,7 +13,8 @@ export const useChatAuth = () => {
   const [dailyInteractionsCount, setDailyInteractionsCount] = useState<number>(0);
   const [remainingInteractions, setRemainingInteractions] = useState<number>(MAX_ANON_INTERACTIONS);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const { toast } = useToast();
+  const location = useLocation();
+  const isChatRoute = location.pathname === "/chat";
 
   // Load interactions count from localStorage and reset if it's a new day
   useEffect(() => {
@@ -109,11 +109,11 @@ export const useChatAuth = () => {
       
       if (date === today) {
         if (count >= MAX_ANON_INTERACTIONS) {
-          toast({
-            variant: "destructive",
-            title: "Limite atingido",
-            description: "Você atingiu o limite de 10 interações por dia. Faça login para continuar."
-          });
+          // Remove toast notification in chat screen
+          if (!isChatRoute) {
+            // If we needed to show a notification, we'd do it here
+            console.log("Limite atingido: Você atingiu o limite de 10 interações por dia. Faça login para continuar.");
+          }
           return false;
         }
         

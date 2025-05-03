@@ -1,10 +1,8 @@
 
 import React from "react";
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
@@ -13,6 +11,27 @@ import Themes from "./pages/Themes";
 import Signup from "./pages/Signup";
 import ProfileComplete from "./pages/ProfileComplete";
 import PromptLogs from "./pages/PromptLogs";
+
+// Toast components wrapped with location check
+const ToastProviders = () => {
+  const location = useLocation();
+  const isChatRoute = location.pathname === "/chat";
+  
+  if (isChatRoute) {
+    return null; // Don't render any toast providers on chat route
+  }
+  
+  // Import toasters only when needed (dynamically)
+  const { Toaster } = require("@/components/ui/toaster");
+  const { Toaster: Sonner } = require("@/components/ui/sonner");
+  
+  return (
+    <>
+      <Toaster />
+      <Sonner />
+    </>
+  );
+};
 
 const queryClient = new QueryClient();
 
@@ -31,8 +50,6 @@ const App = () => {
     <React.StrictMode>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
-          <Toaster />
-          <Sonner />
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Login />} />
@@ -45,6 +62,7 @@ const App = () => {
               <Route path="/prompt-logs" element={<PromptLogs />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
+            <ToastProviders />
           </BrowserRouter>
         </TooltipProvider>
       </QueryClientProvider>

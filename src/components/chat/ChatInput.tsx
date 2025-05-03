@@ -1,7 +1,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import { SendHorizontal } from "lucide-react"
-import { Mic, MicOff, AlertCircle } from "lucide-react"
+import { Mic, Check, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
 import { useAudioTranscription } from "@/hooks/useAudioTranscription"
@@ -205,55 +205,46 @@ export const ChatInput = ({
               handleSubmit()
             }
           }}
-          className="w-full resize-none rounded-lg border border-pump-gray/20 dark:border-[#333333] bg-white dark:bg-[#222222] dark:text-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-pump-purple/20 pr-20"
+          className="w-full resize-none rounded-lg border border-pump-gray/20 dark:border-[#333333] bg-white dark:bg-[#222222] dark:text-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-pump-purple/20 pr-4"
           rows={1}
           placeholder="Digite sua mensagem..."
           disabled={isLoading || isAudioLoading}
           style={{ minHeight: '44px', maxHeight: '150px', overflowY: 'auto' }}
         />
         
-        <div className="absolute right-12 top-1/2 -translate-y-1/2 flex items-center gap-2">
-          {isRecording && (
-            <span className="flex items-center gap-1 text-xs text-red-500">
-              <AudioWaveform />
-            </span>
-          )}
-          {isAudioLoading && (
-            <span className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
-              <LoadingDots />
-            </span>
-          )}
+        {/* Área de botões abaixo do input */}
+        <div className="flex justify-end items-center gap-2 mt-2">
+          <button
+            type="button"
+            className={`p-2 rounded-full transition-colors ${
+              isRecording 
+                ? 'bg-red-500/10 text-red-500 animate-pulse' 
+                : 'text-pump-purple dark:text-white hover:bg-pump-purple/10'
+            } disabled:opacity-50`}
+            onClick={handleVoiceButtonClick}
+            onMouseDown={handlePressStart}
+            onMouseUp={handlePressEnd}
+            onMouseLeave={isPressHolding ? handlePressEnd : undefined}
+            onTouchStart={handlePressStart}
+            onTouchEnd={handlePressEnd}
+            disabled={isLoading}
+            aria-label={isRecording ? "Finalizar gravação" : "Gravar áudio"}
+            title={isPressHolding ? "Segurando para gravar" : (isRecording ? "Clique para parar gravação" : "Clique para gravar ou segure para gravar enquanto pressiona")}
+          >
+            {isRecording
+              ? <Check className="w-5 h-5" />
+              : <Mic className="w-5 h-5" />}
+          </button>
+          
+          <button
+            type="button"
+            className="p-2 text-pump-purple dark:text-white hover:text-pump-purple/80 dark:hover:text-white/80 transition-colors disabled:opacity-50"
+            onClick={() => handleSubmit()}
+            disabled={isLoading}
+          >
+            <SendHorizontal className="w-5 h-5" />
+          </button>
         </div>
-
-        <button
-          type="button"
-          className={`absolute right-12 top-1/2 -translate-y-1/2 p-1.5 rounded-full transition-colors ${
-            isRecording 
-              ? 'bg-red-500/10 text-red-500 animate-pulse' 
-              : 'text-pump-purple dark:text-white hover:bg-pump-purple/10'
-          } disabled:opacity-50`}
-          onClick={handleVoiceButtonClick}
-          onMouseDown={handlePressStart}
-          onMouseUp={handlePressEnd}
-          onMouseLeave={isPressHolding ? handlePressEnd : undefined}
-          onTouchStart={handlePressStart}
-          onTouchEnd={handlePressEnd}
-          disabled={isLoading}
-          aria-label={isRecording ? "Parar gravação" : "Gravar áudio"}
-          title={isPressHolding ? "Segurando para gravar" : (isRecording ? "Clique para parar gravação" : "Clique para gravar ou segure para gravar enquanto pressiona")}
-        >
-          {isRecording
-            ? <MicOff className="w-5 h-5" />
-            : <Mic className="w-5 h-5" />}
-        </button>
-        <button
-          type="button"
-          className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-pump-purple dark:text-white hover:text-pump-purple/80 dark:hover:text-white/80 transition-colors disabled:opacity-50"
-          onClick={() => handleSubmit()}
-          disabled={isLoading}
-        >
-          <SendHorizontal className="w-5 h-5" />
-        </button>
         
         {/* Indicador de gravação abaixo do input */}
         {isRecording && (
@@ -274,6 +265,13 @@ export const ChatInput = ({
               ))}
             </div>
             <span>Gravando áudio...</span>
+          </div>
+        )}
+        
+        {isAudioLoading && (
+          <div className="mt-2 flex items-center gap-2 text-gray-500 dark:text-gray-400 text-xs">
+            <LoadingDots />
+            <span>Processando áudio...</span>
           </div>
         )}
       </div>

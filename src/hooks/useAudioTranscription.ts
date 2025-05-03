@@ -1,7 +1,6 @@
 
 import { useCallback, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
 
 interface UseAudioTranscriptionResult {
   isRecording: boolean;
@@ -22,7 +21,6 @@ export function useAudioTranscription(
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [transcript, setTranscript] = useState("");
-  const { toast } = useToast();
 
   const resetTranscript = () => setTranscript("");
 
@@ -93,11 +91,6 @@ export function useAudioTranscription(
               console.log("Nenhum callback de transcrição chamado: ", 
                 onTranscriptionComplete ? "texto vazio" : "callback não definido");
             }
-            
-            toast({
-              title: "Transcrição concluída",
-              description: "Áudio transcrito com sucesso.",
-            });
           } else if (data && data.error) {
             throw new Error(data.error);
           } else {
@@ -117,11 +110,6 @@ export function useAudioTranscription(
           }
           
           setError(errorMessage);
-          toast({
-            variant: "destructive",
-            title: "Erro",
-            description: errorMessage,
-          });
         } finally {
           setIsLoading(false);
         }
@@ -130,21 +118,11 @@ export function useAudioTranscription(
       mediaRecorder.start();
       setIsRecording(true);
       console.log("Gravação iniciada...");
-      
-      toast({
-        title: "Gravação iniciada",
-        description: "Fale agora e pressione o botão novamente para parar.",
-      });
     } catch (err: any) {
       console.error("Erro ao iniciar gravação:", err);
       setError("Permissão de microfone negada ou dispositivo não suportado.");
-      toast({
-        variant: "destructive",
-        title: "Erro",
-        description: "Permissão de microfone negada ou dispositivo não suportado.",
-      });
     }
-  }, [toast, onTranscriptionComplete]);
+  }, [onTranscriptionComplete]);
 
   const stopRecording = useCallback(() => {
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {

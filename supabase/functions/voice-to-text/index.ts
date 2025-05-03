@@ -2,6 +2,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts"
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { corsHeaders } from "./utils/cors.ts"
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 // Process base64 in chunks to prevent memory issues
 function processBase64Chunks(base64String, chunkSize = 32768) {
@@ -39,6 +40,12 @@ serve(async (req) => {
   }
 
   try {
+    // Create Supabase client
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? ''
+    )
+
     const { audio } = await req.json()
     
     if (!audio) {
@@ -59,12 +66,31 @@ serve(async (req) => {
     console.log("Sending to OpenAI Whisper API...")
 
     // Get OpenAI API key
-    const openai_key = Deno.env.get('OPENAI_API_KEY');
-    if (!openai_key) {
-      console.error("OPENAI_API_KEY não configurada nas variáveis de ambiente do Supabase");
+    const { data: keyData, error: keyError } = await supabase
+      .from('modelkeys')
+      .select('apikey')
+      .eq('model', 'OpenAI')
+      .single()
+    
+    if (keyError || !keyData) {
+      console.error("Could not fetch API key:", keyError?.message || "No key found");
       return new Response(
         JSON.stringify({ 
-          error: "OPENAI_API_KEY não configurada. Por favor, configure a chave da API OpenAI no painel de controle do Supabase." 
+          error: "Chave da API OpenAI não encontrada. Verifique se a tabela 'modelkeys' contém uma entrada para o modelo 'OpenAI'." 
+        }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
+    const openai_key = keyData.apikey;
+    if (!openai_key) {
+      console.error("API key is empty");
+      return new Response(
+        JSON.stringify({ 
+          error: "Chave da API OpenAI está vazia. Verifique a configuração da chave na tabela 'modelkeys'." 
         }),
         {
           status: 500,

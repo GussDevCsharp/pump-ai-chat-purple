@@ -95,9 +95,13 @@ export function useAudioTranscription(): UseAudioTranscriptionResult {
           console.error("Erro ao processar áudio:", err);
           let errorMessage = err.message || "Erro ao processar o áudio.";
           
-          // Verificar se é um erro de API key
-          if (errorMessage.includes("OPENAI_API_KEY") || errorMessage.includes("API do OpenAI")) {
-            errorMessage = "Chave da API do OpenAI não configurada. Entre em contato com o administrador.";
+          // Verificar se é um erro relacionado à chave da API
+          if (
+            errorMessage.includes("OpenAI") && 
+            (errorMessage.includes("chave") || errorMessage.includes("API key") || 
+             errorMessage.includes("table") || errorMessage.includes("tabela"))
+          ) {
+            errorMessage = "Chave da API do OpenAI não encontrada ou inválida. Verifique a configuração.";
           }
           
           setError(errorMessage);

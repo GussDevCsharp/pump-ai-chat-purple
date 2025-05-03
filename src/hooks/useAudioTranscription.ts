@@ -21,11 +21,13 @@ export function useAudioTranscription(
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [transcript, setTranscript] = useState("");
+  const cancelRef = useRef<boolean>(false);
 
   const resetTranscript = () => setTranscript("");
 
   const startRecording = useCallback(async () => {
     setError(null);
+    cancelRef.current = false;
     
     try {
       console.log("Solicitando acesso ao microfone...");
@@ -49,8 +51,8 @@ export function useAudioTranscription(
       };
 
       mediaRecorder.onstop = async () => {
-        // Verificamos se a gravação foi cancelada pelo flag cancelMode no stopRecording
-        if (!mediaRecorderRef.current?.cancelMode) {
+        // Verificamos se a gravação foi cancelada usando nossa referência cancelRef
+        if (!cancelRef.current) {
           setIsLoading(true);
           try {
             console.log("Gravação parada, processando áudio...");
@@ -117,8 +119,8 @@ export function useAudioTranscription(
           }
         } else {
           console.log("Gravação cancelada pelo usuário, áudio descartado.");
-          // Remover a flag de cancelamento
-          delete mediaRecorderRef.current?.cancelMode;
+          // Resetamos a flag de cancelamento para futuras gravações
+          cancelRef.current = false;
         }
       };
 
@@ -135,10 +137,9 @@ export function useAudioTranscription(
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
       console.log(cancelMode ? "Cancelando gravação..." : "Parando gravação...");
       
-      // Add a custom property to the mediaRecorder to signal cancellation
-      // TypeScript doesn't know about this property, so we need to use a type assertion
+      // Set the cancel flag if we're in cancel mode
       if (cancelMode) {
-        (mediaRecorderRef.current as any).cancelMode = true;
+        cancelRef.current = true;
       }
       
       mediaRecorderRef.current.stop();

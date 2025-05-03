@@ -1,7 +1,7 @@
 
 import "https://deno.land/x/xhr@0.1.0/mod.ts"
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { corsHeaders } from "../chat/utils/cors.ts"
+import { corsHeaders } from "./utils/cors.ts"
 
 // Process base64 in chunks to prevent memory issues
 function processBase64Chunks(base64String, chunkSize = 32768) {

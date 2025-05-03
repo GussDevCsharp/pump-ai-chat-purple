@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react"
 import { SendHorizontal } from "lucide-react"
 import { Mic, MicOff, AlertCircle } from "lucide-react"
@@ -27,12 +26,14 @@ export const ChatInput = ({
   // Adiciona um callback para enviar automaticamente a transcrição
   const handleTranscriptionComplete = (text: string) => {
     if (text && text.trim() !== "") {
+      // Definir o texto no input primeiro
       setMessage(text);
-      // Pequeno delay para garantir que a UI foi atualizada com o texto
+      
+      // Enviar a mensagem automaticamente após um breve delay
+      // para garantir que a UI foi atualizada
       setTimeout(() => {
-        onSendMessage(text);
-        setMessage("");
-      }, 100);
+        handleSubmit(text);
+      }, 300);
     }
   };
 
@@ -53,23 +54,25 @@ export const ChatInput = ({
     }
   }, [message, furtivePromptTitle, setFurtivePromptCleared]);
 
-  const handleSubmit = async () => {
-    if (!message.trim() && !furtivePromptTitle) return
+  const handleSubmit = async (overrideMessage?: string) => {
+    const textToSend = overrideMessage || message;
+    
+    if (!textToSend.trim() && !furtivePromptTitle) return;
 
     try {
-      setIsLoading(true)
-      onSendMessage(message)
-      setMessage("")
+      setIsLoading(true);
+      onSendMessage(textToSend);
+      setMessage("");
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Error",
         description: "Failed to send message. Please try again."
-      })
+      });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   // Função para ajustar a altura do textarea conforme o conteúdo
   const autoResizeTextarea = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -185,7 +188,7 @@ export const ChatInput = ({
         <button
           type="button"
           className="absolute right-3 p-1 text-pump-purple dark:text-white hover:text-pump-purple/80 dark:hover:text-white/80 transition-colors disabled:opacity-50"
-          onClick={handleSubmit}
+          onClick={() => handleSubmit()}
           disabled={isLoading}
         >
           <SendHorizontal className="w-5 h-5" />

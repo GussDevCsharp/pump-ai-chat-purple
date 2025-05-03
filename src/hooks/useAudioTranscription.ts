@@ -85,9 +85,13 @@ export function useAudioTranscription(
             console.log("Transcrição recebida:", data.text);
             setTranscript(data.text);
             
-            // Chamar o callback se estiver definido
-            if (onTranscriptionComplete) {
+            // Chamar o callback apenas se existir texto transcrito e for válido
+            if (onTranscriptionComplete && data.text.trim() !== "") {
+              console.log("Chamando callback de transcrição completa com texto:", data.text);
               onTranscriptionComplete(data.text);
+            } else {
+              console.log("Nenhum callback de transcrição chamado: ", 
+                onTranscriptionComplete ? "texto vazio" : "callback não definido");
             }
             
             toast({

@@ -8,12 +8,14 @@ interface UseAudioTranscriptionResult {
   isLoading: boolean;
   error: string | null;
   startRecording: () => void;
-  stopRecording: () => void;
+  stopRecording: (autoSend?: boolean) => void;
   transcript: string;
   resetTranscript: () => void;
 }
 
-export function useAudioTranscription(): UseAudioTranscriptionResult {
+export function useAudioTranscription(
+  onTranscriptionComplete?: (text: string) => void
+): UseAudioTranscriptionResult {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const [isRecording, setIsRecording] = useState(false);
@@ -82,6 +84,12 @@ export function useAudioTranscription(): UseAudioTranscriptionResult {
           if (data && data.text) {
             console.log("Transcrição recebida:", data.text);
             setTranscript(data.text);
+            
+            // Chamar o callback se estiver definido
+            if (onTranscriptionComplete) {
+              onTranscriptionComplete(data.text);
+            }
+            
             toast({
               title: "Transcrição concluída",
               description: "Áudio transcrito com sucesso.",
@@ -132,7 +140,7 @@ export function useAudioTranscription(): UseAudioTranscriptionResult {
         description: "Permissão de microfone negada ou dispositivo não suportado.",
       });
     }
-  }, [toast]);
+  }, [toast, onTranscriptionComplete]);
 
   const stopRecording = useCallback(() => {
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {

@@ -24,6 +24,18 @@ export const ChatInput = ({
   const [isLoading, setIsLoading] = useState(false)
   const { toast } = useToast()
 
+  // Adiciona um callback para enviar automaticamente a transcrição
+  const handleTranscriptionComplete = (text: string) => {
+    if (text && text.trim() !== "") {
+      setMessage(text);
+      // Pequeno delay para garantir que a UI foi atualizada com o texto
+      setTimeout(() => {
+        onSendMessage(text);
+        setMessage("");
+      }, 100);
+    }
+  };
+
   const {
     isRecording,
     isLoading: isAudioLoading,
@@ -32,25 +44,7 @@ export const ChatInput = ({
     stopRecording,
     transcript,
     resetTranscript,
-  } = useAudioTranscription()
-
-  // Efeito para incluir a transcrição na mensagem quando disponível
-  useEffect(() => {
-    if (transcript) {
-      setMessage((prev) => prev ? prev + " " + transcript : transcript)
-      resetTranscript()
-    }
-  }, [transcript, resetTranscript])
-
-  useEffect(() => {
-    if (audioError) {
-      toast({
-        variant: "destructive",
-        title: "Erro",
-        description: audioError,
-      })
-    }
-  }, [audioError, toast])
+  } = useAudioTranscription(handleTranscriptionComplete);
 
   // Limpar o título do prompt furtivo quando a mensagem for vazia
   useEffect(() => {

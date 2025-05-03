@@ -1,8 +1,8 @@
+
 import { useState, useEffect } from "react"
 import { SendHorizontal } from "lucide-react"
 import { Mic, MicOff } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/components/ui/use-toast"
 import { useAudioTranscription } from "@/hooks/useAudioTranscription"
 import LoadingDots from "./LoadingDots"
@@ -34,12 +34,13 @@ export const ChatInput = ({
     resetTranscript,
   } = useAudioTranscription()
 
+  // Efeito para incluir a transcrição na mensagem quando disponível
   useEffect(() => {
     if (transcript) {
       setMessage((prev) => prev ? prev + " " + transcript : transcript)
       resetTranscript()
     }
-  }, [transcript])
+  }, [transcript, resetTranscript])
 
   useEffect(() => {
     if (audioError) {
@@ -51,11 +52,12 @@ export const ChatInput = ({
     }
   }, [audioError, toast])
 
+  // Limpar o título do prompt furtivo quando a mensagem for vazia
   useEffect(() => {
     if (furtivePromptTitle && message.trim() === "") {
       setFurtivePromptCleared && setFurtivePromptCleared();
     }
-  }, [message]);
+  }, [message, furtivePromptTitle, setFurtivePromptCleared]);
 
   const handleSubmit = async () => {
     if (!message.trim() && !furtivePromptTitle) return
@@ -74,6 +76,21 @@ export const ChatInput = ({
       setIsLoading(false)
     }
   }
+
+  // Função para ajustar a altura do textarea conforme o conteúdo
+  const autoResizeTextarea = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const textarea = e.target;
+    textarea.style.height = 'auto';
+    textarea.style.height = `${Math.min(textarea.scrollHeight, 150)}px`;
+  };
+
+  const handleVoiceButtonClick = () => {
+    if (isRecording) {
+      stopRecording();
+    } else {
+      startRecording();
+    }
+  };
 
   return (
     <div className="w-full max-w-3xl mx-auto p-4 border-t border-pump-gray/20 bg-white dark:bg-[#1A1F2C]">
@@ -100,7 +117,10 @@ export const ChatInput = ({
       <div className="relative flex items-center">
         <textarea
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={(e) => {
+            setMessage(e.target.value);
+            autoResizeTextarea(e);
+          }}
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
               e.preventDefault()
@@ -111,6 +131,7 @@ export const ChatInput = ({
           rows={1}
           placeholder="Digite sua mensagem..."
           disabled={isLoading || isAudioLoading}
+          style={{ minHeight: '44px', maxHeight: '150px' }}
         />
         {isAudioLoading && (
           <span className="absolute flex items-center gap-1 right-28 text-xs text-gray-500 dark:text-gray-400">
@@ -120,13 +141,17 @@ export const ChatInput = ({
         )}
         <button
           type="button"
-          className={`absolute right-12 p-1.5 rounded-full text-pump-purple dark:text-white transition-colors ${isRecording ? 'bg-pump-purple/10' : 'hover:bg-pump-purple/10'} disabled:opacity-50`}
-          onClick={isRecording ? stopRecording : startRecording}
-          disabled={isLoading || isAudioLoading}
+          className={`absolute right-12 p-1.5 rounded-full transition-colors ${
+            isRecording 
+              ? 'bg-red-500/10 text-red-500 animate-pulse' 
+              : 'text-pump-purple dark:text-white hover:bg-pump-purple/10'
+          } disabled:opacity-50`}
+          onClick={handleVoiceButtonClick}
+          disabled={isLoading}
           aria-label={isRecording ? "Parar gravação" : "Gravar áudio"}
         >
           {isRecording
-            ? <MicOff className="w-5 h-5 text-red-500 animate-pulse" />
+            ? <MicOff className="w-5 h-5" />
             : <Mic className="w-5 h-5" />}
         </button>
         <button

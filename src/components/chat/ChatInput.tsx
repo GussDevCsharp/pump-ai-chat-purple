@@ -93,7 +93,7 @@ export const ChatInput = ({
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto p-4 border-t border-pump-gray/20 bg-white dark:bg-[#1A1F2C]">
+    <div className="w-full max-w-3xl mx-auto p-4 border-t border-pump-gray/20 bg-offwhite dark:bg-[#1A1F2C]">
       {furtivePromptTitle && (
         <div className="mb-2 text-xs text-pump-purple dark:text-white font-medium">
           Tópico selecionado: <b>{furtivePromptTitle}</b>
@@ -165,4 +165,3 @@ export const ChatInput = ({
       </div>
     </div>
   )
-}

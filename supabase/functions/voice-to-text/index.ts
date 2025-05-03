@@ -61,7 +61,7 @@ serve(async (req) => {
     // Get OpenAI API key
     const openai_key = Deno.env.get('OPENAI_API_KEY');
     if (!openai_key) {
-      throw new Error("OPENAI_API_KEY is not set in environment variables");
+      throw new Error("OPENAI_API_KEY não configurada nas variáveis de ambiente do Supabase")
     }
 
     // Send to OpenAI
@@ -76,11 +76,11 @@ serve(async (req) => {
     if (!response.ok) {
       const errorText = await response.text();
       console.error(`OpenAI API error: ${errorText}`);
-      throw new Error(`OpenAI API error: ${response.status}`);
+      throw new Error(`Erro na API do OpenAI: ${response.status}`);
     }
 
     const result = await response.json()
-    console.log("Transcription successful:", result.text)
+    console.log("Transcrição bem-sucedida:", result.text)
 
     return new Response(
       JSON.stringify({ text: result.text }),
@@ -88,7 +88,7 @@ serve(async (req) => {
     )
 
   } catch (error) {
-    console.error("Error in voice-to-text function:", error)
+    console.error("Erro na função voice-to-text:", error)
     return new Response(
       JSON.stringify({ error: error.message }),
       {

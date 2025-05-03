@@ -28,7 +28,7 @@ export function useAudioTranscription(): UseAudioTranscriptionResult {
     setError(null);
     
     try {
-      console.log("Requesting microphone access...");
+      console.log("Solicitando acesso ao microfone...");
       const stream = await navigator.mediaDevices.getUserMedia({ 
         audio: {
           echoCancellation: true,
@@ -37,7 +37,7 @@ export function useAudioTranscription(): UseAudioTranscriptionResult {
         }
       });
       
-      console.log("Microphone access granted, setting up recorder...");
+      console.log("Acesso ao microfone concedido, configurando gravador...");
       const mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
       audioChunksRef.current = [];
       mediaRecorderRef.current = mediaRecorder;
@@ -51,7 +51,7 @@ export function useAudioTranscription(): UseAudioTranscriptionResult {
       mediaRecorder.onstop = async () => {
         setIsLoading(true);
         try {
-          console.log("Recording stopped, processing audio...");
+          console.log("Gravação parada, processando áudio...");
           const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
           
           // Converte o áudio gravado em base64 para enviar à função
@@ -63,13 +63,13 @@ export function useAudioTranscription(): UseAudioTranscriptionResult {
           const chunkSize = 1024;
           for (let i = 0; i < uint8Array.length; i += chunkSize) {
             const chunk = uint8Array.slice(i, Math.min(i + chunkSize, uint8Array.length));
-            binary += String.fromCharCode.apply(null, chunk);
+            binary += String.fromCharCode.apply(null, Array.from(chunk));
           }
           
           const base64Audio = btoa(binary);
-          console.log(`Audio converted to base64, length: ${base64Audio.length}`);
+          console.log(`Áudio convertido para base64, tamanho: ${base64Audio.length}`);
 
-          console.log("Sending audio to transcription service...");
+          console.log("Enviando áudio para o serviço de transcrição...");
           const response = await supabase.functions.invoke("voice-to-text", {
             body: { audio: base64Audio }
           });
@@ -80,22 +80,31 @@ export function useAudioTranscription(): UseAudioTranscriptionResult {
           
           const data = response.data;
           if (data && data.text) {
-            console.log("Transcription received:", data.text);
+            console.log("Transcrição recebida:", data.text);
             setTranscript(data.text);
             toast({
               title: "Transcrição concluída",
               description: "Áudio transcrito com sucesso.",
             });
+          } else if (data && data.error) {
+            throw new Error(data.error);
           } else {
             throw new Error("Resposta do serviço de transcrição inválida.");
           }
         } catch (err: any) {
-          console.error("Error processing audio:", err);
-          setError(err.message || "Erro ao processar o áudio.");
+          console.error("Erro ao processar áudio:", err);
+          let errorMessage = err.message || "Erro ao processar o áudio.";
+          
+          // Verificar se é um erro de API key
+          if (errorMessage.includes("OPENAI_API_KEY") || errorMessage.includes("API do OpenAI")) {
+            errorMessage = "Chave da API do OpenAI não configurada. Entre em contato com o administrador.";
+          }
+          
+          setError(errorMessage);
           toast({
             variant: "destructive",
             title: "Erro",
-            description: err.message || "Erro ao processar o áudio.",
+            description: errorMessage,
           });
         } finally {
           setIsLoading(false);
@@ -104,14 +113,14 @@ export function useAudioTranscription(): UseAudioTranscriptionResult {
 
       mediaRecorder.start();
       setIsRecording(true);
-      console.log("Recording started...");
+      console.log("Gravação iniciada...");
       
       toast({
         title: "Gravação iniciada",
         description: "Fale agora e pressione o botão novamente para parar.",
       });
     } catch (err: any) {
-      console.error("Error starting recording:", err);
+      console.error("Erro ao iniciar gravação:", err);
       setError("Permissão de microfone negada ou dispositivo não suportado.");
       toast({
         variant: "destructive",
@@ -123,7 +132,7 @@ export function useAudioTranscription(): UseAudioTranscriptionResult {
 
   const stopRecording = useCallback(() => {
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
-      console.log("Stopping recording...");
+      console.log("Parando gravação...");
       mediaRecorderRef.current.stop();
       mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
       setIsRecording(false);

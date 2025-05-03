@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react"
+
+import { useState, useEffect, useRef } from "react"
 import { SendHorizontal } from "lucide-react"
 import { Mic, MicOff, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -21,6 +22,8 @@ export const ChatInput = ({
 }: ChatInputProps) => {
   const [message, setMessage] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [isPressHolding, setIsPressHolding] = useState(false)
+  const pressTimer = useRef<number | null>(null)
   const { toast } = useToast()
 
   // Adiciona um callback para enviar automaticamente a transcrição
@@ -81,13 +84,53 @@ export const ChatInput = ({
     textarea.style.height = `${Math.min(textarea.scrollHeight, 150)}px`;
   };
 
-  const handleVoiceButtonClick = () => {
-    if (isRecording) {
-      stopRecording();
-    } else {
+  // Função para iniciar gravação ao pressionar e segurar
+  const handlePressStart = () => {
+    // Não inicia nova gravação se já estiver gravando
+    if (isRecording) return;
+    
+    // Se o usuário simplesmente clicar rápido, vamos tratar como toggle normal
+    pressTimer.current = window.setTimeout(() => {
+      setIsPressHolding(true);
       startRecording();
+    }, 300); // Tempo para considerar que é um "press & hold"
+  };
+
+  // Função para parar a gravação quando soltar o botão
+  const handlePressEnd = () => {
+    // Limpar o timer se o botão for solto antes do tempo de segurar
+    if (pressTimer.current) {
+      clearTimeout(pressTimer.current);
+      pressTimer.current = null;
+    }
+
+    // Se estava em modo de pressionar e segurar, para a gravação
+    if (isPressHolding) {
+      stopRecording();
+      setIsPressHolding(false);
     }
   };
+
+  // Função para toggle normal do botão (click rápido)
+  const handleVoiceButtonClick = () => {
+    // Se o usuário simplesmente clicou (não é um press & hold), fazemos o toggle normal
+    if (!isPressHolding) {
+      if (isRecording) {
+        stopRecording();
+      } else {
+        startRecording();
+      }
+    }
+  };
+
+  // Limpa o timer quando o componente é desmontado
+  useEffect(() => {
+    return () => {
+      if (pressTimer.current) {
+        clearTimeout(pressTimer.current);
+      }
+    };
+  }, []);
 
   // Ondas de áudio para visualização
   const AudioWaveform = () => {
@@ -177,9 +220,14 @@ export const ChatInput = ({
               : 'text-pump-purple dark:text-white hover:bg-pump-purple/10'
           } disabled:opacity-50`}
           onClick={handleVoiceButtonClick}
+          onMouseDown={handlePressStart}
+          onMouseUp={handlePressEnd}
+          onMouseLeave={isPressHolding ? handlePressEnd : undefined}
+          onTouchStart={handlePressStart}
+          onTouchEnd={handlePressEnd}
           disabled={isLoading}
           aria-label={isRecording ? "Parar gravação" : "Gravar áudio"}
-          title={audioError ? "Ocorreu um erro na última transcrição" : undefined}
+          title={isPressHolding ? "Segurando para gravar" : (isRecording ? "Clique para parar gravação" : "Clique para gravar ou segure para gravar enquanto pressiona")}
         >
           {isRecording
             ? <MicOff className="w-5 h-5" />

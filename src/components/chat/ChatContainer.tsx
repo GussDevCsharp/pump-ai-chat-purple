@@ -56,8 +56,8 @@ export const ChatContainer = () => {
     patternPrompt
   })
 
-  const showWelcomeScreen = !sessionId || (messages.length === 1 && messages[0].role === 'assistant' && 
-    messages[0].content === 'Olá! Como posso ajudar você hoje?')
+  // Modificado: Agora verificamos se temos tema mas não uma sessão específica
+  const showWelcomeScreen = !sessionId
 
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden relative">
@@ -73,7 +73,7 @@ export const ChatContainer = () => {
         <ChatContent
           messages={messages}
           isThinking={isThinking}
-          showThemePrompts={!!currentSession?.theme_id}
+          showThemePrompts={!!currentThemeId}
           themePrompts={themePrompts}
           isThemePromptsLoading={isThemePromptsLoading}
           onSendMessage={handleSendMessage}

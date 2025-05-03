@@ -2,7 +2,7 @@
 import { useState } from "react"
 import { ThemePrompt } from "./useThemePrompts"
 
-interface BusinessData {
+export interface BusinessData {
   company_name: string
   industry: string
   years: string

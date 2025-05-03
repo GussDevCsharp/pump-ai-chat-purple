@@ -147,22 +147,26 @@ export function SidebarSessionCard({
 
       {showDeleteConfirmation ? (
         <div 
-          className="absolute right-2 top-0 bottom-0 flex items-center justify-center z-10 bg-offwhite dark:bg-[#222222] px-2 py-1 rounded shadow-md"
+          className="absolute right-2 top-0 bottom-0 flex items-center justify-center z-20 bg-offwhite dark:bg-[#222222] px-2 py-1 rounded shadow-md"
           onClick={(e) => e.stopPropagation()}
+          style={{ width: 'auto', minWidth: '120px' }}
         >
-          <div className="flex items-center space-x-2">
-            <button 
-              onClick={handleConfirmDelete}
-              className="px-2 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600 transition-colors dark:bg-red-600 dark:hover:bg-red-700"
-            >
-              Sim
-            </button>
-            <button 
-              onClick={handleCancelDelete}
-              className="px-2 py-1 bg-gray-200 text-gray-800 rounded text-xs hover:bg-gray-300 transition-colors dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
-            >
-              Não
-            </button>
+          <div className="flex flex-col items-center space-y-2">
+            <p className="text-xs font-medium text-gray-700 dark:text-gray-300">Confirmar exclusão?</p>
+            <div className="flex items-center space-x-2">
+              <button 
+                onClick={handleConfirmDelete}
+                className="px-3 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600 transition-colors dark:bg-red-600 dark:hover:bg-red-700"
+              >
+                Sim
+              </button>
+              <button 
+                onClick={handleCancelDelete}
+                className="px-3 py-1 bg-gray-200 text-gray-800 rounded text-xs hover:bg-gray-300 transition-colors dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
+              >
+                Não
+              </button>
+            </div>
           </div>
         </div>
       ) : (

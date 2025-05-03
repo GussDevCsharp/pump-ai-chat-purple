@@ -128,28 +128,34 @@ export const ChatInputArea = ({
         />
         
         {/* Área de botões abaixo do input - responsiva para mobile */}
-        <div className="flex justify-end items-center gap-2 mt-2 relative">
-          <RecordingIndicator 
-            isRecording={isRecording} 
-            isLoading={isAudioLoading}
-            isMobile={isMobile}
-          />
-          
-          <VoiceRecordButton
-            isRecording={isRecording}
-            isLoading={isLoading}
-            onStartRecording={startRecording}
-            onStopRecording={stopRecording}
-          />
-          
-          <button
-            type="button"
-            className="p-2 text-pump-purple dark:text-white hover:text-pump-purple/80 dark:hover:text-white/80 transition-colors disabled:opacity-50"
-            onClick={() => handleSubmit()}
-            disabled={isLoading}
-          >
-            <SendHorizontal className="w-5 h-5" />
-          </button>
+        <div className="flex items-center mt-2 gap-2">
+          <div className="flex-1">
+            {(isRecording || isAudioLoading) && (
+              <RecordingIndicator 
+                isRecording={isRecording} 
+                isLoading={isAudioLoading}
+                isMobile={isMobile}
+              />
+            )}
+          </div>
+
+          <div className="flex gap-2">
+            <VoiceRecordButton
+              isRecording={isRecording}
+              isLoading={isLoading}
+              onStartRecording={startRecording}
+              onStopRecording={stopRecording}
+            />
+            
+            <button
+              type="button"
+              className="p-2 text-pump-purple dark:text-white hover:text-pump-purple/80 dark:hover:text-white/80 transition-colors disabled:opacity-50"
+              onClick={() => handleSubmit()}
+              disabled={isLoading}
+            >
+              <SendHorizontal className="w-5 h-5" />
+            </button>
+          </div>
         </div>
       </div>
     </div>

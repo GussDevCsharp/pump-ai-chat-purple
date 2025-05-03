@@ -16,9 +16,9 @@ export const RecordingIndicator = ({
   if (!isRecording && !isLoading) return null;
   
   return (
-    <div className="absolute left-3 bottom-[52px] z-10">
+    <div className="flex items-center gap-2 text-xs">
       {isRecording && (
-        <div className="flex items-center gap-2 text-red-500 text-xs animate-pulse">
+        <div className="flex items-center gap-1 text-red-500 animate-pulse">
           <div className="flex items-center gap-1">
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <div 
@@ -39,7 +39,7 @@ export const RecordingIndicator = ({
       )}
       
       {isLoading && (
-        <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 text-xs">
+        <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400">
           <LoadingDots />
           <span>{isMobile ? "Processando..." : "Processando áudio..."}</span>
         </div>

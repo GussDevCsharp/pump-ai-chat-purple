@@ -77,9 +77,9 @@ export default function Landing() {
   ];
 
   return (
-    <div className="min-h-screen bg-offwhite">
+    <div className="min-h-screen bg-white">
       <Header />
-      <main className="container mx-auto px-4 py-8 md:py-12 bg-offwhite">
+      <main className="container mx-auto px-4 py-8 md:py-12 bg-white">
         <div className="max-w-4xl mx-auto text-center mb-12 md:mb-16">
           <h1 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4 md:mb-6">
             Inteligência Artificial para Empresas

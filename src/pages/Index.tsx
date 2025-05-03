@@ -11,7 +11,7 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-offwhite dark:bg-[#1A1F2C]">
+    <div className="min-h-screen bg-white dark:bg-[#1A1F2C]">
       <Header />
       <main>
         {/* Dashboard removido */}

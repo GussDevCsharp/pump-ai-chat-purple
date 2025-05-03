@@ -14,7 +14,7 @@ export default function Signup() {
   const [currentStep, setCurrentStep] = React.useState(0);
 
   return (
-    <div className="relative min-h-screen bg-offwhite">
+    <div className="relative min-h-screen bg-white">
       <NeuralBackground />
       <div className="relative z-10 flex flex-col justify-center items-center px-4 py-6 md:py-8 w-full min-h-screen">
         <div className="max-w-3xl w-full mx-auto">
@@ -34,7 +34,7 @@ export default function Signup() {
                 <div className="w-full border-t border-gray-300"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-offwhite text-gray-500">
+                <span className="px-2 bg-white text-gray-500">
                   ou preencha o formulário abaixo
                 </span>
               </div>

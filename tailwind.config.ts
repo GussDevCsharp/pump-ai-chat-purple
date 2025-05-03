@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -20,13 +21,13 @@ export default {
     extend: {
       colors: {
         offwhite: {
-          DEFAULT: '#FFFDF3',
+          DEFAULT: '#FFFFFF',
         },
         pump: {
           purple: '#7E1CC6',
           gray: '#8E9196',
           'gray-light': '#F5F5F5',
-          'offwhite': '#FFFDF3'
+          'offwhite': '#FFFFFF'
         },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

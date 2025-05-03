@@ -86,6 +86,12 @@
   }
 }
 
+@keyframes recording-progress {
+  0% { transform: translateX(-100%); }
+  50% { transform: translateX(20%); }
+  100% { transform: translateX(-100%); }
+}
+
 .animate-slide-in-left {
   animation: slide-in-left 0.3s ease-out forwards;
 }

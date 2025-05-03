@@ -1,6 +1,7 @@
 
 import React from "react";
 import LoadingDots from "../LoadingDots";
+import { History } from "lucide-react";
 
 interface RecordingIndicatorProps {
   isRecording: boolean;
@@ -18,21 +19,13 @@ export const RecordingIndicator = ({
   return (
     <div className="flex items-center gap-2 text-xs">
       {isRecording && (
-        <div className="flex items-center gap-1 text-red-500 animate-pulse">
-          <div className="flex items-center gap-1">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div 
-                key={i}
-                className="animate-audio-wave"
-                style={{
-                  width: '2px', 
-                  background: 'currentColor',
-                  borderRadius: '2px',
-                  height: `${5 + Math.sin(i/2) * 10}px`,
-                  animationDelay: `${i * 0.1}s`
-                }}
-              />
-            ))}
+        <div className="flex items-center gap-2 text-pump-purple animate-pulse">
+          <History className="w-4 h-4" />
+          <div className="h-1 w-16 bg-pump-purple/30 rounded-full overflow-hidden">
+            <div className="h-full bg-pump-purple animate-pulse rounded-full" style={{
+              width: '60%',
+              animation: 'recording-progress 2s ease-in-out infinite'
+            }}/>
           </div>
           <span>{isMobile ? "Gravando..." : "Gravando áudio..."}</span>
         </div>

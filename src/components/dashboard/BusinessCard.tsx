@@ -79,7 +79,7 @@ export const BusinessCard = ({
 
   return (
     <Card 
-      className="border border-[#E5E5E5] bg-offwhite shadow-sm hover:shadow-md transition-shadow cursor-pointer dark:bg-[#1A1F2C] dark:border-white/10"
+      className="border border-[#E5E5E5] bg-white shadow-sm hover:shadow-md transition-shadow cursor-pointer dark:bg-[#1A1F2C] dark:border-white/10"
       onClick={handleCardClick}
     >
       <CardHeader>

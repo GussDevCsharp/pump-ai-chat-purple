@@ -61,7 +61,16 @@ serve(async (req) => {
     // Get OpenAI API key
     const openai_key = Deno.env.get('OPENAI_API_KEY');
     if (!openai_key) {
-      throw new Error("OPENAI_API_KEY não configurada nas variáveis de ambiente do Supabase")
+      console.error("OPENAI_API_KEY não configurada nas variáveis de ambiente do Supabase");
+      return new Response(
+        JSON.stringify({ 
+          error: "OPENAI_API_KEY não configurada. Por favor, configure a chave da API OpenAI no painel de controle do Supabase." 
+        }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
     }
 
     // Send to OpenAI
@@ -76,7 +85,13 @@ serve(async (req) => {
     if (!response.ok) {
       const errorText = await response.text();
       console.error(`OpenAI API error: ${errorText}`);
-      throw new Error(`Erro na API do OpenAI: ${response.status}`);
+      return new Response(
+        JSON.stringify({ error: `Erro na API do OpenAI: ${response.status} - ${errorText}` }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
     }
 
     const result = await response.json()

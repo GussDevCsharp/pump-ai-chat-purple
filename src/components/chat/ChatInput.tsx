@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react"
 import { SendHorizontal } from "lucide-react"
-import { Mic, MicOff } from "lucide-react"
+import { Mic, MicOff, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
 import { useAudioTranscription } from "@/hooks/useAudioTranscription"
@@ -99,6 +99,14 @@ export const ChatInput = ({
           Tópico selecionado: <b>{furtivePromptTitle}</b>
         </div>
       )}
+      
+      {audioError && (
+        <div className="mb-2 text-xs text-red-500 flex items-center gap-1">
+          <AlertCircle className="w-3 h-3" />
+          <span>Erro: {audioError}</span>
+        </div>
+      )}
+      
       {suggestedPrompts && (
         <div className="mb-4 flex flex-wrap gap-2">
           {suggestedPrompts.map((prompt, index) => (
@@ -149,6 +157,7 @@ export const ChatInput = ({
           onClick={handleVoiceButtonClick}
           disabled={isLoading}
           aria-label={isRecording ? "Parar gravação" : "Gravar áudio"}
+          title={audioError ? "Ocorreu um erro na última transcrição" : undefined}
         >
           {isRecording
             ? <MicOff className="w-5 h-5" />

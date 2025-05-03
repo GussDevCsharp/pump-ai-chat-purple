@@ -86,6 +86,25 @@ export const ChatInput = ({
     }
   };
 
+  // Ondas de áudio para visualização
+  const AudioWaveform = () => {
+    return (
+      <div className="flex items-center gap-1">
+        {[1, 2, 3, 4].map((i) => (
+          <div
+            key={i}
+            className={`w-0.5 bg-red-500 rounded-full animate-pulse`}
+            style={{
+              height: `${8 + Math.random() * 12}px`,
+              animationDelay: `${i * 0.1}s`,
+              animationDuration: `${0.7 + Math.random() * 0.3}s`
+            }}
+          />
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div className="w-full max-w-3xl mx-auto p-4 border-t border-pump-gray/20 bg-offwhite dark:bg-[#1A1F2C]">
       {furtivePromptTitle && (
@@ -135,6 +154,12 @@ export const ChatInput = ({
           disabled={isLoading || isAudioLoading}
           style={{ minHeight: '44px', maxHeight: '150px' }}
         />
+        {isRecording && (
+          <span className="absolute flex items-center gap-1 right-28 text-xs text-red-500">
+            <AudioWaveform />
+            <span className="ml-1">Gravando...</span>
+          </span>
+        )}
         {isAudioLoading && (
           <span className="absolute flex items-center gap-1 right-28 text-xs text-gray-500 dark:text-gray-400">
             <LoadingDots />

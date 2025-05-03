@@ -90,6 +90,33 @@
   animation: slide-in-left 0.3s ease-out forwards;
 }
 
+/* Animação para as ondas de áudio */
+@keyframes audio-wave {
+  0% { height: 5px; }
+  50% { height: 15px; }
+  100% { height: 5px; }
+}
+
+.animate-audio-wave {
+  animation: audio-wave 0.7s infinite;
+}
+
+.animate-audio-wave-1 {
+  animation-delay: 0s;
+}
+
+.animate-audio-wave-2 {
+  animation-delay: 0.2s;
+}
+
+.animate-audio-wave-3 {
+  animation-delay: 0.4s;
+}
+
+.animate-audio-wave-4 {
+  animation-delay: 0.6s;
+}
+
 /* Ajustes gerais de responsividade */
 @media (max-width: 640px) {
   .container {
@@ -112,4 +139,3 @@
     font-size: 16px;
   }
 }
-

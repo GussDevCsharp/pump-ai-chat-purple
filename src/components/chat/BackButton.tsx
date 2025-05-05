@@ -14,7 +14,7 @@ export const BackButton = ({ isMobile }: BackButtonProps) => {
     <Button
       variant="ghost"
       size="sm"
-      className={`absolute top-4 z-20 text-pump-purple dark:text-white hover:text-pump-purple/90 dark:hover:text-white/90 ${isMobile ? 'left-16' : 'left-4'}`}
+      className={`absolute top-4 z-20 text-pump-gray dark:text-white hover:text-pump-gray/90 dark:hover:text-white/90 ${isMobile ? 'left-16' : 'left-4'}`}
       onClick={() => navigate('/themes')}
     >
       <ChevronLeft className="h-4 w-4 mr-1" />

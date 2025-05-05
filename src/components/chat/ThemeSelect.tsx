@@ -78,7 +78,7 @@ export const ThemeSelect = ({ sessionId, currentTheme, onThemeChange }: ThemeSel
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant="ghost" size="sm" className="h-8 w-8 p-0 relative">
-          <Tag className="h-4 w-4 text-pump-purple dark:text-white" />
+          <Tag className="h-4 w-4 text-pump-gray dark:text-white" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-48 p-2 bg-offwhite dark:bg-[#222222] border border-[#E5E5E5] dark:border-white/10">
@@ -118,7 +118,7 @@ export const ThemeSelect = ({ sessionId, currentTheme, onThemeChange }: ThemeSel
                 />
                 <span 
                   className="w-3 h-3 rounded-full inline-block border border-gray-200 dark:border-gray-600" 
-                  style={{ background: theme.color || "#7E1CC6" }}
+                  style={{ background: theme.color || "#8E9196" }}
                 />
                 <span className="text-sm truncate">{theme.name}</span>
               </Button>

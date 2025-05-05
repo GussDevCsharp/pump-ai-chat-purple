@@ -24,8 +24,9 @@ export default {
           DEFAULT: '#FFFFFF',
         },
         pump: {
-          purple: '#7E1CC6',
+          purple: '#7E1CC6', // Mantendo para compatibilidade
           gray: '#8E9196',
+          'gray-dark': '#333333',
           'gray-light': '#F5F5F5',
           'offwhite': '#FFFFFF'
         },

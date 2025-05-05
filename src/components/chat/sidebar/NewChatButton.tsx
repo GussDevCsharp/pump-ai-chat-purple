@@ -9,9 +9,9 @@ export function NewChatButton({ onClick }: NewChatButtonProps) {
   return (
     <button 
       onClick={onClick}
-      className="p-2 hover:bg-pump-purple/10 rounded-full"
+      className="p-2 hover:bg-pump-gray/10 rounded-full"
     >
-      <Plus className="w-5 h-5 text-pump-purple" />
+      <Plus className="w-5 h-5 text-pump-gray" />
     </button>
   )
 }

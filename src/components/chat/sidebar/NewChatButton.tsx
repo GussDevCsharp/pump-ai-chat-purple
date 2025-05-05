@@ -11,7 +11,7 @@ export function NewChatButton({ onClick }: NewChatButtonProps) {
       onClick={onClick}
       className="p-2 hover:bg-pump-gray/10 rounded-full"
     >
-      <Plus className="w-5 h-5 text-pump-gray" />
+      <Plus className="w-5 h-5 text-pump-gray dark:text-white" />
     </button>
   )
 }

@@ -11,6 +11,8 @@ import Themes from "./pages/Themes";
 import Signup from "./pages/Signup";
 import ProfileComplete from "./pages/ProfileComplete";
 import PromptLogs from "./pages/PromptLogs";
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
 
 // Toast components wrapped with location check
 const ToastProviders = () => {
@@ -20,10 +22,6 @@ const ToastProviders = () => {
   if (isChatRoute) {
     return null; // Don't render any toast providers on chat route
   }
-  
-  // Import toasters only when needed (dynamically)
-  const { Toaster } = require("@/components/ui/toaster");
-  const { Toaster: Sonner } = require("@/components/ui/sonner");
   
   return (
     <>

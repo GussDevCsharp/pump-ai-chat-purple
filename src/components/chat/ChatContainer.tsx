@@ -26,7 +26,7 @@ export const ChatContainer = () => {
   
   const sessionThemeId = currentSession?.theme_id ?? themeFromUrl
   
-  const { currentThemeId, patternPrompt, themePrompts, isThemePromptsLoading, currentThemeName } = useChatTheme(sessionThemeId)
+  const { currentThemeId, patternPrompt, themePrompts, isThemePromptsLoading, currentThemeName, currentThemePrompt } = useChatTheme(sessionThemeId)
   const { messages, setMessages, isThinking, setIsThinking, saveLocalMessages } = useChatSession(sessionId)
   
   const {
@@ -42,11 +42,12 @@ export const ChatContainer = () => {
     focus: "Soluções inovadoras",
   }, async () => {})
   
-  // Use our new hook for sending messages
+  // Corrigido para incluir currentThemePrompt
   const { handleSendMessage } = useChatSendMessage({
     sessionId,
     currentThemeId,
     currentThemeName,
+    currentThemePrompt, // Adicionado para resolver o erro
     furtivePrompt,
     setFurtivePrompt,
     messages,
@@ -82,6 +83,7 @@ export const ChatContainer = () => {
           furtivePromptTitle={furtivePrompt?.title}
           setFurtivePromptCleared={() => setFurtivePrompt(null)}
           onPromptSelect={handlePromptCardSelect}
+          currentThemePrompt={currentThemePrompt}
         />
       )}
     </div>

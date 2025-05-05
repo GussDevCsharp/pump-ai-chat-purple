@@ -38,9 +38,8 @@ export const ThemeGrid: React.FC<ThemeGridProps> = ({ themes, onSelectTheme, isL
 
   return (
     <div className={`grid gap-4 
-      grid-cols-1
-      ${isMobile ? 'grid-cols-1' : 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'}
-      w-full`}
+      ${isMobile ? 'grid-cols-1' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4'}
+      w-full auto-rows-fr`}
     >
       {themes.map((theme) => (
         <ThemeCard

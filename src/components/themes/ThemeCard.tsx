@@ -20,13 +20,13 @@ export const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
   return (
     <button
       onClick={() => onSelect(id, name)}
-      className="flex flex-col overflow-hidden rounded-lg w-full bg-offwhite dark:bg-[#222222] border border-[#E5E5E5] dark:border-white/10 hover:shadow-md transition-all"
+      className="flex flex-col overflow-hidden rounded-lg w-full h-full bg-white dark:bg-[#222222] border border-[#E5E5E5] dark:border-white/10 hover:shadow-md transition-all"
     >
       <div 
         className="h-3 w-full" 
         style={{ background: bgGradient }}
       />
-      <div className="p-4 flex flex-col items-start text-left">
+      <div className="p-4 flex-1 flex flex-col items-start text-left">
         <h3 className="text-lg font-medium text-gray-800 dark:text-white mb-1">{name}</h3>
         {description && (
           <p className="text-sm text-pump-gray dark:text-gray-300 line-clamp-2 mb-2">

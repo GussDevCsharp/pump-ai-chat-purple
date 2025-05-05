@@ -11,6 +11,7 @@ import { ThemeGrid } from "@/components/themes/ThemeGrid";
 import { PageFooter } from "@/components/common/PageFooter";
 import { ThemeSearch } from "@/components/themes/ThemeSearch";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useTheme } from "@/hooks/useTheme";
 
 export default function Themes() {
   const { themes, isLoading, searchTerm, handleSearch } = useChatThemes();
@@ -18,6 +19,7 @@ export default function Themes() {
   const navigate = useNavigate();
   const { user } = useChatAuth();
   const isMobile = useIsMobile();
+  const { isDark } = useTheme();
 
   const handleSelectTheme = async (themeId: string, themeName: string) => {
     const session = await createSession(`Chat sobre ${themeName}`, undefined, undefined, themeId);
@@ -54,7 +56,7 @@ export default function Themes() {
               <ThemeSearch onSearch={handleSearch} value={searchTerm} />
               <Button 
                 onClick={handleNewChat}
-                className="bg-pump-purple hover:bg-pump-purple/90 text-white rounded-lg px-5 py-2"
+                className={`${isDark ? 'bg-pump-purple hover:bg-pump-purple/90 text-white' : 'bg-white text-pump-gray border border-gray-300 hover:bg-gray-100'} rounded-lg px-5 py-2 transition-all duration-200`}
               >
                 <MessageSquare className="w-4 h-4 mr-2" />
                 Novo Chat

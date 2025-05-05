@@ -149,7 +149,7 @@ export default function Login() {
 
               <Button 
                 type="submit" 
-                className="w-full bg-pump-purple hover:bg-pump-purple/90 text-lg rounded-lg py-3"
+                className={`w-full ${isDark ? 'bg-pump-purple hover:bg-pump-purple/90 text-white' : 'bg-white text-pump-gray border border-gray-300 hover:bg-gray-100'} text-lg rounded-lg py-3 transition-all duration-200`}
                 disabled={isLoading}
               >
                 {isLoading ? "Entrando..." : "Entrar"}

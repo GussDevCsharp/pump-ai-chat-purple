@@ -18,7 +18,8 @@ export const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
   const [themePrompts, setThemePrompts] = useState<{title: string}[]>([]);
   const [loading, setLoading] = useState(true);
   
-  const bgGradient = color ? color : '#8E9196';
+  const bgColor = color ? color : '#8E9196';
+  const firstLetter = name.charAt(0).toUpperCase();
 
   useEffect(() => {
     const fetchThemePrompts = async () => {
@@ -47,14 +48,24 @@ export const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
   return (
     <button
       onClick={() => onSelect(id, name)}
-      className="flex flex-col overflow-hidden rounded-lg w-full h-full bg-white dark:bg-[#222222] border border-[#E5E5E5] dark:border-white/10 hover:shadow-md transition-all"
+      className="flex flex-col overflow-hidden rounded-lg w-full h-full bg-white dark:bg-[#222222] border border-[#E5E5E5] dark:border-white/10 hover:shadow-md transition-all duration-300 hover:scale-[1.02] group"
     >
-      <div 
-        className="h-3 w-full" 
-        style={{ background: bgGradient }}
-      />
-      <div className="p-4 flex-1 flex flex-col items-start text-left">
-        <h3 className="text-lg font-medium text-gray-800 dark:text-white mb-1">{name}</h3>
+      <div className="p-4 flex-1 flex flex-col items-start text-left relative">
+        <div 
+          className="absolute -top-10 -left-10 w-24 h-24 rounded-full opacity-10 transition-all duration-500 group-hover:opacity-20"
+          style={{ background: bgColor }}
+        />
+        
+        <div className="flex items-center gap-3 mb-2">
+          <div 
+            className="w-8 h-8 rounded-full flex items-center justify-center text-white font-semibold transition-transform duration-300 group-hover:scale-110" 
+            style={{ background: bgColor }}
+          >
+            {firstLetter}
+          </div>
+          <h3 className="text-lg font-medium text-gray-800 dark:text-white">{name}</h3>
+        </div>
+        
         {description && (
           <p className="text-sm text-pump-gray dark:text-gray-300 line-clamp-2 mb-2">
             {description}
@@ -65,7 +76,10 @@ export const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
         {themePrompts.length > 0 && (
           <div className="mt-2 w-full space-y-1">
             {themePrompts.map((prompt, index) => (
-              <div key={index} className="text-xs py-1 px-2 bg-gray-100 dark:bg-gray-800 text-pump-gray dark:text-gray-300 rounded-md line-clamp-1">
+              <div 
+                key={index} 
+                className="text-xs py-1 px-2 bg-gray-100 dark:bg-gray-800 text-pump-gray dark:text-gray-300 rounded-md line-clamp-1 transition-all duration-300 group-hover:translate-x-1"
+              >
                 {prompt.title}
               </div>
             ))}

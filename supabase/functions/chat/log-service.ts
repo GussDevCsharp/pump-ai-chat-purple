@@ -6,7 +6,8 @@ export async function savePromptLog(supabase: any, {
   openAIPayload,
   furtivePrompt,
   finalUserMessage,
-  furtiveFragments
+  furtiveFragments,
+  themePrompt
 }: {
   userEmail: string,
   systemPrompt: string,
@@ -14,7 +15,8 @@ export async function savePromptLog(supabase: any, {
   openAIPayload: any,
   furtivePrompt?: { text: string } | null,
   finalUserMessage: string,
-  furtiveFragments?: { fragment1?: string, fragment2?: string } | null
+  furtiveFragments?: { fragment1?: string, fragment2?: string } | null,
+  themePrompt?: string | null
 }) {
   if (!userEmail) return;
   
@@ -29,6 +31,7 @@ export async function savePromptLog(supabase: any, {
         ...openAIPayload,
         furtive_prompt: furtivePrompt?.text || null,
         furtive_fragments: furtiveFragments || null,
+        theme_prompt: themePrompt || null,
         original_message: message,
         final_message: finalUserMessage
       }

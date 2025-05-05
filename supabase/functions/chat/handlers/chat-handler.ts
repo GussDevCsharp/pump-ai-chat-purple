@@ -89,6 +89,24 @@ async function processChatMessage(
     }
   }
 
+  // Get theme prompt if themeId exists
+  let themePrompt = null;
+  if (themeId) {
+    console.log("Fetching theme prompt for theme ID:", themeId);
+    const { data: themeData, error: themeError } = await supabase
+      .from('chat_themes')
+      .select('prompt')
+      .eq('id', themeId)
+      .maybeSingle();
+    
+    if (themeError) {
+      console.error("Error fetching theme prompt:", themeError);
+    } else if (themeData?.prompt) {
+      themePrompt = themeData.prompt;
+      console.log("Theme prompt fetched successfully:", themePrompt ? "Found" : "Not found");
+    }
+  }
+
   // Get all system prompts
   const { systemPrompt, components } = await getSystemPrompts(supabase, themeId)
   
@@ -110,12 +128,13 @@ async function processChatMessage(
   console.log("2. Rules:", components.rules ? "Present" : "Missing");
   console.log("3. Tags:", components.tags ? "Present" : "Missing");
   console.log("4. Theme:", components.theme ? "Present" : "Missing");
-  console.log("5. User message:", message);
-  console.log("6. Furtive prompt:", furtivePrompt?.text || 'None');
+  console.log("5. Theme base prompt:", themePrompt ? "Present" : "Missing");
+  console.log("6. User message:", message);
+  console.log("7. Furtive prompt:", furtivePrompt?.text || 'None');
   
   if (furtiveFragments) {
-    console.log("7. Furtive fragment 1:", furtiveFragments.fragment1 ? "Present" : "Missing");
-    console.log("8. Furtive fragment 2:", furtiveFragments.fragment2 ? "Present" : "Missing");
+    console.log("8. Furtive fragment 1:", furtiveFragments.fragment1 ? "Present" : "Missing");
+    console.log("9. Furtive fragment 2:", furtiveFragments.fragment2 ? "Present" : "Missing");
   }
   
   // Build final prompt integrating furtive fragments
@@ -129,7 +148,43 @@ async function processChatMessage(
   // Add furtive fragments if available and should be used
   if (furtiveFragments && shouldUseFurtivePrompts) {
     console.log("Including furtive fragments in system prompt (first interaction or theme selected)");
-    finalSystemPrompt = `${furtiveFragments.fragment1}\n\n${furtiveFragments.fragment2}\n\n${systemPrompt}`;
+    
+    // Nova estrutura: Layout + Regras tema + Fragmentos furtivos + Sistema
+    let newSystemPrompt = "";
+    
+    // 1. Layout
+    if (components.layout) {
+      newSystemPrompt += components.layout + "\n\n";
+    }
+    
+    // 2. Tema principal
+    if (themePrompt) {
+      newSystemPrompt += `Contexto do tema: ${themePrompt}\n\n`;
+    }
+    
+    // 3. Fragmentos furtivos do perfil
+    if (furtiveFragments.fragment1) {
+      newSystemPrompt += furtiveFragments.fragment1 + "\n\n";
+    }
+    
+    if (furtiveFragments.fragment2) {
+      newSystemPrompt += furtiveFragments.fragment2 + "\n\n";
+    }
+    
+    // 4. Resto do sistema (regras, tags, tema específico)
+    if (components.rules) {
+      newSystemPrompt += components.rules + "\n\n";
+    }
+    
+    if (components.tags) {
+      newSystemPrompt += components.tags + "\n\n";
+    }
+    
+    if (components.theme) {
+      newSystemPrompt += components.theme + "\n\n";
+    }
+    
+    finalSystemPrompt = newSystemPrompt.trim();
   }
   
   // Adjust user message if theme-specific furtive prompt exists
@@ -150,6 +205,11 @@ async function processChatMessage(
   // Ensure layout is included in the prompt logs
   if (components.layout) {
     completeSystemPromptForLog += components.layout + "\n\n";
+  }
+  
+  // Add main theme prompt if available
+  if (themePrompt) {
+    completeSystemPromptForLog += `Contexto do tema: ${themePrompt}\n\n`;
   }
   
   // Add other components
@@ -187,7 +247,8 @@ async function processChatMessage(
     openAIPayload,
     furtivePrompt,
     finalUserMessage,
-    furtiveFragments
+    furtiveFragments,
+    themePrompt
   });
   
   // Call OpenAI API and return response

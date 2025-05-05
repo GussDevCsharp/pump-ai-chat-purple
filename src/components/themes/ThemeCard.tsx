@@ -23,11 +23,11 @@ export const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
   useEffect(() => {
     const fetchThemePrompts = async () => {
       try {
+        // Removida a limitação de 3 subtemas para buscar todos
         const { data, error } = await supabase
           .from("theme_prompts")
           .select("title")
-          .eq("theme_id", id)
-          .limit(3);
+          .eq("theme_id", id);
           
         if (error) {
           console.error("Erro ao buscar subtemas:", error);
@@ -61,7 +61,7 @@ export const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
           </p>
         )}
         
-        {/* Subtemas */}
+        {/* Subtemas - agora mostrando todos */}
         {themePrompts.length > 0 && (
           <div className="mt-2 w-full space-y-1">
             {themePrompts.map((prompt, index) => (

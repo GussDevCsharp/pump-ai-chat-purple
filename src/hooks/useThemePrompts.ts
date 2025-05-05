@@ -24,11 +24,11 @@ export function useThemePrompts(themeId?: string) {
       try {
         console.log("Fetching theme prompts for theme ID:", themeId);
         
+        // Removida a limitação de 6 prompts para buscar todos
         const { data, error } = await supabase
           .from("theme_prompts")
           .select("*")
-          .eq("theme_id", themeId)
-          .limit(6);
+          .eq("theme_id", themeId);
           
         if (error) {
           console.error("Error fetching theme prompts:", error);

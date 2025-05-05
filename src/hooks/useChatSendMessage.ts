@@ -10,14 +10,15 @@ interface UseChatSendMessageProps {
   sessionId: string | null
   currentThemeId: string | null
   currentThemeName: string | null
+  currentThemePrompt: string | null
   furtivePrompt: { text: string; title: string } | null
   setFurtivePrompt: (prompt: { text: string; title: string } | null) => void
   messages: Message[]
   setMessages: (messages: Message[] | ((prev: Message[]) => Message[])) => void
   setIsThinking: (isThinking: boolean) => void
   saveLocalMessages: (sessionId: string, messages: Message[]) => void
-  interpolatePatternPrompt: (pattern: string, userQuery: string, business: Record<string, string>, themeTitle?: string) => string
-  substitutePromptTags: (prompt: string, business: Record<string, string>, themeTitle?: string) => string
+  interpolatePatternPrompt: (pattern: string, userQuery: string, business: Record<string, string>, themeTitle?: string, themePrompt?: string | null) => string
+  substitutePromptTags: (prompt: string, business: Record<string, string>, themeTitle?: string, themePrompt?: string | null) => string
   patternPrompt: { pattern_prompt?: string } | null
 }
 
@@ -25,6 +26,7 @@ export const useChatSendMessage = ({
   sessionId,
   currentThemeId,
   currentThemeName,
+  currentThemePrompt,
   furtivePrompt,
   setFurtivePrompt,
   messages,
@@ -82,10 +84,10 @@ export const useChatSendMessage = ({
       // If there's a furtive prompt, use it for the AI message
       if (furtivePromptSnapshot) {
         if (!content.trim()) {
-          aiMessageToSend = substitutePromptTags(furtivePromptSnapshot.text, businessData, currentThemeName)
+          aiMessageToSend = substitutePromptTags(furtivePromptSnapshot.text, businessData, currentThemeName, currentThemePrompt)
         } else {
           aiMessageToSend =
-            substitutePromptTags(furtivePromptSnapshot.text, businessData, currentThemeName) +
+            substitutePromptTags(furtivePromptSnapshot.text, businessData, currentThemeName, currentThemePrompt) +
             " " +
             content
         }
@@ -94,7 +96,8 @@ export const useChatSendMessage = ({
           patternPrompt.pattern_prompt,
           content,
           businessData,
-          currentThemeName
+          currentThemeName,
+          currentThemePrompt
         )
       }
 

@@ -9,6 +9,7 @@ interface ThemeGridProps {
     name: string;
     description: string | null;
     color: string | null;
+    prompt?: string | null;
   }>;
   onSelectTheme: (themeId: string, themeName: string) => void;
   isLoading: boolean;

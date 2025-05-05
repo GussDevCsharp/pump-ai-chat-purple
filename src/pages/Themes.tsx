@@ -34,9 +34,9 @@ export default function Themes() {
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-[#1A1F2C] flex flex-col">
+    <div className="min-h-screen bg-offwhite dark:bg-[#1A1F2C] flex flex-col">
       <Header />
-      <main className="w-full px-4 md:px-8 py-6 bg-white dark:bg-[#1A1F2C]">
+      <main className="w-full px-4 md:px-8 py-6 bg-offwhite dark:bg-[#1A1F2C]">
         <div className="max-w-7xl mx-auto w-full">
           <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-8">
             <div className="flex flex-col gap-2 mb-4 md:mb-0">

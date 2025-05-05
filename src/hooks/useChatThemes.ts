@@ -8,6 +8,7 @@ export interface ChatTheme {
   name: string
   description: string | null
   color: string | null
+  prompt: string | null
 }
 
 export const useChatThemes = () => {
@@ -34,11 +35,11 @@ export const useChatThemes = () => {
         setThemes(data || [])
         setFilteredThemes(data || [])
       } else {
-        // Busca temas por nome e descrição
+        // Busca temas por nome, descrição e prompt
         const { data: themeData, error: themeError } = await supabase
           .from('chat_themes')
           .select('*')
-          .ilike('name', `%${searchTerm}%`)
+          .or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,prompt.ilike.%${searchTerm}%`)
           .order('name', { ascending: true })
 
         if (themeError) throw themeError
@@ -49,7 +50,7 @@ export const useChatThemes = () => {
           .select(`
             theme_id,
             chat_themes (
-              id, name, description, color
+              id, name, description, color, prompt
             )
           `)
           .ilike('title', `%${searchTerm}%`)

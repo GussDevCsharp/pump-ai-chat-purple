@@ -19,9 +19,16 @@ export function useChatMessages(
     pattern: string,
     userQuery: string,
     business: Record<string, string>,
-    themeTitle?: string
+    themeTitle?: string,
+    themePrompt?: string | null
   ) => {
     let filled = pattern
+    
+    // Adicionar contexto do tema base se disponível
+    if (themePrompt) {
+      filled = `Contexto do tema: ${themePrompt}\n\n${filled}`
+    }
+    
     for (const key in business) {
       filled = filled.replace(new RegExp(`{{\\s*${key}\\s*}}`, "g"), business[key])
     }
@@ -38,9 +45,16 @@ export function useChatMessages(
   const substitutePromptTags = (
     prompt: string, 
     business: Record<string, string>,
-    themeTitle?: string
+    themeTitle?: string,
+    themePrompt?: string | null
   ) => {
     let result = prompt
+    
+    // Adicionar contexto do tema base se disponível
+    if (themePrompt) {
+      result = `Contexto do tema: ${themePrompt}\n\n${result}`
+    }
+    
     for (const key in business) {
       result = result.replace(new RegExp(`{{\\s*${key}\\s*}}`, "g"), business[key])
     }

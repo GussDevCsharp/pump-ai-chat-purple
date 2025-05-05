@@ -137,18 +137,21 @@ export type Database = {
           description: string | null
           id: string
           name: string
+          prompt: string | null
         }
         Insert: {
           color?: string | null
           description?: string | null
           id?: string
           name: string
+          prompt?: string | null
         }
         Update: {
           color?: string | null
           description?: string | null
           id?: string
           name?: string
+          prompt?: string | null
         }
         Relationships: []
       }

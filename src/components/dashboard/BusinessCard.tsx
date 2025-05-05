@@ -15,6 +15,7 @@ interface BusinessCardProps {
   themeColor?: string
   themeId?: string
   prompts?: any[]
+  themePrompt?: string | null
 }
 
 export const BusinessCard = ({ 
@@ -23,7 +24,8 @@ export const BusinessCard = ({
   gradient, 
   themeName, 
   themeColor,
-  themeId 
+  themeId,
+  themePrompt
 }: BusinessCardProps) => {
   const navigate = useNavigate()
   const { prompts, isLoading } = useThemePrompts(themeId);
@@ -44,7 +46,8 @@ export const BusinessCard = ({
           { 
             name: title, 
             description: description,
-            color: gradient 
+            color: gradient,
+            prompt: themePrompt || null
           }
         ])
         .select()
@@ -79,7 +82,7 @@ export const BusinessCard = ({
 
   return (
     <Card 
-      className="border border-[#E5E5E5] bg-white shadow-sm hover:shadow-md transition-shadow cursor-pointer dark:bg-[#1A1F2C] dark:border-white/10"
+      className="border border-[#E5E5E5] bg-offwhite shadow-sm hover:shadow-md transition-shadow cursor-pointer dark:bg-[#1A1F2C] dark:border-white/10"
       onClick={handleCardClick}
     >
       <CardHeader>
@@ -101,6 +104,13 @@ export const BusinessCard = ({
             >
               {themeName}
             </span>
+          </div>
+        )}
+        {themePrompt && (
+          <div className="mt-1 max-w-full">
+            <div className="text-xs py-1 px-2 bg-gray-100 dark:bg-gray-800 text-pump-gray dark:text-gray-300 rounded-md line-clamp-1">
+              {themePrompt.length > 50 ? `${themePrompt.substring(0, 50)}...` : themePrompt}
+            </div>
           </div>
         )}
       </CardHeader>

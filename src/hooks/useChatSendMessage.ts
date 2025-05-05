@@ -79,6 +79,7 @@ export const useChatSendMessage = ({
       let aiMessageToSend = content
       let furtivePromptSnapshot = furtivePrompt
 
+      // If there's a furtive prompt, use it for the AI message
       if (furtivePromptSnapshot) {
         if (!content.trim()) {
           aiMessageToSend = substitutePromptTags(furtivePromptSnapshot.text, businessData, currentThemeName)
@@ -174,7 +175,14 @@ export const useChatSendMessage = ({
         }
       }
 
-      setFurtivePrompt(null)
+      // Only clear the furtive prompt after successfully sending the message
+      // This was another part of the issue - we were clearing too early
+      if (furtivePromptSnapshot) {
+        // Wait a moment before clearing to ensure UI shows it being used
+        setTimeout(() => {
+          setFurtivePrompt(null);
+        }, 500);
+      }
 
     } catch (error) {
       console.error("Chat error:", error)

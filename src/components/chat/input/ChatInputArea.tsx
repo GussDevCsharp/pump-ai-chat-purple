@@ -60,9 +60,11 @@ export const ChatInputArea = ({
   // Get audio visualization levels
   const audioLevel = useAudioVisualization(isRecording);
 
-  // Limpar o título do prompt furtivo quando a mensagem for vazia
+  // Não limpar o título do prompt furtivo quando a mensagem estiver vazia
+  // This was the main issue - we were clearing furtivePromptTitle too aggressively
   useEffect(() => {
-    if (furtivePromptTitle && message.trim() === "") {
+    if (furtivePromptTitle && message.trim() === "" && !document.activeElement?.contains(textareaRef.current)) {
+      // Only clear if the textarea is not focused
       setFurtivePromptCleared && setFurtivePromptCleared();
     }
   }, [message, furtivePromptTitle, setFurtivePromptCleared]);
@@ -114,7 +116,7 @@ export const ChatInputArea = ({
   return (
     <div className="w-full max-w-3xl mx-auto p-4 border-t border-pump-gray/20 bg-white dark:bg-[#1A1F2C]">
       {furtivePromptTitle && (
-        <div className="mb-2 text-xs text-pump-purple dark:text-white font-medium">
+        <div className="mb-2 text-xs text-pump-gray font-medium dark:text-white">
           Tópico selecionado: <b>{furtivePromptTitle}</b>
         </div>
       )}
@@ -144,7 +146,7 @@ export const ChatInputArea = ({
               handleSubmit()
             }
           }}
-          className="w-full resize-none rounded-lg border border-pump-gray/20 dark:border-[#333333] bg-white dark:bg-[#222222] dark:text-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-pump-purple/20 pr-4"
+          className="w-full resize-none rounded-lg border border-pump-gray/20 dark:border-[#333333] bg-white dark:bg-[#222222] dark:text-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-pump-gray/20 pr-4"
           rows={1}
           placeholder="Digite sua mensagem..."
           disabled={isLoading || isAudioLoading}
@@ -175,7 +177,7 @@ export const ChatInputArea = ({
             
             <button
               type="button"
-              className="p-2 text-pump-purple dark:text-white hover:text-pump-purple/80 dark:hover:text-white/80 transition-colors disabled:opacity-50"
+              className="p-2 text-pump-gray dark:text-white hover:text-pump-gray/80 dark:hover:text-white/80 transition-colors disabled:opacity-50"
               onClick={() => handleSubmit()}
               disabled={isLoading}
             >

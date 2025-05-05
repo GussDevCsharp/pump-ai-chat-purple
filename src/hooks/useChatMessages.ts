@@ -54,11 +54,13 @@ export function useChatMessages(
   }
 
   const handlePromptCardSelect = async (prompt: ThemePrompt) => {
+    // Store the furtive prompt for later use and persistence
     setFurtivePrompt({
       text: prompt.prompt_furtive ?? prompt.title,
       title: prompt.title
     })
     
+    // Set the prompt title in the text area but don't send it yet
     const textArea = document.querySelector('textarea')
     if (textArea) {
       textArea.value = prompt.title

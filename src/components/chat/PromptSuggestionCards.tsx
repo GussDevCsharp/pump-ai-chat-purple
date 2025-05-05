@@ -1,7 +1,6 @@
 
 import React from "react";
 import { ThemePrompt } from "@/hooks/useThemePrompts";
-import { Badge } from "@/components/ui/badge";
 
 interface PromptSuggestionCardsProps {
   prompts: ThemePrompt[];

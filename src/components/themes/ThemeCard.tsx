@@ -48,7 +48,7 @@ export const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
   return (
     <button
       onClick={() => onSelect(id, name)}
-      className="flex flex-col overflow-hidden rounded-lg w-full h-full card-glassmorphism card-hover"
+      className="flex flex-col overflow-hidden rounded-lg w-full h-full card-glassmorphism hover:shadow-lg hover:border-gray-300/50 hover:scale-[1.02] transition-all duration-300"
     >
       <div className="p-4 flex-1 flex flex-col items-start text-left relative">
         <div 
@@ -77,7 +77,7 @@ export const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
             {themePrompts.map((prompt, index) => (
               <div 
                 key={index} 
-                className="text-xs py-1 px-2 glassmorphism text-pump-gray dark:text-gray-300 rounded-md line-clamp-1 transition-all duration-300 group-hover:translate-x-1"
+                className="text-xs py-1 px-2 glassmorphism text-pump-gray dark:text-gray-300 rounded-md line-clamp-1 transition-all duration-300 hover:translate-x-1"
               >
                 {prompt.title}
               </div>

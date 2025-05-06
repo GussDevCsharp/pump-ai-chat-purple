@@ -82,7 +82,7 @@ export const BusinessCard = ({
 
   return (
     <Card 
-      className="border border-[#E5E5E5] bg-offwhite shadow-sm hover:shadow-md transition-shadow cursor-pointer dark:bg-[#1A1F2C] dark:border-white/10"
+      className="card-glassmorphism card-hover cursor-pointer"
       onClick={handleCardClick}
     >
       <CardHeader>
@@ -108,7 +108,7 @@ export const BusinessCard = ({
         )}
         {themePrompt && (
           <div className="mt-1 max-w-full">
-            <div className="text-xs py-1 px-2 bg-gray-100 dark:bg-gray-800 text-pump-gray dark:text-gray-300 rounded-md line-clamp-1">
+            <div className="text-xs py-1 px-2 glassmorphism text-pump-gray dark:text-gray-300 rounded-md line-clamp-1">
               {themePrompt.length > 50 ? `${themePrompt.substring(0, 50)}...` : themePrompt}
             </div>
           </div>

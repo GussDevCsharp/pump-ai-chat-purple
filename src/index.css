@@ -77,6 +77,33 @@
   }
 }
 
+/* Glassmorphism utility classes */
+@layer utilities {
+  .glassmorphism {
+    @apply bg-gray-200/30 backdrop-blur-md border border-gray-200/50 shadow-lg;
+  }
+  
+  .dark .glassmorphism {
+    @apply bg-gray-800/30 backdrop-blur-md border border-gray-700/50 shadow-lg;
+  }
+  
+  .card-glassmorphism {
+    @apply bg-gray-200/30 backdrop-blur-md border border-gray-200/40 shadow-md rounded-lg transition-all duration-300;
+  }
+  
+  .dark .card-glassmorphism {
+    @apply bg-gray-800/30 backdrop-blur-md border border-gray-700/30 shadow-md;
+  }
+  
+  .card-hover {
+    @apply hover:bg-gray-200/40 hover:shadow-lg hover:border-gray-300/50 hover:scale-[1.02];
+  }
+  
+  .dark .card-hover {
+    @apply hover:bg-gray-800/40 hover:shadow-lg hover:border-gray-600/50 hover:scale-[1.02];
+  }
+}
+
 @keyframes slide-in-left {
   from {
     transform: translateX(-100%);
@@ -176,3 +203,4 @@
 .w-0\.75 {
   width: 0.1875rem;
 }
+

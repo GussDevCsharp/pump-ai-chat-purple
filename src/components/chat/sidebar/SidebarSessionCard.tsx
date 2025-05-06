@@ -86,16 +86,16 @@ export function SidebarSessionCard({
       className={cn(
         "px-2 sm:px-3 py-2 relative rounded-lg flex items-center cursor-pointer group transition-colors",
         isActive 
-          ? "bg-offwhite text-pump-gray-dark dark:bg-[#222222] dark:text-white"
-          : "hover:bg-offwhite/50 text-pump-gray dark:hover:bg-white/5 dark:text-gray-300"
+          ? "card-glassmorphism text-pump-gray-dark dark:text-white"
+          : "hover:bg-gray-200/30 text-pump-gray dark:hover:bg-white/5 dark:text-gray-300"
       )}
     >
       <div className="mr-2 sm:mr-3">
         <div className={cn(
           "flex items-center justify-center w-8 h-8 rounded-lg",
           isActive 
-            ? "bg-offwhite/80 text-pump-purple dark:bg-[#333333] dark:text-white"
-            : "bg-offwhite/80 text-pump-purple dark:bg-[#333333] dark:text-gray-300"
+            ? "bg-gray-300/50 text-pump-purple dark:bg-gray-700/50 dark:text-white"
+            : "bg-gray-200/50 text-pump-purple dark:bg-gray-800/50 dark:text-gray-300"
         )}>
           <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5" />
         </div>

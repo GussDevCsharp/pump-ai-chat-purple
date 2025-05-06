@@ -19,10 +19,10 @@ interface TrendingTopicsProps {
 export const TrendingTopics = ({ latestTopics }: TrendingTopicsProps) => {
   return (
     <div className="w-full">
-      <Card className="p-4 bg-white/90">
+      <Card className="p-4 card-glassmorphism">
         <div className="flex items-center gap-2 mb-3">
           <Activity className="w-4 h-4 text-pump-purple" />
-          <h2 className="text-base font-semibold text-gray-900">Últimas Atualizações</h2>
+          <h2 className="text-base font-semibold text-gray-900 dark:text-white">Últimas Atualizações</h2>
         </div>
         <Table>
           <TableHeader>

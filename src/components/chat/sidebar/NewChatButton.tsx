@@ -12,9 +12,9 @@ export function NewChatButton({ onClick }: NewChatButtonProps) {
   return (
     <button 
       onClick={onClick}
-      className={`p-2 ${isDark 
-        ? 'hover:bg-pump-gray/10 text-white' 
-        : 'hover:bg-gray-200 text-pump-gray border border-gray-300'} rounded-full transition-colors duration-200`}
+      className={`p-2 card-glassmorphism ${isDark 
+        ? 'text-white' 
+        : 'text-pump-gray'} rounded-full transition-all duration-200`}
     >
       <Plus className="w-5 h-5" />
     </button>

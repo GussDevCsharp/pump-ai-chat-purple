@@ -1,5 +1,4 @@
-
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useChatAuth } from "./useChatAuth"
 import { useChatSessions } from "./useChatSessions"
 import { Message } from "./useChatSession"
@@ -43,12 +42,49 @@ export const useChatSendMessage = ({
   const location = useLocation();
   const isChatRoute = location.pathname === "/chat";
   
-  const businessData = {
+  // Use business data from profile instead of hardcoded values
+  const [businessData, setBusinessData] = useState({
     company_name: "Minha Empresa",
     industry: "Tecnologia",
     years: "5",
     focus: "Soluções inovadoras",
-  }
+  });
+
+  // Fetch profile data when user is authenticated
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      if (authStatus !== 'authenticated' || !user) return;
+      
+      try {
+        // Fetch company profile
+        const { data: companyProfile } = await supabase
+          .from('company_profiles')
+          .select('*')
+          .eq('user_id', user.id)
+          .maybeSingle();
+        
+        // Fetch entrepreneur profile
+        const { data: entrepreneurProfile } = await supabase
+          .from('entrepreneur_profiles')
+          .select('*')
+          .eq('user_id', user.id)
+          .maybeSingle();
+      
+        if (companyProfile || entrepreneurProfile) {
+          setBusinessData({
+            company_name: companyProfile?.company_name || "Minha Empresa",
+            industry: companyProfile?.business_segment || "Tecnologia",
+            years: companyProfile?.years_in_operation || "5",
+            focus: entrepreneurProfile?.main_goal || "Soluções inovadoras",
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching profile data:", error);
+      }
+    };
+    
+    fetchProfileData();
+  }, [authStatus, user]);
 
   const handleSendMessage = async (content: string) => {
     if (authStatus === 'anonymous' && !recordInteraction()) {

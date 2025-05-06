@@ -21,7 +21,9 @@ export const WelcomeSection: React.FC<WelcomeSectionProps> = ({ onNewChat }) => 
       <Button 
         onClick={onNewChat}
         size="lg"
-        className={`${isDark ? 'bg-pump-gray hover:bg-pump-gray/90 text-white' : 'bg-white text-pump-gray border border-gray-300 hover:bg-gray-100'} rounded-lg px-5 py-2 text-base transition-all duration-200`}
+        className={`${isDark 
+          ? 'bg-pump-gray hover:bg-pump-gray/90 text-white' 
+          : 'bg-white text-pump-gray border border-gray-300 hover:bg-gray-100'} rounded-lg px-5 py-2 text-base transition-all duration-200`}
       >
         <MessageCircle className="w-4 h-4 mr-2" />
         Novo Chat

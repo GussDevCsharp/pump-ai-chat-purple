@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { Header } from "@/components/common/Header"
@@ -10,8 +11,11 @@ import { supabase } from "@/integrations/supabase/client"
 import { toast } from "sonner"
 import { Checkbox } from "@/components/ui/checkbox"
 import NeuralBackground from "@/components/effects/NeuralBackground"
+import { useTheme } from "@/hooks/useTheme"
 
 export default function ProfileComplete() {
+  const { isDark } = useTheme();
+  
   // Entrepreneur profile state
   const [mainGoal, setMainGoal] = useState("")
   const [entrepreneurshipReason, setEntrepreneurshipReason] = useState("")
@@ -55,7 +59,7 @@ export default function ProfileComplete() {
           .from('company_profiles')
           .select('*')
           .eq('user_id', userId)
-          .single()
+          .maybeSingle()
         
         if (companyProfile) {
           setCompanyName(companyProfile.company_name || "")
@@ -76,7 +80,7 @@ export default function ProfileComplete() {
           .from('entrepreneur_profiles')
           .select('*')
           .eq('user_id', userId)
-          .single()
+          .maybeSingle()
         
         if (entrepreneurProfile) {
           setMainGoal(entrepreneurProfile.main_goal || "")
@@ -183,7 +187,9 @@ export default function ProfileComplete() {
           <div className="flex justify-between mb-8">
             <Button 
               variant={activeStep === 0 ? "default" : "outline"}
-              className={activeStep === 0 ? "bg-pump-purple text-white dark:hover:bg-pump-purple/90" : "dark:text-white"}
+              className={activeStep === 0 
+                ? "bg-pump-purple text-white dark:hover:bg-pump-purple/90" 
+                : `${isDark ? "text-white" : "text-pump-gray border-gray-300"}`}
               onClick={() => setActiveStep(0)}
             >
               Perfil do Empresário
@@ -191,7 +197,9 @@ export default function ProfileComplete() {
             
             <Button 
               variant={activeStep === 1 ? "default" : "outline"}
-              className={activeStep === 1 ? "bg-pump-purple text-white dark:hover:bg-pump-purple/90" : "dark:text-white"}
+              className={activeStep === 1 
+                ? "bg-pump-purple text-white dark:hover:bg-pump-purple/90" 
+                : `${isDark ? "text-white" : "text-pump-gray border-gray-300"}`}
               onClick={() => setActiveStep(1)}
             >
               Perfil da Empresa
@@ -231,7 +239,7 @@ export default function ProfileComplete() {
                     Você se considera mais operacional, estratégico ou comercial no seu negócio?
                   </label>
                   <Select value={managementStyle} onValueChange={setManagementStyle}>
-                    <SelectTrigger>
+                    <SelectTrigger className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700">
                       <SelectValue placeholder="Selecione..." />
                     </SelectTrigger>
                     <SelectContent>
@@ -270,7 +278,7 @@ export default function ProfileComplete() {
                     Com que frequência você revisa ou ajusta suas metas?
                   </label>
                   <Select value={goalsReviewFrequency} onValueChange={setGoalsReviewFrequency}>
-                    <SelectTrigger>
+                    <SelectTrigger className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700">
                       <SelectValue placeholder="Selecione..." />
                     </SelectTrigger>
                     <SelectContent>
@@ -363,7 +371,7 @@ export default function ProfileComplete() {
                       Há quanto tempo em operação?
                     </label>
                     <Select value={yearsInOperation} onValueChange={setYearsInOperation}>
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700">
                         <SelectValue placeholder="Selecione..." />
                       </SelectTrigger>
                       <SelectContent>
@@ -513,7 +521,9 @@ export default function ProfileComplete() {
                   <Button 
                     type="button"
                     onClick={nextStep}
-                    className="bg-pump-purple hover:bg-pump-purple/90 dark:text-white"
+                    className={isDark 
+                      ? "bg-pump-purple hover:bg-pump-purple/90 text-white" 
+                      : "bg-pump-purple hover:bg-pump-purple/90 text-white"}
                   >
                     Próximo
                   </Button>
@@ -524,14 +534,16 @@ export default function ProfileComplete() {
                     type="button"
                     variant="outline"
                     onClick={prevStep}
-                    className="dark:text-white dark:border-gray-700"
+                    className={isDark 
+                      ? "text-white dark:border-gray-700" 
+                      : "text-pump-gray border-gray-300"}
                   >
                     Voltar
                   </Button>
                   
                   <Button 
                     type="submit"
-                    className="bg-pump-purple hover:bg-pump-purple/90 dark:text-white"
+                    className="bg-pump-purple hover:bg-pump-purple/90 text-white"
                     disabled={isLoading}
                   >
                     {isLoading ? "Salvando..." : "Salvar perfil"}

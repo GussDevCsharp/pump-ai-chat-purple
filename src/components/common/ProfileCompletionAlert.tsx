@@ -1,98 +1,35 @@
 
-import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { Button } from "@/components/ui/button"
-import { Info } from "lucide-react"
-import { supabase } from "@/integrations/supabase/client"
-import { cn } from "@/lib/utils"
-import { useChatAuth } from "@/hooks/useChatAuth"
+import React from 'react';
+import { AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
+import { useProfileNavigation } from '@/hooks/useProfileNavigation';
 
-export function ProfileCompletionAlert() {
-  const [showAlert, setShowAlert] = useState(false)
-  const navigate = useNavigate()
-  const { authStatus } = useChatAuth()
-  
-  useEffect(() => {
-    // Only check profile completion if the user is authenticated
-    if (authStatus !== 'authenticated') {
-      return
-    }
-    
-    const checkProfileCompletion = async () => {
-      try {
-        const { data: session } = await supabase.auth.getSession()
-        if (!session.session) return
+export const ProfileCompletionAlert = () => {
+  const navigate = useNavigate();
+  const { isProfileComplete, isLoading } = useProfileNavigation();
 
-        const { data: companyProfile, error: companyError } = await supabase
-          .from('company_profiles')
-          .select('id, profile_completed')
-          .eq('user_id', session.session.user.id)
-          .single()
-        
-        if (companyError && companyError.code !== 'PGRST116') {
-          console.error('Error checking company profile:', companyError)
-          return
-        }
-        
-        if (!companyProfile || !companyProfile.profile_completed) {
-          setShowAlert(true)
-        }
-      } catch (error) {
-        console.error('Error checking profile completion:', error)
-      }
-    }
-    
-    const timer = setTimeout(checkProfileCompletion, 1000)
-    return () => clearTimeout(timer)
-  }, [authStatus])
-  
-  const handleComplete = () => {
-    navigate('/profile/complete')
-    setShowAlert(false)
+  if (isLoading || isProfileComplete !== false) {
+    return null;
   }
-  
-  const handleLater = () => {
-    setShowAlert(false)
-  }
-  
-  if (!showAlert) return null
 
   return (
-    <div 
-      className={cn(
-        "fixed top-0 left-0 right-0 z-50", 
-        "bg-pump-purple text-white", 
-        "shadow-[0_4px_14px_rgba(0,0,0,0.1)]", 
-        "animate-fade-in"
-      )}
-    >
-      <div className="container mx-auto px-4 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Info className="h-5 w-5 text-white/80" />
-            <span className="text-sm font-medium">
-              Deixa eu conhecer seu negócio ainda mais
-            </span>
-          </div>
-          <div className="flex items-center gap-3">
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={handleLater}
-              className="text-pump-purple border-white/30 hover:bg-white/10"
-            >
-              Depois
-            </Button>
-            <Button 
-              size="sm"
-              onClick={handleComplete}
-              className="bg-white text-pump-purple hover:bg-white/90"
-            >
-              Completar perfil
-            </Button>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
+    <Alert className="mb-4 bg-amber-50 border-amber-200">
+      <AlertCircle className="h-4 w-4 text-amber-500" />
+      <AlertTitle className="text-amber-700">Perfil incompleto</AlertTitle>
+      <AlertDescription className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <span className="text-amber-600">
+          Complete seu perfil para obter respostas mais personalizadas.
+        </span>
+        <Button 
+          onClick={() => navigate('/profile-complete')}
+          variant="outline"
+          className="border-amber-500 hover:bg-amber-100 text-amber-700"
+        >
+          Completar perfil
+        </Button>
+      </AlertDescription>
+    </Alert>
+  );
+};

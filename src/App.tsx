@@ -1,4 +1,3 @@
-
 import React from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -56,7 +55,7 @@ const App = () => {
               <Route path="/signup" element={<Signup />} />
               <Route path="/themes" element={<Themes />} />
               <Route path="/business-generator" element={<BusinessGenerator />} />
-              <Route path="/profile/complete" element={<ProfileComplete />} />
+              <Route path="/profile-complete" element={<ProfileComplete />} />
               <Route path="/prompt-logs" element={<PromptLogs />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

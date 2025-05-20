@@ -19,7 +19,7 @@ export const ChatHeader = ({ mobileMenuButton }: { mobileMenuButton?: React.Reac
         )}
         <Link to="/">
           <img 
-            src="\img\CHATPUMP PNG.png" 
+            src="\img\CHATPUMP.png" 
             alt="ChatPump"
             className="h-6 sm:h-8"
           />

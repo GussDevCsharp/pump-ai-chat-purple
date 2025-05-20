@@ -75,7 +75,7 @@ export default function Login() {
               <img 
                 src="\img\CHATPUMP.png" 
                 alt="ChatPump"
-                className="h-12 mx-auto"
+                className="h-16 mx-auto"
               />
             </Link>
             <h2 className="mt-6 text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">

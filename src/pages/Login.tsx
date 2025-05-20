@@ -75,10 +75,10 @@ export default function Login() {
               <img 
                 src="\img\CHATPUMP.png" 
                 alt="ChatPump"
-                className="h-20 mx-auto"
+                className="h-28 md:h-32 w-auto mx-auto"
               />
             </Link>
-            <h2 className="mt-6 text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+            <h2 className="mt-4 text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
               Bem-vindo de volta
             </h2>
             <p className="mt-2 text-base text-pump-gray dark:text-white/70">

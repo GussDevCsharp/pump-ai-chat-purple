@@ -11,7 +11,12 @@ export const WelcomeScreen = ({ onSendMessage }: WelcomeScreenProps) => {
   
   return (
     <div className="flex flex-col items-center justify-between h-full bg-white dark:bg-[#1A1F2C]">
-      <div className="flex-1 flex items-center justify-center w-full">
+      <div className="flex-1 flex flex-col items-center justify-center w-full">
+        <img 
+          src="\img\CHATPUMP.png" 
+          alt="ChatPump"
+          className="h-20 mb-6"
+        />
         <h1 className="text-2xl sm:text-3xl font-bold text-pump-purple dark:text-white mb-6 sm:mb-8 text-center max-w-md px-4">
           Vamos transformar sua empresa hoje?
         </h1>

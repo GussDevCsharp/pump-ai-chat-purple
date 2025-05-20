@@ -15,7 +15,8 @@ export const WelcomeScreen = ({ onSendMessage }: WelcomeScreenProps) => {
         <img 
           src="\img\CHATPUMP.png" 
           alt="ChatPump"
-          className="h-28 md:h-32 w-auto mb-6"
+          className="h-auto w-full max-w-[300px] sm:max-w-[380px] mb-6"
+          style={{ background: 'transparent' }}
         />
         <h1 className="text-2xl sm:text-3xl font-bold text-pump-purple dark:text-white mb-6 sm:mb-8 text-center max-w-md px-4">
           Vamos transformar sua empresa hoje?

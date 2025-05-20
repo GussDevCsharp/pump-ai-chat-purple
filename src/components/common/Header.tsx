@@ -15,7 +15,8 @@ export const Header = () => {
           <img 
             src="\img\CHATPUMP.png" 
             alt="ChatPump"
-            className="h-14 md:h-16 w-auto"
+            className="h-auto w-[240px] max-h-16"
+            style={{ background: 'transparent' }}
           />
         </Link>
         <div className="flex items-center gap-4">

@@ -71,14 +71,15 @@ export default function Login() {
       <div className="w-full md:w-1/2 bg-offwhite dark:bg-black/40 flex items-center justify-center px-4 py-8 sm:px-6 lg:px-8 relative z-10">
         <div className={`max-w-md w-full ${isDark ? 'bg-black/70 backdrop-blur-lg' : 'bg-white/85'} shadow-lg rounded-xl p-6 sm:p-8`}>
           <div className="text-center">
-            <Link to="/">
+            <Link to="/" className="inline-block w-full max-w-[300px]">
               <img 
                 src="\img\CHATPUMP.png" 
                 alt="ChatPump"
-                className="h-28 md:h-32 w-auto mx-auto"
+                className="h-auto w-full max-w-[280px] mx-auto"
+                style={{ background: 'transparent' }}
               />
             </Link>
-            <h2 className="mt-4 text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+            <h2 className="mt-2 text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
               Bem-vindo de volta
             </h2>
             <p className="mt-2 text-base text-pump-gray dark:text-white/70">

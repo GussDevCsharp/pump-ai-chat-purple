@@ -7,7 +7,8 @@ export const Watermark = () => {
       <img 
         src="/uploads/chatpump-logo-transparent.png"
         alt="Watermark"
-        className="w-[500px] max-w-full"
+        className="w-[600px] max-w-full"
+        style={{ background: 'transparent' }}
       />
     </div>
   )

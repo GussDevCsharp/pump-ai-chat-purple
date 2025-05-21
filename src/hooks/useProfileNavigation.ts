@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 export function useProfileNavigation() {
   const [isProfileComplete, setIsProfileComplete] = useState<boolean | null>(null);
@@ -40,8 +41,20 @@ export function useProfileNavigation() {
     checkProfileStatus();
   }, []);
 
-  const redirectToProfileIfNeeded = () => {
+  const redirectToProfileIfNeeded = (currentPath: string) => {
+    // If we're already on the profile-complete page or login/signup, don't redirect
+    if (
+      currentPath === '/profile-complete' || 
+      currentPath === '/login' || 
+      currentPath === '/signup' || 
+      currentPath === '/'
+    ) {
+      return false;
+    }
+
+    // If profile is not complete, redirect to profile completion
     if (isProfileComplete === false) {
+      toast.warning('Por favor, complete seu perfil para continuar');
       navigate('/profile-complete');
       return true;
     }

@@ -8,15 +8,18 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { Settings, LogOut, UserRound } from "lucide-react";
+import { Settings, LogOut, UserRound, ClipboardEdit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useProfileNavigation } from "@/hooks/useProfileNavigation";
+import { useEffect } from "react";
 
 export function UserCardMenu() {
   const { authStatus, user, isLoading } = useChatAuth();
   const navigate = useNavigate();
+  const { isProfileComplete, isLoading: profileLoading } = useProfileNavigation();
 
   // Função de logout corrigida para usar o método do Supabase
   const handleLogout = async () => {
@@ -71,9 +74,23 @@ export function UserCardMenu() {
               {authStatus === "authenticated" ? "Usuário logado" : "Visitante"}
             </span>
           </div>
+          {!profileLoading && isProfileComplete === false && (
+            <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border border-white"></span>
+          )}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-44">
+        {authStatus === "authenticated" && (
+          <DropdownMenuItem onClick={() => navigate('/profile-complete')}>
+            <ClipboardEdit className="w-4 h-4 mr-2" />
+            {isProfileComplete ? "Completar perfil" : (
+              <div className="flex items-center">
+                Completar perfil
+                {!isProfileComplete && <span className="ml-2 w-2 h-2 bg-red-500 rounded-full"></span>}
+              </div>
+            )}
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem>
           <Settings className="w-4 h-4 mr-2" />
           Configurações

@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useLocation } from "react-router-dom"
 import { Header } from "@/components/common/Header"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -12,9 +12,12 @@ import { toast } from "sonner"
 import { Checkbox } from "@/components/ui/checkbox"
 import NeuralBackground from "@/components/effects/NeuralBackground"
 import { useTheme } from "@/hooks/useTheme"
+import { Wand } from "lucide-react"
+import { useAIGeneration } from "@/hooks/useAIGeneration"
 
 export default function ProfileComplete() {
   const { isDark } = useTheme();
+  const { generateWithAI, isGenerating } = useAIGeneration();
   
   // Entrepreneur profile state
   const [mainGoal, setMainGoal] = useState("")
@@ -44,6 +47,68 @@ export default function ProfileComplete() {
   const [isLoading, setIsLoading] = useState(false)
   const [activeStep, setActiveStep] = useState(0)
   const navigate = useNavigate()
+  const location = useLocation()
+  
+  // Handle AI generation for text fields
+  const handleGenerateField = async (fieldId: string) => {
+    // Collect all form data to provide context
+    const contextData = {
+      companyName,
+      yearsInOperation,
+      mainProducts,
+      targetAudience, 
+      channelType,
+      salesModel,
+      averageRevenue,
+      employeesCount,
+      managementTools,
+      documentedProcesses,
+      mainGoal,
+      entrepreneurshipReason,
+      managementStyle,
+      motivation,
+      difficulties,
+      goalsReviewFrequency,
+      teamStatus,
+      planningTimeWeekly,
+      technologyInvestment,
+      leadershipStyle
+    };
+    
+    const generatedText = await generateWithAI({
+      field: fieldId,
+      contextData,
+    });
+    
+    if (!generatedText) return;
+    
+    // Update the corresponding field
+    switch (fieldId) {
+      case "mainGoal":
+        setMainGoal(generatedText);
+        break;
+      case "entrepreneurshipReason":
+        setEntrepreneurshipReason(generatedText);
+        break;
+      case "motivation":
+        setMotivation(generatedText);
+        break;
+      case "difficulties":
+        setDifficulties(generatedText);
+        break;
+      case "mainProducts":
+        setMainProducts(generatedText);
+        break;
+      case "targetAudience":
+        setTargetAudience(generatedText);
+        break;
+      case "biggestChallenge":
+        setBiggestChallenge(generatedText);
+        break;
+    }
+    
+    toast.success(`Campo gerado com sucesso!`);
+  };
   
   // Fetch existing profile data if available
   useEffect(() => {
@@ -175,6 +240,29 @@ export default function ProfileComplete() {
     if (activeStep > 0) setActiveStep(activeStep - 1)
   }
 
+  // Function to render an AI button for text fields
+  const renderAIButton = (fieldId: string) => (
+    <Button
+      type="button"
+      variant="outline"
+      size="sm"
+      onClick={() => handleGenerateField(fieldId)}
+      className={`px-2 py-1 h-8 text-xs flex items-center ${isDark ? 'bg-[#333333] text-white' : ''}`}
+      disabled={isGenerating[fieldId]}
+    >
+      {isGenerating[fieldId] ? (
+        <span className="flex items-center">
+          <span className="animate-spin mr-1">⟳</span> Gerando...
+        </span>
+      ) : (
+        <>
+          <Wand className="w-3 h-3 mr-1" />
+          Gerar com IA
+        </>
+      )}
+    </Button>
+  );
+
   return (
     <div className="min-h-screen bg-offwhite dark:bg-[#1A1F2C]">
       <NeuralBackground />
@@ -216,22 +304,28 @@ export default function ProfileComplete() {
                   <label className="block text-sm font-medium mb-1 dark:text-gray-200">
                     Qual é o seu maior objetivo como empreendedor nos próximos 12 meses?
                   </label>
-                  <Textarea 
-                    value={mainGoal} 
-                    onChange={(e) => setMainGoal(e.target.value)} 
-                    className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700"
-                  />
+                  <div className="flex items-start gap-2">
+                    <Textarea 
+                      value={mainGoal} 
+                      onChange={(e) => setMainGoal(e.target.value)} 
+                      className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700"
+                    />
+                    {renderAIButton("mainGoal")}
+                  </div>
                 </div>
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 dark:text-gray-200">
                     Em poucas palavras, por que você decidiu empreender?
                   </label>
-                  <Textarea 
-                    value={entrepreneurshipReason} 
-                    onChange={(e) => setEntrepreneurshipReason(e.target.value)} 
-                    className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700"
-                  />
+                  <div className="flex items-start gap-2">
+                    <Textarea 
+                      value={entrepreneurshipReason} 
+                      onChange={(e) => setEntrepreneurshipReason(e.target.value)} 
+                      className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700"
+                    />
+                    {renderAIButton("entrepreneurshipReason")}
+                  </div>
                 </div>
                 
                 <div>
@@ -255,22 +349,28 @@ export default function ProfileComplete() {
                   <label className="block text-sm font-medium mb-1 dark:text-gray-200">
                     O que mais te motiva no dia a dia da empresa?
                   </label>
-                  <Textarea 
-                    value={motivation} 
-                    onChange={(e) => setMotivation(e.target.value)} 
-                    className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700"
-                  />
+                  <div className="flex items-start gap-2">
+                    <Textarea 
+                      value={motivation} 
+                      onChange={(e) => setMotivation(e.target.value)} 
+                      className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700"
+                    />
+                    {renderAIButton("motivation")}
+                  </div>
                 </div>
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 dark:text-gray-200">
                     Quais são suas maiores dificuldades como gestor hoje?
                   </label>
-                  <Textarea 
-                    value={difficulties} 
-                    onChange={(e) => setDifficulties(e.target.value)} 
-                    className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700"
-                  />
+                  <div className="flex items-start gap-2">
+                    <Textarea 
+                      value={difficulties} 
+                      onChange={(e) => setDifficulties(e.target.value)} 
+                      className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700"
+                    />
+                    {renderAIButton("difficulties")}
+                  </div>
                 </div>
                 
                 <div>
@@ -389,22 +489,28 @@ export default function ProfileComplete() {
                   <label className="block text-sm font-medium mb-1 dark:text-gray-200">
                     Qual é o principal produto ou serviço que você oferece hoje?
                   </label>
-                  <Textarea 
-                    value={mainProducts} 
-                    onChange={(e) => setMainProducts(e.target.value)} 
-                    className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700"
-                  />
+                  <div className="flex items-start gap-2">
+                    <Textarea 
+                      value={mainProducts} 
+                      onChange={(e) => setMainProducts(e.target.value)} 
+                      className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700"
+                    />
+                    {renderAIButton("mainProducts")}
+                  </div>
                 </div>
                 
                 <div>
                   <label className="block text-sm font-medium mb-1 dark:text-gray-200">
                     Qual é o seu público-alvo?
                   </label>
-                  <Textarea 
-                    value={targetAudience} 
-                    onChange={(e) => setTargetAudience(e.target.value)} 
-                    className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700"
-                  />
+                  <div className="flex items-start gap-2">
+                    <Textarea 
+                      value={targetAudience} 
+                      onChange={(e) => setTargetAudience(e.target.value)} 
+                      className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700"
+                    />
+                    {renderAIButton("targetAudience")}
+                  </div>
                 </div>
                 
                 <div>
@@ -505,11 +611,14 @@ export default function ProfileComplete() {
                   <label className="block text-sm font-medium mb-1 dark:text-gray-200">
                     Qual é o maior desafio da sua empresa neste momento?
                   </label>
-                  <Textarea 
-                    value={biggestChallenge} 
-                    onChange={(e) => setBiggestChallenge(e.target.value)} 
-                    className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700"
-                  />
+                  <div className="flex items-start gap-2">
+                    <Textarea 
+                      value={biggestChallenge} 
+                      onChange={(e) => setBiggestChallenge(e.target.value)} 
+                      className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700"
+                    />
+                    {renderAIButton("biggestChallenge")}
+                  </div>
                 </div>
               </div>
             )}

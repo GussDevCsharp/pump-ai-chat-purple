@@ -1,6 +1,5 @@
-
-import React from 'react';
-import { useNavigate } from "react-router-dom";
+import React, { useEffect } from 'react';
+import { useNavigate, useLocation } from "react-router-dom";
 import { useChatThemes } from "@/hooks/useChatThemes";
 import { useChatSessions } from "@/hooks/useChatSessions";
 import { Header } from "@/components/common/Header";
@@ -12,14 +11,22 @@ import { PageFooter } from "@/components/common/PageFooter";
 import { ThemeSearch } from "@/components/themes/ThemeSearch";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTheme } from "@/hooks/useTheme";
+import { useProfileNavigation } from "@/hooks/useProfileNavigation";
 
 export default function Themes() {
   const { themes, isLoading, searchTerm, handleSearch } = useChatThemes();
   const { createSession } = useChatSessions();
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useChatAuth();
   const isMobile = useIsMobile();
   const { isDark } = useTheme();
+  const { redirectToProfileIfNeeded } = useProfileNavigation();
+
+  // Check if profile is complete, otherwise redirect to profile completion
+  useEffect(() => {
+    redirectToProfileIfNeeded(location.pathname);
+  }, [redirectToProfileIfNeeded, location.pathname]);
 
   const handleSelectTheme = async (themeId: string, themeName: string) => {
     const session = await createSession(`Chat sobre ${themeName}`, undefined, undefined, themeId);

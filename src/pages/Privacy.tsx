@@ -131,9 +131,9 @@ export default function Privacy() {
                 Se você tiver dúvidas sobre esta Política de Privacidade ou sobre nossas práticas de privacidade, entre em contato conosco:
               </p>
               <div className="mt-4 text-pump-gray-dark dark:text-white/90">
-                <p><strong>E-mail:</strong> privacidade@chatpump.com.br</p>
-                <p><strong>Telefone:</strong> (11) 5555-5555</p>
-                <p><strong>Endereço:</strong> Av. Paulista, 1000 - Bela Vista, São Paulo - SP, 01310-100</p>
+                <p><strong>E-mail:</strong> suporte@pumpia.com.br</p>
+                <p><strong>Telefone:</strong> (85) 99222-4804</p>
+                <p><strong>Endereço:</strong> AV SARGENTO HERMINIO SAMPAIO, 1209</p>
               </div>
             </section>
           </div>

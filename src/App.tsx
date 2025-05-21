@@ -1,3 +1,4 @@
+
 import React from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -10,6 +11,7 @@ import Themes from "./pages/Themes";
 import Signup from "./pages/Signup";
 import ProfileComplete from "./pages/ProfileComplete";
 import PromptLogs from "./pages/PromptLogs";
+import Privacy from "./pages/Privacy";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 
@@ -57,6 +59,7 @@ const App = () => {
               <Route path="/business-generator" element={<BusinessGenerator />} />
               <Route path="/profile-complete" element={<ProfileComplete />} />
               <Route path="/prompt-logs" element={<PromptLogs />} />
+              <Route path="/privacy" element={<Privacy />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             <ToastProviders />

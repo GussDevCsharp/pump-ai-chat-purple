@@ -2,6 +2,7 @@
 import React from 'react';
 import { Copyright } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Link } from 'react-router-dom';
 
 export const PageFooter = () => {
   const isMobile = useIsMobile();
@@ -14,7 +15,7 @@ export const PageFooter = () => {
           <span>{new Date().getFullYear()} ChatPump. Todos os direitos reservados.</span>
         </div>
         <div className="flex gap-4 text-xs sm:text-sm justify-center sm:justify-start">
-          <a href="#" className="hover:text-white/80 transition-colors">Privacidade</a>
+          <Link to="/privacy" className="hover:text-white/80 transition-colors">Privacidade</Link>
           <a href="#" className="hover:text-white/80 transition-colors">Termos</a>
           <a href="#" className="hover:text-white/80 transition-colors">Contato</a>
         </div>

@@ -69,7 +69,7 @@ export function EntrepreneurProfileForm({
           <Textarea 
             value={mainGoal} 
             onChange={(e) => setMainGoal(e.target.value)} 
-            className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700"
+            className="w-full"
           />
           <AIGenerateButton
             fieldId="mainGoal"
@@ -87,7 +87,7 @@ export function EntrepreneurProfileForm({
           <Textarea 
             value={entrepreneurshipReason} 
             onChange={(e) => setEntrepreneurshipReason(e.target.value)} 
-            className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700"
+            className="w-full"
           />
           <AIGenerateButton
             fieldId="entrepreneurshipReason"
@@ -102,7 +102,7 @@ export function EntrepreneurProfileForm({
           Você se considera mais operacional, estratégico ou comercial no seu negócio?
         </label>
         <Select value={managementStyle} onValueChange={setManagementStyle}>
-          <SelectTrigger className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700">
+          <SelectTrigger className="w-full bg-white dark:bg-[#333333] dark:text-white dark:border-gray-700">
             <SelectValue placeholder="Selecione..." />
           </SelectTrigger>
           <SelectContent>
@@ -122,7 +122,7 @@ export function EntrepreneurProfileForm({
           <Textarea 
             value={motivation} 
             onChange={(e) => setMotivation(e.target.value)} 
-            className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700"
+            className="w-full"
           />
           <AIGenerateButton
             fieldId="motivation"
@@ -140,7 +140,7 @@ export function EntrepreneurProfileForm({
           <Textarea 
             value={difficulties} 
             onChange={(e) => setDifficulties(e.target.value)} 
-            className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700"
+            className="w-full"
           />
           <AIGenerateButton
             fieldId="difficulties"
@@ -155,7 +155,7 @@ export function EntrepreneurProfileForm({
           Com que frequência você revisa ou ajusta suas metas?
         </label>
         <Select value={goalsReviewFrequency} onValueChange={setGoalsReviewFrequency}>
-          <SelectTrigger className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700">
+          <SelectTrigger className="w-full bg-white dark:bg-[#333333] dark:text-white dark:border-gray-700">
             <SelectValue placeholder="Selecione..." />
           </SelectTrigger>
           <SelectContent>
@@ -174,7 +174,7 @@ export function EntrepreneurProfileForm({
           Você trabalha com uma equipe ou sozinho atualmente?
         </label>
         <Select value={teamStatus} onValueChange={setTeamStatus}>
-          <SelectTrigger>
+          <SelectTrigger className="bg-white dark:bg-[#333333] dark:text-white dark:border-gray-700">
             <SelectValue placeholder="Selecione..." />
           </SelectTrigger>
           <SelectContent>
@@ -191,7 +191,7 @@ export function EntrepreneurProfileForm({
           Quanto tempo por semana você dedica ao planejamento do seu negócio?
         </label>
         <Select value={planningTimeWeekly} onValueChange={setPlanningTimeWeekly}>
-          <SelectTrigger>
+          <SelectTrigger className="bg-white dark:bg-[#333333] dark:text-white dark:border-gray-700">
             <SelectValue placeholder="Selecione..." />
           </SelectTrigger>
           <SelectContent>
@@ -221,7 +221,7 @@ export function EntrepreneurProfileForm({
         <Input 
           value={leadershipStyle} 
           onChange={(e) => setLeadershipStyle(e.target.value)} 
-          className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700"
+          className="w-full bg-white dark:bg-[#333333] dark:text-white dark:border-gray-700"
         />
       </div>
     </div>

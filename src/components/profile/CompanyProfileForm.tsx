@@ -73,7 +73,7 @@ export function CompanyProfileForm({
           <Input 
             value={companyName} 
             onChange={(e) => setCompanyName(e.target.value)} 
-            className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700"
+            className="w-full bg-white dark:bg-[#333333] dark:text-white dark:border-gray-700"
             required
           />
         </div>
@@ -83,7 +83,7 @@ export function CompanyProfileForm({
             Há quanto tempo em operação?
           </label>
           <Select value={yearsInOperation} onValueChange={setYearsInOperation}>
-            <SelectTrigger className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700">
+            <SelectTrigger className="w-full bg-white dark:bg-[#333333] dark:text-white dark:border-gray-700">
               <SelectValue placeholder="Selecione..." />
             </SelectTrigger>
             <SelectContent>
@@ -105,7 +105,7 @@ export function CompanyProfileForm({
           <Textarea 
             value={mainProducts} 
             onChange={(e) => setMainProducts(e.target.value)} 
-            className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700"
+            className="w-full"
           />
           <AIGenerateButton
             fieldId="mainProducts"
@@ -123,7 +123,7 @@ export function CompanyProfileForm({
           <Textarea 
             value={targetAudience} 
             onChange={(e) => setTargetAudience(e.target.value)} 
-            className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700"
+            className="w-full"
           />
           <AIGenerateButton
             fieldId="targetAudience"
@@ -138,7 +138,7 @@ export function CompanyProfileForm({
           Sua empresa atua em qual canal?
         </label>
         <Select value={channelType} onValueChange={setChannelType}>
-          <SelectTrigger>
+          <SelectTrigger className="bg-white dark:bg-[#333333] dark:text-white dark:border-gray-700">
             <SelectValue placeholder="Selecione..." />
           </SelectTrigger>
           <SelectContent>
@@ -154,7 +154,7 @@ export function CompanyProfileForm({
           Hoje, o seu modelo de vendas é mais:
         </label>
         <Select value={salesModel} onValueChange={setSalesModel}>
-          <SelectTrigger>
+          <SelectTrigger className="bg-white dark:bg-[#333333] dark:text-white dark:border-gray-700">
             <SelectValue placeholder="Selecione..." />
           </SelectTrigger>
           <SelectContent>
@@ -170,7 +170,7 @@ export function CompanyProfileForm({
           Qual é o seu faturamento médio mensal?
         </label>
         <Select value={averageRevenue} onValueChange={setAverageRevenue}>
-          <SelectTrigger>
+          <SelectTrigger className="bg-white dark:bg-[#333333] dark:text-white dark:border-gray-700">
             <SelectValue placeholder="Selecione..." />
           </SelectTrigger>
           <SelectContent>
@@ -193,7 +193,7 @@ export function CompanyProfileForm({
           type="number"
           value={employeesCount} 
           onChange={(e) => setEmployeesCount(e.target.value)} 
-          className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700"
+          className="w-full bg-white dark:bg-[#333333] dark:text-white dark:border-gray-700"
           min="0"
         />
       </div>
@@ -203,7 +203,7 @@ export function CompanyProfileForm({
           Quais ferramentas você usa para gerenciar sua empresa?
         </label>
         <Select value={managementTools} onValueChange={setManagementTools}>
-          <SelectTrigger>
+          <SelectTrigger className="bg-white dark:bg-[#333333] dark:text-white dark:border-gray-700">
             <SelectValue placeholder="Selecione..." />
           </SelectTrigger>
           <SelectContent>
@@ -235,7 +235,7 @@ export function CompanyProfileForm({
           <Textarea 
             value={biggestChallenge} 
             onChange={(e) => setBiggestChallenge(e.target.value)} 
-            className="w-full dark:bg-[#333333] dark:text-white dark:border-gray-700"
+            className="w-full"
           />
           <AIGenerateButton
             fieldId="biggestChallenge"

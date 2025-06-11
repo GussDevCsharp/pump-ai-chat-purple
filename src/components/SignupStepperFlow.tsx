@@ -96,7 +96,7 @@ export function SignupStepperFlow({ onStepChange }: SignupStepperFlowProps) {
                 disabled={!canGoToPlans || isLoading}
                 onClick={() => setActiveTab("planos")}
               >
-                Próximo: Finalizar Cadastro
+                Próximo: Escolher Plano
               </Button>
             </div>
           </form>
@@ -110,7 +110,7 @@ export function SignupStepperFlow({ onStepChange }: SignupStepperFlowProps) {
             </div>
           ) : (
             <div className="space-y-6">
-              <h3 className="text-lg font-semibold text-center text-gray-900 mb-4">Finalize seu cadastro</h3>
+              <h3 className="text-lg font-semibold text-center text-gray-900 mb-4">Escolha seu Plano</h3>
               <SignupPlansStep
                 plans={plans}
                 selectedPlanId={selectedPlan?.id ?? null}
@@ -127,14 +127,16 @@ export function SignupStepperFlow({ onStepChange }: SignupStepperFlowProps) {
                 >
                   Voltar
                 </Button>
-                <Button 
-                  type="button" 
-                  className="bg-pump-purple text-white hover:bg-pump-purple/90" 
-                  disabled={!canSubmit || isLoading}
-                  onClick={() => handleSignup(selectedPlan)}
-                >
-                  {isLoading ? "Cadastrando..." : "Finalizar Cadastro"}
-                </Button>
+                {plans.length > 0 && (
+                  <Button 
+                    type="button" 
+                    className="bg-pump-purple text-white hover:bg-pump-purple/90" 
+                    disabled={!canSubmit || isLoading}
+                    onClick={() => handleSignup(selectedPlan)}
+                  >
+                    {isLoading ? "Cadastrando..." : "Finalizar Cadastro"}
+                  </Button>
+                )}
               </div>
             </div>
           )}

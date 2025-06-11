@@ -4,13 +4,12 @@ import { useNavigate } from "react-router-dom"
 import { Header } from "@/components/common/Header"
 import { supabase } from "@/integrations/supabase/client"
 import { toast } from "sonner"
-import NeuralBackground from "@/components/effects/NeuralBackground"
 import { useTheme } from "@/hooks/useTheme"
 import { useAIGeneration } from "@/hooks/useAIGeneration"
 import { EntrepreneurProfileForm } from "@/components/profile/EntrepreneurProfileForm"
 import { CompanyProfileForm } from "@/components/profile/CompanyProfileForm"
-import { ProfileStepNavigation } from "@/components/profile/ProfileStepNavigation"
 import { ProfileFormNavigation } from "@/components/profile/ProfileFormNavigation"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export default function ProfileComplete() {
   const { isDark } = useTheme();
@@ -42,7 +41,7 @@ export default function ProfileComplete() {
   const [biggestChallenge, setBiggestChallenge] = useState("")
   
   const [isLoading, setIsLoading] = useState(false)
-  const [activeStep, setActiveStep] = useState(0)
+  const [activeTab, setActiveTab] = useState("entrepreneur")
   const navigate = useNavigate()
   
   // Handle AI generation for text fields
@@ -78,7 +77,6 @@ export default function ProfileComplete() {
     
     if (!generatedText) return;
     
-    // Update the corresponding field
     switch (fieldId) {
       case "mainGoal":
         setMainGoal(generatedText);
@@ -136,7 +134,6 @@ export default function ProfileComplete() {
           setBiggestChallenge(companyProfile.biggest_challenge || "")
         }
         
-        // Fetch entrepreneur profile
         const { data: entrepreneurProfile } = await supabase
           .from('entrepreneur_profiles')
           .select('*')
@@ -197,7 +194,6 @@ export default function ProfileComplete() {
       
       if (companyError) throw companyError
       
-      // Update or create entrepreneur profile
       const { error: entrepreneurError } = await supabase
         .from('entrepreneur_profiles')
         .upsert({
@@ -228,87 +224,99 @@ export default function ProfileComplete() {
   }
   
   const nextStep = () => {
-    if (activeStep < 1) setActiveStep(activeStep + 1)
+    setActiveTab("company")
   }
   
   const prevStep = () => {
-    if (activeStep > 0) setActiveStep(activeStep - 1)
+    setActiveTab("entrepreneur")
   }
 
+  const currentStep = activeTab === "entrepreneur" ? 0 : 1
+
   return (
-    <div className="min-h-screen bg-offwhite dark:bg-[#1A1F2C]">
-      <NeuralBackground />
+    <div className="min-h-screen bg-background">
       <Header />
       
-      <div className="container mx-auto px-4 py-8 relative z-10">
-        <div className="max-w-3xl mx-auto bg-white/90 dark:bg-[#222222]/90 backdrop-blur-sm rounded-xl shadow-md p-6">
-          <h1 className="text-2xl font-bold text-center text-pump-purple dark:text-white mb-6">Complete seu perfil</h1>
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto bg-card rounded-xl shadow-sm border p-8">
+          <h1 className="text-3xl font-bold text-center text-foreground mb-8">Complete seu perfil</h1>
           
-          <ProfileStepNavigation activeStep={activeStep} setActiveStep={setActiveStep} />
-          
-          <form onSubmit={(e) => e.preventDefault()} className="space-y-6">
-            {activeStep === 0 ? (
-              <EntrepreneurProfileForm
-                mainGoal={mainGoal}
-                setMainGoal={setMainGoal}
-                entrepreneurshipReason={entrepreneurshipReason}
-                setEntrepreneurshipReason={setEntrepreneurshipReason}
-                managementStyle={managementStyle}
-                setManagementStyle={setManagementStyle}
-                motivation={motivation}
-                setMotivation={setMotivation}
-                difficulties={difficulties}
-                setDifficulties={setDifficulties}
-                goalsReviewFrequency={goalsReviewFrequency}
-                setGoalsReviewFrequency={setGoalsReviewFrequency}
-                teamStatus={teamStatus}
-                setTeamStatus={setTeamStatus}
-                planningTimeWeekly={planningTimeWeekly}
-                setPlanningTimeWeekly={setPlanningTimeWeekly}
-                technologyInvestment={technologyInvestment}
-                setTechnologyInvestment={setTechnologyInvestment}
-                leadershipStyle={leadershipStyle}
-                setLeadershipStyle={setLeadershipStyle}
-                isGenerating={isGenerating}
-                onGenerateField={handleGenerateField}
-              />
-            ) : (
-              <CompanyProfileForm
-                companyName={companyName}
-                setCompanyName={setCompanyName}
-                yearsInOperation={yearsInOperation}
-                setYearsInOperation={setYearsInOperation}
-                mainProducts={mainProducts}
-                setMainProducts={setMainProducts}
-                targetAudience={targetAudience}
-                setTargetAudience={setTargetAudience}
-                channelType={channelType}
-                setChannelType={setChannelType}
-                salesModel={salesModel}
-                setSalesModel={setSalesModel}
-                averageRevenue={averageRevenue}
-                setAverageRevenue={setAverageRevenue}
-                employeesCount={employeesCount}
-                setEmployeesCount={setEmployeesCount}
-                managementTools={managementTools}
-                setManagementTools={setManagementTools}
-                documentedProcesses={documentedProcesses}
-                setDocumentedProcesses={setDocumentedProcesses}
-                biggestChallenge={biggestChallenge}
-                setBiggestChallenge={setBiggestChallenge}
-                isGenerating={isGenerating}
-                onGenerateField={handleGenerateField}
-              />
-            )}
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-8">
+              <TabsTrigger value="entrepreneur" className="text-sm font-medium">
+                🧠 Perfil do Empresário
+              </TabsTrigger>
+              <TabsTrigger value="company" className="text-sm font-medium">
+                🏢 Perfil da Empresa
+              </TabsTrigger>
+            </TabsList>
             
-            <ProfileFormNavigation
-              activeStep={activeStep}
-              isLoading={isLoading}
-              onPrevStep={prevStep}
-              onNextStep={nextStep}
-              onSubmit={handleSubmit}
-            />
-          </form>
+            <form onSubmit={(e) => e.preventDefault()} className="space-y-6">
+              <TabsContent value="entrepreneur" className="space-y-6">
+                <EntrepreneurProfileForm
+                  mainGoal={mainGoal}
+                  setMainGoal={setMainGoal}
+                  entrepreneurshipReason={entrepreneurshipReason}
+                  setEntrepreneurshipReason={setEntrepreneurshipReason}
+                  managementStyle={managementStyle}
+                  setManagementStyle={setManagementStyle}
+                  motivation={motivation}
+                  setMotivation={setMotivation}
+                  difficulties={difficulties}
+                  setDifficulties={setDifficulties}
+                  goalsReviewFrequency={goalsReviewFrequency}
+                  setGoalsReviewFrequency={setGoalsReviewFrequency}
+                  teamStatus={teamStatus}
+                  setTeamStatus={setTeamStatus}
+                  planningTimeWeekly={planningTimeWeekly}
+                  setPlanningTimeWeekly={setPlanningTimeWeekly}
+                  technologyInvestment={technologyInvestment}
+                  setTechnologyInvestment={setTechnologyInvestment}
+                  leadershipStyle={leadershipStyle}
+                  setLeadershipStyle={setLeadershipStyle}
+                  isGenerating={isGenerating}
+                  onGenerateField={handleGenerateField}
+                />
+              </TabsContent>
+              
+              <TabsContent value="company" className="space-y-6">
+                <CompanyProfileForm
+                  companyName={companyName}
+                  setCompanyName={setCompanyName}
+                  yearsInOperation={yearsInOperation}
+                  setYearsInOperation={setYearsInOperation}
+                  mainProducts={mainProducts}
+                  setMainProducts={setMainProducts}
+                  targetAudience={targetAudience}
+                  setTargetAudience={setTargetAudience}
+                  channelType={channelType}
+                  setChannelType={setChannelType}
+                  salesModel={salesModel}
+                  setSalesModel={setSalesModel}
+                  averageRevenue={averageRevenue}
+                  setAverageRevenue={setAverageRevenue}
+                  employeesCount={employeesCount}
+                  setEmployeesCount={setEmployeesCount}
+                  managementTools={managementTools}
+                  setManagementTools={setManagementTools}
+                  documentedProcesses={documentedProcesses}
+                  setDocumentedProcesses={setDocumentedProcesses}
+                  biggestChallenge={biggestChallenge}
+                  setBiggestChallenge={setBiggestChallenge}
+                  isGenerating={isGenerating}
+                  onGenerateField={handleGenerateField}
+                />
+              </TabsContent>
+              
+              <ProfileFormNavigation
+                activeStep={currentStep}
+                isLoading={isLoading}
+                onPrevStep={prevStep}
+                onNextStep={nextStep}
+                onSubmit={handleSubmit}
+              />
+            </form>
+          </Tabs>
         </div>
       </div>
     </div>

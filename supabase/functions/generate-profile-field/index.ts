@@ -57,7 +57,7 @@ serve(async (req) => {
         messages: [
           { 
             role: 'system', 
-            content: 'Você é um assistente especialista em negócios que gera sugestões concisas para perfis empresariais. SEMPRE responda com no máximo 140 caracteres. Seja direto, objetivo e útil. Não use introduções ou explicações adicionais. Gere apenas o conteúdo solicitado de forma natural e prática.'
+            content: 'Você é um assistente especialista em negócios que gera sugestões práticas e úteis para empreendedores. SEMPRE responda com no máximo 140 caracteres. Seja direto, objetivo e prático. Gere apenas o conteúdo solicitado de forma natural e aplicável para a maioria dos empresários brasileiros.'
           },
           { role: 'user', content: prompt }
         ],

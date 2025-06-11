@@ -16,39 +16,33 @@ export function useAIGeneration() {
     setIsGenerating(prev => ({ ...prev, [field]: true }));
     
     try {
-      // Create context from existing data
-      const context = contextData ? Object.entries(contextData)
-        .filter(([_, value]) => value)
-        .map(([key, value]) => `${key}: ${value}`)
-        .join("\n") : "";
-      
-      // Create appropriate prompt based on the field and context
+      // Create specific prompts for each field that work independently
       let prompt = "";
       
       switch (field) {
         case "mainGoal":
-          prompt = `${promptPrefix} Baseado nas informações a seguir, gere um objetivo principal específico e realista para o empreendedor nos próximos 12 meses. MÁXIMO 140 caracteres. Seja direto e objetivo:\n\n${context}`;
+          prompt = "Gere um objetivo principal específico e realista para um empreendedor nos próximos 12 meses. Exemplo: aumentar faturamento, expandir mercado, melhorar processos. MÁXIMO 140 caracteres.";
           break;
         case "entrepreneurshipReason":
-          prompt = `${promptPrefix} Baseado nas informações a seguir, gere uma motivação autêntica e pessoal para empreender. MÁXIMO 140 caracteres. Use linguagem natural:\n\n${context}`;
+          prompt = "Gere uma motivação autêntica e pessoal para empreender. Exemplo: independência financeira, realizar sonhos, criar impacto positivo. MÁXIMO 140 caracteres.";
           break;
         case "motivation":
-          prompt = `${promptPrefix} Baseado nas informações a seguir, gere o que motiva este empresário no dia a dia. MÁXIMO 140 caracteres. Seja específico:\n\n${context}`;
+          prompt = "Gere o que motiva um empresário no dia a dia. Exemplo: ver clientes satisfeitos, crescimento da equipe, inovação. MÁXIMO 140 caracteres.";
           break;
         case "difficulties":
-          prompt = `${promptPrefix} Baseado nas informações a seguir, gere as principais dificuldades como gestor. MÁXIMO 140 caracteres. Seja realista:\n\n${context}`;
+          prompt = "Gere as principais dificuldades de um gestor. Exemplo: gestão de pessoas, fluxo de caixa, concorrência. MÁXIMO 140 caracteres.";
           break;
         case "mainProducts":
-          prompt = `${promptPrefix} Baseado nas informações a seguir, gere uma descrição concisa dos principais produtos/serviços. MÁXIMO 140 caracteres:\n\n${context}`;
+          prompt = "Gere uma descrição concisa de produtos/serviços de uma empresa. Exemplo: consultoria empresarial, produtos artesanais, serviços digitais. MÁXIMO 140 caracteres.";
           break;
         case "targetAudience":
-          prompt = `${promptPrefix} Baseado nas informações a seguir, gere uma descrição precisa do público-alvo. MÁXIMO 140 caracteres:\n\n${context}`;
+          prompt = "Gere uma descrição de público-alvo empresarial. Exemplo: pequenos empresários, jovens profissionais, famílias classe média. MÁXIMO 140 caracteres.";
           break;
         case "biggestChallenge":
-          prompt = `${promptPrefix} Baseado nas informações a seguir, gere o maior desafio atual da empresa. MÁXIMO 140 caracteres. Seja específico:\n\n${context}`;
+          prompt = "Gere o maior desafio atual de uma empresa. Exemplo: captação de clientes, redução de custos, digitalização. MÁXIMO 140 caracteres.";
           break;
         default:
-          prompt = `${promptPrefix} Baseado nas informações a seguir, gere um texto relevante para o campo "${field}". MÁXIMO 140 caracteres:\n\n${context}`;
+          prompt = `Gere uma sugestão útil e prática para o campo "${field}" de um perfil empresarial. MÁXIMO 140 caracteres.`;
       }
       
       // Make API call to the Supabase Edge Function

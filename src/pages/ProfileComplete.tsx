@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { Header } from "@/components/common/Header"
@@ -234,11 +233,11 @@ export default function ProfileComplete() {
   const currentStep = activeTab === "entrepreneur" ? 0 : 1
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white dark:bg-[#1A1F2C]">
       <Header />
       
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto bg-card rounded-xl shadow-sm border p-8">
+        <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-sm border p-8">
           <h1 className="text-3xl font-bold text-center text-foreground mb-8">Complete seu perfil</h1>
           
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">

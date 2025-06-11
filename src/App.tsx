@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Index from "./pages/Index";
+import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import BusinessGenerator from "./pages/BusinessGenerator";
@@ -12,6 +13,7 @@ import Signup from "./pages/Signup";
 import ProfileComplete from "./pages/ProfileComplete";
 import PromptLogs from "./pages/PromptLogs";
 import Privacy from "./pages/Privacy";
+import Subscription from "./pages/Subscription";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 
@@ -51,7 +53,7 @@ const App = () => {
         <TooltipProvider>
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Login />} />
+              <Route path="/" element={<Landing />} />
               <Route path="/chat" element={<Index />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
@@ -60,6 +62,7 @@ const App = () => {
               <Route path="/profile-complete" element={<ProfileComplete />} />
               <Route path="/prompt-logs" element={<PromptLogs />} />
               <Route path="/privacy" element={<Privacy />} />
+              <Route path="/subscription" element={<Subscription />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             <ToastProviders />

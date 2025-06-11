@@ -1,12 +1,7 @@
 
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-
-const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
-
-if (!openAIApiKey) {
-  console.error("OPENAI_API_KEY is not defined in environment variables");
-}
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -28,6 +23,28 @@ serve(async (req) => {
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
+
+    // Create Supabase client to fetch API key from database
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Fetch OpenAI API key from database
+    const { data: apiKeyData, error: apiKeyError } = await supabase
+      .from('modelkeys')
+      .select('apikey')
+      .eq('model', 'OpenAI')
+      .single();
+
+    if (apiKeyError || !apiKeyData?.apikey) {
+      console.error('Could not fetch API key:', apiKeyError);
+      return new Response(
+        JSON.stringify({ error: "Chave da API OpenAI não encontrada" }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const openAIApiKey = apiKeyData.apikey;
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',

@@ -27,28 +27,28 @@ export function useAIGeneration() {
       
       switch (field) {
         case "mainGoal":
-          prompt = `${promptPrefix} Baseado nas informações a seguir, gere um objetivo principal realista e específico para o empreendedor nos próximos 12 meses:\n\n${context}`;
+          prompt = `${promptPrefix} Baseado nas informações a seguir, gere um objetivo principal específico e realista para o empreendedor nos próximos 12 meses. MÁXIMO 140 caracteres. Seja direto e objetivo:\n\n${context}`;
           break;
         case "entrepreneurshipReason":
-          prompt = `${promptPrefix} Baseado nas informações a seguir, gere um texto curto explicando uma motivação autêntica para empreender:\n\n${context}`;
+          prompt = `${promptPrefix} Baseado nas informações a seguir, gere uma motivação autêntica e pessoal para empreender. MÁXIMO 140 caracteres. Use linguagem natural:\n\n${context}`;
           break;
         case "motivation":
-          prompt = `${promptPrefix} Baseado nas informações a seguir, gere um texto curto sobre o que poderia motivar este empresário no dia a dia:\n\n${context}`;
+          prompt = `${promptPrefix} Baseado nas informações a seguir, gere o que motiva este empresário no dia a dia. MÁXIMO 140 caracteres. Seja específico:\n\n${context}`;
           break;
         case "difficulties":
-          prompt = `${promptPrefix} Baseado nas informações a seguir, gere um texto curto sobre as possíveis dificuldades como gestor para este empresário:\n\n${context}`;
+          prompt = `${promptPrefix} Baseado nas informações a seguir, gere as principais dificuldades como gestor. MÁXIMO 140 caracteres. Seja realista:\n\n${context}`;
           break;
         case "mainProducts":
-          prompt = `${promptPrefix} Baseado nas informações a seguir, gere um texto curto e focado descrevendo os principais produtos ou serviços que esta empresa poderia oferecer:\n\n${context}`;
+          prompt = `${promptPrefix} Baseado nas informações a seguir, gere uma descrição concisa dos principais produtos/serviços. MÁXIMO 140 caracteres:\n\n${context}`;
           break;
         case "targetAudience":
-          prompt = `${promptPrefix} Baseado nas informações a seguir, gere um texto curto e preciso descrevendo o público-alvo ideal para esta empresa:\n\n${context}`;
+          prompt = `${promptPrefix} Baseado nas informações a seguir, gere uma descrição precisa do público-alvo. MÁXIMO 140 caracteres:\n\n${context}`;
           break;
         case "biggestChallenge":
-          prompt = `${promptPrefix} Baseado nas informações a seguir, gere um texto curto descrevendo qual poderia ser o maior desafio atual desta empresa:\n\n${context}`;
+          prompt = `${promptPrefix} Baseado nas informações a seguir, gere o maior desafio atual da empresa. MÁXIMO 140 caracteres. Seja específico:\n\n${context}`;
           break;
         default:
-          prompt = `${promptPrefix} Baseado nas informações a seguir, gere um texto relevante para o campo "${field}":\n\n${context}`;
+          prompt = `${promptPrefix} Baseado nas informações a seguir, gere um texto relevante para o campo "${field}". MÁXIMO 140 caracteres:\n\n${context}`;
       }
       
       // Make API call to the Supabase Edge Function
@@ -58,7 +58,13 @@ export function useAIGeneration() {
       
       if (error) throw new Error(error.message);
       
-      return data.text;
+      // Ensure the generated text doesn't exceed 140 characters
+      let generatedText = data.text;
+      if (generatedText.length > 140) {
+        generatedText = generatedText.substring(0, 137) + '...';
+      }
+      
+      return generatedText;
     } catch (error) {
       console.error('Error generating AI content:', error);
       toast.error('Erro ao gerar conteúdo com IA. Tente novamente.');

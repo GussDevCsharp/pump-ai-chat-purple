@@ -40,12 +40,12 @@ serve(async (req) => {
         messages: [
           { 
             role: 'system', 
-            content: 'Você é um assistente especialista em negócios que gera conteúdo conciso e relevante para perfis empresariais. Sempre responda diretamente com o conteúdo solicitado sem introduções ou explicações adicionais. Mantenha as respostas curtas (máximo 3-4 frases) e objetivas.'
+            content: 'Você é um assistente especialista em negócios que gera sugestões concisas para perfis empresariais. SEMPRE responda com no máximo 140 caracteres. Seja direto, objetivo e útil. Não use introduções ou explicações adicionais. Gere apenas o conteúdo solicitado de forma natural e prática.'
           },
           { role: 'user', content: prompt }
         ],
         temperature: 0.7,
-        max_tokens: 200
+        max_tokens: 50
       }),
     });
 
@@ -55,7 +55,12 @@ serve(async (req) => {
       throw new Error(data.error.message || 'Erro na API OpenAI');
     }
 
-    const generatedText = data.choices[0].message.content.trim();
+    let generatedText = data.choices[0].message.content.trim();
+    
+    // Ensure the text doesn't exceed 140 characters
+    if (generatedText.length > 140) {
+      generatedText = generatedText.substring(0, 137) + '...';
+    }
 
     return new Response(
       JSON.stringify({ text: generatedText, field }),

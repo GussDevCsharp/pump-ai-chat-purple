@@ -17,20 +17,18 @@ interface SignupFormProps {
   setConfirmPassword: (val: string) => void;
   isLoading: boolean;
   setIsLoading: (val: boolean) => void;
-  hidePayment?: boolean;
-  // These props are optional when hidePayment is true
-  firstName?: string;
-  setFirstName?: (val: string) => void;
-  lastName?: string;
-  setLastName?: (val: string) => void;
-  cpf?: string;
-  setCpf?: (val: string) => void;
-  cardNumber?: string;
-  setCardNumber?: (val: string) => void;
-  cardExpiry?: string;
-  setCardExpiry?: (val: string) => void;
-  cardCvc?: string;
-  setCardCvc?: (val: string) => void;
+  firstName: string;
+  setFirstName: (val: string) => void;
+  lastName: string;
+  setLastName: (val: string) => void;
+  cpf: string;
+  setCpf: (val: string) => void;
+  cardNumber: string;
+  setCardNumber: (val: string) => void;
+  cardExpiry: string;
+  setCardExpiry: (val: string) => void;
+  cardCvc: string;
+  setCardCvc: (val: string) => void;
 }
 
 export function SignupForm(props: SignupFormProps) {
@@ -39,22 +37,18 @@ export function SignupForm(props: SignupFormProps) {
   const handleSignup = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    // Modified validation to account for optional fields
-    const needsProfileFields = !props.hidePayment;
-    const needsPaymentFields = !props.hidePayment;
-
     if (!props.email || !props.password || !props.confirmPassword) {
       toast.error("Preencha todos os campos obrigatórios");
       return;
     }
 
-    if (needsProfileFields && (!props.firstName || !props.lastName || !props.cpf)) {
+    if (!props.firstName || !props.lastName || !props.cpf) {
       toast.error("Preencha todos os campos de perfil");
       return;
     }
 
-    if (needsPaymentFields && (!props.cardNumber || !props.cardExpiry || !props.cardCvc)) {
-      toast.error("Preencha todos os campos de pagamento");
+    if (!props.cardNumber || !props.cardExpiry || !props.cardCvc) {
+      toast.error("Dados do cartão são obrigatórios para iniciar o trial");
       return;
     }
 
@@ -65,41 +59,62 @@ export function SignupForm(props: SignupFormProps) {
 
     props.setIsLoading(true);
 
-    const { data: signupData, error: signupError } = await supabase.auth.signUp({
-      email: props.email,
-      password: props.password,
-      options: {
-        data: {
-          first_name: props.firstName || "",
-          last_name: props.lastName || "",
-          cpf: props.cpf || "",
-        },
-      },
-    });
+    try {
+      // Primeiro validar o cartão no Stripe
+      const { data: cardValidation, error: cardError } = await supabase.functions.invoke('validate-trial-card', {
+        body: { 
+          email: props.email,
+          cardNumber: props.cardNumber.replace(/\s/g, ''),
+          cardExpiry: props.cardExpiry,
+          cardCvc: props.cardCvc
+        }
+      });
 
-    props.setIsLoading(false);
-
-    if (signupError) {
-      if (
-        signupError.message &&
-        signupError.message.includes("already registered")
-      ) {
-        toast.error("Este e-mail já está cadastrado");
-      } else {
-        toast.error(signupError.message || "Erro ao criar conta");
+      if (cardError || !cardValidation.success) {
+        toast.error(cardValidation?.error || "Erro ao validar cartão");
+        return;
       }
-      return;
+
+      const { data: signupData, error: signupError } = await supabase.auth.signUp({
+        email: props.email,
+        password: props.password,
+        options: {
+          data: {
+            first_name: props.firstName,
+            last_name: props.lastName,
+            cpf: props.cpf,
+            stripe_customer_id: cardValidation.customer_id
+          },
+        },
+      });
+
+      if (signupError) {
+        if (
+          signupError.message &&
+          signupError.message.includes("already registered")
+        ) {
+          toast.error("Este e-mail já está cadastrado");
+        } else {
+          toast.error(signupError.message || "Erro ao criar conta");
+        }
+        return;
+      }
+
+      toast.success("Cadastro realizado! Trial de 14 dias ativado. Verifique seu email.");
+
+      setTimeout(() => {
+        navigate("/login");
+      }, 1000);
+    } catch (error) {
+      console.error("Erro ao criar conta:", error);
+      toast.error("Erro ao criar conta. Tente novamente.");
+    } finally {
+      props.setIsLoading(false);
     }
-
-    toast.success("Cadastro realizado! Verifique seu email.");
-
-    setTimeout(() => {
-      navigate("/login");
-    }, 1000);
   };
 
   return (
-    <form className="space-y-5 bg-white rounded shadow px-6 py-8">
+    <form className="space-y-5 bg-white rounded shadow px-6 py-8" onSubmit={handleSignup}>
       <div>
         <label htmlFor="email" className="block text-sm font-medium text-gray-700">
           Email *
@@ -148,28 +163,34 @@ export function SignupForm(props: SignupFormProps) {
           disabled={props.isLoading}
         />
       </div>
-      {!props.hidePayment && props.firstName !== undefined && props.lastName !== undefined && props.cpf !== undefined && (
-        <SignupProfileFields
-          firstName={props.firstName}
-          lastName={props.lastName}
-          cpf={props.cpf}
-          setFirstName={props.setFirstName!}
-          setLastName={props.setLastName!}
-          setCpf={props.setCpf!}
-          disabled={props.isLoading}
-        />
-      )}
-      {!props.hidePayment && props.cardNumber !== undefined && props.cardExpiry !== undefined && props.cardCvc !== undefined && (
-        <SignupPaymentFields
-          cardNumber={props.cardNumber}
-          cardExpiry={props.cardExpiry}
-          cardCvc={props.cardCvc}
-          setCardNumber={props.setCardNumber!}
-          setCardExpiry={props.setCardExpiry!}
-          setCardCvc={props.setCardCvc!}
-          disabled={props.isLoading}
-        />
-      )}
+
+      <SignupProfileFields
+        firstName={props.firstName}
+        lastName={props.lastName}
+        cpf={props.cpf}
+        setFirstName={props.setFirstName}
+        setLastName={props.setLastName}
+        setCpf={props.setCpf}
+        disabled={props.isLoading}
+      />
+
+      <SignupPaymentFields
+        cardNumber={props.cardNumber}
+        cardExpiry={props.cardExpiry}
+        cardCvc={props.cardCvc}
+        setCardNumber={props.setCardNumber}
+        setCardExpiry={props.setCardExpiry}
+        setCpf={props.setCardCvc}
+        disabled={props.isLoading}
+      />
+
+      <Button
+        type="submit"
+        disabled={props.isLoading}
+        className="w-full bg-pump-purple hover:bg-pump-purple/90"
+      >
+        {props.isLoading ? "Validando cartão..." : "Iniciar Trial Gratuito"}
+      </Button>
     </form>
   );
 }

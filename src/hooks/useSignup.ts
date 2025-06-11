@@ -14,10 +14,42 @@ export const useSignup = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [cpf, setCpf] = useState("");
+  const [cardNumber, setCardNumber] = useState("");
+  const [cardExpiry, setCardExpiry] = useState("");
+  const [cardCvc, setCardCvc] = useState("");
+
+  const validateCard = () => {
+    // Validação básica do cartão
+    const cleanCardNumber = cardNumber.replace(/\s/g, '');
+    if (cleanCardNumber.length < 13 || cleanCardNumber.length > 19) {
+      return "Número do cartão inválido";
+    }
+
+    if (!/^\d{2}\/\d{2}$/.test(cardExpiry)) {
+      return "Data de validade inválida (MM/AA)";
+    }
+
+    if (cardCvc.length < 3 || cardCvc.length > 4) {
+      return "CVC inválido";
+    }
+
+    return null;
+  };
 
   const handleSignup = async (selectedPlan: Plan | null) => {
     if (!email || !password || !confirmPassword || !firstName || !lastName || !cpf) {
       toast.error("Preencha todos os campos obrigatórios");
+      return;
+    }
+
+    if (!cardNumber || !cardExpiry || !cardCvc) {
+      toast.error("Dados do cartão são obrigatórios para iniciar o trial");
+      return;
+    }
+
+    const cardError = validateCard();
+    if (cardError) {
+      toast.error(cardError);
       return;
     }
 
@@ -29,6 +61,22 @@ export const useSignup = () => {
     setIsLoading(true);
 
     try {
+      // Primeiro validar o cartão no Stripe sem cobrança
+      const { data: cardValidation, error: cardError } = await supabase.functions.invoke('validate-trial-card', {
+        body: { 
+          email,
+          cardNumber: cardNumber.replace(/\s/g, ''),
+          cardExpiry,
+          cardCvc
+        }
+      });
+
+      if (cardError || !cardValidation.success) {
+        toast.error(cardValidation?.error || "Erro ao validar cartão");
+        return;
+      }
+
+      // Criar a conta do usuário
       const { data: signupData, error: signupError } = await supabase.auth.signUp({
         email: email,
         password: password,
@@ -38,7 +86,8 @@ export const useSignup = () => {
             last_name: lastName,
             cpf: cpf,
             selected_plan: selectedPlan?.id || 'trial',
-            trial_start: new Date().toISOString()
+            trial_start: new Date().toISOString(),
+            stripe_customer_id: cardValidation.customer_id
           },
         },
       });
@@ -67,7 +116,8 @@ export const useSignup = () => {
             email: email,
             subscribed: false,
             subscription_tier: 'trial',
-            subscription_end: trialEndDate.toISOString()
+            subscription_end: trialEndDate.toISOString(),
+            stripe_customer_id: cardValidation.customer_id
           });
 
         if (subscriberError) {
@@ -76,7 +126,7 @@ export const useSignup = () => {
         }
       }
 
-      toast.success("Cadastro realizado com sucesso! Trial de 14 dias ativado. Verifique seu email para confirmar sua conta.");
+      toast.success("Cadastro realizado com sucesso! Trial de 14 dias ativado. Seu cartão será cobrado apenas após o período de trial. Verifique seu email para confirmar sua conta.");
       setTimeout(() => {
         navigate("/login");
       }, 2000);
@@ -102,6 +152,12 @@ export const useSignup = () => {
     setLastName,
     cpf,
     setCpf,
+    cardNumber,
+    setCardNumber,
+    cardExpiry,
+    setCardExpiry,
+    cardCvc,
+    setCardCvc,
     handleSignup,
   };
 };

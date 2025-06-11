@@ -1,9 +1,10 @@
 
 import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { SignupForm } from "./SignupForm";
-import { SignupPlansStep } from "./SignupPlansStep";
 import { SignupCredentials } from "./signup/SignupCredentials";
+import { SignupProfileFields } from "./SignupProfileFields";
+import { SignupPaymentFields } from "./SignupPaymentFields";
+import { SignupPlansStep } from "./SignupPlansStep";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useSignup } from "@/hooks/useSignup";
 import { useSignupPlans } from "@/hooks/useSignupPlans";
@@ -29,6 +30,12 @@ export function SignupStepperFlow({ onStepChange }: SignupStepperFlowProps) {
     setLastName,
     cpf,
     setCpf,
+    cardNumber,
+    setCardNumber,
+    cardExpiry,
+    setCardExpiry,
+    cardCvc,
+    setCardCvc,
     handleSignup,
   } = useSignup();
 
@@ -49,7 +56,8 @@ export function SignupStepperFlow({ onStepChange }: SignupStepperFlowProps) {
   }, [activeTab, onStepChange]);
 
   // Validation helpers
-  const canGoToPlans = email && password && confirmPassword && password === confirmPassword && firstName && lastName && cpf;
+  const canGoToPlans = email && password && confirmPassword && password === confirmPassword && 
+                      firstName && lastName && cpf && cardNumber && cardExpiry && cardCvc;
   const canSubmit = selectedPlan !== null && canGoToPlans;
 
   return (
@@ -61,34 +69,47 @@ export function SignupStepperFlow({ onStepChange }: SignupStepperFlowProps) {
         </TabsList>
 
         <TabsContent value="dados">
-          <form className="space-y-4">
+          <form className="space-y-6">
             <h3 className="text-lg font-semibold text-center text-gray-900 mb-4">Seus Dados</h3>
-            <SignupCredentials
-              email={email}
-              setEmail={setEmail}
-              password={password}
-              setPassword={setPassword}
-              confirmPassword={confirmPassword}
-              setConfirmPassword={setConfirmPassword}
-              isLoading={isLoading}
-            />
-            <SignupForm
-              email={email}
-              setEmail={setEmail}
-              password={password}
-              setPassword={setPassword}
-              confirmPassword={confirmPassword}
-              setConfirmPassword={setConfirmPassword}
-              firstName={firstName}
-              setFirstName={setFirstName}
-              lastName={lastName}
-              setLastName={setLastName}
-              cpf={cpf}
-              setCpf={setCpf}
-              isLoading={isLoading}
-              setIsLoading={() => {}}
-              hidePayment
-            />
+            
+            <div className="space-y-4">
+              <SignupCredentials
+                email={email}
+                setEmail={setEmail}
+                password={password}
+                setPassword={setPassword}
+                confirmPassword={confirmPassword}
+                setConfirmPassword={setConfirmPassword}
+                isLoading={isLoading}
+              />
+              
+              <SignupProfileFields
+                firstName={firstName}
+                lastName={lastName}
+                cpf={cpf}
+                setFirstName={setFirstName}
+                setLastName={setLastName}
+                setCpf={setCpf}
+                disabled={isLoading}
+              />
+
+              <div className="border-t pt-4">
+                <h4 className="font-medium text-gray-900 mb-3">Dados do Cartão</h4>
+                <p className="text-sm text-gray-600 mb-4">
+                  Necessário para iniciar seu trial gratuito de 14 dias. Você só será cobrado após o período de trial.
+                </p>
+                <SignupPaymentFields
+                  cardNumber={cardNumber}
+                  cardExpiry={cardExpiry}
+                  cardCvc={cardCvc}
+                  setCardNumber={setCardNumber}
+                  setCardExpiry={setCardExpiry}
+                  setCardCvc={setCardCvc}
+                  disabled={isLoading}
+                />
+              </div>
+            </div>
+
             <div className="flex justify-end mt-6">
               <Button 
                 type="button" 
@@ -111,6 +132,12 @@ export function SignupStepperFlow({ onStepChange }: SignupStepperFlowProps) {
           ) : (
             <div className="space-y-6">
               <h3 className="text-lg font-semibold text-center text-gray-900 mb-4">Escolha seu Plano</h3>
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <p className="text-blue-800 text-sm">
+                  🎉 <strong>Trial Gratuito de 14 dias!</strong> Teste todos os recursos sem cobrança. 
+                  Seu cartão será cobrado apenas após o período de trial.
+                </p>
+              </div>
               <SignupPlansStep
                 plans={plans}
                 selectedPlanId={selectedPlan?.id ?? null}
@@ -134,7 +161,7 @@ export function SignupStepperFlow({ onStepChange }: SignupStepperFlowProps) {
                     disabled={!canSubmit || isLoading}
                     onClick={() => handleSignup(selectedPlan)}
                   >
-                    {isLoading ? "Cadastrando..." : "Finalizar Cadastro"}
+                    {isLoading ? "Validando cartão..." : "Iniciar Trial Gratuito"}
                   </Button>
                 )}
               </div>

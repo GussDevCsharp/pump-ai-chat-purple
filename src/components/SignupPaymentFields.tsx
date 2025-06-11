@@ -21,9 +21,60 @@ export function SignupPaymentFields({
   setCardExpiry,
   setCardCvc,
 }: SignupPaymentFieldsProps) {
+  
+  const formatCardNumber = (value: string) => {
+    // Remove todos os caracteres não numéricos
+    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+    
+    // Adiciona espaços a cada 4 dígitos
+    const matches = v.match(/\d{4,16}/g);
+    const match = matches && matches[0] || '';
+    const parts = [];
+    
+    for (let i = 0, len = match.length; i < len; i += 4) {
+      parts.push(match.substring(i, i + 4));
+    }
+    
+    if (parts.length) {
+      return parts.join(' ');
+    } else {
+      return v;
+    }
+  };
+
+  const formatExpiry = (value: string) => {
+    // Remove tudo que não é número
+    const v = value.replace(/\D/g, '');
+    
+    // Adiciona a barra após os dois primeiros dígitos
+    if (v.length >= 2) {
+      return v.substring(0, 2) + '/' + v.substring(2, 4);
+    }
+    
+    return v;
+  };
+
+  const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatCardNumber(e.target.value);
+    setCardNumber(formatted);
+  };
+
+  const handleExpiryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatExpiry(e.target.value);
+    setCardExpiry(formatted);
+  };
+
+  const handleCvcChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, '').substring(0, 4);
+    setCardCvc(value);
+  };
+
   return (
     <div className="pt-2">
       <h3 className="font-semibold text-lg mb-2 text-gray-900">Dados de pagamento</h3>
+      <p className="text-sm text-gray-600 mb-4">
+        Necessário para validar o trial. Você só será cobrado após 14 dias.
+      </p>
       <div>
         <label htmlFor="cardNumber" className="block text-sm font-medium text-gray-700">
           Número do cartão *
@@ -33,7 +84,7 @@ export function SignupPaymentFields({
           type="text"
           required
           value={cardNumber}
-          onChange={e => setCardNumber(e.target.value)}
+          onChange={handleCardNumberChange}
           className="mt-1"
           disabled={disabled}
           maxLength={19}
@@ -51,7 +102,7 @@ export function SignupPaymentFields({
             type="text"
             required
             value={cardExpiry}
-            onChange={e => setCardExpiry(e.target.value)}
+            onChange={handleExpiryChange}
             disabled={disabled}
             maxLength={5}
             placeholder="MM/AA"
@@ -68,7 +119,7 @@ export function SignupPaymentFields({
             type="text"
             required
             value={cardCvc}
-            onChange={e => setCardCvc(e.target.value)}
+            onChange={handleCvcChange}
             disabled={disabled}
             maxLength={4}
             placeholder="000"

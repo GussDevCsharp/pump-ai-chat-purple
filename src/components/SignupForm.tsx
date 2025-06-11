@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -180,7 +179,7 @@ export function SignupForm(props: SignupFormProps) {
         cardCvc={props.cardCvc}
         setCardNumber={props.setCardNumber}
         setCardExpiry={props.setCardExpiry}
-        setCpf={props.setCardCvc}
+        setCardCvc={props.setCardCvc}
         disabled={props.isLoading}
       />
 

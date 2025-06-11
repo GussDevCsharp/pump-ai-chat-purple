@@ -3,10 +3,11 @@ import { Link } from "react-router-dom"
 import { UserCardMenu } from "@/components/common/UserCardMenu"
 import { useChatAuth } from "@/hooks/useChatAuth"
 import { ThemeToggle } from "@/components/common/ThemeToggle"
+import { Button } from "@/components/ui/button"
+import { LogIn, UserPlus } from "lucide-react"
 
 export const Header = () => {
   const { authStatus } = useChatAuth();
-  const homeLink = authStatus === 'authenticated' ? "/themes" : "/";
 
   return (
     <header className="bg-white dark:bg-[#1A1F2C] border-b border-pump-gray/10 shadow-sm sticky top-0 z-30">
@@ -19,9 +20,28 @@ export const Header = () => {
             style={{ background: 'transparent' }}
           />
         </Link>
+        
         <div className="flex items-center gap-4">
           <ThemeToggle />
-          <UserCardMenu />
+          
+          {authStatus === 'authenticated' ? (
+            <UserCardMenu />
+          ) : (
+            <div className="flex items-center gap-2">
+              <Link to="/login">
+                <Button variant="ghost" size="sm">
+                  <LogIn className="w-4 h-4 mr-2" />
+                  Entrar
+                </Button>
+              </Link>
+              <Link to="/signup">
+                <Button size="sm" className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white">
+                  <UserPlus className="w-4 h-4 mr-2" />
+                  Trial Grátis
+                </Button>
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </header>

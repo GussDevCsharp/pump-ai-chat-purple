@@ -16,7 +16,8 @@ import {
   Zap,
   Shield,
   Clock,
-  Target
+  Target,
+  LogIn
 } from "lucide-react"
 import { Header } from "@/components/common/Header"
 
@@ -100,7 +101,7 @@ export default function Landing() {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+    <div className="min-h-screen bg-[#F8F9FA]">
       <Header />
       
       {/* Hero Section */}
@@ -109,7 +110,7 @@ export default function Landing() {
         <div className="container mx-auto px-4 relative">
           <div className="max-w-4xl mx-auto text-center">
             <Badge variant="secondary" className="mb-6 bg-purple-100 text-purple-700 px-4 py-2">
-              🚀 A Revolução da IA Empresarial
+              🚀 Trial Gratuito de 14 Dias
             </Badge>
             
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight">
@@ -121,22 +122,24 @@ export default function Landing() {
             
             <p className="text-lg md:text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
               Obtenha consultoria empresarial instantânea, estratégias personalizadas e insights 
-              que aceleram seu crescimento. A IA mais avançada do mercado, especializada em negócios.
+              que aceleram seu crescimento. Teste por 14 dias grátis, sem compromisso.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <Link to="/chat" state={{ topic: "Consultoria Empresarial", prompts: businessPrompts[0].features }}>
+              <Link to="/signup">
                 <Button size="lg" className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-8 py-4 text-lg">
                   <MessageSquare className="mr-2 h-5 w-5" />
-                  Começar Grátis Agora
+                  Começar Trial Grátis (14 dias)
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
               
-              <Button size="lg" variant="outline" className="border-2 border-gray-300 hover:border-purple-600 px-8 py-4 text-lg">
-                <Play className="mr-2 h-5 w-5" />
-                Ver Demonstração
-              </Button>
+              <Link to="/login">
+                <Button size="lg" variant="outline" className="border-2 border-purple-600 text-purple-600 hover:bg-purple-50 px-8 py-4 text-lg">
+                  <LogIn className="mr-2 h-5 w-5" />
+                  Entrar
+                </Button>
+              </Link>
             </div>
 
             {/* Stats */}
@@ -152,15 +155,15 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Benefits Section */}
+      {/* Trial Benefits Section */}
       <section className="py-16 md:py-24 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Por que Escolher o ChatPump?
+              14 Dias de Trial Gratuito
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Desenvolvido especificamente para empresas que buscam crescimento acelerado
+              Experimente todos os recursos sem limitações. Cancele a qualquer momento.
             </p>
           </div>
 
@@ -177,11 +180,19 @@ export default function Landing() {
               </Card>
             ))}
           </div>
+
+          <div className="text-center mt-12">
+            <Link to="/signup">
+              <Button size="lg" className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-8 py-4">
+                Iniciar Trial Gratuito Agora
+              </Button>
+            </Link>
+          </div>
         </div>
       </section>
 
       {/* Business Categories */}
-      <section className="py-16 md:py-24 bg-gray-50">
+      <section className="py-16 md:py-24 bg-[#F8F9FA]">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
@@ -194,41 +205,26 @@ export default function Landing() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {businessPrompts.map((category, index) => (
-              <Link 
-                key={index}
-                to="/chat"
-                state={{ topic: category.title, prompts: category.features }}
-                className="group"
-              >
-                <Card className="h-full border-0 shadow-md hover:shadow-xl transition-all duration-300 group-hover:-translate-y-1 bg-white">
-                  <CardHeader className="text-center pb-4">
-                    <div className="mx-auto mb-4 p-3 rounded-full bg-gradient-to-r from-purple-100 to-blue-100 w-fit group-hover:from-purple-200 group-hover:to-blue-200 transition-all">
-                      {category.icon}
-                    </div>
-                    <CardTitle className="text-xl text-gray-900">{category.title}</CardTitle>
-                    <p className="text-sm text-gray-600">{category.description}</p>
-                  </CardHeader>
-                  
-                  <CardContent className="pt-0">
-                    <div className="space-y-2">
-                      {category.features.map((feature, idx) => (
-                        <div key={idx} className="flex items-center text-sm text-gray-600">
-                          <CheckCircle className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
-                          {feature}
-                        </div>
-                      ))}
-                    </div>
-                    
-                    <Button 
-                      variant="ghost" 
-                      className="w-full mt-4 group-hover:bg-purple-50 group-hover:text-purple-700"
-                    >
-                      Explorar Agora
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </CardContent>
-                </Card>
-              </Link>
+              <Card key={index} className="h-full border-0 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-white group cursor-pointer">
+                <CardHeader className="text-center pb-4">
+                  <div className="mx-auto mb-4 p-3 rounded-full bg-gradient-to-r from-purple-100 to-blue-100 w-fit group-hover:from-purple-200 group-hover:to-blue-200 transition-all">
+                    {category.icon}
+                  </div>
+                  <CardTitle className="text-xl text-gray-900">{category.title}</CardTitle>
+                  <p className="text-sm text-gray-600">{category.description}</p>
+                </CardHeader>
+                
+                <CardContent className="pt-0">
+                  <div className="space-y-2">
+                    {category.features.map((feature, idx) => (
+                      <div key={idx} className="flex items-center text-sm text-gray-600">
+                        <CheckCircle className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
+                        {feature}
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
             ))}
           </div>
         </div>
@@ -267,7 +263,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* Final CTA Section */}
       <section className="py-16 md:py-24 bg-gradient-to-r from-purple-600 to-blue-600">
         <div className="container mx-auto px-4 text-center">
           <div className="max-w-3xl mx-auto">
@@ -275,26 +271,27 @@ export default function Landing() {
               Pronto para Revolucionar Sua Empresa?
             </h2>
             <p className="text-lg text-purple-100 mb-8">
-              Junte-se a milhares de empresas que já transformaram seus resultados com o ChatPump
+              Comece seu trial gratuito de 14 dias agora mesmo. Sem cartão de crédito.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/chat">
+              <Link to="/signup">
                 <Button size="lg" className="bg-white text-purple-600 hover:bg-gray-100 px-8 py-4 text-lg">
                   <MessageSquare className="mr-2 h-5 w-5" />
-                  Começar Grátis
+                  Começar Trial Grátis
                 </Button>
               </Link>
               
-              <Link to="/business-generator">
+              <Link to="/login">
                 <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-purple-600 px-8 py-4 text-lg">
-                  Gerar Plano de Negócio
+                  <LogIn className="mr-2 h-5 w-5" />
+                  Já Tenho Conta
                 </Button>
               </Link>
             </div>
             
             <p className="text-sm text-purple-200 mt-4">
-              ✓ Sem cartão de crédito • ✓ Configuração em 2 minutos • ✓ Suporte 24/7
+              ✓ 14 dias grátis • ✓ Sem cartão de crédito • ✓ Cancele a qualquer momento
             </p>
           </div>
         </div>
@@ -323,7 +320,7 @@ export default function Landing() {
             <div>
               <h4 className="font-semibold mb-4">Recursos</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><Link to="/chat" className="hover:text-white">IA Empresarial</Link></li>
+                <li><Link to="/signup" className="hover:text-white">Trial Gratuito</Link></li>
                 <li><Link to="/business-generator" className="hover:text-white">Gerador de Negócios</Link></li>
                 <li><Link to="/themes" className="hover:text-white">Temas</Link></li>
               </ul>

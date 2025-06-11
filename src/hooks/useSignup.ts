@@ -37,7 +37,8 @@ export const useSignup = () => {
             first_name: firstName,
             last_name: lastName,
             cpf: cpf,
-            selected_plan: selectedPlan?.id
+            selected_plan: selectedPlan?.id || 'trial',
+            trial_start: new Date().toISOString()
           },
         },
       });
@@ -51,7 +52,31 @@ export const useSignup = () => {
         return;
       }
 
-      toast.success("Cadastro realizado com sucesso! Verifique seu email para confirmar sua conta.");
+      // Aguardar um pouco para garantir que o usuário foi criado
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Criar registro de trial na tabela subscribers
+      if (signupData.user) {
+        const trialEndDate = new Date();
+        trialEndDate.setDate(trialEndDate.getDate() + 14);
+
+        const { error: subscriberError } = await supabase
+          .from('subscribers')
+          .insert({
+            user_id: signupData.user.id,
+            email: email,
+            subscribed: false,
+            subscription_tier: 'trial',
+            subscription_end: trialEndDate.toISOString()
+          });
+
+        if (subscriberError) {
+          console.error('Erro ao criar trial:', subscriberError);
+          // Não bloquear o cadastro por causa disso
+        }
+      }
+
+      toast.success("Cadastro realizado com sucesso! Trial de 14 dias ativado. Verifique seu email para confirmar sua conta.");
       setTimeout(() => {
         navigate("/login");
       }, 2000);

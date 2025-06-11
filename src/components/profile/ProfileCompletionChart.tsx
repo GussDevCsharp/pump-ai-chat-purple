@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Label } from 'recharts';
 import { Card } from "@/components/ui/card";
@@ -121,7 +120,7 @@ export function ProfileCompletionChart() {
           selected={date}
           onSelect={setDate}
           locale={ptBR}
-          className="rounded-md bg-pump-offwhite pointer-events-auto"
+          className="rounded-md bg-white pointer-events-auto"
         />
       </Card>
     </div>

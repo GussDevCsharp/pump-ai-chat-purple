@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -19,9 +20,6 @@ export default {
     },
     extend: {
       colors: {
-        offwhite: {
-          DEFAULT: '#FFFFFF',
-        },
         pump: {
           gray: '#8E9196',
           'gray-dark': '#333333',

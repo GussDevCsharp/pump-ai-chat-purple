@@ -2,10 +2,10 @@
 import { useEffect, useState } from 'react';
 
 export const useTheme = () => {
-  // Verifica o localStorage na inicialização ou usa o modo claro (isDark = false) como padrão
+  // Verifica o localStorage na inicialização ou usa o modo claro (branco) como padrão
   const [isDark, setIsDark] = useState(() => {
     const savedTheme = localStorage.getItem('theme');
-    // Se houver um tema salvo, use-o, caso contrário, comece com modo claro (offwhite)
+    // Se houver um tema salvo, use-o, caso contrário, comece com modo claro (branco)
     return savedTheme === 'dark';
   });
 

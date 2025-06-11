@@ -21,7 +21,7 @@ export default function Subscription() {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
-  const { data: subscription, isLoading: subLoading, refetch } = useSubscription();
+  const { subscriptionData, isLoading: subLoading, checkSubscription } = useSubscription();
 
   useEffect(() => {
     const fetchPlans = async () => {
@@ -104,8 +104,7 @@ export default function Subscription() {
 
   const refreshSubscription = async () => {
     try {
-      await supabase.functions.invoke('check-subscription');
-      await refetch();
+      await checkSubscription();
       toast.success('Status da assinatura atualizado');
     } catch (error) {
       console.error('Erro ao atualizar assinatura:', error);
@@ -149,7 +148,7 @@ export default function Subscription() {
         </div>
 
         {/* Status da Assinatura */}
-        {subscription && (
+        {subscriptionData && (
           <div className="max-w-4xl mx-auto mb-8">
             <Card className="border-green-200 bg-green-50">
               <CardHeader>
@@ -157,11 +156,11 @@ export default function Subscription() {
                   <div>
                     <CardTitle className="text-green-800">Status da Assinatura</CardTitle>
                     <CardDescription className="text-green-600">
-                      {subscription.subscribed ? 'Assinatura Ativa' : 'Sem Assinatura Ativa'}
+                      {subscriptionData.subscribed ? 'Assinatura Ativa' : 'Sem Assinatura Ativa'}
                     </CardDescription>
                   </div>
-                  <Badge variant={subscription.subscribed ? "default" : "secondary"}>
-                    {subscription.subscription_tier || 'Gratuito'}
+                  <Badge variant={subscriptionData.subscribed ? "default" : "secondary"}>
+                    {subscriptionData.subscription_tier || 'Gratuito'}
                   </Badge>
                 </div>
               </CardHeader>
@@ -170,7 +169,7 @@ export default function Subscription() {
                   <Button onClick={refreshSubscription} variant="outline">
                     Atualizar Status
                   </Button>
-                  {subscription.subscribed && (
+                  {subscriptionData.subscribed && (
                     <Button onClick={handleManageSubscription}>
                       Gerenciar Assinatura
                     </Button>
@@ -184,7 +183,7 @@ export default function Subscription() {
         {/* Planos */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {plans.map((plan) => {
-            const isCurrentPlan = subscription?.subscription_tier?.includes(plan.name.split(' ')[1]);
+            const isCurrentPlan = subscriptionData?.subscription_tier?.includes(plan.name.split(' ')[1]);
             
             return (
               <Card 
